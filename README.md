@@ -1,215 +1,92 @@
-# 🔭 Seestar AstroLab AAVSO
+# 🔭 Seestar AstroLab AAVSO (v1.0.0 — Первая версия)
 
-> Desktop photometry suite for **ZWO Seestar** smart telescopes → official **AAVSO Extended** submissions.  
-> Превращает сырые CSV-логи Seestar в готовые научные отчёты AAVSO за один клик.
+**Seestar AstroLab AAVSO** — специализированное десктопное приложение для владельцев умных телескопов **ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`)** и наблюдателей переменных звёзд [AAVSO (American Association of Variable Star Observers)](https://www.aavso.org).
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)]()
-[![Platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-lightgrey)]()
-[![AAVSO](https://img.shields.io/badge/format-AAVSO%20Extended-success)]()
-[![Languages](https://img.shields.io/badge/UI-6%20languages-orange)]()
-[![License](https://img.shields.io/badge/license-see%20LICENSE-informational)]()
+Программа устраняет технический барьер между встроенным инструментом фотометрии телескопов [ZWO Seestar](https://www.seestar.com) и научной базой данных [AAVSO WebObs](https://www.aavso.org/webobs): она автоматически переводит сырые фотометрические CSV-файлы Seestar в международный научный стандарт **AAVSO Extended**, сверяет координаты и идентификаторы звёзд через [CDS SIMBAD](https://simbad.cds.unistra.fr/simbad/) и [AAVSO VSP (Variable Star Plotter)](https://app.aavso.org/vsp/), автоматически подбирает оптимальную контрольную звезду (`Check Star`: `KNAME` / `KMAG`) в поле зрения конкретной модели Seestar, строит кривую блеска и включает интерактивный **Радар срочных целей AAVSO (`Alert Notices`)** и личный трекер прогресса **«Мои наблюдения»**.
 
 ---
 
-## 📖 Table of Contents
+## 📸 Скриншоты интерфейса (Screenshots)
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [Supported Telescopes](#-supported-telescopes)
-- [Installation](#-installation-windows-10--11)
-- [Quick Start](#-quick-start)
-- [Screenshots](#-screenshots)
-- [Roadmap & Status](#-roadmap--status)
-- [FAQ](#-faq)
-- [Support the Author](#-support-the-author)
-- [Search Keywords](#-search-keywords--tags)
-- [Русская версия](#-русская-версия)
+### 1. Главная панель, конвертер фотометрии Seestar → AAVSO Extended и кривая блеска (Тёмная тема)
+![Главный экран Seestar AstroLab AAVSO, Радар целей и кривая блеска](screenshots/01_main_dashboard_and_urgent_radar_dark.jpg)
 
----
+### 2. Интерактивный Радар срочных целей AAVSO (`Alert Notices` & Priority Targets)
+![Радар срочных целей AAVSO в Seestar AstroLab AAVSO](screenshots/02_photometry_converter_and_light_curve.jpg)
 
-## 🌐 Overview
+### 3. Раздел «Мои наблюдения» (Автологирование сессий и сглаженный HiDPI-график прогресса)
+![Раздел Мои наблюдения и график прогресса фотометрии](screenshots/03_my_observations_analytics.jpg)
 
-**Seestar AstroLab AAVSO** is a dedicated desktop photometry suite for **ZWO Seestar S50, S50PRO, S30, and S30PRO** smart telescopes. It converts raw Seestar photometry CSV logs into the official **AAVSO Extended Format** ready for submission to **AAVSO WebObs**, verifies coordinates and star identifiers against **CDS SIMBAD** and the **AAVSO Variable Star Plotter (VSP)**, automatically picks an optimal **Check Star** (`KNAME` / `KMAG`), renders the light curve, and includes an interactive **AAVSO Alert Notice radar** for high-priority targets.
+### 4. Светлая тема и мультиязычный интерфейс (Light Theme)
+![Светлая тема Seestar AstroLab AAVSO](screenshots/04_light_theme_and_multilang.jpg)
 
-Built and maintained by **CosmoBehemothych** for the variable-star observer community and Seestar owners worldwide.
+### 5. Локализованное меню установщика на 6 языках (`RU | EN | ES | DE | FR | ZH`)
+![Окно установщика Seestar AstroLab AAVSO на 6 языках](screenshots/05_installer_6_languages_ui.jpg)
 
 ---
 
-## ✨ Key Features
+## 🔍 Ключевые возможности (RU)
 
-### 🔁 Seestar CSV → AAVSO Extended
-- Computes mid-exposure Julian Date (`JD Mid`) automatically.
-- Filters target measurements (`Non-reference star` only).
-- Rounds `MAG` and `MERR` to 4 decimal places.
-- Emits a valid AAVSO Extended header: `#TYPE=EXTENDED`, `#OBSCODE`, `#STARID`, `#CHART`, `KNAME`, `KMAG`.
-
-### 🔭 Full ZWO Seestar Lineup Support
-| Model | FOV | Limiting mag (approx.) | Notes |
-|---|---|---|---|
-| **Seestar S30** | 1.28° × 0.72° | ~13.5 mag | Standard |
-| **Seestar S30PRO** | 2.10° × 1.18° | ~14.2 mag | 4K sensor |
-| **Seestar S50** | 0.78° × 1.05° | ~14.5 mag | Standard |
-| **Seestar S50PRO** | 1.15° × 0.65° | ~15.2 mag | 4K sensor |
-
-### 🛰️ Parallel Catalog Synchronization
-- Queries **CDS SIMBAD** mirrors, **VizieR**, and **AAVSO VSP** in parallel.
-- Normalizes constellation names per **IAU 88 constellations** (e.g. `SZ Lyncis` → `SZ Lyn`).
-- Downloads `CHART ID` for the target neighborhood.
-- Automatically selects a non-variable **Check Star** (`KNAME`, `KMAG`) within your Seestar's field of view.
-
-### 🚨 AAVSO Urgent Target Radar
-- Built-in catalog of priority AAVSO Alert Notices: recurrent novae, cataclysmic variables, symbiotic stars, Miras, eclipsing binaries.
-- Sortable by publication date, target name, and priority.
-- Filters targets to those observable within your telescope's limiting magnitude.
-
-### 📊 "My Observations" Tracker
-- Automatically logs every scientific session when a CSV is converted.
-- High-DPI smoothed (cubic-Bézier) activity chart.
-- Filter by date, star (`STARID`), and telescope model.
-- Persistent state across app restarts.
-
-### 🌍 Localization & Theming
-- **6 UI languages**: Русский (`ru-RU`), English (`en-US`), Español (`es-ES`), Deutsch (`de-DE`), Français (`fr-FR`), 中文 (`zh-CN`).
-- **Standard Dark** and **Light** themes with instant switching.
+* **Прямая конвертация ZWO Seestar CSV → AAVSO Extended**: автоматический пересчёт середины экспозиции в юлианскую дату (`JD_Mid = (JD_Start + JD_End) / 2`), фильтрация целевых измерений (`Non-reference star`), округление инструментального блеска `MAG` и погрешности `MERR` в полосе `TG` до 4 знаков после запятой и формирование валидного заголовка `#TYPE=EXTENDED` с вашим кодом `#OBSCODE`.
+* **Адаптация под все 4 модели телескопов ZWO Seestar**:
+  * **Seestar S30** (`FOV 1.28°×0.72°`, рабочий предел фотометрии до `13.5 mag`)
+  * **Seestar S30PRO** (`FOV 2.10°×1.18°`, 4K сенсор, до `14.2 mag`)
+  * **Seestar S50** (`FOV 0.78°×1.05°`, до `14.5 mag`)
+  * **Seestar S50PRO** (`FOV 1.15°×0.65°`, 4K сенсор, до `15.2 mag`)
+* **Параллельная синхронизация с каталогами CDS SIMBAD, VizieR и AAVSO VSP**: автоматическая редукция латинских названий созвездий по стандарту МАС (IAU 88 constellations, например `SZ Lyncis` → `SZ Lyn`), загрузка официального идентификатора карты (`CHART ID`) и автоматический подбор непеременной контрольной звезды (`KNAME`, `KMAG`) в поле зрения выбранного телескопа (с автономным офлайн-резервом при работе в поле без интернета).
+* **Радар срочных запросов AAVSO (`Звёзды с пометкой «Срочно»`)**: встроенный каталог приоритетных целей AAVSO (повторные новые `T CrB`, `RS Oph`, катаклизмические и симбиотические переменные `SS Cyg`, `CH Cyg`, `U Gem`, короткопериодические пульсирующие звёзды `SZ Lyn` и др.) с фильтрацией под проницающую способность вашей модели Seestar.
+* **Постоянное сохранение `OBSCODE` и базы «Мои наблюдения»**: нативный мост хранения Windows (`AstroLabDiskBridge`) атомарно сохраняет ваш код обсерватории `OBSCODE`, историю сконвертированных файлов, выбранный язык и тему в `%APPDATA%\Seestar_AstroLab\user_persistent_store.json`. Данные гарантированно сохраняются после закрытия программы и при установке обновлений поверх.
+* **Полная локализация программы и установщика на 6 языков**: Русский (`ru-RU`), English (`en-US`), Español (`es-ES`), Deutsch (`de-DE`), Français (`fr-FR`) и 中文 (`zh-CN`).
 
 ---
 
-## 🖥️ Supported Telescopes
+## 📋 Пошаговая инструкция пользователя (От съёмки на Seestar до отправки в AAVSO WebObs)
 
-Optimized and tested for the entire **ZWO Seestar** family:
+### Шаг 1. Установка и первый запуск (Windows 10 / 11)
+1. Скачайте установщик **`Seestar_AstroLab_Setup.exe`** из раздела [Releases](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) (или распакуйте архив релиза).
+2. Запустите `Seestar_AstroLab_Setup.exe`, выберите удобный язык установщика (`RU Русский`, `EN English`, `ES Español`, `DE Deutsch`, `FR Français`, `ZH 中文`) и нажмите **«Установить / Обновить»**.
+   * *Примечание по безопасности и путям*: Установщик работает в пользовательском контуре (`PrivilegesRequired=lowest`, без запроса прав администратора UAC) и устанавливает приложение в `%LOCALAPPDATA%\Programs\Seestar_AstroLab`, создавая ярлык **Seestar AstroLab AAVSO** на Рабочем столе и папку с 3 ярлыками в меню «Пуск» (`Seestar AstroLab AAVSO`, `Seestar AstroLab AAVSO Web`, `Удалить Seestar AstroLab AAVSO`).
+3. Также доступна портативная сборка `Portable/Seestar_AstroLab_Portable.exe` (не требует установки) и автономный веб-интерфейс `Source_and_Build/pwa_mobile_and_electron/index.html`.
 
-- ✅ **Seestar S30**
-- ✅ **Seestar S30 PRO**
-- ✅ **Seestar S50**
-- ✅ **Seestar S50 PRO**
+### Шаг 2. Настройка профиля наблюдателя (1 раз)
+1. В верхней панели выберите модель вашего телескопа (`S30`, `S30PRO`, `S50` или `S50PRO`).
+2. В блоке **«Наблюдатель и звезда»** введите ваш официальный код наблюдателя AAVSO в поле **`OBSCODE`** (например, `CBH01`). Поле сохраняется на жёсткий диск мгновенно при вводе и остаётся заполненным при всех последующих запусках программы.
 
-> ⚠️ Other smart telescopes may work if their CSV format matches Seestar's — but this is not officially supported.
+### Шаг 3. Выбор цели и автоподбор контрольной звезды (`Check Star`)
+1. Выберите приоритетную звезду в левой панели **«Радар целей AAVSO»** (нажав кнопку **«Выбрать»** на карточке объекта) или введите название звезды вручную в поле **`STARID`** (например, `SZ Lyn`, `T CrB` или `SS Cyg`).
+2. Программа автоматически нормализует название по стандарту МАС, параллельно опросит зеркала [CDS SIMBAD](https://simbad.cds.unistra.fr/simbad/) и [AAVSO VSP API](https://app.aavso.org/vsp/), проверит координаты `RA/DEC (J2000)` и автоматически заполнит поля:
+   * **`CHART ID`** — идентификатор официальной фотометрической карты AAVSO;
+   * **`KNAME`** и **`KMAG`** — оптимальная непеременная контрольная звезда (`Check Star`) в поле зрения вашей матрицы Seestar.
 
----
-
-## 🚀 Installation (Windows 10 / 11)
-
-1. Download **`Seestar_AstroLab_Setup.exe`** from the [Releases](../../releases) section (or unpack `Seestar_AstroLab_Desktop_Release_2026.zip`).
-2. Run `Seestar_AstroLab_Setup.exe` — the app installs into the user profile **without UAC elevation** and creates the **Seestar AstroLab AAVSO** shortcut on your Desktop and in the Start menu.
-3. Alternatives:
-   - **Portable:** `Portable/Seestar_AstroLab_Portable.exe`
-   - **Web / PWA / Electron build:** `Source_and_Build/pwa_mobile_and_electron/index.html`
-
-**System requirements:** Windows 10 or 11 (64-bit), 4 GB RAM, 200 MB free disk space, active internet connection (for SIMBAD / VSP queries).
-
----
-
-## ⚡ Quick Start
-
-1. **Set your observer code** in *Settings* — your official **AAVSO `OBSCODE`** (required for valid submissions).
-2. **Pick your Seestar model** — this sets the FOV used for check-star search.
-3. **Load your Seestar CSV** — drag-and-drop or *File → Open*.
-4. **Review the auto-filled header** — `STARID`, `RA/DEC (J2000)`, `CHART`, `KNAME`, `KMAG` are pre-populated.
-5. **Export AAVSO Extended file** — ready to upload to **AAVSO WebObs**.
-6. (Optional) Open the **Urgent Targets Radar** to plan tonight's session.
+### Шаг 4. Конвертация CSV-файла Seestar и отправка в AAVSO WebObs
+1. Перетащите (Drag-and-Drop) или выберите через кнопку **«Выбрать CSV-файл Seestar»** сырой файл фотометрии, выгруженный из приложения ZWO Seestar.
+2. Проверьте автоматически построенную **кривую блеска** (`JD Mid` vs `MAG ± MERR`) и таблицу предпросмотра справа.
+3. Нажмите кнопку **«Конвертировать и скачать файл AAVSO Extended»**:
+   * Готовый отчёт `.txt` в стандарте `#TYPE=EXTENDED` сохранится на ваш компьютер;
+   * Сессия автоматически запишется в раздел **«Мои наблюдения»** и обновит график вашего личного прогресса.
+4. Перейдите на портал [AAVSO WebObs — Upload File](https://www.aavso.org/webobs) (кнопка перехода доступна прямо из окна программы) и загрузите созданный `.txt`-файл.
 
 ---
 
-## 🖼️ Screenshots
+## 🌐 Overview & Quick Start (English — SEO Summary)
 
-> _Add screenshots here once a stable UI is available: `docs/screenshot-main.png`, `docs/screenshot-radar.png`, `docs/screenshot-lightcurve.png`._
+**Seestar AstroLab AAVSO** is an open desktop photometry suite for **ZWO Seestar (`S50`, `S50PRO`, `S30`, `S30PRO`)** smart telescopes that bridges the gap between Seestar's built-in photometry output and official [AAVSO WebObs](https://www.aavso.org/webobs) scientific submissions.
 
----
-
-## 🗺️ Roadmap & Status
-
-| Status | Item |
-|---|---|
-| ✅ | Seestar CSV → AAVSO Extended conversion |
-| ✅ | SIMBAD / VizieR / VSP auto-lookup |
-| ✅ | Auto check-star selection |
-| ✅ | Urgent-target radar |
-| ✅ | "My Observations" tracker |
-| ✅ | 6-language UI + dark/light themes |
-| 🔜 | Native macOS / Linux builds |
-| 🔜 | Direct upload to AAVSO WebObs (experimental) |
-| 🔜 | Variable-star light-curve overlay from AAVSO LCG |
+* **1-Click Seestar CSV to AAVSO Extended Conversion**: Automatically filters `Non-reference star` rows, calculates mid-exposure Julian Date (`JD Mid`), rounds instrumental `TG` magnitudes and uncertainties (`MAG`, `MERR`) to 4 decimal places, and generates a compliant `#TYPE=EXTENDED` report.
+* **Automated SIMBAD & AAVSO VSP Calibration**: Queries [CDS SIMBAD](https://simbad.cds.unistra.fr/simbad/) and the [AAVSO Variable Star Plotter (VSP) API](https://app.aavso.org/vsp/) in parallel to verify `RA/DEC (J2000)` coordinates, retrieve the official `CHART ID`, and automatically select an optimal non-variable Check Star (`KNAME`, `KMAG`) tailored to your Seestar model's field of view (`S30`, `S30PRO`, `S50`, `S50PRO`).
+* **AAVSO Urgent Target Radar & Personal Progress Tracker**: Browse urgent AAVSO Alert Notices (`T CrB`, `SS Cyg`, `SZ Lyn`, `RS Oph`, `CH Cyg`, `U Gem`) and track your cumulative photometry sessions with a persistent local database and smooth HiDPI spline chart in **"My Observations"**.
+* **6-Language Installer & App UI**: Full localization for both the installer menu (`Seestar_AstroLab_Setup.exe`) and the application interface in **Russian (`ru-RU`)**, **English (`en-US`)**, **Spanish (`es-ES`)**, **German (`de-DE`)**, **French (`fr-FR`)**, and **Simplified Chinese (`zh-CN`)**.
 
 ---
 
-## ❓ FAQ
+## 🏷️ Ключевые слова для поиска (Search Keywords / Topics)
 
-**Q: Is my data uploaded anywhere?**  
-A: No. All conversions happen locally. Only catalog queries (SIMBAD, VizieR, VSP) go out over HTTPS.
-
-**Q: Which AAVSO chart is used?**  
-A: The one returned by VSP for the target — automatically inserted as `CHART ID`.
-
-**Q: Does it work with S30 without PRO?**  
-A: Yes — the smaller FOV is accounted for during check-star selection.
-
-**Q: Can I submit raw Seestar CSV to AAVSO?**  
-A: No. WebObs requires a specific format — that's exactly what this app produces.
+`seestar` `aavso` `zwo-seestar` `seestar-s50` `seestar-s30` `seestar-s50pro` `seestar-s30pro` `aavso-extended` `photometry` `variable-stars` `simbad` `aavso-vsp` `light-curve` `astronomy` `astrophotography` `citizen-science` `фотометрия` `переменные-звезды` `телескоп-seestar`
 
 ---
 
-## ❤️ Support the Author
+## ❤️ Авторство и поддержка проекта
 
-The project is developed and maintained by **CosmoBehemothych** for the variable-star observer community and Seestar owners.
-
-- **Boosty:** [https://boosty.to/cosmobehemothych](https://boosty.to/cosmobehemothych)
-
-Your support covers: SIMBAD/VSP API stability, test hardware, and ongoing localization work.
-
----
-
-## 🏷️ Search Keywords / Tags
-
-`seestar` `aavso` `zwo-seestar` `seestar-s50` `seestar-s30` `seestar-s50pro` `seestar-s30pro` `aavso-extended` `photometry` `variable-stars` `simbad` `aavso-vsp` `light-curve` `astronomy` `astrophotography` `smart-telescope` `фотометрия` `переменные-звезды` `телескоп-seestar` `ZWO` `WebObs` `CCD photometry`
-
----
-
-<br>
-
-# 🇷🇺 Русская версия
-
-**Seestar AstroLab AAVSO** — десктопное приложение для владельцев умных телескопов **ZWO Seestar (S30, S30PRO, S50, S50PRO)** и наблюдателей переменных звёзд **AAVSO** (American Association of Variable Star Observers). Программа автоматизирует конвертацию сырых фотометрических CSV-файлов Seestar в международный научный формат **AAVSO Extended**, выполняет сверку координат и идентификаторов звёзд через **CDS SIMBAD** и **AAVSO VSP (Variable Star Plotter)**, автоматически подбирает оптимальную контрольную звезду (`Check Star`: `KNAME` / `KMAG`), строит кривую блеска и включает интерактивный **Радар приоритетных и срочных целей AAVSO (Alert Notices)**.
-
-## 🔍 Ключевые возможности
-
-### 🔁 Прямая связь ZWO Seestar → AAVSO Extended
-Автоматический пересчёт середины экспозиции в юлианскую дату (`JD Mid`), фильтрация целевых измерений (`Non-reference star`), округление `MAG` и `MERR` до 4 знаков и формирование валидного заголовка `#TYPE=EXTENDED` с вашим кодом наблюдателя `#OBSCODE`.
-
-### 🔭 Поддержка всей линейки ZWO Seestar
-- **Seestar S30** — `FOV 1.28°×0.72°`, до `13.5 mag`
-- **Seestar S30PRO** — `FOV 2.10°×1.18°`, 4K, до `14.2 mag`
-- **Seestar S50** — `FOV 0.78°×1.05°`, до `14.5 mag`
-- **Seestar S50PRO** — `FOV 1.15°×0.65°`, 4K, до `15.2 mag`
-
-### 🛰️ Параллельная синхронизация с каталогами
-SIMBAD, VizieR и AAVSO VSP — параллельно. Автоматическая нормализация названий созвездий по стандарту МАС (IAU 88 constellations, например `SZ Lyncis` → `SZ Lyn`), загрузка карт окрестностей (`CHART ID`) и подбор непеременной контрольной звезды (`KNAME`, `KMAG`) в поле зрения вашей модели Seestar.
-
-### 🚨 Радар срочных целей AAVSO
-Встроенный каталог приоритетных целей AAVSO (повторные новые, катаклизмические переменные, симбиотические звёзды, мириды, затменные двойные) с сортировкой по дате публикации запроса, названию и приоритету.
-
-### 📊 Раздел «Мои наблюдения»
-Автоматическое логирование ваших научных сессий по факту конвертации CSV-файлов, построение сглаженного HiDPI-графика активности и фильтрация по дате, звезде (`STARID`) и телескопу с постоянным сохранением прогресса между сессиями.
-
-### 🌍 Локализация и темы
-**6 языков интерфейса**: Русский (`ru-RU`), English (`en-US`), Español (`es-ES`), Deutsch (`de-DE`), Français (`fr-FR`), 中文 (`zh-CN`), а также переключатель **Стандартной тёмной** и **Светлой** темы.
-
-## 🚀 Быстрая установка (Windows 10 / 11)
-
-1. Скачайте установщик **`Seestar_AstroLab_Setup.exe`** из раздела **Releases** (или распакуйте архив `Seestar_AstroLab_Desktop_Release_2026.zip`).
-2. Запустите `Seestar_AstroLab_Setup.exe` — программа устанавливается в профиль пользователя без запроса прав администратора (UAC) и создаёт ярлык **Seestar AstroLab AAVSO** на Рабочем столе и в меню «Пуск».
-3. Альтернативы:
-   - **Портативная версия** — `Portable/Seestar_AstroLab_Portable.exe`
-   - **Веб/PWA/Electron-сборка** — `Source_and_Build/pwa_mobile_and_electron/index.html`
-
-## ❤️ Поддержать автора проекта
-
-Проект разрабатывается и поддерживается **CosmoBehemothych** для сообщества наблюдателей переменных звёзд и владельцев телескопов Seestar:
-
-- **Boosty:** [https://boosty.to/cosmobehemothych](https://boosty.to/cosmobehemothych)
-
----
-
-## 📄 License
-
-See the `LICENSE` file in the repository root for details.  
-Подробности — в файле `LICENSE` в корне репозитория.
+* **Разработчик**: **CosmoBehemothych** ([https://github.com/CosmoBehemothych](https://github.com/CosmoBehemothych))
+* **Цифровой отпечаток авторства (Anti-Plagiarism Fingerprint)**: `CBH-ASTROLAB-AAVSO-2026-9F8E4A21-7C3D-B601` (подробная документация по верификации подлинности — в файле [`AUTHORSHIP_AND_COPYRIGHT_PROOF.md`](Source_and_Build/docs/AUTHORSHIP_AND_COPYRIGHT_PROOF.md))
+* **Поддержать развитие проекта на Boosty**: [https://boosty.to/cosmobehemothych](https://boosty.to/cosmobehemothych)
