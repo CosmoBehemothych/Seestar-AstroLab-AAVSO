@@ -1,0 +1,65 @@
+{
+  "name": "seestar-astrolab-aavso",
+  "productName": "Seestar AstroLab AAVSO",
+  "version": "1.0.0",
+  "description": "Seestar AstroLab AAVSO — ZWO Seestar (S30, S30PRO, S50, S50PRO) to AAVSO Extended Photometry Converter, SIMBAD/VSP Check Star Resolver & Urgent Target Radar",
+  "main": "pwa_mobile_and_electron/electron_main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack:portable": "electron-builder --win portable",
+    "pack:installer": "electron-builder --win nsis",
+    "dist": "electron-builder --win"
+  },
+  "author": "CosmoBehemothych",
+  "license": "MIT",
+  "build": {
+    "appId": "org.aavso.seestar.astrolab",
+    "productName": "Seestar AstroLab",
+    "directories": {
+      "output": "dist_electron"
+    },
+    "files": [
+      "pwa_mobile_and_electron/**/*",
+      "Seestar_AstroLab.ico",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "Seestar_AstroLab.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Seestar AstroLab",
+      "uninstallDisplayName": "Seestar AstroLab — Радар целей AAVSO",
+      "installerIcon": "Seestar_AstroLab.ico",
+      "uninstallerIcon": "Seestar_AstroLab.ico",
+      "deleteAppDataOnUninstall": false
+    }
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.0"
+  },
+  "keywords": [
+    "seestar",
+    "aavso",
+    "zwo-seestar",
+    "seestar-s50",
+    "seestar-s30",
+    "s50pro",
+    "s30pro",
+    "photometry",
+    "variable-stars",
+    "astronomy",
+    "astrophotography",
+    "simbad",
+    "vsp",
+    "light-curve"
+  ]
+}
