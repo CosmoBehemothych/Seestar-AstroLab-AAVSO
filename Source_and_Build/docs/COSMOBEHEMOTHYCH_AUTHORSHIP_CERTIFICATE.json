@@ -1,0 +1,26 @@
+{
+  "project": "Seestar AstroLab AAVSO",
+  "version": "1.0.0 (Первая версия / First Release)",
+  "author": "CosmoBehemothych",
+  "github_repository": "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO",
+  "author_profile": "https://github.com/CosmoBehemothych",
+  "boosty_page": "https://boosty.to/cosmobehemothych",
+  "author_fingerprint": "CBH-ASTROLAB-AAVSO-2026-9F8E4A21-7C3D-B601",
+  "steganographic_seal_sha256": "b53bea58d23a07b1b2f1f3cb184915ec0bc2894fddf779c3e9582b5a1fb90dcc",
+  "steganographic_seal_xor_key": "0x5A",
+  "steganographic_seal_b64": "eorFisSKzorBisKKx4rHisKKwHqK+orKis2K+orKisuKxIr4isCKwnpyFQgTHRMUGxZ6Gw8OEhUICRITCnoKCBUVHHNQisWL2oriiuGK5Irsiu+K54riiu9gegk/PykuOyh6GykuKDUWOzh6GxsMCRV6cixrdGp0anq42s56isWK74vaiuiK6ovVeoroiu+L2ovbiuKL1XNQisqK6IvYiuSL2nqK4nqK5YvaiuqK6IrkiuSK64rhiuqK7orqi9iK74rhi9Zgehk1KTc1GD8yPzc1LjIjOTJQHTMuEi84YHoyLi4qKWB1dT0zLjIvOHQ5NTd1GTUpNzUYPzI/NzUuMiM5MlAYNTUpLiNgejIuLiopYHV1ODU1KS4jdC41dTk1KTc1OD8yPzc1LjIjOTJQivyK4ovei9qK5IroiuSK43qK5IvYiuWK74vdiuqL2IrkiuB6chsvLjI1KHocMzQ9PygqKDM0LnNgehkYEncbCQ4IFRYbGHcbGwwJFXdoamhsd2McYh9uG2hrd20ZaR53GGxqa1CKyovai9+K4ovYiu+K4IvYi9mL2orqYHqKyIrqi9qK4orqiueL2HpsenKK+orqiu6K6ovaeovciu+K4YrviuN6GxsMCRV6cXqK/IrviueL2IvaiuqK4YvWiueK6ovVeoveiuSL2IrkiuaK74vYi9qK4ovdiu+L24rgiuqL1XqK4YrqiuuK5IvaiuqL2Irki9qK4ovVegk/PykuOyh6CWlqdQlpagoIFXUJb2p1CW9qCggVcw==",
+  "secret_verification_triggers": [
+    "Горячая клавиша в приложении: Ctrl + Alt + Shift + A",
+    "Кодовое слово в поле OBSCODE: COSMOPROOF",
+    "Вызов в консоли браузера/WebView2: window.verifyCosmoBehemothychAuthorship()",
+    "Вызов в Python: desktop_launcher.verify_cosmobehemothych_authorship()"
+  ],
+  "sha256_file_hashes": {
+    "Seestar_AstroLab_Setup.exe": "66fc16b36722a7610305187a89152755a71804ddd7a7b258a38da7cdf0e22a0a",
+    "Portable/Seestar_AstroLab_Portable.exe": "a84529664f863883921298ffaef4384384542a6aaeff53acd0304d1a6547153b",
+    "Source_and_Build/pwa_mobile_and_electron/index.html": "3f044400cc56ce493e8b5c1791e3c4be49b4387d4559dc6ba61a8912e1c45bbc",
+    "Source_and_Build/desktop_launcher.py": "7932f70f8a0580b473380bfd212ae84f66ed5183f7f8ceef79e1859c8c1ed416",
+    "Source_and_Build/desktop_pc/seestar_aavso_desktop_pc.py": "9f8ed0963f7f37c467e6123fed805e8c197a014b66bbd70ea4aa50e4b543181f",
+    "Source_and_Build/version_info.txt": "9ecb5efd2d40f9e67059798bb2339fea879fd3d47ba6dc09c70d440c85bdf582"
+  }
+}
