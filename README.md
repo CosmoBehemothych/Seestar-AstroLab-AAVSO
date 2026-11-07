@@ -1,3 +1,4 @@
+google-site-verification: google0266b900a6766e57.html
 # 🔭 Seestar AstroLab AAVSO (v1.0.0 — Initial Release)
 
 🌟 **Seestar AstroLab AAVSO** is a specialized desktop application for owners of **ZWO Seestar smart telescopes (`S30`, `S30PRO`, `S50`, `S50PRO`)** and variable star observers affiliated with the [AAVSO (American Association of Variable Star Observers)](https://www.aavso.org).
