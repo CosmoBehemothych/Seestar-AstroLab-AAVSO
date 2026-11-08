@@ -1,6 +1,6 @@
 #define MyAppName "Seestar AstroLab AAVSO"
 #define MyAppFullTitle "Seestar AstroLab AAVSO — Радар целей и фотометрия"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "CosmoBehemothych AstroLab"
 #define MyAppURL "https://boosty.to/cosmobehemothych"
 #define MyAppRepoURL "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO"
@@ -111,6 +111,7 @@ Type: files; Name: "{userprograms}\{#MyAppName}\Документация Seestar
 Type: files; Name: "{userprograms}\{#MyAppName}\Seestar AstroLab Documentation.lnk"
 
 [Files]
+Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\Seestar AstroLab\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "assets\Seestar_AstroLab.ico"; DestDir: "{app}\assets"; Flags: ignoreversion
 Source: "pwa_mobile_and_electron\*"; DestDir: "{app}\pwa_mobile_and_electron"; Flags: ignoreversion recursesubdirs createallsubdirs
