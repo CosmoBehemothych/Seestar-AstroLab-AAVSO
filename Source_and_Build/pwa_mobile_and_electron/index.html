@@ -4449,6 +4449,487 @@
       --cbh-sha256-anchor: "b53bea58d23a07b1b2f1f3cb184915ec0bc2894fddf779c3e9582b5a1fb90dcc";
     }
     
+  
+    /* =========================================================================
+       SEESTAR ASTROLAB AAVSO v1.0.1 — SENIOR TEAM REFACTORING (ITEMS 2–9)
+       ========================================================================= */
+    /* Пункт 2: Таблица сравнения с фиксированными пропорциями и переносом заголовков */
+    .preview-table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
+    .preview-table th:nth-child(1) { width: 16%; }
+    .preview-table th:nth-child(2) { width: 27%; }
+    .preview-table th:nth-child(3) { width: 33%; }
+    .preview-table th:nth-child(4) { width: 24%; }
+    .preview-table th {
+      white-space: normal !important;
+      line-height: 1.25 !important;
+      vertical-align: bottom !important;
+      word-break: break-word;
+    }
+    .preview-table tr.row-critical-mismatch td {
+      background: rgba(239, 68, 68, 0.16) !important;
+      color: #fca5a5 !important;
+      border-top: 1px solid rgba(239, 68, 68, 0.45);
+      border-bottom: 1px solid rgba(239, 68, 68, 0.45);
+    }
+    body[data-theme="light"] .preview-table tr.row-critical-mismatch td {
+      background: rgba(239, 68, 68, 0.12) !important;
+      color: #b91c1c !important;
+    }
+
+    /* Пункт 3 и 8: Шапка карточки сравнения с иконкой тултипа [?] в правом верхнем углу */
+    .preview-card-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .comparison-help-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .comparison-help-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid rgba(148, 163, 184, 0.38);
+      background: rgba(148, 163, 184, 0.14);
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: help;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.18s ease;
+      padding: 0;
+    }
+    .comparison-help-badge:hover,
+    .comparison-help-badge:focus-visible {
+      color: #38bdf8;
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.18);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+    }
+    .comparison-help-tooltip {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 10px);
+      width: min(390px, 86vw);
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #0f172a;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.72);
+      color: #f8fafc;
+      font-size: 12px;
+      line-height: 1.48;
+      z-index: 1250;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-4px);
+      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+      pointer-events: none;
+      text-align: left;
+    }
+    .comparison-help-tooltip::before {
+      content: "";
+      position: absolute;
+      top: -12px;
+      left: 0;
+      right: 0;
+      height: 12px;
+    }
+    .comparison-help-wrap:hover .comparison-help-tooltip,
+    .comparison-help-wrap:focus-within .comparison-help-tooltip,
+    .comparison-help-wrap.force-open .comparison-help-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .ch-tooltip-title {
+      font-weight: 700;
+      font-size: 12.5px;
+      color: #38bdf8;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .ch-tooltip-body > div {
+      margin-bottom: 7px;
+    }
+    .ch-tooltip-body > div:last-child {
+      margin-bottom: 0;
+    }
+    body[data-theme="light"] .comparison-help-tooltip {
+      background: #ffffff;
+      color: #0f172a;
+      border-color: #94a3b8;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.2);
+    }
+    body[data-theme="light"] .ch-tooltip-title {
+      color: #0284c7;
+      border-bottom-color: rgba(15, 23, 42, 0.1);
+    }
+
+    /* Пункт 3: Отдельная карточка Кривой блеска */
+    .lightcurve-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .lc-stats-pill {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--ios-cyan);
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+    .lc-empty-compact {
+      padding: 16px 14px !important;
+      min-height: 96px !important;
+    }
+
+    /* Пункт 4: Векторный SVG-оверлей поля зрения Seestar поверх изображения звезды (z-index: 5) */
+    .dss-viewport-wrap {
+      position: relative !important;
+    }
+    .dss-fallback-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1 !important;
+    }
+    .dss-viewport-wrap img#starImage {
+      position: relative;
+      z-index: 2 !important;
+    }
+    .dss-fov-svg-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5 !important;
+      pointer-events: none;
+      display: block;
+      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.92));
+    }
+
+    /* Пункт 5: Плашка предзагруженного эталона SIMBAD внутри Empty State */
+    .simbad-preloaded-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.14);
+      border: 1px solid rgba(34, 197, 94, 0.38);
+      color: #86efac;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+    body[data-theme="light"] .simbad-preloaded-pill {
+      background: rgba(22, 163, 74, 0.12);
+      color: #15803d;
+    }
+
+    /* Пункт 6: Сворачиваемые разделы-аккордеоны (1. Наблюдатель и звезда, 2. Выбор и проверка файла) */
+    details.step-accordion {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.45);
+      margin-bottom: 10px;
+      transition: border-color 0.18s ease, background 0.18s ease;
+    }
+    details.step-accordion[open] {
+      border-color: rgba(56, 189, 248, 0.45);
+      background: rgba(15, 23, 42, 0.72);
+    }
+    body[data-theme="light"] details.step-accordion {
+      background: rgba(241, 245, 249, 0.75);
+      border-color: rgba(100, 116, 139, 0.28);
+    }
+    body[data-theme="light"] details.step-accordion[open] {
+      background: #ffffff;
+      border-color: #0284c7;
+    }
+    summary.step-accordion-summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--ios-text);
+    }
+    summary.step-accordion-summary::-webkit-details-marker {
+      display: none;
+    }
+    .step-acc-title-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-acc-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .step-acc-summary-pill {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.16);
+      color: var(--ios-text-secondary);
+      max-width: 190px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .step-acc-summary-pill.pill-ready {
+      background: rgba(34, 197, 94, 0.16);
+      color: #86efac;
+      border: 1px solid rgba(34, 197, 94, 0.35);
+    }
+    body[data-theme="light"] .step-acc-summary-pill.pill-ready {
+      color: #15803d;
+    }
+    .step-acc-chevron {
+      font-size: 12px;
+      color: var(--ios-cyan);
+      transition: transform 0.2s ease;
+    }
+    details.step-accordion[open] .step-acc-chevron {
+      transform: rotate(180deg);
+    }
+    .step-accordion-body {
+      padding: 4px 14px 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
+    }
+
+    /* Пункт 7: Выпадающее меню иконки шестерёнки (Настройки) */
+    .ui-theme-toolbar, .header-observer-bar {
+      overflow: visible !important;
+    }
+    .settings-gear-wrap {
+      position: relative;
+      display: inline-flex;
+    }
+    .settings-gear-btn {
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      transition: all 0.15s ease;
+    }
+    .settings-gear-btn:hover {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.15);
+    }
+    .settings-popover-menu {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      min-width: 280px;
+      background: #0f172a;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.72);
+      z-index: 1300;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .settings-popover-menu.open {
+      display: flex;
+    }
+    body[data-theme="light"] .settings-popover-menu {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.18);
+    }
+    .settings-popover-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--ios-cyan);
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+    }
+    .settings-menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ios-text);
+      cursor: pointer;
+      margin: 0;
+      padding: 4px 2px;
+    }
+    .settings-menu-divider {
+      height: 1px;
+      background: rgba(148, 163, 184, 0.18);
+    }
+
+    /* Пункт 9: Блокировка кнопки конвертации и модальное окно критического расхождения */
+    .ios-btn.btn-locked-critical,
+    #btnConvert:disabled {
+      background: rgba(239, 68, 68, 0.22) !important;
+      border: 1px solid rgba(239, 68, 68, 0.55) !important;
+      color: #fca5a5 !important;
+      cursor: not-allowed !important;
+      opacity: 0.85 !important;
+    }
+    body[data-theme="light"] #btnConvert:disabled {
+      background: rgba(239, 68, 68, 0.14) !important;
+      color: #b91c1c !important;
+    }
+    .convert-lock-banner {
+      display: none;
+      margin-top: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+      font-size: 11.5px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+    body[data-theme="light"] .convert-lock-banner {
+      color: #b91c1c;
+      background: rgba(239, 68, 68, 0.1);
+    }
+    .critical-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 15, 0.78);
+      backdrop-filter: blur(5px);
+      z-index: 2500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .critical-modal-card {
+      width: min(480px, 94vw);
+      background: #0f172a;
+      border: 2px solid #ef4444;
+      border-radius: 16px;
+      padding: 22px 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.82);
+      color: #f8fafc;
+      text-align: center;
+    }
+    body[data-theme="light"] .critical-modal-card {
+      background: #ffffff;
+      color: #0f172a;
+    }
+    .critical-modal-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+    .critical-modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #f87171;
+      margin-bottom: 8px;
+    }
+    body[data-theme="light"] .critical-modal-title {
+      color: #dc2626;
+    }
+    .critical-modal-desc {
+      font-size: 13.5px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .critical-modal-details {
+      text-align: left;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #fecaca;
+      margin-bottom: 16px;
+    }
+    body[data-theme="light"] .critical-modal-details {
+      color: #991b1b;
+      background: rgba(239, 68, 68, 0.08);
+    }
+    .crit-reason-line {
+      margin-bottom: 4px;
+    }
+    .crit-reason-line:last-child {
+      margin-bottom: 0;
+    }
+    .critical-modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+  
+    /* ИСПРАВЛЕНИЕ ПУНКТА 2: Снятие обрезки выпадающего меню Настроек в шапке */
+    .sticky-header-container,
+    #stickyHeaderContainer,
+    .ios-navbar,
+    .ui-theme-toolbar,
+    .header-observer-bar {
+      overflow: visible !important;
+    }
+    .sticky-header-container {
+      z-index: 1600 !important;
+    }
+    .ui-theme-toolbar {
+      border-radius: 0 0 20px 20px;
+      position: relative;
+      z-index: 1610;
+    }
+    .settings-popover-menu {
+      z-index: 3000 !important;
+      min-width: 305px !important;
+    }
+
+    /* ИСПРАВЛЕНИЕ ПУНКТА 5: Зелёная кнопка «Сконвертировать данные для загрузки на AAVSO» */
+    #btnConvert:not(:disabled) {
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+      border: 1px solid #4ade80 !important;
+      color: #ffffff !important;
+      font-weight: 800 !important;
+      box-shadow: 0 6px 20px rgba(22, 163, 74, 0.42) !important;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease !important;
+    }
+    #btnConvert:not(:disabled):hover {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+      box-shadow: 0 8px 24px rgba(34, 197, 94, 0.58) !important;
+      transform: translateY(-1px);
+    }
+
   </style>
   <script src="user_persistent_store.js"></script>
 </head>
@@ -4528,7 +5009,7 @@
         <div class="info-cosmo-header">
           <span class="info-cosmo-icon">🪐</span>
           <div class="info-cosmo-title-group">
-            <div class="info-cosmo-title">CosmoBehemothych • Seestar AstroLab AAVSO &copy; 2026 • <span id="appVersionBadge" data-i18n="appVersionLabel" style="color:var(--ios-cyan); font-family:var(--font-mono);">Версия 1.0.0 (Первая версия)</span></div>
+            <div class="info-cosmo-title">CosmoBehemothych • Seestar AstroLab AAVSO &copy; 2026 • <span id="appVersionBadge" data-i18n="appVersionLabel" style="color:var(--ios-cyan); font-family:var(--font-mono);">Версия 1.0.1</span></div>
             <div class="info-cosmo-subtitle" data-i18n="infoCosmoSub">Фотометрическая обсерватория AAVSO Extended</div>
           </div>
         </div>
@@ -4613,14 +5094,7 @@
         <button type="button" class="ios-btn secondary tiny" id="btnOpenGraphGuideTop" data-i18n="btnGraphGuide">📖 Как читать графики</button>
         <button type="button" class="ios-btn secondary tiny" id="btnOpenSplash" data-i18n="btnAbout">ℹ️ Инфо</button>
 
-        <select id="langSelect" class="ios-select" aria-label="Language (ISO 639-1 / BCP 47)">
-          <option value="ru">Русский (ru-RU)</option>
-          <option value="en">English (en-US)</option>
-          <option value="es">Español (es-ES)</option>
-          <option value="de">Deutsch (de-DE)</option>
-          <option value="fr">Français (fr-FR)</option>
-          <option value="zh">中文 (zh-CN)</option>
-        </select>
+<!-- Выбор языка перенесён в меню Настройки (Пункт 3) -->
       </div>
     </header>
 
@@ -4650,12 +5124,49 @@
             <option value="S50PRO">Seestar S50PRO (1.15°×0.65° • 3840×2160 4K • ≤ 15.2 mag)</option>
           </select>
         </div>
-        <div class="header-obs-chip" id="settingsToastToggleChip" title="Settings -> Notifications">
-          <span>⚙️ <span data-i18n="lblSettingsTitle">Настройки:</span></span>
-          <label style="display:inline-flex; align-items:center; gap:5px; cursor:pointer; margin:0; font-size:11.5px; font-weight:700;">
-            <input type="checkbox" id="chkGlobalToastsEnabled" checked style="cursor:pointer; width:14px; height:14px; margin:0;">
-            <span data-i18n="lblToastsShort">🔔 Уведомления</span>
-          </label>
+        <div class="settings-gear-wrap" id="settingsGearWrap">
+          <button type="button" class="header-obs-chip settings-gear-btn" id="btnSettingsGear"
+                  onclick="if(window.toggleSettingsPopover) window.toggleSettingsPopover(event);"
+                  aria-haspopup="true" aria-expanded="false" aria-controls="settingsPopoverMenu"
+                  data-i18n-title="lblSettingsTitle" title="Настройки">
+            <span aria-hidden="true">⚙️</span>
+            <span data-i18n="lblSettingsTitle">Настройки</span>
+            <span aria-hidden="true" style="font-size:10px; opacity:0.8;">▾</span>
+          </button>
+
+          <div class="settings-popover-menu" id="settingsPopoverMenu" role="menu" aria-hidden="true" onclick="event.stopPropagation();">
+            <div class="settings-popover-title" data-i18n="lblSettingsTitle">Настройки</div>
+
+            <div class="settings-menu-item" style="flex-direction:column; align-items:stretch; gap:5px;">
+              <span style="display:inline-flex; align-items:center; gap:7px; font-size:12px;">
+                <span aria-hidden="true">🌐</span>
+                <span data-i18n="splashLangLabel">Язык интерфейса:</span>
+              </span>
+              <select id="langSelect" class="ios-select" aria-label="Language (ISO 639-1 / BCP 47)" style="width:100%;">
+                <option value="ru">Русский (ru-RU)</option>
+                <option value="en">English (en-US)</option>
+                <option value="es">Español (es-ES)</option>
+                <option value="de">Deutsch (de-DE)</option>
+                <option value="fr">Français (fr-FR)</option>
+                <option value="zh">中文 (zh-CN)</option>
+              </select>
+            </div>
+
+            <div class="settings-menu-divider"></div>
+
+            <label class="settings-menu-item" role="menuitemcheckbox">
+              <span style="display:inline-flex; align-items:center; gap:7px;">
+                <span data-i18n="lblToastsShort">🔔 Настройка уведомлений</span>
+              </span>
+              <input type="checkbox" id="chkGlobalToastsEnabled" checked style="cursor:pointer; width:15px; height:15px; margin:0;">
+            </label>
+
+            <div class="settings-menu-divider"></div>
+
+            <button type="button" class="ios-btn secondary tiny" id="btnDiagnose" role="menuitem" data-i18n="btnDiagnose" style="width:100%;">
+              🧪 Диагностика сети и зеркал
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -4735,220 +5246,233 @@
 
     <div class="left-col">
       <div class="card">
-        <details class="mission-banner-collapsible">
-          <summary class="mission-banner-summary">
-            <span data-i18n="missionSummaryTitle">ℹ️ Как работает сверка полей Seestar → SIMBAD &amp; VSP (цветовые коды)</span>
-            <span style="font-size:11px; color:var(--ios-cyan); white-space:nowrap; flex-shrink:0; display:inline-flex; align-items:center;" data-i18n="lblExpand">Развернуть&nbsp;▾</span>
-          </summary>
-          <div class="mission-banner">
-            <div data-i18n-html="noticeHtml">
-              <strong>Назначение и логика работы:</strong> Приложение преобразует сырые CSV-таблицы фотометрии Seestar в стандарт AAVSO Extended для анализа затменных двойных звезд и транзитов экзопланет. Все зеркала SIMBAD опрашиваются параллельно. <span style="color:#86efac">Зелёный</span> — точное совпадение. <span style="color:#fde047">Жёлтый</span> — малое отличие (норма). <span style="color:#fca5a5">Красный</span> — сильное расхождение.
+        <!-- РАЗДЕЛ 1: НАБЛЮДАТЕЛЬ И ЗВЕЗДА + ЗАГРУЗКА SIMBAD/VSP + РЕЗУЛЬТАТЫ И КАЛИБРОВКА VSP (Пункт 4 и 5) -->
+        <details class="step-accordion" id="accObserverStar">
+          <summary class="step-accordion-summary">
+            <div class="step-acc-title-wrap">
+              <span class="step-pipeline-badge">1</span>
+              <span data-i18n="secObserver">Наблюдатель и звезда</span>
             </div>
-            <div class="mission-tags">
-              <span class="mission-tag" data-i18n="tagPhotometry">📈 Фотометрия звезд</span>
-              <span class="mission-tag" data-i18n="tagBinaries">♊ Поиск двойных звезд</span>
-              <span class="mission-tag" data-i18n="tagExoplanets">🪐 Транзиты экзопланет</span>
+            <div class="step-acc-meta">
+              <span class="step-acc-summary-pill" id="accObserverSummaryPill">OBSCODE / STARID</span>
+              <span class="step-acc-chevron" aria-hidden="true">▾</span>
+            </div>
+          </summary>
+          <div class="step-accordion-body">
+            <div class="grid">
+              <div class="field-group">
+                <div class="label-row">
+                  <label for="obscode">
+                    <span data-i18n="lblObsCode">OBSCODE (код обсерватории)</span>
+                    <span class="tooltip-badge" id="tipObsCode" data-tip="">?</span>
+                  </label>
+                </div>
+                <input type="text" id="obscode" value="" data-i18n-placeholder="phObsCode" placeholder="Введите ваш личный код AAVSO" autocomplete="off">
+                <div class="field-hint" id="obscodeHint"></div>
+                <div class="attr-micro-tip" data-i18n="tipObsCodeShort">Наведите или нажмите на значок «?» выше для просмотра рекомендации по коду AAVSO.</div>
+              </div>
+
+              <div class="field-group">
+                <div class="label-row">
+                  <label for="starid">
+                    <span data-i18n="lblStarId">STARID (имя / ID звезды)</span>
+                    <span class="tooltip-badge" id="tipStarId" data-tip="">?</span>
+                  </label>
+                </div>
+                <input type="text" id="starid" list="staridCatalogList" data-i18n-placeholder="phStarId" placeholder="например, SZ Lyn" autocomplete="off">
+                <datalist id="staridCatalogList"></datalist>
+                <div class="attr-micro-tip" data-i18n="tipStarIdText">Каталожное имя исследуемой переменной звезды или экзопланетной системы.</div>
+                <div class="field-hint" id="staridHint"></div>
+              </div>
+            </div>
+
+            <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(148,163,184,0.16);">
+              <button type="button" class="ios-btn" id="btnFetchAll" data-i18n="btnFetchAll">🔭 Загрузить SIMBAD + VSP</button>
+              <div class="stop-row" style="margin-top:8px;">
+                <button type="button" class="ios-btn secondary" id="btnClearAll" data-i18n="btnClearAll">🗑 Очистить</button>
+                <button type="button" class="ios-btn secondary danger" id="btnStop" disabled style="display:none;" data-i18n="btnStop">⏹ Остановить</button>
+              </div>
+            </div>
+
+            <!-- ПУНКТ 4: Результаты и калибровка VSP внутри раздела «Наблюдатель и звезда» -->
+            <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(148,163,184,0.16);">
+              <h2 class="sec" data-i18n="secResults" style="margin-top:0;">Результаты и калибровка VSP</h2>
+              <div class="vsp-loading-banner" id="vspLoadingBanner" role="status" aria-live="polite">
+                <div class="vsp-spinner"></div>
+                <div style="flex:1;">
+                  <div id="vspLoadingTitle" style="font-weight:700;" data-i18n="vspLoadingTitle">⏳ Загрузка CHART (VSP), KNAME (AUID) и KMAG...</div>
+                  <div id="vspLoadingStep" style="font-size:11.5px; color:var(--ios-text-secondary); margin-top:2px;" data-i18n="vspLoadingStepDefault">Координаты RA/DEC получены. Опрашиваем порты и мировые зеркала каталогов...</div>
+                  <div class="vsp-progress-bar-wrap">
+                    <div class="vsp-progress-bar-fill" id="vspProgressBar"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="grid-3">
+                <div class="field-group">
+                  <label for="chart">
+                    <span data-i18n="lblChart">CHART (VSP)</span>
+                    <span class="tooltip-badge" id="tipChart" data-tip="">?</span>
+                  </label>
+                  <input type="text" id="chart" data-i18n-placeholder="phChart" placeholder="X28491AB" autocomplete="off">
+                  <div class="attr-micro-tip" data-i18n="tipChartText">ID фотометрической карты AAVSO VSP.</div>
+                </div>
+
+                <div class="field-group">
+                  <label for="kname">
+                    <span data-i18n="lblKname">KNAME (AUID)</span>
+                    <span class="tooltip-badge" id="tipKname" data-tip="">?</span>
+                  </label>
+                  <input type="text" id="kname" data-i18n-placeholder="phKname" placeholder="000-BDP-712" autocomplete="off">
+                  <div class="attr-micro-tip" data-i18n="tipKnameText">AUID контрольной звезды (Check Star) для проверки точности.</div>
+                </div>
+
+                <div class="field-group">
+                  <label for="kmag">
+                    <span data-i18n="lblKmag">KMAG (mag)</span>
+                    <span class="tooltip-badge" id="tipKmag" data-tip="">?</span>
+                  </label>
+                  <input type="text" id="kmag" data-i18n-placeholder="phKmag" placeholder="9.453" autocomplete="off">
+                  <div class="attr-micro-tip" data-i18n="tipKmagText">Блеск контрольной звезды (оптимум 9.5–13.0 mag).</div>
+                </div>
+              </div>
+
+              <div class="grid" style="margin-top:6px;">
+                <div class="field-group">
+                  <div class="label-row">
+                    <label for="ra">
+                      <span data-i18n="lblRa">RA (J2000, °)</span>
+                      <span class="tooltip-badge" id="tipRa" data-tip="">?</span>
+                    </label>
+                    <button type="button" class="ios-btn secondary tiny" id="btnLoadImage" data-i18n="btnLoadImage">📸 Снимок</button>
+                  </div>
+                  <input type="text" id="ra" data-i18n-placeholder="phRa" placeholder="121.9072" autocomplete="off">
+                  <div class="attr-micro-tip" data-i18n="tipRaText">Прямое восхождение в десятичных градусах (0°–360°).</div>
+                  <div class="field-hint" id="raHint"></div>
+                </div>
+
+                <div class="field-group">
+                  <div class="label-row">
+                    <label for="dec">
+                      <span data-i18n="lblDec">DEC (J2000, °)</span>
+                      <span class="tooltip-badge" id="tipDec" data-tip="">?</span>
+                    </label>
+                  </div>
+                  <input type="text" id="dec" data-i18n-placeholder="phDec" placeholder="44.4604" autocomplete="off">
+                  <div class="attr-micro-tip" data-i18n="tipDecText">Склонение в десятичных градусах (-90°…+90°).</div>
+                  <div class="field-hint" id="decHint"></div>
+                </div>
+              </div>
             </div>
           </div>
         </details>
 
-        <!-- ШАГ 1 (В САМОМ НАЧАЛЕ МЕНЮ — Пункт 3, 4, 8): Единая кнопка выбора файла Seestar и проверка сконвертированного файла с диска -->
-        <h2 class="sec"><span class="step-pipeline-badge">1</span><span data-i18n="secFileStart">1. Выбор и проверка файла фотометрии</span></h2>
-        <div class="file-select-unified-wrap">
-          <div class="label-row">
-            <label for="btnSelectCsvFile" style="margin:0;">
-              <span data-i18n="lblFile">Файл CSV от Seestar:</span>
-              <span class="tooltip-badge" id="tipCsvFile" data-tip="">?</span>
-            </label>
-            <button type="button" class="ios-btn secondary tiny" id="btnLoadDemo" data-i18n="btnLoadDemo">✨ Демо CSV (SZ Lyn)</button>
-          </div>
-
-          <input type="file" id="csvFile" accept=".csv,.txt" style="display:none;">
-          <button type="button" class="ios-btn" id="btnSelectCsvFile" data-i18n="btnSelectCsvFile">📂 Выбрать CSV-файл Seestar</button>
-
-          <div class="selected-file-pill" id="selectedFileNamePill">
-            <span id="selectedFileNameText" data-i18n="noFileSelected">Файл еще не выбран (нажмите кнопку выше или «Демо CSV»)</span>
-          </div>
-          <div class="attr-micro-tip" data-i18n="tipCsvText">Выберите исходный CSV-файл фотометрии Seestar (обрабатываются строки «Non-reference star»).</div>
-
-          <div style="margin-top:6px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.08);">
-            <div class="label-row" style="margin-bottom:6px;">
-              <label for="btnVerifyConvertedFile" style="margin:0;">
-                <span data-i18n="lblVerifyDisk">Проверка готового файла AAVSO:</span>
-                <span class="tooltip-badge" id="tipVerifyFile" data-tip="">?</span>
-              </label>
+        <!-- РАЗДЕЛ 2: ВЫБОР И ПРОВЕРКА ФАЙЛА ФОТОМЕТРИИ -->
+        <details class="step-accordion" id="accFileSelect">
+          <summary class="step-accordion-summary">
+            <div class="step-acc-title-wrap">
+              <span class="step-pipeline-badge">2</span>
+              <span data-i18n="secFileStart">Выбор и проверка файла фотометрии</span>
             </div>
-            <input type="file" id="verifyConvertedInput" accept=".csv,.txt" style="display:none;">
-            <button type="button" class="ios-btn secondary" id="btnVerifyConvertedFile" data-i18n="btnVerifyDisk">🔍 Проверить сконвертированный файл с диска</button>
-            <div class="attr-micro-tip" data-i18n="tipVerifyDiskShort">Проверяет совместимость сконвертированного файла с требованиями сайта AAVSO WebObs.</div>
-            <div id="verifyConvertedResult" class="verify-result-box"></div>
-          </div>
-        </div>
-
-        <!-- ШАГ 2 (Пункт 4): Раздел «Наблюдатель и звезда» -->
-        <h2 class="sec"><span class="step-pipeline-badge">2</span><span data-i18n="secObserver">2. Наблюдатель и звезда</span></h2>
-        <div class="grid">
-          <div class="field-group">
-            <div class="label-row">
-              <label for="obscode">
-                <span data-i18n="lblObsCode">OBSCODE (код обсерватории)</span>
-                <span class="tooltip-badge" id="tipObsCode" data-tip="">?</span>
-              </label>
+            <div class="step-acc-meta">
+              <span class="step-acc-summary-pill" id="accFileSummaryPill" data-i18n="noFileSelected">Файл еще не выбран</span>
+              <span class="step-acc-chevron" aria-hidden="true">▾</span>
             </div>
-            <input type="text" id="obscode" value="" data-i18n-placeholder="phObsCode" placeholder="Введите ваш личный код AAVSO" autocomplete="off">
-            <div class="field-hint" id="obscodeHint"></div>
-            <div class="attr-micro-tip" data-i18n="tipObsCodeShort">Наведите или нажмите на значок «?» выше для просмотра рекомендации по коду AAVSO.</div>
-          </div>
+          </summary>
+          <div class="step-accordion-body">
+            <div class="file-select-unified-wrap">
+              <div class="label-row">
+                <label for="btnSelectCsvFile" style="margin:0;">
+                  <span data-i18n="lblFile">Файл CSV от Seestar:</span>
+                  <span class="tooltip-badge" id="tipCsvFile" data-tip="">?</span>
+                </label>
+                <button type="button" class="ios-btn secondary tiny" id="btnLoadDemo" data-i18n="btnLoadDemo">✨ Демо CSV (SZ Lyn)</button>
+              </div>
 
-          <div class="field-group">
-            <div class="label-row">
-              <label for="starid">
-                <span data-i18n="lblStarId">STARID (имя / ID звезды)</span>
-                <span class="tooltip-badge" id="tipStarId" data-tip="">?</span>
-              </label>
-            </div>
-            <input type="text" id="starid" list="staridCatalogList" data-i18n-placeholder="phStarId" placeholder="например, SZ Lyn" autocomplete="off">
-            <datalist id="staridCatalogList"></datalist>
-            <div class="attr-micro-tip" data-i18n="tipStarIdText">Каталожное имя исследуемой переменной звезды или экзопланетной системы.</div>
-            <div class="field-hint" id="staridHint"></div>
-          </div>
-        </div>
+              <input type="file" id="csvFile" accept=".csv,.txt" style="display:none;">
+              <button type="button" class="ios-btn" id="btnSelectCsvFile" data-i18n="btnSelectCsvFile">📂 Выбрать CSV-файл Seestar</button>
 
-        <!-- ШАГ 3 (Пункт 4 и Пункт 5): Кнопка загрузки SIMBAD + VSP, кнопка «Остановить» скрыта по умолчанию -->
-        <h2 class="sec" data-i18n="secActions">3. Загрузка SIMBAD + VSP</h2>
-        <button type="button" class="ios-btn" id="btnFetchAll" data-i18n="btnFetchAll">🔭 Загрузить SIMBAD + VSP</button>
-        <div class="stop-row" style="margin-top:8px;">
-          <button type="button" class="ios-btn secondary" id="btnDiagnose" data-i18n="btnDiagnose">🧪 Диагностика сети и зеркал</button>
-          <button type="button" class="ios-btn secondary" id="btnClearAll" data-i18n="btnClearAll">🗑 Очистить</button>
-          <button type="button" class="ios-btn secondary danger" id="btnStop" disabled style="display:none;" data-i18n="btnStop">⏹ Остановить</button>
-        </div>
+              <div class="selected-file-pill" id="selectedFileNamePill">
+                <span id="selectedFileNameText" data-i18n="noFileSelected">Файл еще не выбран (нажмите кнопку выше или «Демо CSV»)</span>
+              </div>
+              <div class="attr-micro-tip" data-i18n="tipCsvText">Выберите исходный CSV-файл фотометрии Seestar (обрабатываются строки «Non-reference star»).</div>
 
-        <!-- ШАГ 4 (Пункт 4): Раздел «Результаты и калибровка VSP» -->
-        <h2 class="sec" data-i18n="secResults">4. Результаты и калибровка VSP</h2>
-        <div class="vsp-loading-banner" id="vspLoadingBanner" role="status" aria-live="polite">
-          <div class="vsp-spinner"></div>
-          <div style="flex:1;">
-            <div id="vspLoadingTitle" style="font-weight:700;" data-i18n="vspLoadingTitle">⏳ Загрузка CHART (VSP), KNAME (AUID) и KMAG...</div>
-            <div id="vspLoadingStep" style="font-size:11.5px; color:var(--ios-text-secondary); margin-top:2px;" data-i18n="vspLoadingStepDefault">Координаты RA/DEC получены. Опрашиваем порты и мировые зеркала каталогов...</div>
-            <div class="vsp-progress-bar-wrap">
-              <div class="vsp-progress-bar-fill" id="vspProgressBar"></div>
+              <div style="margin-top:6px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.08);">
+                <div class="label-row" style="margin-bottom:6px;">
+                  <label for="btnVerifyConvertedFile" style="margin:0;">
+                    <span data-i18n="lblVerifyDisk">Проверка готового файла AAVSO:</span>
+                    <span class="tooltip-badge" id="tipVerifyFile" data-tip="">?</span>
+                  </label>
+                </div>
+                <input type="file" id="verifyConvertedInput" accept=".csv,.txt" style="display:none;">
+                <button type="button" class="ios-btn secondary" id="btnVerifyConvertedFile" data-i18n="btnVerifyDisk">🔍 Проверить сконвертированный файл с диска</button>
+                <div class="attr-micro-tip" data-i18n="tipVerifyDiskShort">Проверяет совместимость сконвертированного файла с требованиями сайта AAVSO WebObs.</div>
+                <div id="verifyConvertedResult" class="verify-result-box"></div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="grid-3">
-          <div class="field-group">
-            <label for="chart">
-              <span data-i18n="lblChart">CHART (VSP)</span>
-              <span class="tooltip-badge" id="tipChart" data-tip="">?</span>
-            </label>
-            <input type="text" id="chart" data-i18n-placeholder="phChart" placeholder="X28491AB" autocomplete="off">
-            <div class="attr-micro-tip" data-i18n="tipChartText">ID фотометрической карты AAVSO VSP.</div>
-          </div>
+        </details>
 
-          <div class="field-group">
-            <label for="kname">
-              <span data-i18n="lblKname">KNAME (AUID)</span>
-              <span class="tooltip-badge" id="tipKname" data-tip="">?</span>
-            </label>
-            <input type="text" id="kname" data-i18n-placeholder="phKname" placeholder="000-BDP-712" autocomplete="off">
-            <div class="attr-micro-tip" data-i18n="tipKnameText">AUID контрольной звезды (Check Star) для проверки точности.</div>
-          </div>
-
-          <div class="field-group">
-            <label for="kmag">
-              <span data-i18n="lblKmag">KMAG (mag)</span>
-              <span class="tooltip-badge" id="tipKmag" data-tip="">?</span>
-            </label>
-            <input type="text" id="kmag" data-i18n-placeholder="phKmag" placeholder="9.453" autocomplete="off">
-            <div class="attr-micro-tip" data-i18n="tipKmagText">Блеск контрольной звезды (оптимум 9.5–13.0 mag).</div>
-          </div>
-        </div>
-
-        <div class="grid" style="margin-top:6px;">
-          <div class="field-group">
-            <div class="label-row">
-              <label for="ra">
-                <span data-i18n="lblRa">RA (J2000, °)</span>
-                <span class="tooltip-badge" id="tipRa" data-tip="">?</span>
-              </label>
-              <button type="button" class="ios-btn secondary tiny" id="btnLoadImage" data-i18n="btnLoadImage">📸 Снимок</button>
-            </div>
-            <input type="text" id="ra" data-i18n-placeholder="phRa" placeholder="121.9072" autocomplete="off">
-            <div class="attr-micro-tip" data-i18n="tipRaText">Прямое восхождение в десятичных градусах (0°–360°).</div>
-            <div class="field-hint" id="raHint"></div>
-          </div>
-
-          <div class="field-group">
-            <div class="label-row">
-              <label for="dec">
-                <span data-i18n="lblDec">DEC (J2000, °)</span>
-                <span class="tooltip-badge" id="tipDec" data-tip="">?</span>
-              </label>
-            </div>
-            <input type="text" id="dec" data-i18n-placeholder="phDec" placeholder="44.4604" autocomplete="off">
-            <div class="attr-micro-tip" data-i18n="tipDecText">Склонение в десятичных градусах (-90°…+90°).</div>
-            <div class="field-hint" id="decHint"></div>
-          </div>
-        </div>
-
-        <!-- ШАГ 5 (Пункт 6): Конвертация в AAVSO Extended и прямой переход на https://apps.aavso.org/v2/data/submit/photometry/?preview=true -->
-        <h2 class="sec"><span class="step-pipeline-badge">3</span><span data-i18n="secConvert">5. Конвертация и отправка в AAVSO</span></h2>
+        <!-- ШАГ 3: Зелёная кнопка конвертации и отправки в AAVSO (Пункт 5 и 9) -->
+        <h2 class="sec" style="margin-top:6px;"><span class="step-pipeline-badge">3</span><span data-i18n="secConvert">Конвертация и отправка в AAVSO</span></h2>
         <button type="button" class="ios-btn" id="btnConvert" data-i18n="btnConvert">Сконвертировать данные для загрузки на AAVSO</button>
+        <div id="convertLockReasonBanner" class="convert-lock-banner" role="alert"></div>
 
         <a href="https://apps.aavso.org/v2/data/submit/photometry/?preview=true" target="_blank" rel="noopener noreferrer" class="aavso-preview-link-btn" id="btnOpenAavsoCard">
           <span>🌐 <span data-i18n="lblGoToAavso">Перейти на страницу загрузки данных AAVSO</span></span>
         </a>
-
-        <details class="notif-guide" style="margin-top:12px;">
-          <summary data-i18n="notifGuideTitle">🔔 Справка по всем уведомлениям и индикаторам</summary>
-          <div class="notif-guide-list" data-i18n-html="notifGuideHtml">
-            <div>🟢 <strong>Зеленое поле (Match):</strong> Координаты или имя в форме идеально совпадают с файлом Seestar (&lt; 0.00001°).</div>
-            <div>🟡 <strong>Желтое поле (Нормальное отличие):</strong> Координаты центра кадра Seestar немного сдвинуты относительно SIMBAD (&lt; 0.05°) или имя звезды записано в другом формате — при экспорте будет подставлен чистый каталожный ID.</div>
-            <div>🔴 <strong>Красное поле (Сильное расхождение):</strong> Координаты отличаются более чем на 0.05° — возможно, в форме выбрана не та звезда.</div>
-            <div>📦 <strong>Из кэша (TTL 1 час):</strong> Повторный запрос выполнен мгновенно из памяти без нагрузки на серверы CDS/AAVSO.</div>
-          </div>
-        </details>
       </div>
     </div>
 
     <div class="right-col">
       <div class="card" id="previewCard" style="display:block;">
-        <h2 class="sec" data-i18n="secPreview">Предпросмотр файла Seestar и кривая блеска</h2>
+        <!-- ПУНКТ 3 и ПУНКТ 8: Переименованный заголовок + иконка [?] с тултипом справки в правом верхнем углу -->
+        <div class="preview-card-header-row">
+          <h2 class="sec" data-i18n="secPreview" style="margin:0;">Результаты сравнения данных Seestar и каталога SIMBAD</h2>
+          <div class="comparison-help-wrap" id="comparisonHelpWrap">
+            <button type="button" class="comparison-help-badge" id="btnComparisonHelpTip"
+                    aria-label="Справка по всем уведомлениям и цветовым подсказкам"
+                    aria-describedby="comparisonHelpTooltip">?</button>
+            <div class="comparison-help-tooltip" id="comparisonHelpTooltip" role="tooltip">
+              <div class="ch-tooltip-title" data-i18n="notifGuideTitle">🔔 Справка по всем уведомлениям и цветовым подсказкам</div>
+              <div class="ch-tooltip-body" data-i18n-html="notifGuideHtml">
+                <div>🟢 <strong>Зеленое поле (Match):</strong> Координаты или имя звезды совпадают с файлом Seestar (&lt; 0.00001°).</div>
+                <div>🟡 <strong>Желтое поле (Нормальное отличие):</strong> Координаты центра кадра Seestar немного сдвинуты относительно SIMBAD (&lt; 0.05°) или имя звезды записано в другом формате — при экспорте будет подставлен чистый каталожный ID.</div>
+                <div>🔴 <strong>Красное поле (Сильное расхождение):</strong> Координаты отличаются более чем на 0.05° или не совпадает звезда/блеск — конвертация блокируется до исправления.</div>
+                <div>📦 <strong>Из кэша (TTL 1 час):</strong> Повторный запрос выполнен мгновенно из памяти без нагрузки на серверы CDS/AAVSO.</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <!-- ПУНКТ 4 (ЦИКЛ 2): Пустое состояние по умолчанию (до загрузки файла пользователем) -->
+        <!-- ПУНКТ 5 (Блок 2, п. 4): Пустое состояние (Empty State), пока файл Seestar не загружен в память -->
         <div id="previewEmptyState" class="preview-empty-state">
-          <div class="preview-empty-icon">📂</div>
-          <div class="preview-empty-title" id="previewEmptyTitle" data-i18n="emptyPreviewTitle">Загрузите файл фотометрии Seestar</div>
-          <div class="preview-empty-desc" data-i18n="emptyPreviewDesc">Нет загруженного файла. Выберите исходный CSV-файл Seestar (или нажмите «Демо CSV»), чтобы отобразить имя звезды, сверку параметров и кривую блеска.</div>
+          <div class="preview-empty-icon" id="previewEmptyIcon" aria-hidden="true">📂</div>
+          <div class="preview-empty-title" id="previewEmptyTitle" data-i18n="emptyPreviewTitle">Загрузите CSV файл Seestar для сравнения</div>
+          <div class="preview-empty-desc" id="previewEmptyDesc" data-i18n="emptyPreviewDesc">Таблица сравнения параметров с каталогом SIMBAD появится после выбора исходного CSV-файла фотометрии Seestar в памяти приложения.</div>
+          <div id="simbadPreloadedPill" class="simbad-preloaded-pill" style="display:none;"></div>
+          <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:10px;">
+            <button type="button" class="ios-btn secondary tiny" id="btnEmptyStateSelectCsv" data-i18n="btnSelectCsvFile">📂 Выбрать CSV-файл Seestar</button>
+            <button type="button" class="ios-btn secondary tiny" id="btnEmptyStateLoadDemo" data-i18n="btnLoadDemo">✨ Демо CSV (SZ Lyn)</button>
+          </div>
         </div>
 
         <div id="previewStatus" class="attr-micro-tip" style="display:none; margin-bottom:8px; color:var(--ios-cyan); font-weight:600;"></div>
 
+        <!-- ПУНКТ 2 (Блок 2, п. 1): Переименованные заголовки колонок таблицы сравнения -->
         <table class="preview-table" id="previewTable" style="display:none;">
           <thead>
             <tr>
               <th data-i18n="thParam">Параметр</th>
-              <th data-i18n="thFile">Из файла</th>
-              <th data-i18n="thUI">В интерфейсе</th>
+              <th data-i18n="thFile">Данные из Seestar</th>
+              <th data-i18n="thUI">Данные из Каталога SIMBAD</th>
               <th data-i18n="thMatch">Сверка</th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
 
-        <div class="lightcurve-box" id="lightCurveBox" style="display:none;">
-          <div class="lightcurve-header" style="flex-wrap:wrap; gap:6px;">
-            <span data-i18n="lblLightCurve">📈 Предпросмотр кривой блеска (MAG vs JD Mid)</span>
-            <span id="lightCurveStats" style="color:var(--ios-cyan); font-family:var(--font-mono);"></span>
-          </div>
-          <div class="lc-canvas-wrap">
-            <canvas id="lightCurveCanvas" width="600" height="175"></canvas>
-            <div class="lc-hover-tooltip" id="lcHoverTooltip"></div>
-          </div>
-        </div>
-
-        <!-- BENTO-СЕТКА 2026: КАРТА ПОЛЯ DSS2 (БЕЗ  — ПУНКТ 10) + СТАТУС КАТАЛОГОВ БЕЗ ДУБЛЕЙ (ПУНКТ 12) -->
-        <div class="bento-bottom-grid">
+        <!-- BENTO-СЕТКА: КАРТА ПОЛЯ DSS2 С ПОВЕРХНОСТНЫМ SVG-ОВЕРЛЕЕМ (ПУНКТ 4) + СТАТУС КАТАЛОГОВ -->
+        <div class="bento-bottom-grid" style="margin-top:12px;">
           <div class="star-image-box" id="starImageBox" style="display:flex;">
             <div style="width:100%; display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; font-size:11.5px; color:var(--ios-text-secondary); font-weight:700;">
               <span>🌌 <span data-i18n="lblFov">Поле зрения:</span> <span id="dssFovBadge">ZWO Seestar S50 (0.78°×1.05° • 2.39″/px)</span></span>
@@ -4956,6 +5480,23 @@
             <div class="dss-viewport-wrap" id="dssViewportWrap">
               <canvas id="dssFallbackCanvas" class="dss-fallback-canvas" width="340" height="340"></canvas>
               <img id="starImage" alt="DSS2 Star Field" style="opacity:0;" />
+              <!-- ПУНКТ 4: Векторный оверлей рамки поля зрения поверх изображения звезды (z-index: 5) -->
+              <svg id="dssFovSvgOverlay" class="dss-fov-svg-overlay" viewBox="0 0 340 340" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                <!-- Контур полного участка карты неба DSS2 (2.40° × 2.40° = 340×340 px, масштаб 141.7 px/°) -->
+                <rect x="4" y="4" width="332" height="332" fill="none" stroke="rgba(148, 163, 184, 0.28)" stroke-width="1" stroke-dasharray="3 3" rx="6" />
+                <rect x="8" y="314" width="198" height="18" rx="3" fill="rgba(7, 11, 20, 0.82)" />
+                <text x="13" y="326" fill="#94a3b8" font-size="9.5" font-family="monospace">Обзор карты DSS2: 2.40°×2.40°</text>
+                <!-- Точная физическая рамка поля зрения выбранного телескопа (с учётом фокусного расстояния f) -->
+                <rect id="dssFovRect" x="115" y="96" width="111" height="149"
+                      fill="rgba(56, 189, 248, 0.06)" stroke="#38bdf8" stroke-width="2" stroke-dasharray="6 4" rx="3" />
+                <rect id="dssFovLabelBg" x="8" y="8" width="230" height="19" rx="4" fill="rgba(7, 11, 20, 0.86)" stroke="rgba(56, 189, 248, 0.35)" stroke-width="0.8" />
+                <text id="dssFovLabelText" x="14" y="21" fill="#7dd3fc" font-size="10" font-family="monospace" font-weight="bold">S50 • f=250мм • 0.78°×1.05°</text>
+                <circle cx="170" cy="170" r="6" fill="none" stroke="#38bdf8" stroke-width="1.3" opacity="0.9" />
+                <line x1="158" y1="170" x2="163" y2="170" stroke="#38bdf8" stroke-width="1.3" />
+                <line x1="177" y1="170" x2="182" y2="170" stroke="#38bdf8" stroke-width="1.3" />
+                <line x1="170" y1="158" x2="170" y2="163" stroke="#38bdf8" stroke-width="1.3" />
+                <line x1="170" y1="177" x2="170" y2="182" stroke="#38bdf8" stroke-width="1.3" />
+              </svg>
             </div>
             <div class="caption" id="starImageCaption" style="margin-top:6px;" data-i18n="dssEmptyCaption">Выберите цель или загрузите файл для отображения поля зрения DSS2</div>
           </div>
@@ -4991,6 +5532,27 @@
                 <span style="font-size:10.5px; color:var(--ios-text-secondary); font-weight:700;">CORS / TAP</span>
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ПУНКТ 3 (Блок 2, п. 2): ОТДЕЛЬНЫЙ САМОСТОЯТЕЛЬНЫЙ БЛОК ДЛЯ КРИВОЙ БЛЕСКА -->
+      <div class="card" id="lightCurveCard" style="display:block; margin-top:14px;">
+        <div class="lightcurve-card-header">
+          <h2 class="sec" data-i18n="lblLightCurve" style="margin:0;">📈 Кривая блеска (MAG vs JD Mid)</h2>
+          <span id="lightCurveStats" class="lc-stats-pill" style="display:none;"></span>
+        </div>
+
+        <div id="lightCurveEmptyState" class="preview-empty-state lc-empty-compact">
+          <div class="preview-empty-icon" aria-hidden="true">📈</div>
+          <div class="preview-empty-title" data-i18n="lcEmptyTitle">Кривая блеска появится после загрузки CSV</div>
+          <div class="preview-empty-desc" id="lightCurveEmptyDesc" data-i18n="lcEmptyDesc">Загрузите CSV-файл фотометрии Seestar (минимум 2 целевых кадра «Non-reference star»), чтобы построить график блеска и погрешностей.</div>
+        </div>
+
+        <div class="lightcurve-box" id="lightCurveBox" style="display:none; margin-top:6px;">
+          <div class="lc-canvas-wrap">
+            <canvas id="lightCurveCanvas" width="600" height="175"></canvas>
+            <div class="lc-hover-tooltip" id="lcHoverTooltip"></div>
           </div>
         </div>
       </div>
@@ -5268,6 +5830,27 @@
 
 
 
+
+  <!-- ПУНКТ 1 и 9: Модальное окно критического расхождения (размещено в DOM до <script> с прямыми обработчиками) -->
+  <div class="critical-modal-backdrop" id="criticalMismatchModal" role="alertdialog" aria-modal="true"
+       aria-labelledby="critModalTitle" aria-describedby="critModalDesc" style="display:none;"
+       onclick="if(event.target === this && window.closeCriticalMismatchModal) window.closeCriticalMismatchModal(event);">
+    <div class="critical-modal-card" onclick="event.stopPropagation();">
+      <div class="critical-modal-icon" aria-hidden="true">🚨</div>
+      <h3 class="critical-modal-title" id="critModalTitle" data-i18n="critModalTitle">Критическое расхождение данных</h3>
+      <p class="critical-modal-desc" id="critModalDesc" data-i18n="critModalBody">Обнаружено критическое расхождение данных. Конвертация заблокирована. Проверьте правильность выбранной звезды и файла.</p>
+      <div class="critical-modal-details" id="critModalDetailsList"></div>
+      <div class="critical-modal-actions">
+        <button type="button" class="ios-btn secondary" id="btnCritModalOpenInputs"
+                onclick="if(window.openCriticalMismatchInputs) window.openCriticalMismatchInputs(event);"
+                data-i18n="btnCritOpenInputs">📂 Проверить звезду и файл</button>
+        <button type="button" class="ios-btn danger" id="btnCritModalClose"
+                onclick="if(window.closeCriticalMismatchModal) window.closeCriticalMismatchModal(event);"
+                data-i18n="btnCritClose">Понятно</button>
+      </div>
+    </div>
+  </div>
+
 <script>
 (() => {
   "use strict";
@@ -5321,7 +5904,7 @@
       maxExpSec: 20,
       vspFovArcmin: 75,
       sensor: "Sony IMX662 (FHD)",
-      frameRect: { x: 18, y: 74, w: 304, h: 192 },
+      focalMm: 150, skySurveyFovDeg: 2.40, frameRect: { x: 80, y: 119, w: 181, h: 102 },
       notes: "Широкое поле 1.28°×0.72°, разрешение 1920×1080 (2.40″/px), лимит ≤ 13.5 mag, выдержка 10–20 с"
     }),
     S30PRO: Object.freeze({
@@ -5339,7 +5922,7 @@
       maxExpSec: 30,
       vspFovArcmin: 90,
       sensor: "Sony IMX585 (4K)",
-      frameRect: { x: 10, y: 66, w: 320, h: 208 },
+      focalMm: 160, skySurveyFovDeg: 2.40, frameRect: { x: 21, y: 86, w: 298, h: 167 },
       notes: "Сверхширокое поле 4K 2.10°×1.18°, разрешение 3840×2160 (1.97″/px), лимит ≤ 14.2 mag, выдержка 10–30 с"
     }),
     S50: Object.freeze({
@@ -5357,7 +5940,7 @@
       maxExpSec: 20,
       vspFovArcmin: 60,
       sensor: "Sony IMX462 (FHD)",
-      frameRect: { x: 54, y: 24, w: 232, h: 292 },
+      focalMm: 250, skySurveyFovDeg: 2.40, frameRect: { x: 115, y: 96, w: 111, h: 149 },
       notes: "Апертура 50 мм, поле 0.78°×1.05°, разрешение 1080×1920 (2.39″/px), лимит ≤ 14.5 mag, выдержка 10–20 с"
     }),
     S50PRO: Object.freeze({
@@ -5375,7 +5958,7 @@
       maxExpSec: 30,
       vspFovArcmin: 60,
       sensor: "Sony IMX585 (4K)",
-      frameRect: { x: 26, y: 78, w: 288, h: 184 },
+      focalMm: 280, skySurveyFovDeg: 2.40, frameRect: { x: 89, y: 124, w: 163, h: 92 },
       notes: "Флагман 50 мм 4K, поле 1.15°×0.65°, разрешение 3840×2160 (1.08″/px), лимит ≤ 15.2 mag, выдержка 10–30 с"
     })
   });
@@ -5712,7 +6295,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.0.0",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.0.1",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -5722,7 +6305,7 @@
       errNoObscodeMsg: "Укажите ваш личный код наблюдателя AAVSO (OBSCODE) перед конвертацией данных для загрузки на AAVSO.",
       errNoObscodeExplain: "Стандарт AAVSO Extended требует обязательного указания персонального кода наблюдателя в заголовке #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Версия 1.0.0 (Первая версия)",
+      appVersionLabel: "Версия 1.0.1",
       starIdFromCatalogHint: "✓ Каталожный идентификатор звезды (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -5770,7 +6353,7 @@
       phStarIdEmpty: "Не загружено (из файла CSV)",
       phRaEmpty: "Из файла или радара",
       phDecEmpty: "Из файла или радара",
-      emptyPreviewTitle: "Загрузите файл фотометрии Seestar",
+      emptyPreviewTitle: "Загрузите CSV файл Seestar для сравнения",
       emptyPreviewDesc: "Предпросмотр параметров звезды, сверка координат и кривая блеска появятся автоматически после выбора CSV-файла наблюдения.",
       lcFrameTooltipFmt: "Кадр #{idx} | JD {jd} | {mag} mag ±{merr}",
       btnPickTarget: "Выбрать",
@@ -5880,7 +6463,7 @@
       secResults: "Результаты и калибровка VSP",
       secActions: "Синхронизация с каталогами",
       secConvert: "Конвертация CSV Seestar",
-      secPreview: "Предпросмотр файла Seestar и кривая блеска",
+      secPreview: "Результаты сравнения данных Seestar и каталога SIMBAD",
       secLog: "Лог сравнения «До / После»",
       lblObsCode: "OBSCODE (код обсерватории)",
       lblStarId: "STARID (имя / ID звезды)",
@@ -5948,8 +6531,8 @@
       msgVspDown: "Сервер AAVSO VSP недоступен.",
       msgNoChartId: "CHART ID не возвращён сервером VSP",
       thParam: "Параметр",
-      thFile: "Из файла",
-      thUI: "В интерфейсе",
+      thFile: "Данные из Seestar",
+      thUI: "Данные из Каталога SIMBAD",
       thMatch: "Сверка",
       matchOk: "✓ Совпадает",
       matchBad: "✗ Сильное расхождение",
@@ -5993,7 +6576,7 @@
       btnTriggerNativeInstall: "⚡ Установить приложение в 1 клик (Автоустановка)",
       btnDownloadDesktopShortcut: "💻 Скачать ярлык запуска для ПК со значком",
       submitModalTitle: "🚀 Отправка файла в AAVSO WebObs (?preview=true)",
-      secFileStart: "1. Выбор и проверка файла фотометрии",
+      secFileStart: "Выбор и проверка файла фотометрии",
       btnSelectCsvFile: "📂 Выбрать CSV-файл Seestar",
       noFileSelected: "Файл еще не выбран (нажмите кнопку выше или «Демо CSV»)",
       lblVerifyDisk: "Проверка готового файла AAVSO:",
@@ -6058,7 +6641,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.0.0 session",
+      actAppStarted: "Started Seestar AstroLab v1.0.1 session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -6068,7 +6651,7 @@
       errNoObscodeMsg: "Please enter your personal AAVSO Observer Code (OBSCODE) before converting data for AAVSO upload.",
       errNoObscodeExplain: "The AAVSO Extended format strictly requires a valid personal observer code in the #OBSCODE header.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.0.0 (First Release)",
+      appVersionLabel: "Version 1.0.1",
       starIdFromCatalogHint: "✓ Canonical Catalog Star ID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometry Observatory",
       
@@ -6226,7 +6809,7 @@
       secResults: "Results & VSP Calibration",
       secActions: "Catalogue Synchronization",
       secConvert: "Convert Seestar CSV",
-      secPreview: "Seestar File Preview & Light Curve",
+      secPreview: "Seestar & SIMBAD Catalog Comparison Results",
       secLog: "Before / After Comparison Log",
       lblObsCode: "OBSCODE (Observer Code)",
       lblStarId: "STARID (Target Star Name)",
@@ -6294,8 +6877,8 @@
       msgVspDown: "AAVSO VSP server is unreachable.",
       msgNoChartId: "CHART ID was not returned by VSP",
       thParam: "Parameter",
-      thFile: "From File",
-      thUI: "In UI",
+      thFile: "Data from Seestar",
+      thUI: "Data from SIMBAD Catalog",
       thMatch: "Check",
       matchOk: "✓ Match",
       matchBad: "✗ Major discrepancy",
@@ -6339,7 +6922,7 @@
       btnTriggerNativeInstall: "⚡ Install App in 1 Click (Auto-Install)",
       btnDownloadDesktopShortcut: "💻 Download PC Desktop Shortcut with Icon",
       submitModalTitle: "🚀 Submit File to AAVSO WebObs (?preview=true)",
-      secFileStart: "1. Select & Verify Photometry File",
+      secFileStart: "Select & Verify Photometry File",
       btnSelectCsvFile: "📂 Choose Seestar CSV File",
       noFileSelected: "No file selected yet (click the button above or 'Demo CSV')",
       lblVerifyDisk: "Verify Converted AAVSO File:",
@@ -6402,7 +6985,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.0.0",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.0.1",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -6648,8 +7231,8 @@
       msgVspDown: "AAVSO VSP no disponible.",
       msgNoChartId: "CHART ID no devuelto",
       thParam: "Parámetro",
-      thFile: "Del Archivo",
-      thUI: "En la UI",
+      thFile: "Datos de Seestar",
+      thUI: "Datos del Catálogo SIMBAD",
       thMatch: "Comprobar",
       matchOk: "✓ Coincide",
       matchBad: "✗ Gran discrepancia",
@@ -6722,7 +7305,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.0.0",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.0.1",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -6732,7 +7315,7 @@
       errNoObscodeMsg: "Bitte geben Sie Ihren persönlichen AAVSO-Beobachtercode (OBSCODE) vor der Konvertierung ein.",
       errNoObscodeExplain: "Das AAVSO-Extended-Format erfordert zwingend einen gültigen Beobachtercode im Header #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.0.0 (First Release)",
+      appVersionLabel: "Version 1.0.1",
       starIdFromCatalogHint: "✓ Kanonische Katalog-STARID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometrie-Observatorium",
       
@@ -6858,7 +7441,7 @@
       btnRefreshUrgent: "🔄 Aktualisieren",
       secUrgentStars: "🔥 Dringende Zielsterne (AAVSO Alert Notices)",
       btnCloseModal: "Schließen",
-      secFileStart: "1. Photometriedatei wählen & prüfen",
+      secFileStart: "Photometriedatei wählen & prüfen",
       btnSelectCsvFile: "📂 Seestar-CSV auswählen",
       noFileSelected: "Noch keine Datei gewählt (oben klicken oder 'Demo-CSV')",
       lblVerifyDisk: "Konvertierte AAVSO-Datei prüfen:",
@@ -6957,8 +7540,8 @@
       msgVspDown: "AAVSO VSP nicht erreichbar.",
       msgNoChartId: "Keine CHART ID erhalten",
       thParam: "Parameter",
-      thFile: "Aus Datei",
-      thUI: "In UI",
+      thFile: "Daten von Seestar",
+      thUI: "Data from SIMBAD Catalog",
       thMatch: "Prüfen",
       matchOk: "✓ Stimmt überein",
       matchBad: "✗ Große Abweichung",
@@ -7031,7 +7614,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.0.0",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.0.1",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -7041,7 +7624,7 @@
       errNoObscodeMsg: "Veuillez saisir votre code observateur AAVSO (OBSCODE) avant de convertir les données.",
       errNoObscodeExplain: "Le standard AAVSO Extended exige un code observateur personnel valide dans l'en-tête #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.0.0 (First Release)",
+      appVersionLabel: "Version 1.0.1",
       starIdFromCatalogHint: "✓ Identifiant catalogue canonique (SIMBAD / AAVSO VSX) : {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -7167,7 +7750,7 @@
       btnRefreshUrgent: "🔄 Actualiser",
       secUrgentStars: "🔥 Étoiles Prioritaires (AAVSO Alert Notices)",
       btnCloseModal: "Fermer",
-      secFileStart: "1. Sélection et vérification du fichier",
+      secFileStart: "Sélection et vérification du fichier",
       btnSelectCsvFile: "📂 Choisir un fichier CSV Seestar",
       noFileSelected: "Aucun fichier choisi (cliquez ci-dessus ou sur 'CSV Démo')",
       lblVerifyDisk: "Vérifier un fichier AAVSO :",
@@ -7263,8 +7846,8 @@
       msgVspDown: "AAVSO VSP est indisponible.",
       msgNoChartId: "CHART ID non retourné",
       thParam: "Paramètre",
-      thFile: "Du Fichier",
-      thUI: "Dans l'UI",
+      thFile: "Données de Seestar",
+      thUI: "Données du Catalogue SIMBAD",
       thMatch: "Vérifier",
       matchOk: "✓ Correspond",
       matchBad: "✗ Écart important",
@@ -7339,7 +7922,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.0.0 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.0.1 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -7504,7 +8087,7 @@
       secResults: "结果与 VSP 校准",
       secActions: "星表同步操作",
       secConvert: "转换 Seestar CSV",
-      secPreview: "Seestar 文件预览与光变曲线",
+      secPreview: "Seestar 数据与 SIMBAD 星表比对结果",
       secLog: "转换前后对比日志",
       lblObsCode: "OBSCODE (观测者代码)",
       lblStarId: "STARID (恒星名称 / ID)",
@@ -7571,8 +8154,8 @@
       msgVspDown: "AAVSO VSP 暂时无法访问。",
       msgNoChartId: "未返回 CHART ID",
       thParam: "参数",
-      thFile: "来自文件",
-      thUI: "在界面中",
+      thFile: "来自 Seestar 的数据",
+      thUI: "来自 SIMBAD 星表的数据",
       thMatch: "检查",
       matchOk: "✓ 匹配",
       matchBad: "✗ 重大差异",
@@ -8581,21 +9164,31 @@
       }
     }
 
+    const lcEmptyEl = document.getElementById("lightCurveEmptyState");
     if (pts.length < 2) {
       box.style.display = "none";
+      if (statsEl) { statsEl.textContent = ""; statsEl.style.display = "none"; }
+      if (lcEmptyEl) lcEmptyEl.style.display = "flex";
+      window._lastLightCurveScreenPts = [];
       return;
     }
 
+    if (lcEmptyEl) lcEmptyEl.style.display = "none";
     box.style.display = "block";
+    if (statsEl) statsEl.style.display = "inline-flex";
     const ctx = canvas.getContext("2d");
     const w = canvas.width;
     const h = canvas.height;
     ctx.clearRect(0, 0, w, h);
 
-    const minJd = Math.min(...pts.map(p => p.jd));
-    const maxJd = Math.max(...pts.map(p => p.jd));
-    const minMag = Math.min(...pts.map(p => p.mag - p.merr));
-    const maxMag = Math.max(...pts.map(p => p.mag + p.merr));
+    let minJd = Infinity, maxJd = -Infinity, minMag = Infinity, maxMag = -Infinity;
+    for (let i = 0; i < pts.length; i++) {
+      const p = pts[i];
+      if (p.jd < minJd) minJd = p.jd;
+      if (p.jd > maxJd) maxJd = p.jd;
+      if (p.mag - p.merr < minMag) minMag = p.mag - p.merr;
+      if (p.mag + p.merr > maxMag) maxMag = p.mag + p.merr;
+    }
 
     const padL = 48, padR = 16, padT = 18, padB = 26;
     const plotW = w - padL - padR;
@@ -8632,7 +9225,9 @@
     ctx.stroke();
 
     window._lastLightCurveScreenPts = [];
+    const lcStep = pts.length > 1500 ? Math.ceil(pts.length / 1500) : 1;
     pts.forEach((p, idx) => {
+      if (idx % lcStep !== 0 && idx !== pts.length - 1) return;
       const x = getX(p.jd);
       const y = getY(p.mag);
       const yTop = getY(p.mag - p.merr);
@@ -8666,9 +9261,9 @@
       return;
     }
 
-    const skyviewUrl = `https://skyview.gsfc.nasa.gov/current/cgi/runquery.pl?Position=${encodeURIComponent(ra)},${encodeURIComponent(dec)}&Survey=DSS2+Red&Return=JPEG&Size=0.15&Pixels=400`;
-    const cdsUrl = `https://alasky.cds.unistra.fr/hips-image-services/hips2fits?hips=CDS%2FP%2FDSS2%2Fcolor&width=400&height=400&fov=0.15&format=jpg&ra=${encodeURIComponent(ra)}&dec=${encodeURIComponent(dec)}`;
-    const aladinUrl = `https://aladin.cds.unistra.fr/AladinLite/?target=${encodeURIComponent(ra)}%20${encodeURIComponent(dec)}&fov=0.15`;
+    const skyviewUrl = `https://skyview.gsfc.nasa.gov/current/cgi/runquery.pl?Position=${encodeURIComponent(ra)},${encodeURIComponent(dec)}&Survey=DSS2+Red&Return=JPEG&Size=2.4&Pixels=400`;
+    const cdsUrl = `https://alasky.cds.unistra.fr/hips-image-services/hips2fits?hips=CDS%2FP%2FDSS2%2Fcolor&width=400&height=400&fov=2.4&format=jpg&ra=${encodeURIComponent(ra)}&dec=${encodeURIComponent(dec)}`;
+    const aladinUrl = `https://aladin.cds.unistra.fr/AladinLite/?target=${encodeURIComponent(ra)}%20${encodeURIComponent(dec)}&fov=2.4`;
 
     box.style.display = "flex";
     img.style.opacity = "0";
@@ -8715,20 +9310,205 @@
     document.getElementById("starImageBox").scrollIntoView({ behavior: "smooth", block: "nearest" });
   });
 
-  function previewCsvText(text) {
+  function revealAndFocusField(inputId) {
+    const el = document.getElementById(inputId);
+    if (!el) return;
+    const parentAcc = el.closest("details.step-accordion");
+    if (parentAcc && !parentAcc.open) {
+      parentAcc.open = true;
+    }
+    setTimeout(() => {
+      try {
+        el.focus();
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      } catch (_) {}
+    }, 30);
+  }
+
+  // ПУНКТ 5: Автоматическое управление аккордеонами с задержкой 3 секунды (3000 мс)
+  window.scheduleSimbadLoadedAccordionTransition = function() {
+    if (window._accSimbadTimer) clearTimeout(window._accSimbadTimer);
+    window._accSimbadTimer = setTimeout(() => {
+      const acc1 = document.getElementById("accObserverStar");
+      const acc2 = document.getElementById("accFileSelect");
+      if (acc1) acc1.open = false;
+      if (acc2) acc2.open = true;
+    }, 3000);
+  };
+
+  window.scheduleCsvLoadedAccordionTransition = function() {
+    if (window._accCsvTimer) clearTimeout(window._accCsvTimer);
+    window._accCsvTimer = setTimeout(() => {
+      const acc2 = document.getElementById("accFileSelect");
+      if (acc2) acc2.open = false;
+    }, 3000);
+  };
+
+  function updateAccordionSummaryBadges() {
+    const obsVal = (document.getElementById("obscode")?.value || document.getElementById("headerObscodeQuick")?.value || "").trim();
+    const starVal = (document.getElementById("starid")?.value || "").trim();
+    const obsPill = document.getElementById("accObserverSummaryPill");
+    if (obsPill) {
+      if (obsVal || starVal) {
+        const simbadTag = STATE.simbadCatalogLoaded ? " ✓ SIMBAD" : "";
+        obsPill.textContent = `${obsVal || "OBSCODE: —"} • ${starVal || "STARID: —"}${simbadTag}`;
+        obsPill.classList.toggle("pill-ready", Boolean(obsVal && starVal && STATE.simbadCatalogLoaded));
+      } else {
+        obsPill.textContent = "OBSCODE / STARID";
+        obsPill.classList.remove("pill-ready");
+      }
+    }
+
+    const filePill = document.getElementById("accFileSummaryPill");
+    if (filePill) {
+      const hasCsv = Boolean(currentCsvText && String(currentCsvText).trim());
+      if (hasCsv) {
+        const loadedName = (document.getElementById("selectedFileNameText")?.textContent || "CSV загружен").trim();
+        filePill.textContent = loadedName;
+        filePill.classList.add("pill-ready");
+      } else {
+        filePill.textContent = t("noFileSelected");
+        filePill.classList.remove("pill-ready");
+      }
+    }
+  }
+
+  function updateEmptyStateSimbadPill() {
+    const pill = document.getElementById("simbadPreloadedPill");
+    if (!pill) return;
+    const hasCsv = Boolean(currentCsvText && String(currentCsvText).trim());
+    if (!hasCsv && STATE.simbadCatalogLoaded && STATE.catalogStarName) {
+      pill.style.display = "inline-flex";
+      pill.textContent = `✓ Данные SIMBAD (${STATE.catalogStarName}) загружены — выберите CSV-файл Seestar для сверки`;
+    } else {
+      pill.style.display = "none";
+    }
+  }
+
+  function checkMagCompatibility(fileMag, starName, kmagVal) {
+    if (isNaN(fileMag)) {
+      return { status: "bad", msg: t("matchBad") };
+    }
+    if (fileMag < -1.5 || fileMag > 18.5) {
+      return { status: "bad", msg: `${t("matchBad")} (MAG ${fileMag} вне физического диапазона)` };
+    }
+    const cleanTarget = String(starName || "").trim();
+    if (cleanTarget && Array.isArray(window.URGENT_TARGETS_DB)) {
+      const found = window.URGENT_TARGETS_DB.find(
+        item => AstroLabCore.compareStarIds(item.name, cleanTarget).status === "ok"
+      );
+      if (found && found.minMag != null && found.maxMag != null) {
+        const lowBound = Math.min(found.minMag, found.maxMag) - 2.0;
+        const highBound = Math.max(found.minMag, found.maxMag) + 2.0;
+        if (fileMag < lowBound || fileMag > highBound) {
+          return {
+            status: "bad",
+            msg: `${t("matchBad")} (MAG ${fileMag} вне диапазона ${found.minMag}..${found.maxMag}m)`
+          };
+        }
+      }
+    }
+    if (!isNaN(kmagVal) && Math.abs(fileMag - kmagVal) > 5.5) {
+      return {
+        status: "bad",
+        msg: `${t("matchBad")} (ΔMAG > 5.5m относительно KMAG ${kmagVal})`
+      };
+    }
+    return { status: "ok", msg: t("matchOk") };
+  }
+
+  // ПУНКТ 1: Глобальные функции гарантированного закрытия модального окна «Критическое расхождение данных»
+  window.closeCriticalMismatchModal = function(ev) {
+    if (ev && typeof ev.preventDefault === "function") ev.preventDefault();
+    if (ev && typeof ev.stopPropagation === "function") ev.stopPropagation();
+    const modal = document.getElementById("criticalMismatchModal");
+    if (modal) {
+      modal.style.setProperty("display", "none", "important");
+      modal.setAttribute("aria-hidden", "true");
+    }
+    STATE.dismissedMismatchSig = STATE.currentMismatchSig || "dismissed";
+  };
+
+  window.openCriticalMismatchInputs = function(ev) {
+    window.closeCriticalMismatchModal(ev);
+    const acc1 = document.getElementById("accObserverStar");
+    const acc2 = document.getElementById("accFileSelect");
+    if (acc1) acc1.open = true;
+    if (acc2) acc2.open = true;
+    revealAndFocusField("starid");
+  };
+
+  function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
+    STATE.isConversionBlockedByMismatch = Boolean(isCritical);
+    STATE.lastMismatchReasons = Array.isArray(reasons) ? reasons : [];
+    const sig = isCritical ? STATE.lastMismatchReasons.join("|") : "";
+    STATE.currentMismatchSig = sig;
+
+    const btnConvert = document.getElementById("btnConvert");
+    const lockBanner = document.getElementById("convertLockReasonBanner");
+
+    if (btnConvert) {
+      btnConvert.disabled = Boolean(isCritical);
+      btnConvert.setAttribute("aria-disabled", isCritical ? "true" : "false");
+      btnConvert.classList.toggle("btn-locked-critical", Boolean(isCritical));
+    }
+
+    if (lockBanner) {
+      if (isCritical) {
+        lockBanner.style.display = "block";
+        lockBanner.textContent = "🔒 Обнаружено критическое расхождение данных. Конвертация заблокирована. Проверьте правильность выбранной звезды и файла.";
+      } else {
+        lockBanner.style.display = "none";
+        lockBanner.textContent = "";
+      }
+    }
+
+    const modal = document.getElementById("criticalMismatchModal");
+    if (isCritical && showModalNow) {
+      const detailsEl = document.getElementById("critModalDetailsList");
+      if (detailsEl) {
+        detailsEl.innerHTML = STATE.lastMismatchReasons.length
+          ? STATE.lastMismatchReasons.map(r => `<div class="crit-reason-line">• ${escapeHtml(r)}</div>`).join("")
+          : `<div class="crit-reason-line">• Проверьте соответствие координат RA/DEC, имени звезды (STARID) и звёздной величины (MAG).</div>`;
+      }
+      if (modal) {
+        modal.style.setProperty("display", "flex", "important");
+        modal.setAttribute("aria-hidden", "false");
+      }
+    } else if (!isCritical) {
+      STATE.dismissedMismatchSig = "";
+      if (modal) {
+        modal.style.setProperty("display", "none", "important");
+        modal.setAttribute("aria-hidden", "true");
+      }
+    }
+  }
+
+  function previewCsvText(text, options = {}) {
+    const triggerModalOnMismatch = options.triggerModal !== false;
     const previewCard = document.getElementById("previewCard");
     const emptyStateEl = document.getElementById("previewEmptyState");
     const previewTableEl = document.getElementById("previewTable");
     const tbody = document.querySelector("#previewTable tbody");
     const previewStatus = document.getElementById("previewStatus");
+    const lcBox = document.getElementById("lightCurveBox");
+    const lcEmpty = document.getElementById("lightCurveEmptyState");
+    const lcStats = document.getElementById("lightCurveStats");
 
+    updateAccordionSummaryBadges();
+
+    // ПУНКТ 5 (Empty State): Пока CSV-файл Seestar не выбран — таблица скрыта
     if (!text || !String(text).trim()) {
       if (previewCard) previewCard.style.display = "block";
       if (emptyStateEl) emptyStateEl.style.display = "block";
       if (previewTableEl) previewTableEl.style.display = "none";
       if (previewStatus) previewStatus.style.display = "none";
       if (tbody) tbody.innerHTML = "";
-      document.getElementById("lightCurveBox").style.display = "none";
+      if (lcBox) lcBox.style.display = "none";
+      if (lcEmpty) lcEmpty.style.display = "flex";
+      if (lcStats) { lcStats.textContent = ""; lcStats.style.display = "none"; }
+      updateEmptyStateSimbadPill();
+      applyCriticalMismatchState(false, [], false);
       return;
     }
 
@@ -8736,72 +9516,97 @@
     const row = extractFirstDataRow(lines);
 
     if (!row) {
-      previewCard.style.display = "block";
-      if (emptyStateEl) emptyStateEl.style.display = "none";
+      if (previewCard) previewCard.style.display = "block";
+      if (emptyStateEl) emptyStateEl.style.display = "block";
       if (previewTableEl) previewTableEl.style.display = "none";
       if (previewStatus) { previewStatus.style.display = "block"; previewStatus.textContent = t("msgNoData"); }
-      tbody.innerHTML = "";
-      document.getElementById("lightCurveBox").style.display = "none";
+      if (tbody) tbody.innerHTML = "";
+      if (lcBox) lcBox.style.display = "none";
+      if (lcEmpty) lcEmpty.style.display = "flex";
+      applyCriticalMismatchState(false, [], false);
       showIosNotification(t("secPreview"), t("msgNoData"), t("msgNoDataExplain"), "warn");
       return;
     }
 
-    previewCard.style.display = "block";
+    if (previewCard) previewCard.style.display = "block";
     if (emptyStateEl) emptyStateEl.style.display = "none";
     if (previewTableEl) previewTableEl.style.display = "table";
-    if (previewStatus) { previewStatus.style.display = "block"; previewStatus.textContent = t("previewReady"); }
 
-    // ПУНКТ 4 и 8 (Цикл 2) + ПУНКТ 2 (Цикл 3):
-    // - В таблице «Предпросмотр файла Seestar» колонка «Из файла» всегда показывает row.starId из CSV-файла.
-    // - Поле #starid в разделе «2. Наблюдатель и звезда» инициализируется из файла ТОЛЬКО при первичной загрузке,
-    //   когда каталог ещё не синхронизирован (data-source !== "catalog").
-    // - После «Синхронизации с каталогами» и после экспорта поле #starid в разделе «Наблюдатель и звезда»
-    //   строго сохраняет каноническое значение из каталога (STATE.catalogStarName) и НИКОГДА не перезаписывается из файла!
-    const staridEl = document.getElementById("starid");
-    if (staridEl) {
-      if (staridEl.getAttribute("data-source") === "catalog" && STATE.catalogStarName) {
-        staridEl.value = STATE.catalogStarName;
-      } else if (!staridEl.getAttribute("data-user-typed") && !staridEl.value.trim()) {
-        staridEl.value = row.starId || "";
+    // ПУНКТ 8: КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО подставлять данные из CSV-файла Seestar
+    // в поля каталога SIMBAD (#ra, #dec, #chart, #kname, #kmag) и в столбец «Данные из Каталога SIMBAD»!
+    const hasSimbadCatalog = Boolean(
+      STATE.simbadCatalogLoaded &&
+      STATE.catalogStarName &&
+      STATE.catalogRa != null &&
+      !isNaN(Number(STATE.catalogRa)) &&
+      STATE.catalogDec != null &&
+      !isNaN(Number(STATE.catalogDec))
+    );
+
+    if (!hasSimbadCatalog) {
+      // Данные из каталога SIMBAD ещё НЕ загружены пользователем:
+      // показываем только столбец «Данные из Seestar», а столбец «Данные из Каталога SIMBAD» оставляем пустым ("— (Не загружено)") без ложной сверки!
+      if (previewStatus) {
+        previewStatus.style.display = "block";
+        previewStatus.textContent = "Файл Seestar прочитан. Нажмите «🔭 Загрузить SIMBAD + VSP» в разделе 1 для сверки с каталогом.";
       }
+      setFieldStatus("starid", "staridHint", null, "");
+      setFieldStatus("ra", "raHint", null, "");
+      setFieldStatus("dec", "decHint", null, "");
+
+      const waitingBadge = `<span style="color:var(--ios-text-secondary); font-size:11px;">⏳ Ожидается SIMBAD</span>`;
+      const notLoadedCell = `<span style="color:var(--ios-text-secondary); font-style:italic;">— (Не загружено)</span>`;
+
+      tbody.innerHTML = `
+        <tr><td>STARID</td><td>${escapeHtml(row.starId)}</td><td>${notLoadedCell}</td><td id="previewStarIdCheckCell">${waitingBadge}</td></tr>
+        <tr><td>RA</td><td>${escapeHtml(row.ra)}</td><td>${notLoadedCell}</td><td>${waitingBadge}</td></tr>
+        <tr><td>DEC</td><td>${escapeHtml(row.dec)}</td><td>${notLoadedCell}</td><td>${waitingBadge}</td></tr>
+        <tr><td>MAG</td><td>${escapeHtml(row.mag)}</td><td>${notLoadedCell}</td><td>${waitingBadge}</td></tr>
+        <tr><td>MERR</td><td>${escapeHtml(row.merr)}</td><td>≤ 0.5000m</td><td><span style="color:var(--ios-green); font-weight:700;">${escapeHtml(t("matchOk"))}</span></td></tr>
+        <tr><td>UTC</td><td>${escapeHtml(row.utc)}</td><td colspan="2"></td></tr>
+      `;
+
+      applyCriticalMismatchState(false, [], false);
+      drawLightCurve(lines);
+      loadStarImage(row.starId, row.ra, row.dec);
+      updateAccordionSummaryBadges();
+      return;
     }
-    const raInputEl = document.getElementById("ra");
-    const decInputEl = document.getElementById("dec");
-    if (raInputEl && !raInputEl.value.trim() && row.ra) raInputEl.value = row.ra;
-    if (decInputEl && !decInputEl.value.trim() && row.dec) decInputEl.value = row.dec;
 
-    const rawUiStarId = staridEl ? staridEl.value.trim() : "";
-    // ПУНКТ 6a и 9: Не подменяем выбранную в UI звезду на старый STATE.catalogStarName!
-    const uiStarId = rawUiStarId ? normalizeStarForVsp(rawUiStarId, null) : "";
-    const uiRa = parseFloat(document.getElementById("ra").value.trim());
-    const uiDec = parseFloat(document.getElementById("dec").value.trim());
+    // Если данные из SIMBAD реально загружены (STATE.simbadCatalogLoaded === true):
+    if (previewStatus) {
+      previewStatus.style.display = "block";
+      previewStatus.textContent = t("previewReady");
+    }
 
-    let starIdMatch = null;
+    const catStar = STATE.catalogStarName;
+    const catRa = Number(STATE.catalogRa);
+    const catDec = Number(STATE.catalogDec);
+    const catKmag = parseFloat((document.getElementById("kmag")?.value || "").trim());
+
+    const cmp = AstroLabCore.compareStarIds(row.starId, catStar);
+    const starIdMatch = cmp.status;
     let starIdMsg = "";
-    if (rawUiStarId) {
-      const cmp = AstroLabCore.compareStarIds(row.starId, rawUiStarId);
-      starIdMatch = cmp.status;
-      if (cmp.status === "ok") {
-        starIdMsg = t("starIdSame");
-      } else if (cmp.status === "warn") {
-        starIdMsg = t("starIdSynonymMsg")
-          .replace("{cat}", cmp.canonicalUi || uiStarId)
-          .replace("{file}", row.starId);
-      } else if (cmp.status === "bad") {
-        starIdMsg = t("starIdDiffStarMsg")
-          .replace("{file}", row.starId)
-          .replace("{ui}", rawUiStarId);
-      }
-    } else {
-      starIdMsg = t("starIdMissing");
+    if (cmp.status === "ok") {
+      starIdMsg = t("starIdSame");
+    } else if (cmp.status === "warn") {
+      starIdMsg = t("starIdSynonymMsg")
+        .replace("{cat}", cmp.canonicalUi || catStar)
+        .replace("{file}", row.starId);
+    } else if (cmp.status === "bad") {
+      starIdMsg = t("starIdDiffStarMsg")
+        .replace("{file}", row.starId)
+        .replace("{ui}", catStar);
     }
     setFieldStatus("starid", "staridHint", starIdMatch, starIdMsg);
 
-    const raRes = checkCoordDiff(uiRa, row.ra);
+    const raRes = checkCoordDiff(catRa, row.ra);
     setFieldStatus("ra", "raHint", raRes.status, raRes.msg);
 
-    const decRes = checkCoordDiff(uiDec, row.dec);
+    const decRes = checkCoordDiff(catDec, row.dec);
     setFieldStatus("dec", "decHint", decRes.status, decRes.msg);
+
+    const magRes = checkMagCompatibility(row.mag, catStar, catKmag);
 
     const matchCell = (m, isStarRow = false) => {
       if (m === "ok") return `<span style="color:var(--ios-green); font-weight:700;">${escapeHtml(t("matchOk"))}</span>`;
@@ -8810,20 +9615,44 @@
       return `<span style="color:var(--ios-text-secondary)">${escapeHtml(t("starIdMissing"))}</span>`;
     };
 
+    const starRowCls = starIdMatch === "bad" ? ' class="row-critical-mismatch"' : "";
+    const raRowCls   = raRes.status === "bad" ? ' class="row-critical-mismatch"' : "";
+    const decRowCls  = decRes.status === "bad" ? ' class="row-critical-mismatch"' : "";
+    const magRowCls  = magRes.status === "bad" ? ' class="row-critical-mismatch"' : "";
+
+    const simbadMagRef = !isNaN(catKmag) ? `K=${catKmag}m` : "Каталог SIMBAD / VSX";
+
     tbody.innerHTML = `
-      <tr><td>STARID</td><td>${escapeHtml(row.starId)}</td><td>${escapeHtml(rawUiStarId || uiStarId || "—")}</td><td id="previewStarIdCheckCell">${matchCell(starIdMatch, true)}</td></tr>
-      <tr><td>RA</td><td>${escapeHtml(row.ra)}</td><td>${escapeHtml(isNaN(uiRa) ? "—" : uiRa)}</td><td>${matchCell(raRes.status)}</td></tr>
-      <tr><td>DEC</td><td>${escapeHtml(row.dec)}</td><td>${escapeHtml(isNaN(uiDec) ? "—" : uiDec)}</td><td>${matchCell(decRes.status)}</td></tr>
-      <tr><td>MAG</td><td>${escapeHtml(row.mag)}</td><td colspan="2" style="color:var(--ios-text-secondary); font-size:10.5px;">${escapeHtml(t("matchOk"))}</td></tr>
-      <tr><td>MERR</td><td>${escapeHtml(row.merr)}</td><td colspan="2" style="color:var(--ios-text-secondary); font-size:10.5px;">${escapeHtml(t("matchOk"))}</td></tr>
+      <tr${starRowCls}><td>STARID</td><td>${escapeHtml(row.starId)}</td><td>${escapeHtml(catStar)}</td><td id="previewStarIdCheckCell">${matchCell(starIdMatch, true)}</td></tr>
+      <tr${raRowCls}><td>RA</td><td>${escapeHtml(row.ra)}</td><td>${escapeHtml(catRa.toFixed(6))}</td><td>${matchCell(raRes.status)}</td></tr>
+      <tr${decRowCls}><td>DEC</td><td>${escapeHtml(row.dec)}</td><td>${escapeHtml(catDec.toFixed(6))}</td><td>${matchCell(decRes.status)}</td></tr>
+      <tr${magRowCls}><td>MAG</td><td>${escapeHtml(row.mag)}</td><td>${escapeHtml(simbadMagRef)}</td><td>${matchCell(magRes.status)}</td></tr>
+      <tr><td>MERR</td><td>${escapeHtml(row.merr)}</td><td>≤ 0.5000m</td><td>${matchCell("ok")}</td></tr>
       <tr><td>UTC</td><td>${escapeHtml(row.utc)}</td><td colspan="2"></td></tr>
     `;
 
-    drawLightCurve(lines);
+    const mismatchReasons = [];
+    if (starIdMatch === "bad") {
+      mismatchReasons.push(`Не совпадает звезда (STARID): в файле Seestar «${row.starId}», в каталоге SIMBAD «${catStar}»`);
+    }
+    if (raRes.status === "bad") {
+      mismatchReasons.push(`Критическое расхождение координаты RA (> 0.05°): файл ${row.ra}° vs SIMBAD ${catRa.toFixed(5)}°`);
+    }
+    if (decRes.status === "bad") {
+      mismatchReasons.push(`Критическое расхождение координаты DEC (> 0.05°): файл ${row.dec}° vs SIMBAD ${catDec.toFixed(5)}°`);
+    }
+    if (magRes.status === "bad") {
+      mismatchReasons.push(`Несовместимая звёздная величина (MAG): ${row.mag}m (${magRes.msg})`);
+    }
 
-    const imgRa = (!isNaN(uiRa) ? uiRa : (!isNaN(row.ra) ? row.ra : null));
-    const imgDec = (!isNaN(uiDec) ? uiDec : (!isNaN(row.dec) ? row.dec : null));
-    loadStarImage(uiStarId || row.starId, imgRa, imgDec);
+    const isCritical = mismatchReasons.length > 0;
+    const newSig = mismatchReasons.join("|");
+    const shouldPopModal = isCritical && triggerModalOnMismatch && (newSig !== STATE.dismissedMismatchSig);
+    applyCriticalMismatchState(isCritical, mismatchReasons, shouldPopModal);
+
+    drawLightCurve(lines);
+    loadStarImage(catStar || row.starId, catRa, catDec);
+    updateAccordionSummaryBadges();
   }
 
   function previewFile(file) {
@@ -8831,14 +9660,44 @@
     const reader = new FileReader();
     reader.onload = e => {
       currentCsvText = e.target.result;
-      previewCsvText(currentCsvText);
+      STATE.dismissedMismatchSig = "";
+      previewCsvText(currentCsvText, { triggerModal: true });
+      // ПУНКТ 5: Спустя 3 секунды после выбора CSV-файла автоматически сворачиваем Раздел 2
+      if (typeof window.scheduleCsvLoadedAccordionTransition === "function") {
+        window.scheduleCsvLoadedAccordionTransition();
+      }
     };
     reader.readAsText(file);
   }
 
-  ["starid", "ra", "dec"].forEach(id => {
-    document.getElementById(id).addEventListener("input", () => {
-      if (currentCsvText) previewCsvText(currentCsvText);
+  ["starid", "ra", "dec", "kmag"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("input", () => {
+      if (id === "starid") {
+        // При ручном изменении звезды пользователем сбрасываем флаг старого SIMBAD до нажатия «Загрузить SIMBAD + VSP»
+        STATE.simbadCatalogLoaded = false;
+      } else if (id === "ra" || id === "dec") {
+        const rVal = parseFloat((document.getElementById("ra")?.value || "").trim());
+        const dVal = parseFloat((document.getElementById("dec")?.value || "").trim());
+        if (!isNaN(rVal) && !isNaN(dVal)) {
+          STATE.catalogRa = rVal;
+          STATE.catalogDec = dVal;
+          if (!STATE.catalogStarName) {
+            STATE.catalogStarName = (document.getElementById("starid")?.value || "").trim();
+          }
+          STATE.simbadCatalogLoaded = Boolean(STATE.catalogStarName);
+        }
+      }
+      updateAccordionSummaryBadges();
+      if (currentCsvText) previewCsvText(currentCsvText, { triggerModal: false });
+    });
+    el.addEventListener("change", () => {
+      updateAccordionSummaryBadges();
+      if (currentCsvText && STATE.simbadCatalogLoaded) {
+        STATE.dismissedMismatchSig = "";
+        previewCsvText(currentCsvText, { triggerModal: true });
+      }
     });
   });
 
@@ -9099,6 +9958,8 @@
       canonicalStar = finalCatRec.canonicalStar;
     }
     STATE.catalogStarName = canonicalStar;
+    STATE.simbadCatalogLoaded = Boolean(canonicalStar && STATE.catalogRa != null && STATE.catalogDec != null);
+    STATE.dismissedMismatchSig = "";
     if (staridEl && canonicalStar) {
       staridEl.value = canonicalStar;
       staridEl.setAttribute("data-source", "catalog");
@@ -9106,7 +9967,16 @@
       setFieldStatus("starid", "staridHint", "ok", t("starIdFromCatalogHint").replace("{star}", canonicalStar));
     }
 
-    if (currentCsvText) previewCsvText(currentCsvText);
+    updateAccordionSummaryBadges();
+    if (currentCsvText) {
+      previewCsvText(currentCsvText, { triggerModal: true });
+    } else {
+      previewCsvText("");
+    }
+    // ПУНКТ 5: Спустя 3 секунды после загрузки данных из SIMBAD + VSP автоматически сворачиваем Раздел 1 и раскрываем Раздел 2
+    if (typeof window.scheduleSimbadLoadedAccordionTransition === "function") {
+      window.scheduleSimbadLoadedAccordionTransition();
+    }
   }));
 
   document.getElementById("btnDiagnose").addEventListener("click", () => runOperation(async () => {
@@ -9164,15 +10034,14 @@
     document.getElementById("csvFile").value = "";
     currentCsvText = "";
 
-    document.getElementById("previewCard").style.display = "none";
+    STATE.simbadCatalogLoaded = false;
+    STATE.dismissedMismatchSig = "";
+    STATE.catalogStarName = "";
+    STATE.catalogRa = null;
+    STATE.catalogDec = null;
     document.getElementById("conversionLogCard").style.display = "none";
     document.getElementById("statusWrapper").style.display = "none";
-    document.getElementById("starImageBox").style.display = "none";
-    document.getElementById("lightCurveBox").style.display = "none";
-    const emptyEl = document.getElementById("previewEmptyState");
-    const loadedEl = document.getElementById("previewLoadedContent");
-    if (emptyEl) emptyEl.style.display = "block";
-    if (loadedEl) loadedEl.style.display = "none";
+    previewCsvText("");
     const stEl = document.getElementById("starid");
     if (stEl) { stEl.removeAttribute("data-user-typed"); stEl.removeAttribute("data-source"); }
     const pillEl = document.getElementById("selectedFileNamePill");
@@ -9187,17 +10056,12 @@
   });
 
   document.getElementById("btnLoadDemo").addEventListener("click", () => {
-    const stEl = document.getElementById("starid");
-    if (stEl) { stEl.removeAttribute("data-user-typed"); stEl.removeAttribute("data-source"); }
-    STATE.catalogStarName = "SZ Lyncis";
-    STATE.catalogRa = 122.398952;
-    STATE.catalogDec = 44.471556;
-    document.getElementById("starid").value = "SZ Lyncis";
-    document.getElementById("chart").value = "X28491AB";
-    document.getElementById("kname").value = "000-BDP-712";
-    document.getElementById("kmag").value = "9.642";
-    document.getElementById("ra").value = "122.398952";
-    document.getElementById("dec").value = "44.471556";
+    // ПУНКТ 8: Загрузка файла Seestar (включая Демо CSV) НЕ заполняет поля каталога SIMBAD!
+    // Данные каталога SIMBAD заполняются только при нажатии «🔭 Загрузить SIMBAD + VSP» или выборе цели в Радаре.
+    const pillEl = document.getElementById("selectedFileNamePill");
+    if (pillEl) pillEl.classList.add("file-loaded");
+    const txtEl = document.getElementById("selectedFileNameText");
+    if (txtEl) txtEl.textContent = "Demo_SZ_Lyn_25pts_Seestar.csv";
 
     const header = "Name,Type,RA,DEC,RefStars,Filter,Mag,MagErr,X,Y,Exp,UTC,JD_Start,Airmass,Sky,JD_End,Flux,Peak,SNR";
     const rows = [header];
@@ -9213,7 +10077,11 @@
       rows.push(`SZ Lyncis,Non-reference star,122.401880,44.473356,6,TG,${mag},${err},942.4,518.2,20s,${utc},${jdS},1.14,120.5,${jdE},48200,14500,112.4`);
     }
     currentCsvText = rows.join("\n");
-    previewCsvText(currentCsvText);
+    STATE.dismissedMismatchSig = "";
+    previewCsvText(currentCsvText, { triggerModal: true });
+    if (typeof window.scheduleCsvLoadedAccordionTransition === "function") {
+      window.scheduleCsvLoadedAccordionTransition();
+    }
     showIosNotification(t("btnLoadDemo"), t("demoLoaded"), t("demoLoadedExplain"), "ok");
   });
 
@@ -9244,14 +10112,19 @@
   }
 
   async function processFile() {
-    // ПУНКТ 11 (Цикл 3): При нажатии кнопки конвертации для сайта AAVSO, если OBSCODE не указан,
-    // показывается понятная локализованная ошибка, конвертация НЕ запускается, фокус переводится на поле OBSCODE.
+    // ПУНКТ 9 (Блок 4, п. 1): Жёсткая блокировка конвертации при критическом расхождении данных Seestar и SIMBAD
+    if (STATE.isConversionBlockedByMismatch) {
+      applyCriticalMismatchState(true, STATE.lastMismatchReasons || [], true);
+      return;
+    }
+
+    // ПУНКТ 6 и 11: Если OBSCODE не указан — автоматически раскрываем аккордеон «Наблюдатель и звезда» и переводим фокус
     const obscodeEl = document.getElementById("obscode");
     const obscodeRaw = obscodeEl ? obscodeEl.value.trim() : "";
     if (!obscodeRaw || obscodeRaw.toUpperCase() === "NA") {
       setFieldStatus("obscode", "obscodeHint", "bad", t("errNoObscodeMsg"));
       showIosNotification(t("errNoObscodeTitle"), t("errNoObscodeMsg"), t("errNoObscodeExplain"), "err");
-      if (obscodeEl) obscodeEl.focus();
+      revealAndFocusField("obscode");
       return;
     }
     setFieldStatus("obscode", "obscodeHint", null, "");
@@ -9299,7 +10172,7 @@
       `#SOFTWARE=${activeScopeProf.name}`,
       "#DELIM=,",
       "#DATE=JD",
-      "#OBSTYPE=CMOS",
+      "#OBSTYPE=DSLR",
       "#STARID,DATE,MAG,MERR,FILT,TRANS,MTYPE,CNAME,CMAG,KNAME,KMAG,AMASS,GROUP,CHART,NOTES"
     ];
     let count = 0, skipped = 0, bad = 0;
@@ -9709,6 +10582,11 @@
       const obsVal = obsHeader ? obsHeader.split("=")[1].trim() : "";
       if (!obsVal || obsVal === "NA") {
         issues.push("не указан личный код наблюдателя в #OBSCODE");
+      }
+      const obstypeHeader = headerLines.find(h => h.toUpperCase().startsWith("#OBSTYPE="));
+      const obstypeVal = obstypeHeader && obstypeHeader.includes("=") ? obstypeHeader.split("=")[1].trim().toUpperCase() : "";
+      if (obstypeVal !== "DSLR") {
+        issues.push(`неверный #OBSTYPE=${obstypeVal || "нет"} (требуется #OBSTYPE=DSLR)`);
       }
       if (dataLines.length === 0) {
         issues.push("нет строк фотометрических измерений");
@@ -10338,15 +11216,10 @@
       ctx.fill();
     }
 
-    // Рамка поля зрения выбранного телескопа (S30 / S30PRO / S50 / S50PRO) без 
-    const prof = AstroLabCore.getScopeProfile(currentScopeModel);
-    const fr = prof.frameRect || { x: 40, y: 40, w: 260, h: 260 };
-    ctx.save();
-    ctx.strokeStyle = "rgba(56, 189, 248, 0.42)";
-    ctx.lineWidth = 1.2;
-    ctx.setLineDash([5, 4]);
-    ctx.strokeRect(fr.x, fr.y, fr.w, fr.h);
-    ctx.restore();
+    // Рамка поля зрения отрисовывается поверх изображения через векторный слой #dssFovSvgOverlay (z-index: 5)
+    if (typeof window.updateDssFovSvgOverlay === "function") {
+      window.updateDssFovSvgOverlay(currentScopeModel);
+    }
 
     // Целевая звезда в центре поля
     const tx = 170, ty = 162;
@@ -10574,17 +11447,30 @@
   // Поле STARID формируется исключительно из загруженного CSV-файла фотометрии.
   function selectRadarOrUrgentTarget(star, ra, dec, chart, kname, kmag) {
     activeRadarReferenceStar = star;
+    const starEl = document.getElementById("starid");
+    if (starEl) {
+      starEl.value = star;
+      starEl.setAttribute("data-source", "catalog");
+    }
     document.getElementById("ra").value = ra;
     document.getElementById("dec").value = dec;
     if (chart) document.getElementById("chart").value = chart;
     if (kname) document.getElementById("kname").value = kname;
     if (kmag) document.getElementById("kmag").value = kmag;
+    STATE.catalogStarName = star;
     STATE.catalogRa = parseFloat(ra);
     STATE.catalogDec = parseFloat(dec);
+    STATE.simbadCatalogLoaded = true;
+    STATE.dismissedMismatchSig = "";
 
     // Если файл уже загружен пользователем — пересчитываем сверку с новыми эталонными RA/DEC
     if (currentCsvText) {
-      previewCsvText(currentCsvText);
+      previewCsvText(currentCsvText, { triggerModal: true });
+    } else {
+      previewCsvText("");
+    }
+    if (typeof window.scheduleSimbadLoadedAccordionTransition === "function") {
+      window.scheduleSimbadLoadedAccordionTransition();
     }
     updateCatalogStatusCardTelemetry();
     renderV6RadarDock();
@@ -11529,7 +12415,7 @@
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.0.0",
+      application: "Seestar AstroLab AAVSO v1.0.1",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -11577,7 +12463,151 @@
   renderSplashQuickHub();
 })();
 
+
+  // =========================================================================
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.0.1 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // =========================================================================
+  window.updateDssFovSvgOverlay = function(scopeModel) {
+    const code = scopeModel || window._currentScopeModel || "S50";
+    const prof = AstroLabCore.getScopeProfile(code);
+    // Точный физический расчёт рамки относительно поля карты DSS2 2.40° × 2.40° (340×340 px)
+    const skyDeg = prof.skySurveyFovDeg || 2.40;
+    const wPx = Math.round(((prof.fovDegW || 0.78) / skyDeg) * 340);
+    const hPx = Math.round(((prof.fovDegH || 1.05) / skyDeg) * 340);
+    const xPx = Math.round((340 - wPx) / 2);
+    const yPx = Math.round((340 - hPx) / 2);
+
+    const rectEl = document.getElementById("dssFovRect");
+    const labelBg = document.getElementById("dssFovLabelBg");
+    const labelTxt = document.getElementById("dssFovLabelText");
+    if (rectEl) {
+      rectEl.setAttribute("x", xPx);
+      rectEl.setAttribute("y", yPx);
+      rectEl.setAttribute("width", wPx);
+      rectEl.setAttribute("height", hPx);
+    }
+    if (labelBg && labelTxt) {
+      const focalMm = prof.focalMm || (code.startsWith("S50") ? 250 : 150);
+      const fovStr = prof.fovStr || `${prof.fovDegW}°×${prof.fovDegH}°`;
+      const pxScale = prof.pixelScale ? `${prof.pixelScale}″/px` : "";
+      const lbl = `${code} • f=${focalMm}мм • ${fovStr} (${pxScale})`;
+      labelTxt.textContent = lbl;
+      labelBg.setAttribute("width", Math.min(324, Math.max(180, lbl.length * 6.1 + 14)));
+    }
+  };
+
+  window.toggleSettingsPopover = function(ev) {
+    if (ev && typeof ev.stopPropagation === "function") ev.stopPropagation();
+    const gearBtn = document.getElementById("btnSettingsGear");
+    const gearMenu = document.getElementById("settingsPopoverMenu");
+    if (!gearBtn || !gearMenu) return;
+    const nextOpen = !gearMenu.classList.contains("open");
+    gearBtn.setAttribute("aria-expanded", nextOpen ? "true" : "false");
+    gearMenu.setAttribute("aria-hidden", nextOpen ? "false" : "true");
+    gearMenu.classList.toggle("open", nextOpen);
+  };
+
+  (function initV101Components() {
+    const gearWrap = document.getElementById("settingsGearWrap");
+    const gearBtn = document.getElementById("btnSettingsGear");
+    const gearMenu = document.getElementById("settingsPopoverMenu");
+    const diagBtn = document.getElementById("btnDiagnose");
+
+    function closeGearMenu() {
+      if (!gearBtn || !gearMenu) return;
+      gearBtn.setAttribute("aria-expanded", "false");
+      gearMenu.setAttribute("aria-hidden", "true");
+      gearMenu.classList.remove("open");
+    }
+
+    document.addEventListener("click", (e) => {
+      if (gearWrap && !gearWrap.contains(e.target)) closeGearMenu();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeGearMenu();
+        if (window.closeCriticalMismatchModal) window.closeCriticalMismatchModal(e);
+      }
+    });
+
+    if (diagBtn) {
+      diagBtn.addEventListener("click", () => {
+        closeGearMenu();
+        setTimeout(() => {
+          const sw = document.getElementById("statusWrapper");
+          if (sw) sw.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 60);
+      });
+    }
+
+    // Иконка [?] тултипа справки в правом верхнем углу карточки сравнения
+    const helpWrap = document.getElementById("comparisonHelpWrap");
+    const helpBtn = document.getElementById("btnComparisonHelpTip");
+    if (helpWrap && helpBtn) {
+      helpBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        helpWrap.classList.toggle("force-open");
+      });
+      document.addEventListener("click", (e) => {
+        if (!helpWrap.contains(e.target)) helpWrap.classList.remove("force-open");
+      });
+    }
+
+    // Быстрые кнопки внутри Empty State
+    const btnEmptyCsv = document.getElementById("btnEmptyStateSelectCsv");
+    const btnEmptyDemo = document.getElementById("btnEmptyStateLoadDemo");
+    if (btnEmptyCsv) {
+      btnEmptyCsv.addEventListener("click", () => {
+        const inp = document.getElementById("csvFile");
+        if (inp) inp.click();
+      });
+    }
+    if (btnEmptyDemo) {
+      btnEmptyDemo.addEventListener("click", () => {
+        const demoBtn = document.getElementById("btnLoadDemo");
+        if (demoBtn) demoBtn.click();
+      });
+    }
+
+    // Кнопки модального окна критического расхождения (Пункт 1)
+    const btnCritClose = document.getElementById("btnCritModalClose");
+    const btnCritOpenInputs = document.getElementById("btnCritModalOpenInputs");
+    if (btnCritClose) {
+      btnCritClose.addEventListener("click", (e) => window.closeCriticalMismatchModal(e));
+    }
+    if (btnCritOpenInputs) {
+      btnCritOpenInputs.addEventListener("click", (e) => window.openCriticalMismatchInputs(e));
+    }
+
+    // Синхронизация бейджей аккордеонов при вводе OBSCODE
+    const obsInput = document.getElementById("obscode");
+    const hdrObsInput = document.getElementById("headerObscodeQuick");
+    if (obsInput) obsInput.addEventListener("input", updateAccordionSummaryBadges);
+    if (hdrObsInput) hdrObsInput.addEventListener("input", () => setTimeout(updateAccordionSummaryBadges, 10));
+
+    // Синхронизация точной физической рамки поля зрения при смене модели телескопа
+    const hdrScope = document.getElementById("headerScopeSelect");
+    if (hdrScope) {
+      hdrScope.addEventListener("change", () => {
+        setTimeout(() => window.updateDssFovSvgOverlay(hdrScope.value), 20);
+      });
+    }
+    document.querySelectorAll("[data-scope-tab]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const sc = btn.getAttribute("data-scope-tab");
+        setTimeout(() => window.updateDssFovSvgOverlay(sc), 20);
+      });
+    });
+
+    window.updateDssFovSvgOverlay(window._currentScopeModel || "S50");
+    updateAccordionSummaryBadges();
+  })();
+
 </script>
+
+
+
 
 </body>
 </html>
