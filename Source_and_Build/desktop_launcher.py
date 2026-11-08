@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""
 ================================================================================
-Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.0.0 — Первая версия)
+Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.0.1 — Первая версия)
 ================================================================================
 - Открывает локальный интерфейс pwa_mobile_and_electron/index.html внутри
   собственного нативного окна (Microsoft Edge WebView2).
@@ -20,8 +20,8 @@ import subprocess
 import sys
 import threading
 
-APP_VERSION = "1.0.0"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.0.0 — Первая версия)"
+APP_VERSION = "1.0.1"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.0.1 — Первая версия)"
 APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
 
 if sys.platform == "win32":
@@ -214,7 +214,48 @@ def try_install_pywebview():
         return False
 
 
+
+_APP_MUTEX_HANDLE = None
+
+def _acquire_running_app_mutex():
+    """Создаёт именованный мьютекс Windows и lock-файл на время работы окна приложения (Пункт 7)."""
+    global _APP_MUTEX_HANDLE
+    lock_file = os.path.join(get_persistent_data_dir(), "running_instance.lock")
+    try:
+        with open(lock_file, "w", encoding="utf-8") as lf:
+            json.dump({"pid": os.getpid(), "version": APP_VERSION}, lf)
+    except Exception:
+        pass
+
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            _APP_MUTEX_HANDLE = ctypes.windll.kernel32.CreateMutexW(
+                None, False, "Local\\SeestarAstroLabAAVSO_Running_Mutex"
+            )
+        except Exception:
+            pass
+
+    import atexit
+    def _cleanup_running_lock():
+        global _APP_MUTEX_HANDLE
+        try:
+            if os.path.exists(lock_file):
+                os.remove(lock_file)
+        except Exception:
+            pass
+        if sys.platform == "win32" and _APP_MUTEX_HANDLE:
+            try:
+                import ctypes
+                ctypes.windll.kernel32.CloseHandle(_APP_MUTEX_HANDLE)
+            except Exception:
+                pass
+            _APP_MUTEX_HANDLE = None
+    atexit.register(_cleanup_running_lock)
+
+
 def main():
+    _acquire_running_app_mutex()
     html_file = get_html_path()
     icon_file = get_icon_path()
 
