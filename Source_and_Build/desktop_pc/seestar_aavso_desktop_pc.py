@@ -1,4 +1,11 @@
-APP_VERSION = "2.4.0"
+APP_VERSION = "1.0.1"
+import sys as _sys, os as _os
+try:
+    _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+    from backend.astrolab_backend_core import PhotometryBackendEngine, SCOPE_PROFILES as BACKEND_SCOPE_PROFILES
+except Exception:
+    PhotometryBackendEngine = None
+    BACKEND_SCOPE_PROFILES = {}
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -1244,6 +1251,10 @@ class SeestarDesktopApp:
             obs_val = obs_hdr.split("=", 1)[1].strip() if "=" in obs_hdr else ""
             if not obs_val or obs_val == "NA":
                 issues.append("не указан личный #OBSCODE")
+            obstype_hdr = next((h for h in headers if h.upper().startswith("#OBSTYPE=")), "")
+            obstype_val = obstype_hdr.split("=", 1)[1].strip().upper() if "=" in obstype_hdr else ""
+            if obstype_val != "DSLR":
+                issues.append(f"неверный #OBSTYPE={obstype_val or 'нет'} (требуется #OBSTYPE=DSLR)")
             if not data:
                 issues.append("нет строк измерений")
             else:

@@ -20,6 +20,18 @@ import subprocess
 import sys
 import threading
 
+# Подключение единого серверного ядра бизнес-логики PhotometryBackendEngine
+try:
+    from backend.astrolab_backend_core import PhotometryBackendEngine, start_background_rpc_server
+except ImportError:
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from backend.astrolab_backend_core import PhotometryBackendEngine, start_background_rpc_server
+    except ImportError:
+        PhotometryBackendEngine = None
+        start_background_rpc_server = None
+
+
 APP_VERSION = "1.0.1"
 APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.0.1 — Первая версия)"
 APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
@@ -103,15 +115,37 @@ class AstroLabDiskBridge:
         self._store["seestar_host_counted_this_launch"] = "1" 
 
     def _load_from_disk(self):
+        store = {}
         if os.path.isfile(self.json_path):
             try:
                 with open(self.json_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
                 if isinstance(data, dict):
-                    return data
+                    store.update(data)
             except Exception:
                 pass
-        return {}
+        # ПУНКТ 2: Подхватываем язык, выбранный пользователем в установщике (из user_settings.json или user_persistent_store.js)
+        try:
+            base_d = get_base_dir()
+            for cand_settings in [
+                os.path.join(base_d, "user_settings.json"),
+                os.path.join(os.path.dirname(base_d), "user_settings.json"),
+            ]:
+                if os.path.isfile(cand_settings):
+                    with open(cand_settings, "r", encoding="utf-8") as sf:
+                        s_obj = json.load(sf)
+                    inst_lang = s_obj.get("lang") or s_obj.get("seestar_lang")
+                    if inst_lang and not store.get("lang"):
+                        store["lang"] = str(inst_lang)
+                        store["seestar_lang"] = str(inst_lang)
+                    break
+        except Exception:
+            pass
+        if store.get("seestar_lang") and not store.get("lang"):
+            store["lang"] = store["seestar_lang"]
+        elif store.get("lang") and not store.get("seestar_lang"):
+            store["seestar_lang"] = store["lang"]
+        return store
 
     def _save_to_disk(self):
         try:
@@ -143,9 +177,51 @@ class AstroLabDiskBridge:
             self._save_to_disk()
         return True
 
+
     def get_all_store(self):
         with self._lock:
             return dict(self._store)
+
+    def backend_get_scope_profile(self, code="S50"):
+        if PhotometryBackendEngine:
+            return PhotometryBackendEngine.get_scope_profile(code)
+        return {}
+
+    def backend_preview_csv(self, payload):
+        if PhotometryBackendEngine and isinstance(payload, dict):
+            return PhotometryBackendEngine.preview_and_verify_csv(
+                csv_text=payload.get("csvText", ""),
+                simbad_loaded=bool(payload.get("simbadLoaded", False)),
+                catalog_star=payload.get("catalogStar", ""),
+                catalog_ra=payload.get("catalogRa"),
+                catalog_dec=payload.get("catalogDec"),
+                catalog_kmag=payload.get("catalogKmag"),
+            )
+        return {}
+
+    def backend_convert_csv(self, payload):
+        if PhotometryBackendEngine and isinstance(payload, dict):
+            return PhotometryBackendEngine.convert_seestar_csv_to_aavso_extended(
+                csv_text=payload.get("csvText", ""),
+                obscode=payload.get("obscode", ""),
+                starid_ui=payload.get("starid", ""),
+                chart=payload.get("chart", "na"),
+                kname=payload.get("kname", "na"),
+                kmag=payload.get("kmag", "na"),
+                ra_ui=payload.get("ra", ""),
+                dec_ui=payload.get("dec", ""),
+                scope_model=payload.get("scopeModel", "S50"),
+                simbad_loaded=bool(payload.get("simbadLoaded", False)),
+                catalog_star=payload.get("catalogStar", ""),
+                catalog_ra=payload.get("catalogRa"),
+                catalog_dec=payload.get("catalogDec"),
+            )
+        return {}
+
+    def backend_verify_file(self, content):
+        if PhotometryBackendEngine:
+            return PhotometryBackendEngine.verify_converted_aavso_file(content)
+        return {}
 
 
 def apply_win32_window_icon(window_title, icon_path):
@@ -256,6 +332,8 @@ def _acquire_running_app_mutex():
 
 def main():
     _acquire_running_app_mutex()
+    if start_background_rpc_server:
+        start_background_rpc_server(18765)
     html_file = get_html_path()
     icon_file = get_icon_path()
 

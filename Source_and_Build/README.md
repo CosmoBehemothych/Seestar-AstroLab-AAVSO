@@ -9,19 +9,19 @@
 ## 📸 Скриншоты интерфейса (Screenshots)
 
 ### 1. Главная панель, конвертер фотометрии Seestar → AAVSO Extended и кривая блеска (Тёмная тема)
-![Главный экран Seestar AstroLab AAVSO, Радар целей и кривая блеска](screenshots/01_main_dashboard_and_urgent_radar_dark.jpg)
+![Главный экран Seestar AstroLab AAVSO, Радар целей и кривая блеска](screenshots/01_main_dashboard_and_urgent_radar_dark.jpg?v=1.0.1)
 
 ### 2. Интерактивный Радар срочных целей AAVSO (`Alert Notices` & Priority Targets)
-![Радар срочных целей AAVSO в Seestar AstroLab AAVSO](screenshots/02_photometry_converter_and_light_curve.jpg)
+![Радар срочных целей AAVSO в Seestar AstroLab AAVSO](screenshots/02_photometry_converter_and_light_curve.jpg?v=1.0.1)
 
 ### 3. Раздел «Мои наблюдения» (Автологирование сессий и сглаженный HiDPI-график прогресса)
-![Раздел Мои наблюдения и график прогресса фотометрии](screenshots/03_my_observations_analytics.jpg)
+![Раздел Мои наблюдения и график прогресса фотометрии](screenshots/03_my_observations_analytics.jpg?v=1.0.1)
 
 ### 4. Светлая тема и мультиязычный интерфейс (Light Theme)
-![Светлая тема Seestar AstroLab AAVSO](screenshots/04_light_theme_and_multilang.jpg)
+![Светлая тема Seestar AstroLab AAVSO](screenshots/04_light_theme_and_multilang.jpg?v=1.0.1)
 
 ### 5. Локализованное меню установщика на 6 языках (`RU | EN | ES | DE | FR | ZH`)
-![Окно установщика Seestar AstroLab AAVSO на 6 языках](screenshots/05_installer_6_languages_ui.jpg)
+![Окно установщика Seestar AstroLab AAVSO на 6 языках](screenshots/05_installer_6_languages_ui.jpg?v=1.0.1)
 
 ---
 

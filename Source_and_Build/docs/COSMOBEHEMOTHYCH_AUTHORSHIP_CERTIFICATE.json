@@ -16,11 +16,11 @@
     "Вызов в Python: desktop_launcher.verify_cosmobehemothych_authorship()"
   ],
   "sha256_file_hashes": {
-    "Seestar_AstroLab_Setup.exe": "66fc16b36722a7610305187a89152755a71804ddd7a7b258a38da7cdf0e22a0a",
+    "Seestar_AstroLab_Setup.exe": "10c47e18bf8bdb68d9a6064028c3c7a3e42684779d94d0123564c589594f743f",
     "Portable/Seestar_AstroLab_Portable.exe": "a84529664f863883921298ffaef4384384542a6aaeff53acd0304d1a6547153b",
-    "Source_and_Build/pwa_mobile_and_electron/index.html": "3f044400cc56ce493e8b5c1791e3c4be49b4387d4559dc6ba61a8912e1c45bbc",
+    "Source_and_Build/pwa_mobile_and_electron/index.html": "3ce5dfa89441af849fd4aabd0acfc9ef3be888cf43661416d9aef12bb041d442",
     "Source_and_Build/desktop_launcher.py": "7932f70f8a0580b473380bfd212ae84f66ed5183f7f8ceef79e1859c8c1ed416",
-    "Source_and_Build/desktop_pc/seestar_aavso_desktop_pc.py": "9f8ed0963f7f37c467e6123fed805e8c197a014b66bbd70ea4aa50e4b543181f",
+    "Source_and_Build/desktop_pc/seestar_aavso_desktop_pc.py": "de6422889a417151dc3507ebab4ff906a19b35f89d0e6d55f2e168d6ef050177",
     "Source_and_Build/version_info.txt": "9ecb5efd2d40f9e67059798bb2339fea879fd3d47ba6dc09c70d440c85bdf582"
   }
 }
