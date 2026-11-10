@@ -8204,7 +8204,7 @@
       fullPageLcSubtitle: "Используйте селектор масштаба и полосы прокрутки для детального изучения кривой блеска",
       lblZoomX: "Масштаб X:",
       lblZoomY: "Высота Y:",
-      btnCloseModal: "✕ Закрыть",
+      btnCloseModal: "Вернуться",
       filterUrgent: "🔥 Срочно",
       filterEphem: "⚡ Эфемериды",
       filterExo: "🪐 Экзопланета",
@@ -9627,8 +9627,12 @@
     const modal = document.getElementById("fullPageLightCurveModal");
     if (!modal || !modal.classList.contains("open")) return;
 
-    const zoomFactor = parseFloat(document.getElementById("fullPageZoomSelect")?.value || "2") || 2;
-    const heightPx = parseInt(document.getElementById("fullPageHeightSelect")?.value || "520", 10) || 520;
+    const zoomFactor = parseFloat(document.getElementById("fullPageZoomSelect")?.value || "1") || 1;
+    const scrollContainerEl = document.getElementById("fullPageLcScrollContainer");
+    const availFullH = Math.max(540, ((scrollContainerEl && scrollContainerEl.clientHeight) || (window.innerHeight - 130)) - 24);
+    const rawHVal = document.getElementById("fullPageHeightSelect")?.value || "auto";
+    const parsedH = parseInt(rawHVal, 10);
+    const heightPx = (rawHVal === "auto" || isNaN(parsedH) || parsedH <= 520) ? availFullH : Math.max(availFullH, parsedH);
     const scrollContainer = document.getElementById("fullPageLcScrollContainer");
     const innerWrap = document.getElementById("fullPageLcInnerWrap");
     const fpCanvas = document.getElementById("fullPageLightCurveCanvas");

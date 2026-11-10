@@ -57,6 +57,9 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 ### 5. Installer menu localized into 6 languages (`RU | EN | ES | DE | FR | ZH`)
 ![Installer 6 Languages UI](screenshots/05_installer_6_languages_ui.png)
 
+### 6. Full-screen scrollable light curve analysis (`SZ Lyn` — full-window mode)
+![Full-Screen Light Curve Analysis](screenshots/06_fullscreen_light_curve_sz_lyn.png)
+
 ## ✨ Key Features
 
 * 🔄 **Direct ZWO Seestar CSV → AAVSO Extended conversion**: automatically calculates mid-exposure Julian Date (`JD_Mid = (JD_Start + JD_End) / 2`), filters target measurements (`Non-reference star`), rounds instrumental `MAG` and uncertainty `MERR` in the `TG` band to 4 decimal places, and generates a valid `#TYPE=EXTENDED` header with your `#OBSCODE`.
