@@ -1,6 +1,6 @@
 #define MyAppName "Seestar AstroLab AAVSO"
 #define MyAppFullTitle "Seestar AstroLab AAVSO — Радар целей и фотометрия"
-#define MyAppVersion "1.0.1"
+#define MyAppVersion "1.1.0 alpha"
 #define MyAppPublisher "CosmoBehemothych AstroLab"
 #define MyAppURL "https://boosty.to/cosmobehemothych"
 #define MyAppRepoURL "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO"

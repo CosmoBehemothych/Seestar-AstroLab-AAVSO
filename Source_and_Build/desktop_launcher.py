@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""
 ================================================================================
-Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.0.1 — Первая версия)
+Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.1.0 alpha)
 ================================================================================
 - Открывает локальный интерфейс pwa_mobile_and_electron/index.html внутри
   собственного нативного окна (Microsoft Edge WebView2).
@@ -22,18 +22,20 @@ import threading
 
 # Подключение единого серверного ядра бизнес-логики PhotometryBackendEngine
 try:
-    from backend.astrolab_backend_core import PhotometryBackendEngine, start_background_rpc_server
+    from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server
 except ImportError:
     try:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        from backend.astrolab_backend_core import PhotometryBackendEngine, start_background_rpc_server
+        from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server
     except ImportError:
         PhotometryBackendEngine = None
+        AavsoNativeAndStorageService = None
+        get_program_converted_storage_dir = None
         start_background_rpc_server = None
 
 
-APP_VERSION = "1.0.1"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.0.1 — Первая версия)"
+APP_VERSION = "1.1.0 alpha"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.1.0 alpha)"
 APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
 
 if sys.platform == "win32":
@@ -145,6 +147,13 @@ class AstroLabDiskBridge:
             store["lang"] = store["seestar_lang"]
         elif store.get("lang") and not store.get("seestar_lang"):
             store["seestar_lang"] = store["lang"]
+        try:
+            if AavsoNativeAndStorageService:
+                conv_db = AavsoNativeAndStorageService.load_storage_db()
+                store["seestar_converted_photometry_db_v1"] = json.dumps(conv_db, ensure_ascii=False)
+                store["seestar_converted_storage_dir"] = get_program_converted_storage_dir()
+        except Exception:
+            pass
         return store
 
     def _save_to_disk(self):
@@ -222,6 +231,64 @@ class AstroLabDiskBridge:
         if PhotometryBackendEngine:
             return PhotometryBackendEngine.verify_converted_aavso_file(content)
         return {}
+
+    def backend_save_converted_session(self, payload):
+        if AavsoNativeAndStorageService and isinstance(payload, dict):
+            res = AavsoNativeAndStorageService.save_converted_session(
+                star_name=payload.get("star", ""),
+                obscode=payload.get("obscode", ""),
+                scope_model=payload.get("scopeModel", "S50"),
+                file_name=payload.get("fileName", "Seestar_AAVSO.csv"),
+                aavso_csv_content=payload.get("content", ""),
+                points=payload.get("points"),
+            )
+            try:
+                db_data = AavsoNativeAndStorageService.load_storage_db()
+                with self._lock:
+                    self._store["seestar_converted_photometry_db_v1"] = json.dumps(db_data, ensure_ascii=False)
+                    self._save_to_disk()
+            except Exception:
+                pass
+            return res
+        return {"ok": False, "error": "Backend storage service unavailable"}
+
+    def backend_get_converted_history(self, star=""):
+        if AavsoNativeAndStorageService:
+            return AavsoNativeAndStorageService.get_converted_history(star)
+        return {"ok": False, "hasData": False, "points": [], "error": "Сервис истории недоступен"}
+
+    def backend_query_aavso_star(self, payload):
+        if AavsoNativeAndStorageService and isinstance(payload, dict):
+            return AavsoNativeAndStorageService.query_aavso_star(
+                star_name=payload.get("star", ""),
+                scope_model=payload.get("scopeModel", "S50"),
+                api_token=payload.get("apiToken", ""),
+            )
+        return {"ok": False, "error": "Backend AAVSO resolver unavailable"}
+
+    def backend_fetch_aavso_light_curve(self, payload):
+        if AavsoNativeAndStorageService and isinstance(payload, dict):
+            return AavsoNativeAndStorageService.fetch_aavso_light_curve(
+                star_name=payload.get("star", ""),
+                days_back=int(payload.get("daysBack", 180) or 180),
+                api_token=payload.get("apiToken", ""),
+                user_obscode=payload.get("obscode", ""),
+            )
+        return {"ok": False, "hasAavsoData": False, "otherObserversPoints": [], "userAavsoPoints": []}
+
+    def backend_open_converted_storage_folder(self):
+        try:
+            folder = get_program_converted_storage_dir() if get_program_converted_storage_dir else self.data_dir
+            os.makedirs(folder, exist_ok=True)
+            if sys.platform == "win32":
+                os.startfile(folder)
+            elif sys.platform == "darwin":
+                subprocess.Popen(["open", folder])
+            else:
+                subprocess.Popen(["xdg-open", folder])
+            return {"ok": True, "path": folder}
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
 
 
 def apply_win32_window_icon(window_title, icon_path):

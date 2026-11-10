@@ -537,6 +537,17 @@ class PhotometryBackendEngine:
         date_part = (first_utc or "session").replace(".", "-").replace(" ", "_").replace(":", "-")
         safe_star = (canonical_target or first_raw_star or "SEESTAR").replace(" ", "_")
         suggested_name = f"{safe_star}_{date_part}_{count}pts_Seestar.csv"
+        final_content_str = "\n".join(out_lines) + "\n"
+        try:
+            AavsoNativeAndStorageService.save_converted_session(
+                star_name=canonical_target or first_raw_star or starid_ui,
+                obscode=obs_clean,
+                scope_model=scope_model,
+                file_name=suggested_name,
+                aavso_csv_content=final_content_str,
+            )
+        except Exception:
+            pass
 
         return {
             "ok": True,
@@ -585,6 +596,614 @@ class PhotometryBackendEngine:
             "obstype": obstype_val,
             "issues": issues,
         }
+
+
+
+
+# ==============================================================================
+# 5. НАТИВНАЯ ИНТЕГРАЦИЯ С AAVSO (VSX, VSP, AID LIGHT CURVE, TARGET TOOL)
+#    И ХРАНИЛИЩЕ ИСТОРИИ КОНВЕРТАЦИЙ В ПАПКЕ ПРОГРАММЫ (Converted_Photometry_Storage)
+# ==============================================================================
+import csv as _csv
+import io as _io
+import xml.etree.ElementTree as _ET
+
+
+def get_program_converted_storage_dir() -> str:
+    """
+    Возвращает путь к отдельному разделу в папке с программой:
+    `<Папка_программы>/Converted_Photometry_Storage`
+    (если папка программы доступна только для чтения, создаёт также зеркало в %APPDATA%).
+    """
+    base_candidates = []
+    if getattr(os.sys, "frozen", False):
+        exe_dir = os.path.dirname(os.path.abspath(os.sys.executable))
+        base_candidates.append(exe_dir)
+    here = os.path.dirname(os.path.abspath(__file__))
+    # Поднимаемся из backend/ в корень программы (установленной или Source_and_Build)
+    prog_root = os.path.dirname(here)
+    if prog_root.lower().endswith(".exe"):
+        prog_root = os.path.dirname(prog_root)
+    base_candidates.append(prog_root)
+    base_candidates.append(os.path.dirname(prog_root))
+
+    for base in base_candidates:
+        if not base:
+            continue
+        target = os.path.join(base, "Converted_Photometry_Storage")
+        try:
+            os.makedirs(os.path.join(target, "sessions"), exist_ok=True)
+            db_p = os.path.join(target, "user_converted_photometry_db.json")
+            if not os.path.isfile(db_p):
+                with open(db_p, "w", encoding="utf-8") as f:
+                    json.dump({"version": APP_VERSION, "sessions": [], "points": []}, f, ensure_ascii=False, indent=2)
+            return target
+        except Exception:
+            continue
+
+    appdata = os.environ.get("APPDATA") or os.environ.get("LOCALAPPDATA") or os.path.expanduser("~")
+    fallback = os.path.join(appdata, "Seestar_AstroLab", "Converted_Photometry_Storage")
+    os.makedirs(os.path.join(fallback, "sessions"), exist_ok=True)
+    return fallback
+
+
+class AavsoNativeAndStorageService:
+    """
+    Отвечает за:
+    1. Сохранение и чтение всех ранее сконвертированных пользователем данных
+       в отдельном разделе папки с программой (`Converted_Photometry_Storage/`).
+    2. Загрузку данных о звёздах и срочных запросах напрямую из AAVSO (VSX, VSP,
+       REST API v2, Target Tool API, VizieR B/vsx/vsx) вместо SIMBAD.
+    3. Загрузку уже известной кривой блеска из базы AAVSO AID (с разделением на
+       вклад пользователя и данные других участников AAVSO).
+    4. Строгий запрет на выдумывание данных: если данных в базе AAVSO или в
+       локальном хранилище нет, возвращает явный статус ошибки без генерации фейковых точек.
+    """
+    _lock = threading.Lock()
+
+    @classmethod
+    def get_storage_db_path(cls) -> str:
+        st_dir = get_program_converted_storage_dir()
+        return os.path.join(st_dir, "user_converted_photometry_db.json")
+
+    @classmethod
+    def load_storage_db(cls) -> Dict[str, Any]:
+        db_path = cls.get_storage_db_path()
+        if os.path.isfile(db_path):
+            try:
+                with open(db_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if isinstance(data, dict):
+                    data.setdefault("sessions", [])
+                    data.setdefault("points", [])
+                    return data
+            except Exception:
+                pass
+        return {"version": APP_VERSION, "sessions": [], "points": []}
+
+    @classmethod
+    def save_converted_session(
+        cls,
+        star_name: str,
+        obscode: str,
+        scope_model: str,
+        file_name: str,
+        aavso_csv_content: str,
+        points: Optional[List[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Сохраняет сконвертированный отчёт в папку `<Папка_программы>/Converted_Photometry_Storage/sessions/`
+        и добавляет все сконвертированные точки в `user_converted_photometry_db.json`.
+        """
+        canonical_star = PhotometryBackendEngine.normalize_star_for_vsp(star_name)
+        st_dir = get_program_converted_storage_dir()
+        sessions_dir = os.path.join(st_dir, "sessions")
+        os.makedirs(sessions_dir, exist_ok=True)
+
+        safe_fname = re.sub(r'[<>:"/\\|?*]+', "_", str(file_name or "Seestar_AAVSO.csv").strip())
+        saved_csv_path = os.path.join(sessions_dir, safe_fname)
+        if aavso_csv_content:
+            try:
+                with open(saved_csv_path, "w", encoding="utf-8") as f:
+                    f.write(aavso_csv_content)
+            except Exception:
+                pass
+
+        # Если список точек не передан явно, парсим их из самого сконвертированного файла AAFF Extended
+        extracted_pts: List[Dict[str, Any]] = []
+        if points and isinstance(points, list):
+            for p in points:
+                try:
+                    extracted_pts.append({
+                        "star": canonical_star or str(p.get("star") or star_name).strip(),
+                        "jd": round(float(p["jd"]), 6),
+                        "mag": round(float(p["mag"]), 4),
+                        "merr": round(float(p.get("merr", 0.015)), 4),
+                        "band": str(p.get("band") or p.get("filter") or "TG").strip(),
+                        "obscode": str(obscode or p.get("obscode") or "").strip().upper(),
+                        "utc": str(p.get("utc") or ""),
+                        "scope": str(scope_model or "S50"),
+                        "fileName": safe_fname,
+                    })
+                except Exception:
+                    continue
+        elif aavso_csv_content:
+            for line in aavso_csv_content.splitlines():
+                s = line.strip()
+                if not s or s.startswith("#"):
+                    continue
+                cols = [c.strip() for c in s.split(",")]
+                if len(cols) >= 5:
+                    try:
+                        extracted_pts.append({
+                            "star": PhotometryBackendEngine.normalize_star_for_vsp(cols[0]) or canonical_star,
+                            "jd": round(float(cols[1]), 6),
+                            "mag": round(float(cols[2]), 4),
+                            "merr": round(float(cols[3]), 4),
+                            "band": cols[4] or "TG",
+                            "obscode": str(obscode or "").strip().upper(),
+                            "utc": "",
+                            "scope": str(scope_model or "S50"),
+                            "fileName": safe_fname,
+                        })
+                    except Exception:
+                        continue
+
+        now_iso = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        with cls._lock:
+            db = cls.load_storage_db()
+            existing_keys = {
+                (PhotometryBackendEngine.get_canonical_star_key(pt.get("star")), round(float(pt.get("jd", 0.0)), 6))
+                for pt in db.get("points", [])
+                if pt.get("jd") is not None
+            }
+            added_count = 0
+            for pt in extracted_pts:
+                k = (PhotometryBackendEngine.get_canonical_star_key(pt["star"]), pt["jd"])
+                if k not in existing_keys:
+                    pt["convertedAt"] = now_iso
+                    db["points"].append(pt)
+                    existing_keys.add(k)
+                    added_count += 1
+
+            session_meta = {
+                "id": f"sess-{int(time.time() * 1000)}",
+                "star": canonical_star or star_name,
+                "obscode": str(obscode or "").strip().upper(),
+                "scope": str(scope_model or "S50"),
+                "fileName": safe_fname,
+                "savedPath": saved_csv_path,
+                "pointsCount": len(extracted_pts),
+                "newUniquePointsAdded": added_count,
+                "convertedAt": now_iso,
+            }
+            db["sessions"].append(session_meta)
+            try:
+                with open(cls.get_storage_db_path(), "w", encoding="utf-8") as f:
+                    json.dump(db, f, ensure_ascii=False, indent=2)
+            except Exception:
+                pass
+
+        return cls.get_converted_history(canonical_star or star_name)
+
+    @classmethod
+    def get_converted_history(cls, star_name: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Возвращает все ранее сконвертированные пользователем точки из папки
+        `<Папка_программы>/Converted_Photometry_Storage/`.
+        Если данных нет — НЕ выдумывает их, а возвращает честный флаг `hasData: False` и текст ошибки.
+        """
+        st_dir = get_program_converted_storage_dir()
+        db = cls.load_storage_db()
+        all_pts = db.get("points", [])
+        all_sessions = db.get("sessions", [])
+
+        if star_name and str(star_name).strip():
+            target_clean = str(star_name).strip()
+            filtered_pts = [
+                p for p in all_pts
+                if PhotometryBackendEngine.are_same_star(p.get("star"), target_clean)
+            ]
+            filtered_sessions = [
+                s for s in all_sessions
+                if PhotometryBackendEngine.are_same_star(s.get("star"), target_clean)
+            ]
+        else:
+            filtered_pts = list(all_pts)
+            filtered_sessions = list(all_sessions)
+
+        filtered_pts.sort(key=lambda x: float(x.get("jd", 0.0)))
+        has_data = len(filtered_pts) > 0
+        err_msg = ""
+        if not has_data:
+            if star_name:
+                err_msg = (
+                    f"В локальном разделе программы (Converted_Photometry_Storage) пока нет "
+                    f"ранее сконвертированных вами данных для звезды «{star_name}»."
+                )
+            else:
+                err_msg = "В локальном разделе программы (Converted_Photometry_Storage) пока нет сконвертированных файлов."
+
+        return {
+            "ok": True,
+            "hasData": has_data,
+            "storageDir": st_dir,
+            "dbPath": cls.get_storage_db_path(),
+            "star": star_name or "ALL",
+            "pointsCount": len(filtered_pts),
+            "sessionsCount": len(filtered_sessions),
+            "totalPointsAllStars": len(all_pts),
+            "totalSessionsAllStars": len(all_sessions),
+            "points": filtered_pts,
+            "sessions": filtered_sessions[-50:],
+            "error": err_msg,
+        }
+
+    @classmethod
+    def query_aavso_star(
+        cls,
+        star_name: str,
+        scope_model: str = "S50",
+        api_token: str = "",
+    ) -> Dict[str, Any]:
+        """
+        Загружает данные о звезде напрямую из каталогов AAVSO (VSX VOTable, VSP API,
+        AAVSO REST API v2 /v2/api/stars/search/, VizieR B/vsx/vsx) вместо SIMBAD.
+        Если звезды нет в каталогах AAVSO — НЕ выдумывает данные, а возвращает ошибку.
+        """
+        raw_q = str(star_name or "").strip()
+        if not raw_q:
+            return {"ok": False, "error": "Не указан идентификатор звезды (STARID)."}
+
+        norm_q = PhotometryBackendEngine.normalize_star_for_vsp(raw_q)
+        # Нормализация Vnnn -> V0nnn для VSX/VizieR
+        vsx_q = re.sub(r"^[vV](\d{3})\s+([A-Za-z]{3})$", r"V0\1 \2", norm_q)
+        prof = PhotometryBackendEngine.get_scope_profile(scope_model)
+        fov_arcmin = prof.get("vspFovArcmin", 60)
+        mag_limit = prof.get("magLimit", 14.5)
+
+        result: Dict[str, Any] = {
+            "ok": False,
+            "star": norm_q,
+            "main_id": norm_q,
+            "auid": "",
+            "ra": None,
+            "dec": None,
+            "otype_txt": "",
+            "sp_type": "",
+            "magRange": "",
+            "period": None,
+            "chartid": "",
+            "kname": "",
+            "kmag": "",
+            "kerr": 0.02,
+            "photometry": [],
+            "source": "",
+        }
+
+        # 1. Официальный AAVSO REST API v2 (/v2/api/stars/search/) при наличии токена
+        tok = str(api_token or "").strip()
+        if tok:
+            try:
+                u_v2 = f"https://apps.aavso.org/v2/api/stars/search/?{urllib.parse.urlencode({'name': norm_q})}"
+                req = urllib.request.Request(
+                    u_v2,
+                    headers={"Authorization": f"Token {tok}", "User-Agent": f"SeestarAstroLab/{APP_VERSION}"},
+                )
+                with urllib.request.urlopen(req, timeout=7.0) as resp:
+                    v2_data = json.loads(resp.read().decode("utf-8", errors="replace"))
+                items = v2_data.get("results", v2_data) if isinstance(v2_data, dict) else v2_data
+                if isinstance(items, list) and items:
+                    it0 = items[0]
+                    result["main_id"] = it0.get("name") or norm_q
+                    result["star"] = result["main_id"]
+                    result["auid"] = it0.get("auid") or ""
+                    result["ra"] = float(it0["ra"]) if it0.get("ra") is not None else None
+                    result["dec"] = float(it0["dec"]) if it0.get("dec") is not None else None
+                    result["otype_txt"] = it0.get("var_type") or it0.get("type") or "Variable"
+                    if it0.get("max_mag") is not None and it0.get("min_mag") is not None:
+                        result["magRange"] = f"{it0['max_mag']} - {it0['min_mag']}"
+                    result["period"] = it0.get("period")
+                    result["source"] = "AAVSO API v2 (Stars)"
+                    result["ok"] = result["ra"] is not None and result["dec"] is not None
+            except Exception:
+                pass
+
+        # 2. Официальный AAVSO VSX VOTable API (https://www.aavso.org/vsx/index.php?view=query.votable&ident=...)
+        if not result["ok"]:
+            for cand_ident in (norm_q, vsx_q, raw_q):
+                try:
+                    u_vsx = f"https://www.aavso.org/vsx/index.php?{urllib.parse.urlencode({'view': 'query.votable', 'ident': cand_ident})}"
+                    req = urllib.request.Request(u_vsx, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
+                    with urllib.request.urlopen(req, timeout=7.0) as resp:
+                        xml_str = resp.read().decode("utf-8", errors="replace")
+                    if "<VOTABLE" in xml_str.upper():
+                        root = _ET.fromstring(xml_str)
+                        fields = []
+                        for el in root.iter():
+                            tag = el.tag.split("}")[-1].upper()
+                            if tag == "FIELD":
+                                fields.append((el.attrib.get("name") or el.attrib.get("ID") or "").lower())
+                            elif tag == "TR":
+                                tds = [(td.text or "").strip() for td in el if td.tag.split("}")[-1].upper() == "TD"]
+                                if fields and tds:
+                                    rmap = dict(zip(fields, tds))
+                                    ra_v = rmap.get("radeg") or rmap.get("ra") or rmap.get("raj2000")
+                                    dec_v = rmap.get("dedeg") or rmap.get("dec") or rmap.get("dej2000")
+                                    if ra_v and dec_v:
+                                        result["ra"] = float(ra_v)
+                                        result["dec"] = float(dec_v)
+                                        result["main_id"] = rmap.get("name") or norm_q
+                                        result["star"] = result["main_id"]
+                                        result["auid"] = rmap.get("auid") or result["auid"]
+                                        result["otype_txt"] = rmap.get("vartype") or rmap.get("type") or "Variable"
+                                        mx = rmap.get("maxmag") or rmap.get("max")
+                                        mn = rmap.get("minmag") or rmap.get("min")
+                                        if mx and mn:
+                                            result["magRange"] = f"{mx} - {mn}"
+                                        result["period"] = rmap.get("period")
+                                        result["source"] = "AAVSO VSX Direct"
+                                        result["ok"] = True
+                                        break
+                        if result["ok"]:
+                            break
+                except Exception:
+                    continue
+
+        # 3. Официальный AAVSO VSP API (https://apps.aavso.org/vsp/api/chart/?format=json&...)
+        vsp_urls = [
+            f"https://apps.aavso.org/vsp/api/chart/?{urllib.parse.urlencode({'format': 'json', 'star': norm_q, 'fov': str(fov_arcmin), 'maglimit': str(mag_limit)})}"
+        ]
+        if result["ra"] is not None and result["dec"] is not None:
+            vsp_urls.append(
+                f"https://apps.aavso.org/vsp/api/chart/?{urllib.parse.urlencode({'format': 'json', 'ra': str(result['ra']), 'dec': str(result['dec']), 'fov': str(fov_arcmin), 'maglimit': str(mag_limit)})}"
+            )
+        for vu in vsp_urls:
+            try:
+                req = urllib.request.Request(vu, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
+                with urllib.request.urlopen(req, timeout=8.0) as resp:
+                    vsp_json = json.loads(resp.read().decode("utf-8", errors="replace"))
+                if isinstance(vsp_json, dict) and vsp_json.get("chartid"):
+                    result["chartid"] = str(vsp_json.get("chartid") or "")
+                    if vsp_json.get("auid") and not result["auid"]:
+                        result["auid"] = str(vsp_json["auid"])
+                    if vsp_json.get("star"):
+                        result["main_id"] = PhotometryBackendEngine.normalize_star_for_vsp(vsp_json["star"])
+                        result["star"] = result["main_id"]
+                    if not result["ok"] and vsp_json.get("ra") and vsp_json.get("dec"):
+                        result["ra"], result["dec"] = cls._parse_hms_dms(vsp_json["ra"], vsp_json["dec"])
+                        result["source"] = "AAVSO VSP API"
+                        result["ok"] = True
+                    phot = vsp_json.get("photometry") or []
+                    result["photometry"] = phot
+                    chk = PhotometryBackendEngine.pick_check_star(
+                        phot, result["auid"], prof.get("optCheckMin", 9.0), prof.get("optCheckMax", 13.5)
+                    )
+                    if chk:
+                        result["kname"] = chk["auid"]
+                        result["kmag"] = f"{chk['mag']:.3f}"
+                        result["kerr"] = chk.get("err", 0.02)
+                    break
+            except Exception:
+                continue
+
+        # 4. Еженедельное зеркало каталога AAVSO VSX в VizieR (B/vsx/vsx)
+        if not result["ok"]:
+            adql = (
+                'SELECT TOP 1 "Name", "RAJ2000", "DEJ2000", "Type", "max", "min", "Period" '
+                'FROM "B/vsx/vsx" '
+                f"WHERE \"Name\" = '{vsx_q.replace(chr(39), '')}' OR \"Name\" = '{norm_q.replace(chr(39), '')}'"
+            )
+            for vm in VIZIER_MIRRORS:
+                try:
+                    q_str = urllib.parse.urlencode({"request": "doQuery", "lang": "ADQL", "format": "json", "query": adql})
+                    req = urllib.request.Request(f"{vm['base']}?{q_str}", headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
+                    with urllib.request.urlopen(req, timeout=7.0) as resp:
+                        vj = json.loads(resp.read().decode("utf-8", errors="replace"))
+                    rows = vj.get("data") or []
+                    if rows:
+                        r0 = rows[0]
+                        result["main_id"] = str(r0[0]).strip()
+                        result["star"] = result["main_id"]
+                        result["ra"] = float(r0[1])
+                        result["dec"] = float(r0[2])
+                        result["otype_txt"] = str(r0[3] or "Variable")
+                        if r0[4] is not None and r0[5] is not None:
+                            result["magRange"] = f"{r0[4]} - {r0[5]}"
+                        result["period"] = r0[6]
+                        result["source"] = f"AAVSO VSX ({vm['name']})"
+                        result["ok"] = True
+                        break
+                except Exception:
+                    continue
+
+        if not result["ok"]:
+            result["error"] = (
+                f"Ошибка: Звезда «{raw_q}» не найдена в базах данных AAVSO (VSX / VSP). "
+                ""
+            )
+        return result
+
+    @classmethod
+    def fetch_aavso_light_curve(
+        cls,
+        star_name: str,
+        days_back: int = 180,
+        api_token: str = "",
+        user_obscode: str = "",
+        max_points: int = 400,
+    ) -> Dict[str, Any]:
+        """
+        Загружает УЖЕ ИЗВЕСТНУЮ кривую блеска звезды из базы AAVSO AID:
+        1) Официальный AAVSO REST API v2: GET https://apps.aavso.org/v2/api/observations/photometry/?target=...
+        2) Официальный веб-эндпоинт кривых блеска AAVSO:
+           GET https://www.aavso.org/vsx/index.php?view=api.delim&ident=...&fromjd=...&tojd=...&delimiter=,
+        Разделяет точки на:
+          - `otherObserversPoints` (данные других участников AAVSO);
+          - `userAavsoPoints` (точки в базе AAVSO с кодом `user_obscode`).
+        Также подгружает локально сохранённые ранее сконвертированные точки пользователя
+        из папки `<Папка_программы>/Converted_Photometry_Storage/`.
+        КРИТИЧЕСКОЕ ПРАВИЛО: Если в AAVSO данных нет — НИКОГДА не выдумывает точки!
+        Возвращает явное сообщение об ошибке.
+        """
+        clean_star = PhotometryBackendEngine.normalize_star_for_vsp(star_name)
+        if not clean_star:
+            return {
+                "ok": False,
+                "hasAavsoData": False,
+                "error": "Не указано имя звезды (STARID) для запроса кривой блеска из AAVSO.",
+                "otherObserversPoints": [],
+                "userAavsoPoints": [],
+                "localConvertedHistory": cls.get_converted_history(""),
+            }
+
+        now_jd = (time.time() / 86400.0) + 2440587.5
+        from_jd = now_jd - max(10, int(days_back or 180))
+        u_obs = str(user_obscode or "").strip().upper()
+        tok = str(api_token or "").strip()
+
+        band_map = {
+            "0": "Vis.", "2": "V", "3": "B", "4": "R", "5": "I",
+            "7": "U", "8": "CV", "9": "CR", "21": "TB", "22": "TG",
+            "23": "TR", "41": "SG", "42": "SR", "43": "SI",
+            "50": "TB", "51": "TG", "52": "TR",
+        }
+
+        raw_points: List[Dict[str, Any]] = []
+        source_used = ""
+        network_errors: List[str] = []
+
+        # Канал 1: AAVSO REST API v2 (/v2/api/observations/photometry/)
+        if tok:
+            try:
+                q = urllib.parse.urlencode({"target": clean_star})
+                url = f"https://apps.aavso.org/v2/api/observations/photometry/?{q}"
+                req = urllib.request.Request(
+                    url,
+                    headers={"Authorization": f"Token {tok}", "User-Agent": f"SeestarAstroLab/{APP_VERSION}"},
+                )
+                with urllib.request.urlopen(req, timeout=9.0) as resp:
+                    data = json.loads(resp.read().decode("utf-8", errors="replace"))
+                for item in (data.get("results") or [])[:max_points]:
+                    if item.get("fainterthan"):
+                        continue
+                    jd_v = float(item["jd_dbl"])
+                    mag_v = float(str(item["magnitude"]).lstrip("<"))
+                    if jd_v < from_jd:
+                        continue
+                    err_v = float(item.get("uncertainty") or 0.02)
+                    b_raw = str(item.get("band") or "V")
+                    raw_points.append({
+                        "jd": round(jd_v, 6),
+                        "mag": round(mag_v, 4),
+                        "merr": round(err_v, 4),
+                        "band": band_map.get(b_raw, b_raw),
+                        "obscode": str(item.get("obscode") or "").strip().upper(),
+                        "source": "AAVSO_API_V2",
+                    })
+                if raw_points:
+                    source_used = "AAVSO API v2 (/v2/api/observations/photometry/)"
+            except Exception as e:
+                network_errors.append(f"AAVSO API v2: {e}")
+
+        # Канал 2: Официальный эндпоинт выгрузки кривой блеска AAVSO (api.delim)
+        if not raw_points:
+            try:
+                q_params = {
+                    "view": "api.delim",
+                    "ident": clean_star,
+                    "fromjd": f"{from_jd:.4f}",
+                    "tojd": f"{now_jd:.4f}",
+                    "delimiter": ",",
+                }
+                url = f"https://www.aavso.org/vsx/index.php?{urllib.parse.urlencode(q_params)}"
+                req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
+                with urllib.request.urlopen(req, timeout=9.0) as resp:
+                    csv_text = resp.read().decode("utf-8", errors="replace")
+                reader = _csv.DictReader(_io.StringIO(csv_text))
+                for row in reader:
+                    jd_str = row.get("JD") or row.get("jd")
+                    mag_str = str(row.get("Magnitude") or row.get("mag") or "").strip()
+                    if not jd_str or not mag_str or mag_str.startswith("<"):
+                        continue
+                    try:
+                        jd_v = float(jd_str)
+                        mag_v = float(mag_str)
+                        err_v = float(row.get("Uncertainty") or row.get("uncert") or 0.02)
+                        band_v = str(row.get("Band") or row.get("band") or "V").strip()
+                        obs_v = str(row.get("Observer Code") or row.get("obscode") or "").strip().upper()
+                        raw_points.append({
+                            "jd": round(jd_v, 6),
+                            "mag": round(mag_v, 4),
+                            "merr": round(err_v, 4),
+                            "band": band_v,
+                            "obscode": obs_v,
+                            "source": "AAVSO_AID_DELIM",
+                        })
+                        if len(raw_points) >= max_points:
+                            break
+                    except Exception:
+                        continue
+                if raw_points:
+                    source_used = "AAVSO AID (vsx/index.php?view=api.delim)"
+            except Exception as e:
+                network_errors.append(f"AAVSO AID api.delim: {e}")
+
+        raw_points.sort(key=lambda x: x["jd"])
+        other_pts = [p for p in raw_points if not u_obs or p.get("obscode") != u_obs]
+        user_aavso_pts = [p for p in raw_points if u_obs and p.get("obscode") == u_obs]
+
+        local_history = cls.get_converted_history(clean_star)
+        has_aavso = len(raw_points) >= 5
+
+        aavso_err_msg = ""
+        if len(raw_points) == 0:
+            detail = f" ({'; '.join(network_errors)})" if network_errors else ""
+            aavso_err_msg = (
+                f"В базе AAVSO (AID) не найдено наблюдений для звезды «{clean_star}» "
+                f"за последние {days_back} сут.{detail}"
+            )
+        elif len(raw_points) < 5:
+            aavso_err_msg = (
+                f"В базе AAVSO (AID) недостаточно точек для построения кривой блеска звезды «{clean_star}» "
+                f"(найдено точек: {len(raw_points)})."
+            )
+            raw_points = []
+            other_pts = []
+            user_aavso_pts = []
+
+        return {
+            "ok": has_aavso or local_history.get("hasData", False),
+            "star": clean_star,
+            "hasAavsoData": has_aavso,
+            "sourceUsed": source_used,
+            "totalAavsoPoints": len(raw_points),
+            "otherObserversCount": len(other_pts),
+            "userAavsoCount": len(user_aavso_pts),
+            "otherObserversPoints": other_pts,
+            "userAavsoPoints": user_aavso_pts,
+            "localConvertedHistory": local_history,
+            "aavsoError": aavso_err_msg,
+        }
+
+    @staticmethod
+    def _parse_hms_dms(ra_val: Any, dec_val: Any) -> Tuple[float, float]:
+        def _conv(v: Any, is_ra: bool) -> float:
+            if isinstance(v, (int, float)):
+                return float(v)
+            s = str(v).strip().replace(":", " ")
+            try:
+                return float(s)
+            except ValueError:
+                pass
+            parts = [float(p) for p in s.split() if p]
+            if not parts:
+                return 0.0
+            sign = -1.0 if s.startswith("-") else 1.0
+            deg = abs(parts[0]) + (parts[1] / 60.0 if len(parts) > 1 else 0.0) + (parts[2] / 3600.0 if len(parts) > 2 else 0.0)
+            return deg * 15.0 if is_ra else sign * deg
+
+        return _conv(ra_val, True), _conv(dec_val, False)
 
 
 # ==============================================================================
@@ -655,6 +1274,34 @@ class _AstroLabBackendRequestHandler(BaseHTTPRequestHandler):
         elif action == "verify_file":
             res = PhotometryBackendEngine.verify_converted_aavso_file(body.get("content", ""))
             self._send_json({"ok": True, "result": res})
+        elif action == "save_converted_session":
+            res = AavsoNativeAndStorageService.save_converted_session(
+                star_name=body.get("star", ""),
+                obscode=body.get("obscode", ""),
+                scope_model=body.get("scopeModel", "S50"),
+                file_name=body.get("fileName", "Seestar_AAVSO.csv"),
+                aavso_csv_content=body.get("content", ""),
+                points=body.get("points"),
+            )
+            self._send_json(res)
+        elif action == "get_converted_history":
+            res = AavsoNativeAndStorageService.get_converted_history(body.get("star"))
+            self._send_json(res)
+        elif action == "query_aavso_star":
+            res = AavsoNativeAndStorageService.query_aavso_star(
+                star_name=body.get("star", ""),
+                scope_model=body.get("scopeModel", "S50"),
+                api_token=body.get("apiToken", ""),
+            )
+            self._send_json(res)
+        elif action == "fetch_aavso_light_curve":
+            res = AavsoNativeAndStorageService.fetch_aavso_light_curve(
+                star_name=body.get("star", ""),
+                days_back=int(body.get("daysBack", 180) or 180),
+                api_token=body.get("apiToken", ""),
+                user_obscode=body.get("obscode", ""),
+            )
+            self._send_json(res)
         else:
             self._send_json({"ok": False, "error": f"Unknown action: {action}"}, 400)
 

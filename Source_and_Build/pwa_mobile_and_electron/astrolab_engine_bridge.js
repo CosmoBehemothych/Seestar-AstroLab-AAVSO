@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.0.1) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.1.0 alpha) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.0.1.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.1.0 alpha.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -500,7 +500,7 @@
       missionSummaryTitle: "ℹ️ Как работает сверка полей Seestar → SIMBAD & VSP (цветовые индикаторы)",
       lblExpand: "Развернуть\u00A0▾",
       bentoSyncBadgeText: "Online • TTL 1ч",
-      bentoSimbadDefault: "✓ 3 зеркала (HTTPS:443)",
+      bentoSimbadDefault: "✓ AAVSO VSX & VSP (HTTPS)",
       bentoVspDefault: "✓ Активен (API v2)",
       bentoVizierDefault: "✓ 4 зеркала (Резерв)",
       lblThemePanel: "Цветовая панель",
@@ -606,7 +606,7 @@
       optLimitAll: "Все (без лимита)",
       lblFov: "Поле зрения:",
       secCatalogStatus: "📡 Статус каталогов",
-      catSimbadTap: "Зеркала CDS SIMBAD TAP",
+      catSimbadTap: "Каталог AAVSO VSX / VSP",
       catAavsoVsp: "Сервер AAVSO VSP / VSX",
       catVizierApass: "Каталоги VizieR / APASS DR9",
       catLocalCache: "Локальный кэш запросов",
@@ -730,7 +730,7 @@
       previewReady: "Файл прочитан. Проверьте сверку параметров и кривую блеска ниже.",
       starIdCorrected: "STARID отличается от каталожного. При экспорте будет использован ID из интерфейса.",
       starIdSame: "STARID полностью совпадает с файлом.",
-      fetchingSimbad: "📡 1/2: Загрузка координат из SIMBAD...",
+      fetchingSimbad: "📡 1/2: Загрузка данных звезды и кривой блеска из AAVSO (VSX / AID)...",
       fetchingVsp: "📡 2/2: Загрузка карты и звезды сравнения из AAVSO VSP...",
       imgLoading: "Загрузка снимка DSS2...",
       imgOpenAladin: "🔭 Открыть в Aladin Lite",
@@ -2453,7 +2453,7 @@
     "phObsFilterDate": "ДД.ММ.ГГГГ",
     "dssEmptyCaption": "Выберите цель или загрузите файл для отображения поля зрения DSS2",
     "dssSurveyFovLabel": "Обзор карты DSS2: 2.40°×2.40°",
-    "lblStarFieldPhoto": "🌌 Снимок окрестностей звезды (DSS2)",
+    "lblStarFieldPhoto": "📊 Известная кривая блеска AAVSO (AID) и Ваш вклад",
     "critModalTitle": "Критическое расхождение данных",
     "critModalBody": "Обнаружено критическое расхождение данных. Конвертация заблокирована. Проверьте правильность выбранной звезды и файла.",
     "btnCritOpenInputs": "📂 Проверить звезду и файл",
@@ -2517,7 +2517,7 @@
     "phObsFilterDate": "YYYY-MM-DD",
     "dssEmptyCaption": "Select a target or load a CSV file to display the DSS2 star field",
     "dssSurveyFovLabel": "DSS2 Survey View: 2.40°×2.40°",
-    "lblStarFieldPhoto": "🌌 Star Field Survey Image (DSS2)",
+    "lblStarFieldPhoto": "📊 Known AAVSO Light Curve (AID) & Your Contribution",
     "critModalTitle": "Critical Data Mismatch",
     "critModalBody": "A critical data mismatch was detected. Conversion is locked. Please verify the selected target star and CSV file.",
     "btnCritOpenInputs": "📂 Check Star & File",
@@ -2587,7 +2587,7 @@
     "btnGraphGuideShort": "📖 ¿Cómo leer el gráfico?",
     "dssEmptyCaption": "Seleccione un objetivo o cargue un archivo CSV para mostrar el campo estelar DSS2",
     "dssSurveyFovLabel": "Campo del mapa DSS2: 2.40°×2.40°",
-    "lblStarFieldPhoto": "🌌 Imagen del campo estelar (DSS2)",
+    "lblStarFieldPhoto": "📊 Curva de luz AAVSO (AID) y su contribución",
     "critModalTitle": "Discrepancia crítica de datos",
     "critModalBody": "Se detectó una discrepancia crítica de datos. La conversión está bloqueada. Verifique la estrella seleccionada y el archivo CSV.",
     "btnCritOpenInputs": "📂 Verificar estrella y archivo",
@@ -2676,7 +2676,7 @@
     "btnGraphGuideShort": "📖 Wie liest man die Kurve?",
     "dssEmptyCaption": "Zielstern wählen oder CSV-Datei laden, um das DSS2-Sternfeld anzuzeigen",
     "dssSurveyFovLabel": "DSS2-Kartenfeld: 2.40°×2.40°",
-    "lblStarFieldPhoto": "🌌 Sternfeldbild (DSS2)",
+    "lblStarFieldPhoto": "📊 Bekannte AAVSO-Lichtkurve (AID) & Ihr Beitrag",
     "critModalTitle": "Kritische Datenabweichung",
     "critModalBody": "Es wurde eine kritische Datenabweichung festgestellt. Die Konvertierung ist gesperrt. Bitte prüfen Sie den gewählten Stern und die CSV-Datei.",
     "btnCritOpenInputs": "📂 Stern & Datei prüfen",
@@ -2776,7 +2776,7 @@
     "btnGraphGuideShort": "📖 Comment lire le graphique ?",
     "dssEmptyCaption": "Sélectionnez une cible ou chargez un fichier CSV pour afficher le champ stellaire DSS2",
     "dssSurveyFovLabel": "Champ de la carte DSS2 : 2.40°×2.40°",
-    "lblStarFieldPhoto": "🌌 Image du champ stellaire (DSS2)",
+    "lblStarFieldPhoto": "📊 Courbe de lumière AAVSO (AID) et votre contribution",
     "critModalTitle": "Divergence critique des données",
     "critModalBody": "Une divergence critique des données a été détectée. La conversion est bloquée. Veuillez vérifier l'étoile sélectionnée et le fichier CSV.",
     "btnCritOpenInputs": "📂 Vérifier l'étoile et le fichier",
@@ -2876,7 +2876,7 @@
     "btnGraphGuideShort": "📖 如何解读光变曲线？",
     "dssEmptyCaption": "请选择目标恒星或加载 CSV 文件以显示 DSS2 巡天视场图像",
     "dssSurveyFovLabel": "DSS2 巡天星图范围: 2.40°×2.40°",
-    "lblStarFieldPhoto": "🌌 恒星天区巡天图像 (DSS2)",
+    "lblStarFieldPhoto": "📊 已知 AAVSO 光变曲线 (AID) 与您的贡献",
     "critModalTitle": "关键数据不一致警告",
     "critModalBody": "检测到关键测光数据存在重大差异，转换已锁定。请检查所选目标恒星 (STARID) 与 CSV 文件是否匹配。",
     "btnCritOpenInputs": "📂 检查目标恒星与文件",
@@ -3297,6 +3297,68 @@
       log(t("msgSimbadCache") + `: "${starName}"`);
       return cached;
     }
+
+    const cleanTarget = reduceConstellationName(starName);
+    const vsxTarget = cleanTarget.replace(/^[vV](\d{3})\s+([A-Za-z]{3})$/, "V0$1 $2");
+    log(`📡 Запрос к базе переменных звёзд AAVSO (VSX / VSP): "${cleanTarget}"...`);
+
+    try {
+      let rpcRes = null;
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_query_aavso_star === "function") {
+        rpcRes = await window.pywebview.api.backend_query_aavso_star({
+          star: cleanTarget,
+          scopeModel: window._currentScopeModel || "S50"
+        });
+      } else {
+        const r = await fetch("http://127.0.0.1:18765/api/rpc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "query_aavso_star", star: cleanTarget, scopeModel: window._currentScopeModel || "S50" }),
+          signal: AbortSignal.timeout(6000)
+        });
+        if (r.ok) rpcRes = await r.json();
+      }
+      if (rpcRes && rpcRes.ok && rpcRes.ra != null && rpcRes.dec != null) {
+        STATE.workingMirror = rpcRes.source || "AAVSO VSX";
+        const result = {
+          main_id: rpcRes.main_id || cleanTarget,
+          ra: Number(rpcRes.ra),
+          dec: Number(rpcRes.dec),
+          otype_txt: rpcRes.otype_txt || "Variable",
+          sp_type: rpcRes.magRange || "",
+          _source: rpcRes.source || "AAVSO VSX"
+        };
+        log(`    ✓ ${result._source}: RA=${result.ra.toFixed(5)}°, DEC=${result.dec.toFixed(5)}°`);
+        setCached(CACHE.simbad, starName, result, t("msgSimbadCache"));
+        return result;
+      }
+    } catch (_) {}
+
+    try {
+      const vsxSafe = vsxTarget.replace(/[\x00-\x1f']/g, "");
+      const rawSafe = cleanTarget.replace(/[\x00-\x1f']/g, "");
+      const vsxAdql = `SELECT TOP 1 "Name", "RAJ2000", "DEJ2000", "Type", "max", "min" FROM "B/vsx/vsx" WHERE "Name" = '${vsxSafe}' OR "Name" = '${rawSafe}'`;
+      const vsxParams = new URLSearchParams({ request: "doQuery", lang: "ADQL", format: "json", query: vsxAdql });
+      const vizResp = await fetch(`https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?${vsxParams}`, { signal: AbortSignal.timeout(5500) });
+      if (vizResp.ok) {
+        const vj = await vizResp.json();
+        if (vj.data && vj.data.length > 0) {
+          const row = vj.data[0];
+          STATE.workingMirror = "AAVSO VSX";
+          const result = {
+            main_id: String(row[0] || cleanTarget).trim(),
+            ra: Number(row[1]),
+            dec: Number(row[2]),
+            otype_txt: String(row[3] || "Variable"),
+            sp_type: (row[4] != null && row[5] != null) ? `${row[4]} - ${row[5]}` : "",
+            _source: "AAVSO VSX Catalog"
+          };
+          log(`    ✓ AAVSO VSX Catalog: "${result.main_id}" (RA=${result.ra.toFixed(5)}°, DEC=${result.dec.toFixed(5)}°)`);
+          setCached(CACHE.simbad, starName, result, t("msgSimbadCache"));
+          return result;
+        }
+      }
+    } catch (_) {}
 
     const safeName = starName.replace(/[\x00-\x1f]/g, "").replace(/'/g, "''");
     const adql = `SELECT TOP 1 main_id, ra, dec, otype_txt, sp_type FROM basic JOIN ident ON oid = oidref WHERE id = '${safeName}'`;
@@ -3862,159 +3924,48 @@
     return null;
   }
 
+  // Live-геттер и принудительный сброс переменных основного замыкания при нажатии «Очистить»
+  window.__getLiveCurrentCsvText = function() {
+    return typeof currentCsvText === "string" ? currentCsvText : "";
+  };
+  window.__clearMainClosureState = function() {
+    currentCsvText = "";
+    window._exposedCurrentCsvText = "";
+    try { activeRadarReferenceStar = ""; } catch (_) {}
+    try {
+      STATE.simbadCatalogLoaded = false;
+      STATE.dismissedMismatchSig = "";
+      STATE.catalogStarName = "";
+      STATE.catalogRa = null;
+      STATE.catalogDec = null;
+    } catch (_) {}
+    try {
+      if (typeof stopAllRequests === "function") stopAllRequests();
+    } catch (_) {}
+  };
+
   function drawLightCurve(lines) {
-    const box = document.getElementById("lightCurveBox");
-    const canvas = document.getElementById("lightCurveCanvas");
-    const statsEl = document.getElementById("lightCurveStats");
-    if (!canvas) return;
-
-    const pts = [];
-    for (let i = 0; i < lines.length; i++) {
-      const raw = lines[i].trim();
-      if (!raw || (i === 0 && raw.toLowerCase().startsWith("name,"))) continue;
-      const c = raw.split(",");
-      if (c.length < 19 || c[1].trim().toLowerCase() !== "non-reference star") continue;
-      const mag = parseFloat(c[6].trim());
-      const merr = parseFloat(c[7].trim());
-      const jd1 = parseFloat(c[12].trim());
-      const jd2 = parseFloat(c[15].trim());
-      const jd = (!isNaN(jd1) && !isNaN(jd2)) ? (jd1 + jd2) / 2 : jd1;
-      if (!isNaN(mag) && !isNaN(jd)) {
-        pts.push({ jd, mag, merr: isNaN(merr) ? 0 : merr });
-      }
+    window._exposedCurrentCsvText = typeof currentCsvText === "string" ? currentCsvText : (Array.isArray(lines) ? lines.join("\n") : "");
+    if (typeof window.renderUserOnlyLightCurveCard === "function") {
+      window.renderUserOnlyLightCurveCard(lines);
     }
-
-    const lcEmptyEl = document.getElementById("lightCurveEmptyState");
-    if (pts.length < 2) {
-      box.style.display = "none";
-      if (statsEl) { statsEl.textContent = ""; statsEl.style.display = "none"; }
-      if (lcEmptyEl) lcEmptyEl.style.display = "flex";
-      window._lastLightCurveScreenPts = [];
-      return;
+    if (typeof window.renderAavsoAndContributionWidget === "function") {
+      const st = (document.getElementById("starid")?.value || STATE.catalogStarName || "").trim();
+      window.renderAavsoAndContributionWidget(st, false);
     }
-
-    if (lcEmptyEl) lcEmptyEl.style.display = "none";
-    box.style.display = "block";
-    if (statsEl) statsEl.style.display = "inline-flex";
-    const ctx = canvas.getContext("2d");
-    const w = canvas.width;
-    const h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-
-    let minJd = Infinity, maxJd = -Infinity, minMag = Infinity, maxMag = -Infinity;
-    for (let i = 0; i < pts.length; i++) {
-      const p = pts[i];
-      if (p.jd < minJd) minJd = p.jd;
-      if (p.jd > maxJd) maxJd = p.jd;
-      if (p.mag - p.merr < minMag) minMag = p.mag - p.merr;
-      if (p.mag + p.merr > maxMag) maxMag = p.mag + p.merr;
-    }
-
-    const padL = 48, padR = 16, padT = 18, padB = 26;
-    const plotW = w - padL - padR;
-    const plotH = h - padT - padB;
-
-    ctx.strokeStyle = document.body.getAttribute("data-theme") === "light" ? "rgba(15,23,42,0.12)" : "rgba(255,255,255,0.08)";
-    ctx.lineWidth = 1;
-    for (let k = 0; k <= 3; k++) {
-      const y = padT + (plotH * k) / 3;
-      ctx.beginPath();
-      ctx.moveTo(padL, y);
-      ctx.lineTo(w - padR, y);
-      ctx.stroke();
-
-      const mVal = minMag + ((maxMag - minMag) * k) / 3;
-      ctx.fillStyle = document.body.getAttribute("data-theme") === "light" ? "#475569" : "#98a2b3";
-      ctx.font = "10px monospace";
-      ctx.textAlign = "right";
-      ctx.fillText(mVal.toFixed(3), padL - 6, y + 3);
-    }
-
-    const getX = jd => padL + ((jd - minJd) / (maxJd - minJd || 1)) * plotW;
-    const getY = mag => padT + ((mag - minMag) / (maxMag - minMag || 0.01)) * plotH;
-
-    const isLightTheme = document.body.getAttribute("data-theme") === "light";
-    ctx.strokeStyle = isLightTheme ? "rgba(29, 78, 216, 0.78)" : "rgba(10, 132, 255, 0.65)";
-    ctx.lineWidth = 1.75;
-    ctx.beginPath();
-    pts.forEach((p, idx) => {
-      const x = getX(p.jd), y = getY(p.mag);
-      if (idx === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-
-    window._lastLightCurveScreenPts = [];
-    const lcStep = pts.length > 1500 ? Math.ceil(pts.length / 1500) : 1;
-    pts.forEach((p, idx) => {
-      if (idx % lcStep !== 0 && idx !== pts.length - 1) return;
-      const x = getX(p.jd);
-      const y = getY(p.mag);
-      const yTop = getY(p.mag - p.merr);
-      const yBot = getY(p.mag + p.merr);
-      window._lastLightCurveScreenPts.push({ x, y, jd: p.jd, mag: p.mag, merr: p.merr, idx: idx + 1 });
-
-      ctx.strokeStyle = isLightTheme ? "rgba(29, 78, 216, 0.55)" : "rgba(100, 210, 255, 0.48)";
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(x, yTop);
-      ctx.lineTo(x, yBot);
-      ctx.stroke();
-
-      ctx.fillStyle = isLightTheme ? "#1d4ed8" : "#64d2ff";
-      ctx.beginPath();
-      ctx.arc(x, y, 3.2, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    statsEl.textContent = `N=${pts.length} | Δm=${(maxMag - minMag).toFixed(3)}m`;
   }
 
-  function loadStarImage(starId, ra, dec) {
+  function loadStarImage(starId, _ra, _dec) {
     const box = document.getElementById("starImageBox");
-    const img = document.getElementById("starImage");
-    const cap = document.getElementById("starImageCaption");
-
-    const hasRaDec = (ra != null && !isNaN(ra) && dec != null && !isNaN(dec));
-    if (!hasRaDec) {
-      box.style.display = "none";
-      return;
+    if (box) box.style.display = "flex";
+    window._exposedCurrentCsvText = typeof currentCsvText === "string" ? currentCsvText : "";
+    const targetStar = String(starId || document.getElementById("starid")?.value || STATE.catalogStarName || "").trim();
+    if (typeof window.renderAavsoAndContributionWidget === "function") {
+      window.renderAavsoAndContributionWidget(targetStar, true);
     }
-
-    const skyviewUrl = `https://skyview.gsfc.nasa.gov/current/cgi/runquery.pl?Position=${encodeURIComponent(ra)},${encodeURIComponent(dec)}&Survey=DSS2+Red&Return=JPEG&Size=2.4&Pixels=400`;
-    const cdsUrl = `https://alasky.cds.unistra.fr/hips-image-services/hips2fits?hips=CDS%2FP%2FDSS2%2Fcolor&width=400&height=400&fov=2.4&format=jpg&ra=${encodeURIComponent(ra)}&dec=${encodeURIComponent(dec)}`;
-    const aladinUrl = `https://aladin.cds.unistra.fr/AladinLite/?target=${encodeURIComponent(ra)}%20${encodeURIComponent(dec)}&fov=2.4`;
-
-    box.style.display = "flex";
-    img.style.opacity = "0";
-    img.src = "";
-    if (typeof window.renderProceduralDssFallback === "function") {
-      window.renderProceduralDssFallback(starId, ra, dec);
+    if (typeof window.renderUserOnlyLightCurveCard === "function") {
+      window.renderUserOnlyLightCurveCard(currentCsvText ? currentCsvText.split(/\r?\n/) : []);
     }
-    cap.className = "caption";
-    cap.innerHTML = `${escapeHtml(t("imgLoading"))} <a href="${aladinUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--ios-cyan);">${escapeHtml(t("imgOpenAladin"))}</a>`;
-
-    let attempt = 0;
-    const tryLoad = (url) => {
-      img.onload = () => {
-        img.style.opacity = "1";
-        cap.className = "caption";
-        cap.innerHTML = t("imgFieldCaption").replace("{star}", escapeHtml(starId || "—"));
-      };
-      img.onerror = () => {
-        attempt++;
-        if (attempt === 1) {
-          cap.textContent = t("imgAltServer");
-          tryLoad(cdsUrl);
-        } else {
-          img.style.opacity = "0";
-          cap.className = "caption";
-          cap.innerHTML = `${t("dssFieldFallbackFmt").replace("{star}", escapeHtml(starId || "—"))}<a href="${aladinUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--ios-cyan); text-decoration:none;">${escapeHtml(t("imgOpenAladin"))}</a>)`;
-        }
-      };
-      img.src = url;
-    };
-    tryLoad(skyviewUrl);
   }
 
   document.getElementById("btnLoadImage").addEventListener("click", () => {
@@ -4311,8 +4262,17 @@
       if (lcBox) lcBox.style.display = "none";
       if (lcEmpty) lcEmpty.style.display = "flex";
       if (lcStats) { lcStats.textContent = ""; lcStats.style.display = "none"; }
+      const alertBanner = document.getElementById("lcDataStatusAlerts");
+      if (alertBanner) { alertBanner.style.display = "none"; alertBanner.textContent = ""; }
       updateEmptyStateSimbadPill();
       applyCriticalMismatchState(false, [], false);
+      if (typeof window.renderUserOnlyLightCurveCard === "function") {
+        window.renderUserOnlyLightCurveCard([]);
+      }
+      if (typeof window.renderAavsoAndContributionWidget === "function") {
+        const curStar = (document.getElementById("starid")?.value || STATE.catalogStarName || "").trim();
+        window.renderAavsoAndContributionWidget(curStar, false);
+      }
       return;
     }
 
@@ -4848,12 +4808,17 @@
 
     document.getElementById("csvFile").value = "";
     currentCsvText = "";
+    window._exposedCurrentCsvText = "";
+    activeRadarReferenceStar = "";
 
     STATE.simbadCatalogLoaded = false;
     STATE.dismissedMismatchSig = "";
     STATE.catalogStarName = "";
     STATE.catalogRa = null;
     STATE.catalogDec = null;
+    if (typeof window.resetAllCurvesOnClear === "function") {
+      window.resetAllCurvesOnClear();
+    }
     document.getElementById("conversionLogCard").style.display = "none";
     document.getElementById("statusWrapper").style.display = "none";
     previewCsvText("");
@@ -5107,6 +5072,16 @@
 
     STATE.lastConvertedFileName = suggestedName;
     STATE.lastConvertedContent = csvContentFinal;
+    window._exposedCurrentCsvText = currentCsvText || "";
+    if (typeof window.recordConvertedSessionAndRefreshCurve === "function" && count > 0) {
+      window.recordConvertedSessionAndRefreshCurve({
+        star: verifiedCatalogStar || starIdUI || firstRawFileStar || "",
+        obscode: obscode,
+        scopeModel: currentScopeModel || "S50",
+        fileName: suggestedName,
+        content: csvContentFinal
+      });
+    }
     if (typeof addObsTrackerRecord === "function" && count > 0) {
       const obsDate = (firstUtc && firstUtc.length >= 10) ? firstUtc.slice(0, 10).replace(/\./g, "-") : new Date().toISOString().slice(0, 10);
       const estMins = Math.max(1, Math.round(count * 0.5));
@@ -6153,12 +6128,7 @@
         .replace("{maxE}", prof.maxExpSec);
     }
 
-    const filterScopeBtn = document.getElementById("radarFilterScopeBtn");
-    if (filterScopeBtn) {
-      filterScopeBtn.textContent = t("filterScopeFmt")
-        .replace("{id}", prof.id)
-        .replace("{mag}", prof.magLimit);
-    }
+    // Кнопка фильтра под модель телескопа удалена
 
     const dssBadge = document.getElementById("dssFovBadge");
     if (dssBadge) {
@@ -6168,8 +6138,8 @@
     const starVal = (document.getElementById("starid") && document.getElementById("starid").value.trim()) || activeRadarReferenceStar || "";
     const raVal = parseFloat(document.getElementById("ra") && document.getElementById("ra").value);
     const decVal = parseFloat(document.getElementById("dec") && document.getElementById("dec").value);
-    if (!isNaN(raVal) && !isNaN(decVal)) {
-      window.renderProceduralDssFallback(starVal, raVal, decVal);
+    if (typeof window.renderAavsoAndContributionWidget === "function") {
+      window.renderAavsoAndContributionWidget("", false);
     }
 
     renderV6RadarDock();
@@ -6342,16 +6312,32 @@
                        (item.desc && item.desc.toLowerCase().includes(q));
         if (!matchQ) return false;
       }
+      const pStr = String(item.priority || "");
+      const tStr = String(item.type || "");
+      const tLower = tStr.toLowerCase();
       if (currentRadarFilter === "urgent") {
-        return item.priority.includes("СРОЧНО") || item.priority.includes("Приоритет") || item.priority.includes("Чёрная дыра") || item.priority.includes("Сверхбыстрая");
+        return pStr.includes("СРОЧНО") || pStr.includes("Чёрная дыра") || pStr.includes("Сверхбыстрая");
       }
-      if (currentRadarFilter === "scope") {
-        const ev = AstroLabCore.evaluateScopeSuitability(item, currentScopeModel);
-        return ev.compatible;
+      if (currentRadarFilter === "ephem") {
+        return pStr.includes("Эфемериды") || tStr.includes("EW") || tStr.includes("DSCT");
       }
       if (currentRadarFilter === "exo") {
-        const tLower = item.type.toLowerCase();
-        return tLower.includes("ep") || tLower.includes("ea") || tLower.includes("eb") || tLower.includes("ew") || tLower.includes("транзит") || tLower.includes("затмен") || item.priority.includes("Экзопланета");
+        return pStr.includes("Экзопланета") || tStr.includes("(EP") || tLower.includes("транзит");
+      }
+      if (currentRadarFilter === "eclipse") {
+        return pStr.includes("Затмения") || tStr.includes("EA") || tStr.includes("EB") || tStr.includes("EW") || tLower.includes("затмен");
+      }
+      if (currentRadarFilter === "standard") {
+        return pStr.includes("Эталон");
+      }
+      if (currentRadarFilter === "campaign") {
+        return pStr.includes("Кампания") || pStr.includes("Активно");
+      }
+      if (currentRadarFilter === "symbiotic") {
+        return pStr.includes("Симбиотическая") || tStr.includes("ZAND") || tLower.includes("симбиот");
+      }
+      if (currentRadarFilter === "nova") {
+        return pStr.includes("Новая") || pStr.includes("Сверхбыстрая") || tStr.includes("(NA") || tStr.includes("(NB") || tStr.includes("(NR") || tStr.includes("(NC");
       }
       return true;
     });
@@ -7274,7 +7260,7 @@
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.0.1",
+      application: "Seestar AstroLab AAVSO v1.1.0 alpha",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -7535,7 +7521,7 @@
 (function initSeniorTeamFixesV101() {
   const EXTRA_I18N = {
     ru: {
-      lblStarFieldPhoto: "🌌 Снимок окрестностей звезды (DSS2)",
+      lblStarFieldPhoto: "📊 Известная кривая блеска AAVSO (AID) и Ваш вклад",
       lblFileOnlyNoSimbadCheck: "Измерение из файла Seestar (не сверяется с SIMBAD)",
       msgStarImageMissing: "Изображение звезды в каталогах отсутствует",
       errNoStarIdTitle: "Не выбрана звезда (STARID)",
@@ -7553,7 +7539,7 @@
       vspStep2Loading: "⏳ Шаг 2/2: Загрузка карты AAVSO VSP (CHART, KNAME, KMAG)..."
     },
     en: {
-      lblStarFieldPhoto: "🌌 Star Field Survey Image (DSS2)",
+      lblStarFieldPhoto: "📊 Known AAVSO Light Curve (AID) & Your Contribution",
       lblFileOnlyNoSimbadCheck: "Seestar file measurement (not compared with SIMBAD)",
       msgStarImageMissing: "Star image is not available in the catalogs",
       errNoStarIdTitle: "Target Star (STARID) Not Selected",
@@ -7571,7 +7557,7 @@
       vspStep2Loading: "⏳ Step 2/2: Fetching AAVSO VSP chart & check star (CHART, KNAME, KMAG)..."
     },
     es: {
-      lblStarFieldPhoto: "🌌 Imagen del campo estelar (DSS2)",
+      lblStarFieldPhoto: "📊 Curva de luz AAVSO (AID) y su contribución",
       lblFileOnlyNoSimbadCheck: "Medición del archivo Seestar (no se compara con SIMBAD)",
       msgStarImageMissing: "La imagen de la estrella no está disponible en los catálogos",
       errNoStarIdTitle: "Estrella (STARID) no seleccionada",
@@ -7589,7 +7575,7 @@
       vspStep2Loading: "⏳ Paso 2/2: Cargando carta AAVSO VSP..."
     },
     de: {
-      lblStarFieldPhoto: "🌌 Sternfeldbild (DSS2)",
+      lblStarFieldPhoto: "📊 Bekannte AAVSO-Lichtkurve (AID) & Ihr Beitrag",
       lblFileOnlyNoSimbadCheck: "Messwert aus Seestar-Datei (kein SIMBAD-Abgleich)",
       msgStarImageMissing: "Sternbild ist in den Katalogen nicht vorhanden",
       errNoStarIdTitle: "Stern (STARID) nicht ausgewählt",
@@ -7607,7 +7593,7 @@
       vspStep2Loading: "⏳ Schritt 2/2: AAVSO VSP-Karte wird geladen..."
     },
     fr: {
-      lblStarFieldPhoto: "🌌 Image du champ stellaire (DSS2)",
+      lblStarFieldPhoto: "📊 Courbe de lumière AAVSO (AID) et votre contribution",
       lblFileOnlyNoSimbadCheck: "Mesure du fichier Seestar (non comparée à SIMBAD)",
       msgStarImageMissing: "L'image de l'étoile est absente des catalogues",
       errNoStarIdTitle: "Étoile (STARID) non sélectionnée",
@@ -7625,7 +7611,7 @@
       vspStep2Loading: "⏳ Étape 2/2 : Chargement de la carte AAVSO VSP..."
     },
     zh: {
-      lblStarFieldPhoto: "🌌 恒星天区巡天图像 (DSS2)",
+      lblStarFieldPhoto: "📊 已知 AAVSO 光变曲线 (AID) 与您的贡献",
       lblFileOnlyNoSimbadCheck: "Seestar 文件实测值（不与 SIMBAD 比对）",
       msgStarImageMissing: "星表中缺少该恒星的图像",
       errNoStarIdTitle: "未选择目标恒星 (STARID)",
@@ -7734,29 +7720,8 @@
     viewportWrap.appendChild(missingImgNotice);
   }
 
-  const starImgEl = document.getElementById("starImage");
-  const dssCanvasEl = document.getElementById("dssFallbackCanvas");
-  const starCapEl = document.getElementById("starImageCaption");
-  if (starImgEl) {
-    starImgEl.addEventListener("load", () => {
-      if (missingImgNotice) missingImgNotice.style.display = "none";
-      if (dssCanvasEl) dssCanvasEl.style.display = "none";
-    });
-    starImgEl.addEventListener("error", () => {
-      // На второй ошибке (когда оба сервера SkyView и Alasky не вернули фото звезды)
-      setTimeout(() => {
-        if (starImgEl.style.opacity === "0" || !starImgEl.complete || starImgEl.naturalWidth === 0) {
-          if (dssCanvasEl) dssCanvasEl.style.display = "none";
-          if (missingImgNotice) {
-            missingImgNotice.textContent = getTr("msgStarImageMissing");
-            missingImgNotice.style.display = "flex";
-          }
-          if (starCapEl) {
-            starCapEl.textContent = getTr("msgStarImageMissing");
-          }
-        }
-      }, 60);
-    });
+  if (missingImgNotice) {
+    missingImgNotice.style.display = "none";
   }
 
   // ПУНКТ 6: Наглядный баннер ошибки при недоступности серверов SIMBAD / VSP
@@ -7952,6 +7917,10 @@
       if (statWrap) statWrap.style.display = "none";
       const preloadedPill = document.getElementById("simbadPreloadedPill");
       if (preloadedPill) preloadedPill.style.display = "none";
+
+      if (typeof window.resetAllCurvesOnClear === "function") {
+        window.resetAllCurvesOnClear();
+      }
 
       // Сбрасываем снимок DSS2 к дефолтному холсту
       const starImg = document.getElementById("starImage");
@@ -8195,4 +8164,1618 @@
       });
     }
   })();
+})();
+
+
+
+// ============================================================================
+// МОДУЛЬ ГРАФИКОВ И РАДАРА ЦЕЛЕЙ v1.1.0 ALPHA
+// ============================================================================
+(function initUnifiedAstroLabLightCurvesAndRadarV110() {
+  const LOCAL_CONV_DB_KEY = "seestar_converted_photometry_db_v1";
+  window._clearGenerationCounter = window._clearGenerationCounter || 0;
+
+  // Переопределяем старую процедурную отрисовку DSS2, чтобы она никогда не рисовала поверх графика AAVSO
+  window.renderProceduralDssFallback = function() {};
+
+  const CURVE_AND_FILTER_I18N = {
+    ru: {
+      lblLightCurve: "📈 Кривая блеска (MAG vs JD Mid) — Мои наблюдения",
+      btnExpandFullPage: "⛶ На весь экран",
+      btnReloadAavso: "🔄 Обновить AAVSO",
+      lblLayerCurrent: "Текущая сессия (только что загружено)",
+      lblLayerHistory: "Мои прошлые конвертации (папка программы)",
+      lblAavsoOthers: "Другие участники AAVSO",
+      lblMyContribution: "Мой вклад (текущие + архив)",
+      legCurrent: "Текущая сессия",
+      legHistory: "Мои прошлые конвертации",
+      legAavso: "AAVSO (другие участники)",
+      axisTime: "Время наблюдения (JD Mid / UTC)",
+      aavsoInitialTitle: "Загрузите данные по звезде и приложите собственный файл Seestar",
+      aavsoInitialDesc: "Укажите звезду в разделе 1 и нажмите «🔭 Загрузить данные AAVSO», а также приложите собственный CSV-файл фотометрии Seestar в разделе 2 для построения кривой блеска AAVSO (AID) и отображения вашего вклада.",
+      noUserCurveTitle: "Загрузите CSV-файл фотометрии Seestar для построения вашей кривой блеска",
+      noUserHistoryNote: "В папке программы (Converted_Photometry_Storage) пока нет прошлых конвертаций для этой звезды.",
+      noAavsoDataTitleFmt: "Для звезды «{star}» в базе AAVSO (AID) нет данных кривой блеска",
+      noAavsoDataSub: "Загрузите данные по другой звезде или приложите собственный CSV-файл фотометрии Seestar для отображения ваших наблюдений.",
+      onlyUserShownNote: "В базе AAVSO нет точек для этой звезды — показан ваш вклад.",
+      statsUserFmt: "Сейчас: {cur} точ. | Архив: {hist} точ. | Δm={dm}m",
+      captionAavsoFmt: "🌟 <strong>{star}</strong>: Ваш вклад — <strong style=\"color:#d97706;\">{user} точ.</strong> (текущая: {cur}, архив: {hist}) • База AAVSO (AID): <strong style=\"color:#0284c7;\">{aavso} точ.</strong>",
+      captionNoAavsoFmt: "🌟 <strong>{star}</strong>: показан ваш вклад (<strong style=\"color:#d97706;\">{user} точ.</strong>).",
+      fullPageLcSubtitle: "Используйте селектор масштаба и полосы прокрутки для детального изучения кривой блеска",
+      lblZoomX: "Масштаб X:",
+      lblZoomY: "Высота Y:",
+      btnCloseModal: "✕ Закрыть",
+      filterUrgent: "🔥 Срочно",
+      filterEphem: "⚡ Эфемериды",
+      filterExo: "🪐 Экзопланета",
+      filterEclipse: "⚡ Затмения",
+      filterStandard: "⚡ Эталон",
+      filterCampaign: "⚡ Кампания",
+      filterSymbiotic: "⚡ Симбиотическая",
+      filterNova: "⚡ Новая",
+      tipFilterAll: "📋 <strong>Все цели каталога AAVSO (45):</strong> Полный перечень приоритетных переменных звёзд, транзитных экзопланет, новых и активных ядер галактик.",
+      tipFilterUrgent: "🔥 <strong>Срочно (AAVSO Alert Notices):</strong> Экстренные цели с высокой вероятностью внезапной вспышки или резкого ослабления блеска, требующие оперативного мониторинга (T CrB, SS Cyg, U Gem, R CrB).",
+      tipFilterEphem: "⚡ <strong>Эфемериды (Ephemeris & O−C Timing):</strong> Короткопериодические контактные двойные и пульсирующие звёзды для высокоточного фиксирования моментов минимумов/максимумов и контроля вековых изменений периода (W UMa, SZ Lyn).",
+      tipFilterExo: "🪐 <strong>Экзопланета (Exoplanet Transits EP):</strong> Звёзды с транзитными горячими юпитерами, где при прохождении планеты по диску звезды наблюдается характерное U-образное падение блеска на 0.015–0.030 mag (HD 189733, WASP-12, WASP-33).",
+      tipFilterEclipse: "⚡ <strong>Затмения (Eclipsing Binaries EA / EB / EW):</strong> Затменно-двойные системы, в которых компоненты периодически перекрывают друг друга вдоль луча зрения, формируя глубокие V- или U-образные минимумы блеска (TX UMa, Beta Lyr, AX Per).",
+      tipFilterStandard: "⚡ <strong>Эталон (Reference Prototypes):</strong> Классические звёзды-прототипы фундаментальных классов переменности ОКПЗ/VSX (Алголь, Мира Кита, Z Андромеды, RR Лиры, Дельта Цефея), служащие эталоном для проверки методики фотометрии.",
+      tipFilterCampaign: "⚡ <strong>Кампания (AAVSO Observing Campaigns):</strong> Объекты международных координированных наблюдательных кампаний AAVSO в поддержку космических обсерваторий HST, JWST, XRISM и XMM-Newton (Бетельгейзе, KIC 8462852, V1309 Sco, VW Hyi).",
+      tipFilterSymbiotic: "⚡ <strong>Симбиотическая (Symbiotic Binaries ZAND):</strong> Тесные взаимодействующие двойные системы из холодного красного гиганта и горячего белого карлика в общей ионизованной туманности с нестационарной аккрецией (CH Cyg, CI Cyg, BF Cyg, HM Sge).",
+      tipFilterNova: "⚡ <strong>Новая (Classical & Recurrent Novae NA / NB / NR):</strong> Катаклизмические двойные системы с термоядерными взрывами водородной оболочки на поверхности белого карлика, дающими скачок блеска на 6–15 звёздных величин (GK Per, V339 Del, V1405 Cas, PU Vul)."
+    },
+    en: {
+      lblLightCurve: "📈 Light Curve (MAG vs JD Mid) — My Observations",
+      btnExpandFullPage: "⛶ Full Screen",
+      btnReloadAavso: "🔄 Refresh AAVSO",
+      lblLayerCurrent: "Current Session (Just Loaded)",
+      lblLayerHistory: "My Past Conversions (Program Folder)",
+      lblAavsoOthers: "Other AAVSO Observers",
+      lblMyContribution: "My Contribution (Current + Archive)",
+      legCurrent: "Current Session",
+      legHistory: "Past Conversions",
+      legAavso: "AAVSO (Others)",
+      axisTime: "Observation Time (JD Mid / UTC)",
+      aavsoInitialTitle: "Load star data and attach your own Seestar file",
+      aavsoInitialDesc: "Select a target star in Section 1 and click '🔭 Load AAVSO Data', and attach your own Seestar photometry CSV file in Section 2 to plot the AAVSO (AID) light curve and display your contribution.",
+      noUserCurveTitle: "Load a Seestar photometry CSV file to plot your light curve",
+      noUserHistoryNote: "No previous conversions found in Converted_Photometry_Storage for this star.",
+      noAavsoDataTitleFmt: "No light curve data found in AAVSO (AID) for '{star}'",
+      noAavsoDataSub: "Load data for another star or attach your own Seestar photometry CSV file to plot your observations.",
+      onlyUserShownNote: "No AAVSO points for this star — showing your contribution.",
+      statsUserFmt: "Current: {cur} pts | Archive: {hist} pts | Δm={dm}m",
+      captionAavsoFmt: "🌟 <strong>{star}</strong>: Your contribution — <strong style=\"color:#d97706;\">{user} pts</strong> (current: {cur}, archive: {hist}) • AAVSO AID: <strong style=\"color:#0284c7;\">{aavso} pts</strong>",
+      captionNoAavsoFmt: "🌟 <strong>{star}</strong>: showing your contribution (<strong style=\"color:#d97706;\">{user} pts</strong>).",
+      fullPageLcSubtitle: "Use the zoom selector and scrollbars to inspect the light curve in detail",
+      lblZoomX: "Zoom X:",
+      lblZoomY: "Height Y:",
+      btnCloseModal: "✕ Close",
+      filterUrgent: "🔥 Urgent",
+      filterEphem: "⚡ Ephemeris",
+      filterExo: "🪐 Exoplanet",
+      filterEclipse: "⚡ Eclipses",
+      filterStandard: "⚡ Standard",
+      filterCampaign: "⚡ Campaign",
+      filterSymbiotic: "⚡ Symbiotic",
+      filterNova: "⚡ Nova",
+      tipFilterAll: "📋 <strong>All AAVSO Targets (45):</strong> Complete list of priority variable stars, exoplanet transits, novae, and active galactic nuclei.",
+      tipFilterUrgent: "🔥 <strong>Urgent (AAVSO Alert Notices):</strong> High-priority targets with imminent outburst or fading alerts requiring immediate time-series or nightly photometry.",
+      tipFilterEphem: "⚡ <strong>Ephemeris (O−C Timing):</strong> Short-period eclipsing and pulsating variables observed to measure exact times of minima/maxima and track orbital period evolution.",
+      tipFilterExo: "🪐 <strong>Exoplanet (Transits EP):</strong> Host stars with transiting Hot Jupiters producing characteristic U-shaped brightness dips of 0.015–0.030 mag.",
+      tipFilterEclipse: "⚡ <strong>Eclipses (Eclipsing Binaries EA / EB / EW):</strong> Binary systems whose orbital plane lies near the line of sight, producing periodic V- or U-shaped eclipses.",
+      tipFilterStandard: "⚡ <strong>Standard (Class Prototypes):</strong> Benchmark prototype stars of major GCVS/VSX variability classes (Algol, Mira, Z And, RR Lyr, Delta Cep).",
+      tipFilterCampaign: "⚡ <strong>Campaign (AAVSO Observing Campaigns):</strong> Targets of international Pro-Am campaigns supporting space telescopes (HST, JWST, XRISM).",
+      tipFilterSymbiotic: "⚡ <strong>Symbiotic (ZAND Systems):</strong> Interacting binaries consisting of a cool red giant transferring mass onto a hot white dwarf embedded in an ionized nebula.",
+      tipFilterNova: "⚡ <strong>Nova (Classical & Recurrent Novae NA / NB / NR):</strong> Cataclysmic binaries undergoing thermonuclear runaway eruptions on a white dwarf surface."
+    },
+    es: {
+      lblLightCurve: "📈 Curva de Luz (MAG vs JD Mid) — Mis Observaciones",
+      btnExpandFullPage: "⛶ Pantalla completa",
+      btnReloadAavso: "🔄 Actualizar AAVSO",
+      lblLayerCurrent: "Sesión actual (recién cargada)",
+      lblLayerHistory: "Mis conversiones previas (carpeta)",
+      lblAavsoOthers: "Otros observadores AAVSO",
+      lblMyContribution: "Mi contribución (actual + archivo)",
+      legCurrent: "Sesión actual",
+      legHistory: "Conversiones previas",
+      legAavso: "AAVSO (otros)",
+      axisTime: "Tiempo de observación (JD Mid / UTC)",
+      aavsoInitialTitle: "Cargue los datos de la estrella y adjunte su propio archivo Seestar",
+      aavsoInitialDesc: "Indique la estrella en la Sección 1 y pulse «🔭 Cargar datos AAVSO», y adjunte su propio archivo CSV de fotometría Seestar en la Sección 2 para comparar la curva de luz AAVSO (AID) y su contribución.",
+      noUserCurveTitle: "Cargue un archivo CSV de Seestar para trazar su curva de luz",
+      noUserHistoryNote: "No hay conversiones previas en Converted_Photometry_Storage para esta estrella.",
+      noAavsoDataTitleFmt: "No hay datos de curva de luz en AAVSO (AID) para «{star}»",
+      noAavsoDataSub: "Cargue datos de otra estrella o adjunte su propio archivo CSV de Seestar para visualizar sus observaciones.",
+      onlyUserShownNote: "Sin datos en AAVSO para esta estrella — mostrando su contribución.",
+      statsUserFmt: "Actual: {cur} pts | Archivo: {hist} pts | Δm={dm}m",
+      captionAavsoFmt: "🌟 <strong>{star}</strong>: Su contribución — <strong style=\"color:#d97706;\">{user} pts</strong> • AAVSO: <strong style=\"color:#0284c7;\">{aavso} pts</strong>",
+      captionNoAavsoFmt: "🌟 <strong>{star}</strong>: mostrando su contribución (<strong style=\"color:#d97706;\">{user} pts</strong>).",
+      fullPageLcSubtitle: "Use el selector de escala y las barras de desplazamiento para analizar la curva de luz",
+      lblZoomX: "Escala X:",
+      lblZoomY: "Altura Y:",
+      btnCloseModal: "✕ Cerrar",
+      filterUrgent: "🔥 Urgente",
+      filterEphem: "⚡ Efemérides",
+      filterExo: "🪐 Exoplaneta",
+      filterEclipse: "⚡ Eclipses",
+      filterStandard: "⚡ Estándar",
+      filterCampaign: "⚡ Campaña",
+      filterSymbiotic: "⚡ Simbiótica",
+      filterNova: "⚡ Nova"
+    },
+    de: {
+      lblLightCurve: "📈 Lichtkurve (MAG vs JD Mid) — Meine Beobachtungen",
+      btnExpandFullPage: "⛶ Vollbild",
+      btnReloadAavso: "🔄 AAVSO aktualisieren",
+      lblLayerCurrent: "Aktuelle Sitzung (geladen)",
+      lblLayerHistory: "Frühere Konvertierungen (Ordner)",
+      lblAavsoOthers: "Andere AAVSO-Beobachter",
+      lblMyContribution: "Mein Beitrag (aktuell + Archiv)",
+      legCurrent: "Aktuelle Sitzung",
+      legHistory: "Frühere Konvertierungen",
+      legAavso: "AAVSO (Andere)",
+      axisTime: "Beobachtungszeit (JD Mid / UTC)",
+      aavsoInitialTitle: "Sterndaten laden und eigene Seestar-Datei anhängen",
+      aavsoInitialDesc: "Wählen Sie in Abschnitt 1 einen Stern und klicken Sie auf „🔭 AAVSO-Daten laden“, und hängen Sie in Abschnitt 2 Ihre eigene Seestar-CSV-Datei an, um die AAVSO-Lichtkurve (AID) und Ihren Beitrag darzustellen.",
+      noUserCurveTitle: "Laden Sie eine Seestar-CSV-Datei, um Ihre Lichtkurve darzustellen",
+      noUserHistoryNote: "Keine früheren Konvertierungen in Converted_Photometry_Storage für diesen Stern.",
+      noAavsoDataTitleFmt: "Keine Lichtkurvendaten in der AAVSO-Datenbank (AID) für „{star}“",
+      noAavsoDataSub: "Laden Sie Daten für einen anderen Stern oder hängen Sie Ihre eigene Seestar-CSV-Datei an.",
+      onlyUserShownNote: "Keine AAVSO-Punkte — Ihr Beitrag wird angezeigt.",
+      statsUserFmt: "Aktuell: {cur} Pkt | Archiv: {hist} Pkt | Δm={dm}m",
+      captionAavsoFmt: "🌟 <strong>{star}</strong>: Ihr Beitrag — <strong style=\"color:#d97706;\">{user} Pkt</strong> • AAVSO: <strong style=\"color:#0284c7;\">{aavso} Pkt</strong>",
+      captionNoAavsoFmt: "🌟 <strong>{star}</strong>: Ihr Beitrag wird angezeigt (<strong style=\"color:#d97706;\">{user} Pkt</strong>).",
+      fullPageLcSubtitle: "Nutzen Sie Zoom und Bildlaufleisten zur detaillierten Analyse der Lichtkurve",
+      lblZoomX: "Zoom X:",
+      lblZoomY: "Höhe Y:",
+      btnCloseModal: "✕ Schließen",
+      filterUrgent: "🔥 Dringend",
+      filterEphem: "⚡ Ephemeriden",
+      filterExo: "🪐 Exoplanet",
+      filterEclipse: "⚡ Bedeckungen",
+      filterStandard: "⚡ Referenz",
+      filterCampaign: "⚡ Kampagne",
+      filterSymbiotic: "⚡ Symbiotisch",
+      filterNova: "⚡ Nova"
+    },
+    fr: {
+      lblLightCurve: "📈 Courbe de lumière (MAG vs JD Mid) — Mes observations",
+      btnExpandFullPage: "⛶ Plein écran",
+      btnReloadAavso: "🔄 Actualiser AAVSO",
+      lblLayerCurrent: "Session actuelle (chargée)",
+      lblLayerHistory: "Mes conversions précédentes",
+      lblAavsoOthers: "Autres observateurs AAVSO",
+      lblMyContribution: "Ma contribution (actuel + archive)",
+      legCurrent: "Session actuelle",
+      legHistory: "Conversions précédentes",
+      legAavso: "AAVSO (autres)",
+      axisTime: "Temps d'observation (JD Mid / UTC)",
+      aavsoInitialTitle: "Chargez les données de l'étoile et joignez votre propre fichier Seestar",
+      aavsoInitialDesc: "Indiquez l'étoile dans la Section 1 et cliquez sur « 🔭 Charger les données AAVSO », puis joignez votre propre fichier CSV Seestar dans la Section 2 pour afficher la courbe de lumière AAVSO (AID) et votre contribution.",
+      noUserCurveTitle: "Chargez un fichier CSV Seestar pour tracer votre courbe de lumière",
+      noUserHistoryNote: "Aucune conversion précédente dans Converted_Photometry_Storage pour cette étoile.",
+      noAavsoDataTitleFmt: "Aucune donnée de courbe de lumière dans AAVSO (AID) pour « {star} »",
+      noAavsoDataSub: "Chargez les données d'une autre étoile ou joignez votre propre fichier CSV Seestar pour afficher vos observations.",
+      onlyUserShownNote: "Aucune donnée AAVSO — seule votre contribution est affichée.",
+      statsUserFmt: "Actuel : {cur} pts | Archive : {hist} pts | Δm={dm}m",
+      captionAavsoFmt: "🌟 <strong>{star}</strong> : Votre contribution — <strong style=\"color:#d97706;\">{user} pts</strong> • AAVSO : <strong style=\"color:#0284c7;\">{aavso} pts</strong>",
+      captionNoAavsoFmt: "🌟 <strong>{star}</strong> : affichage de votre contribution (<strong style=\"color:#d97706;\">{user} pts</strong>).",
+      fullPageLcSubtitle: "Utilisez le sélecteur d'échelle et les barres de défilement pour examiner la courbe",
+      lblZoomX: "Échelle X :",
+      lblZoomY: "Hauteur Y :",
+      btnCloseModal: "✕ Fermer",
+      filterUrgent: "🔥 Urgent",
+      filterEphem: "⚡ Éphémérides",
+      filterExo: "🪐 Exoplanète",
+      filterEclipse: "⚡ Éclipses",
+      filterStandard: "⚡ Étalon",
+      filterCampaign: "⚡ Campagne",
+      filterSymbiotic: "⚡ Symbiotique",
+      filterNova: "⚡ Nova"
+    },
+    zh: {
+      lblLightCurve: "📈 光变曲线 (MAG vs JD Mid) — 我的观测结果",
+      btnExpandFullPage: "⛶ 全屏查看",
+      btnReloadAavso: "🔄 刷新 AAVSO",
+      lblLayerCurrent: "当前会话（刚加载的数据）",
+      lblLayerHistory: "我之前转换的数据（程序存档）",
+      lblAavsoOthers: "AAVSO 其他观测者数据",
+      lblMyContribution: "我的贡献（当前 + 存档）",
+      legCurrent: "当前会话",
+      legHistory: "历史转换存档",
+      legAavso: "AAVSO 其他观测者",
+      axisTime: "观测时间 (JD Mid / UTC)",
+      aavsoInitialTitle: "请加载恒星数据并附上您自己的 Seestar 测光文件",
+      aavsoInitialDesc: "请在第 1 步输入目标恒星并点击“🔭 加载 AAVSO 数据”，同时在第 2 步附上您自己的 Seestar 测光 CSV 文件，以展示 AAVSO (AID) 光变曲线与您的观测贡献。",
+      noUserCurveTitle: "请加载 Seestar 测光 CSV 文件以绘制您的光变曲线",
+      noUserHistoryNote: "程序文件夹 (Converted_Photometry_Storage) 中尚无该恒星的历史转换记录。",
+      noAavsoDataTitleFmt: "AAVSO (AID) 数据库中暂无恒星“{star}”的光变曲线数据",
+      noAavsoDataSub: "请加载其他恒星的数据，或附上您自己的 Seestar 测光 CSV 文件以显示您的观测结果。",
+      onlyUserShownNote: "AAVSO 数据库暂无该星数据 — 仅显示您的观测贡献。",
+      statsUserFmt: "当前: {cur} 点 | 存档: {hist} 点 | Δm={dm}m",
+      captionAavsoFmt: "🌟 <strong>{star}</strong>: 您的贡献 — <strong style=\"color:#d97706;\">{user} 点</strong> • AAVSO: <strong style=\"color:#0284c7;\">{aavso} 点</strong>",
+      captionNoAavsoFmt: "🌟 <strong>{star}</strong>: 仅显示您的贡献 (<strong style=\"color:#d97706;\">{user} 点</strong>)。",
+      fullPageLcSubtitle: "使用缩放选择器和滚动条详细查看光变曲线",
+      lblZoomX: "水平缩放 X:",
+      lblZoomY: "垂直高度 Y:",
+      btnCloseModal: "✕ 关闭",
+      filterUrgent: "🔥 紧急",
+      filterEphem: "⚡ 星历表",
+      filterExo: "🪐 系外行星",
+      filterEclipse: "⚡ 食变星",
+      filterStandard: "⚡ 标准星",
+      filterCampaign: "⚡ 观测活动",
+      filterSymbiotic: "⚡ 共生星",
+      filterNova: "⚡ 新星"
+    }
+  };
+
+  if (window.I18N) {
+    for (const [lg, dict] of Object.entries(CURVE_AND_FILTER_I18N)) {
+      if (window.I18N[lg]) {
+        Object.assign(window.I18N[lg], dict);
+      }
+    }
+  }
+
+  function trCurve(key) {
+    const lg = (document.getElementById("langSelect")?.value || document.documentElement.lang || "ru").slice(0, 2).toLowerCase();
+    return (CURVE_AND_FILTER_I18N[lg] && CURVE_AND_FILTER_I18N[lg][key]) ||
+           (CURVE_AND_FILTER_I18N.en && CURVE_AND_FILTER_I18N.en[key]) ||
+           CURVE_AND_FILTER_I18N.ru[key] ||
+           key;
+  }
+
+  // Всплывающие подсказки для кнопок фильтра Радара целей
+  const radarFilterTooltipEl = document.getElementById("radarHoverTooltip");
+  function showFilterChipTooltip(ev, tipKey) {
+    if (!radarFilterTooltipEl || !tipKey) return;
+    const htmlText = trCurve(tipKey);
+    if (!htmlText) return;
+    radarFilterTooltipEl.innerHTML = `<div class="radar-tt-desc" style="margin:0; font-size:11.5px; line-height:1.45;">${htmlText}</div>`;
+    radarFilterTooltipEl.classList.add("visible");
+    radarFilterTooltipEl.setAttribute("aria-hidden", "false");
+    moveFilterChipTooltip(ev);
+  }
+  function moveFilterChipTooltip(ev) {
+    if (!radarFilterTooltipEl || !radarFilterTooltipEl.classList.contains("visible")) return;
+    const cx = (ev && ev.clientX) || 180;
+    const cy = (ev && ev.clientY) || 180;
+    const left = Math.min(window.innerWidth - 360, Math.max(10, cx + 14));
+    const top = Math.min(window.innerHeight - 140, Math.max(10, cy + 14));
+    radarFilterTooltipEl.style.left = `${left}px`;
+    radarFilterTooltipEl.style.top = `${top}px`;
+  }
+  function hideFilterChipTooltip() {
+    if (!radarFilterTooltipEl) return;
+    radarFilterTooltipEl.classList.remove("visible");
+    radarFilterTooltipEl.setAttribute("aria-hidden", "true");
+  }
+
+  document.querySelectorAll("#v6RadarFilters [data-filter-tip-key]").forEach(btn => {
+    const tipKey = btn.getAttribute("data-filter-tip-key");
+    btn.addEventListener("mouseenter", (e) => showFilterChipTooltip(e, tipKey));
+    btn.addEventListener("mousemove", moveFilterChipTooltip);
+    btn.addEventListener("mouseleave", hideFilterChipTooltip);
+  });
+
+  // ==========================================================================
+  // СОСТОЯНИЕ ГРАФИКОВ И ГАРАНТИРОВАННЫЙ СБРОС ПРИ НАЖАТИИ «ОЧИСТИТЬ»
+  // ==========================================================================
+  const STATE_CURVES = {
+    star: "",
+    currentSessionPoints: [],
+    pastConvertedPoints: [],
+    aavsoOtherPoints: [],
+    aavsoHasEnoughData: false,
+    aavsoErrorText: "",
+    aavsoLoadedForStar: "",
+    storageDir: "Converted_Photometry_Storage/",
+    fullPageMode: "user_only"
+  };
+  window._STATE_CURVES = STATE_CURVES;
+
+  function normStarKey(name) {
+    if (!name) return "";
+    if (window.AstroLabCore && typeof window.AstroLabCore.getCanonicalStarKey === "function") {
+      return window.AstroLabCore.getCanonicalStarKey(name);
+    }
+    return String(name).replace(/^(V\*|NAME|\*)\s*/i, "").replace(/[\s_\-]+/g, "").toUpperCase();
+  }
+
+  function sameStar(a, b) {
+    if (!a || !b) return false;
+    if (window.AstroLabCore && typeof window.AstroLabCore.areSameStar === "function") {
+      return window.AstroLabCore.areSameStar(a, b);
+    }
+    return normStarKey(a) === normStarKey(b);
+  }
+
+  // Полный сброс состояния обоих графиков, баннеров и полноэкранного окна при нажатии «Очистить»
+  window.resetAllCurvesOnClear = function() {
+    window._clearGenerationCounter = (window._clearGenerationCounter || 0) + 1;
+    if (typeof window.__clearMainClosureState === "function") {
+      window.__clearMainClosureState();
+    }
+    window._exposedCurrentCsvText = "";
+    STATE_CURVES.star = "";
+    STATE_CURVES.currentSessionPoints = [];
+    STATE_CURVES.pastConvertedPoints = [];
+    STATE_CURVES.aavsoOtherPoints = [];
+    STATE_CURVES.aavsoHasEnoughData = false;
+    STATE_CURVES.aavsoErrorText = "";
+    STATE_CURVES.aavsoLoadedForStar = "";
+    window._lastLightCurveScreenPts = [];
+    window._lastAavsoWidgetScreenPts = [];
+    window._lastFullPageScreenPts = [];
+
+    // Скрываем и очищаем информационный баннер
+    const alertEl = document.getElementById("lcDataStatusAlerts");
+    if (alertEl) {
+      alertEl.style.display = "none";
+      alertEl.textContent = "";
+    }
+
+    // Сбрасываем график #1 («Кривая блеска (MAG vs JD Mid)») в исходное пустое состояние
+    const box = document.getElementById("lightCurveBox");
+    const emptyEl = document.getElementById("lightCurveEmptyState");
+    const statsEl = document.getElementById("lightCurveStats");
+    if (box) box.style.display = "none";
+    if (emptyEl) emptyEl.style.display = "flex";
+    if (statsEl) {
+      statsEl.textContent = "";
+      statsEl.style.display = "none";
+    }
+    const lcCanvas = document.getElementById("lightCurveCanvas");
+    if (lcCanvas) {
+      const ctx1 = lcCanvas.getContext("2d");
+      ctx1.clearRect(0, 0, lcCanvas.width, lcCanvas.height);
+    }
+
+    // Сбрасываем график #2 («Известная кривая блеска AAVSO (AID) и Ваш вклад») в исходное пустое состояние:
+    // полностью очищаем и скрываем канвас-таблицу #dssViewportWrap и показываем #aavsoCurveEmptyState
+    const dssWrap = document.getElementById("dssViewportWrap");
+    const dssCanvas = document.getElementById("dssFallbackCanvas");
+    const aavsoEmpty = document.getElementById("aavsoCurveEmptyState");
+    const aavsoTitle = document.getElementById("aavsoEmptyTitle");
+    const aavsoDesc = document.getElementById("aavsoEmptyDesc");
+    const capEl = document.getElementById("starImageCaption");
+
+    if (dssCanvas) {
+      const ctx2 = dssCanvas.getContext("2d");
+      ctx2.clearRect(0, 0, dssCanvas.width, dssCanvas.height);
+    }
+    if (dssWrap) {
+      dssWrap.style.display = "none";
+    }
+    if (capEl) {
+      capEl.textContent = "";
+      capEl.style.display = "none";
+    }
+    if (aavsoEmpty) {
+      aavsoEmpty.style.display = "flex";
+    }
+    if (aavsoTitle) {
+      aavsoTitle.textContent = trCurve("aavsoInitialTitle");
+    }
+    if (aavsoDesc) {
+      aavsoDesc.textContent = trCurve("aavsoInitialDesc");
+    }
+
+    // Перерисовываем полноэкранное окно в пустом состоянии, если оно открыто
+    renderFullPageScrollableChart();
+  };
+
+  function parseCurrentCsvPoints(linesInput) {
+    let lines = linesInput;
+    if (!Array.isArray(lines)) {
+      const raw = (typeof window.__getLiveCurrentCsvText === "function")
+        ? window.__getLiveCurrentCsvText()
+        : (window._exposedCurrentCsvText || "");
+      lines = raw ? String(raw).split(/\r?\n/) : [];
+    }
+    const pts = [];
+    for (let i = 0; i < lines.length; i++) {
+      const raw = String(lines[i] || "").trim();
+      if (!raw || (i === 0 && raw.toLowerCase().startsWith("name,"))) continue;
+      const c = raw.split(",");
+      if (c.length < 19 || c[1].trim().toLowerCase() !== "non-reference star") continue;
+      const mag = parseFloat(c[6].trim());
+      const merr = parseFloat(c[7].trim());
+      const jd1 = parseFloat(c[12].trim());
+      const jd2 = parseFloat(c[15].trim());
+      const jd = (!isNaN(jd1) && !isNaN(jd2)) ? (jd1 + jd2) / 2 : jd1;
+      if (!isNaN(mag) && !isNaN(jd)) {
+        pts.push({
+          star: c[0].trim(),
+          jd: Number(jd.toFixed(6)),
+          mag: Number(mag.toFixed(4)),
+          merr: isNaN(merr) ? 0.012 : Number(merr.toFixed(4)),
+          band: c[5] ? c[5].trim() : "TG",
+          utc: c[11] ? c[11].trim() : "",
+          idx: pts.length + 1
+        });
+      }
+    }
+    pts.sort((a, b) => a.jd - b.jd);
+    return pts;
+  }
+
+  function readLocalConvertedDbSync() {
+    try {
+      const raw = (window.__SEESTAR_DISK_STORE__ && window.__SEESTAR_DISK_STORE__[LOCAL_CONV_DB_KEY]) ||
+                  (window.localStorage && localStorage.getItem(LOCAL_CONV_DB_KEY));
+      if (raw) {
+        const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+        if (parsed && typeof parsed === "object") {
+          return {
+            version: parsed.version || "1.1.0 alpha",
+            sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
+            points: Array.isArray(parsed.points) ? parsed.points : []
+          };
+        }
+      }
+    } catch (_) {}
+    return { version: "1.1.0 alpha", sessions: [], points: [] };
+  }
+
+  function writeLocalConvertedDbSync(dbObj) {
+    try {
+      const s = JSON.stringify(dbObj);
+      if (window.localStorage) localStorage.setItem(LOCAL_CONV_DB_KEY, s);
+      if (window.__SEESTAR_DISK_STORE__) window.__SEESTAR_DISK_STORE__[LOCAL_CONV_DB_KEY] = s;
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.save_store_item === "function") {
+        window.pywebview.api.save_store_item(LOCAL_CONV_DB_KEY, s);
+      }
+    } catch (_) {}
+  }
+
+  function getPastConvertedPointsExcludingCurrent(starName, currentPts) {
+    if (!starName) return [];
+    const db = readLocalConvertedDbSync();
+    const curKeys = new Set((currentPts || []).map(p => `${Number(p.jd).toFixed(5)}_${Number(p.mag).toFixed(3)}`));
+    const seen = new Set();
+    const out = [];
+    for (const pt of (db.points || [])) {
+      if (!pt || !sameStar(pt.star, starName)) continue;
+      const jd = Number(pt.jd);
+      const mag = Number(pt.mag);
+      if (!Number.isFinite(jd) || !Number.isFinite(mag)) continue;
+      const k = `${jd.toFixed(5)}_${mag.toFixed(3)}`;
+      if (curKeys.has(k) || seen.has(k)) continue;
+      seen.add(k);
+      out.push({
+        star: pt.star,
+        jd: Number(jd.toFixed(6)),
+        mag: Number(mag.toFixed(4)),
+        merr: Number(pt.merr) || 0.012,
+        band: pt.band || "TG",
+        obscode: pt.obscode || ""
+      });
+    }
+    out.sort((a, b) => a.jd - b.jd);
+    return out;
+  }
+
+  window.recordConvertedSessionAndRefreshCurve = async function(payload) {
+    if (!payload || !payload.content) return;
+    const starName = String(payload.star || document.getElementById("starid")?.value || STATE_CURVES.star || "").trim();
+    const obscode = String(payload.obscode || document.getElementById("obscode")?.value || "").trim().toUpperCase();
+    const scopeModel = String(payload.scopeModel || window._currentScopeModel || "S50").trim();
+    const fileName = String(payload.fileName || "Seestar_AAVSO.csv").trim();
+
+    const parsedPts = [];
+    for (const rawLine of String(payload.content).split(/\r?\n/)) {
+      const ln = rawLine.trim();
+      if (!ln || ln.startsWith("#") || ln.toLowerCase().startsWith("name,")) continue;
+      const p = ln.split(",");
+      if (p.length >= 4) {
+        const jd = parseFloat(p[1]);
+        const mag = parseFloat(p[2]);
+        const merr = parseFloat(p[3]);
+        if (!isNaN(jd) && !isNaN(mag)) {
+          parsedPts.push({
+            star: starName || p[0].trim(),
+            jd: Number(jd.toFixed(6)),
+            mag: Number(mag.toFixed(4)),
+            merr: isNaN(merr) ? 0.012 : Number(merr.toFixed(4)),
+            band: p[4] ? p[4].trim() : "TG",
+            obscode: obscode
+          });
+        }
+      }
+    }
+
+    const db = readLocalConvertedDbSync();
+    const existingKeys = new Set((db.points || []).map(pt => `${normStarKey(pt.star)}_${Number(pt.jd).toFixed(5)}_${Number(pt.mag).toFixed(3)}`));
+    let added = 0;
+    for (const pt of parsedPts) {
+      const k = `${normStarKey(pt.star)}_${pt.jd.toFixed(5)}_${pt.mag.toFixed(3)}`;
+      if (!existingKeys.has(k)) {
+        existingKeys.add(k);
+        db.points.push(pt);
+        added++;
+      }
+    }
+    db.sessions = db.sessions || [];
+    db.sessions.unshift({
+      id: "conv_" + Date.now(),
+      timestamp: new Date().toISOString(),
+      star: starName,
+      obscode: obscode,
+      scopeModel: scopeModel,
+      fileName: fileName,
+      pointsCount: parsedPts.length,
+      newUniquePoints: added
+    });
+    writeLocalConvertedDbSync(db);
+
+    try {
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_save_converted_session === "function") {
+        await window.pywebview.api.backend_save_converted_session({
+          star: starName, obscode: obscode, scopeModel: scopeModel,
+          fileName: fileName, content: payload.content, points: parsedPts
+        });
+      } else {
+        await fetch("http://127.0.0.1:18765/api/rpc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "save_converted_session",
+            star: starName, obscode: obscode, scopeModel: scopeModel,
+            fileName: fileName, content: payload.content, points: parsedPts
+          }),
+          signal: AbortSignal.timeout(3500)
+        });
+      }
+    } catch (_) {}
+
+    window.renderUserOnlyLightCurveCard();
+    window.renderAavsoAndContributionWidget(starName, false);
+  };
+
+  function buildContinuousSessionTimeMapping(pointsList, plotL, plotW) {
+    if (!pointsList || pointsList.length === 0) return { mapJdToX: () => plotL, segments: [], dividers: [], minJd: 0, maxJd: 1 };
+    const sorted = [...pointsList].sort((a, b) => a.jd - b.jd);
+    const minJd = sorted[0].jd;
+    const maxJd = sorted[sorted.length - 1].jd;
+    const totalSpan = maxJd - minJd;
+
+    const GAP_THRESHOLD_DAYS = 0.08;
+    const segs = [];
+    let curSeg = [sorted[0]];
+    for (let i = 1; i < sorted.length; i++) {
+      if (sorted[i].jd - sorted[i - 1].jd > GAP_THRESHOLD_DAYS) {
+        segs.push(curSeg);
+        curSeg = [sorted[i]];
+      } else {
+        curSeg.push(sorted[i]);
+      }
+    }
+    segs.push(curSeg);
+
+    if (segs.length === 1 || totalSpan <= 0.12) {
+      const span = Math.max(0.0005, totalSpan);
+      return {
+        mapJdToX: (jd) => plotL + ((jd - minJd) / span) * plotW,
+        segments: segs,
+        dividers: [],
+        minJd,
+        maxJd
+      };
+    }
+
+    const gapPx = Math.min(20, Math.max(10, plotW * 0.025));
+    const usableW = Math.max(80, plotW - gapPx * (segs.length - 1));
+    const weights = segs.map(s => Math.max(3, Math.sqrt(s.length)));
+    const sumW = weights.reduce((a, b) => a + b, 0);
+
+    let accX = plotL;
+    const segMeta = [];
+    const dividers = [];
+    for (let i = 0; i < segs.length; i++) {
+      const s = segs[i];
+      const wPx = (weights[i] / sumW) * usableW;
+      const sMin = s[0].jd;
+      const sMax = s[s.length - 1].jd;
+      const sSpan = Math.max(0.0002, sMax - sMin);
+      segMeta.push({ sMin, sMax, sSpan, startX: accX, wPx, count: s.length, pts: s });
+      accX += wPx;
+      if (i < segs.length - 1) {
+        dividers.push(accX + gapPx / 2);
+        accX += gapPx;
+      }
+    }
+
+    function mapJdToX(jd) {
+      for (let i = 0; i < segMeta.length; i++) {
+        const m = segMeta[i];
+        if (jd <= m.sMax + 1e-7 || i === segMeta.length - 1) {
+          if (m.count === 1) return m.startX + m.wPx / 2;
+          const t = Math.max(0, Math.min(1, (jd - m.sMin) / m.sSpan));
+          return m.startX + t * m.wPx;
+        }
+      }
+      return plotL + plotW;
+    }
+
+    return { mapJdToX, segments: segs, dividers, minJd, maxJd };
+  }
+
+  function drawSmoothSessionCurve(ctx, screenPts, strokeColor, fillColorTop, fillColorBot, plotBottomY, lineWidth = 1.6, dashed = false) {
+    if (!screenPts || screenPts.length === 0) return;
+
+    const subRuns = [];
+    let cur = [screenPts[0]];
+    for (let i = 1; i < screenPts.length; i++) {
+      const dt = Math.abs((screenPts[i].jd || 0) - (screenPts[i - 1].jd || 0));
+      const dx = Math.abs(screenPts[i].x - screenPts[i - 1].x);
+      if (dt > 0.08 || dx > 140) {
+        subRuns.push(cur);
+        cur = [screenPts[i]];
+      } else {
+        cur.push(screenPts[i]);
+      }
+    }
+    subRuns.push(cur);
+
+    for (const run of subRuns) {
+      if (run.length < 2) continue;
+      ctx.save();
+      if (dashed) ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(run[0].x, run[0].y);
+      for (let i = 0; i < run.length - 1; i++) {
+        const p0 = run[i === 0 ? i : i - 1];
+        const p1 = run[i];
+        const p2 = run[i + 1];
+        const p3 = run[i + 2 < run.length ? i + 2 : i + 1];
+        const cp1x = p1.x + (p2.x - p0.x) / 6;
+        const cp1y = p1.y + (p2.y - p0.y) / 6;
+        const cp2x = p2.x - (p3.x - p1.x) / 6;
+        const cp2y = p2.y - (p3.y - p1.y) / 6;
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+      }
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = lineWidth;
+      ctx.stroke();
+
+      if (fillColorTop && fillColorBot && run.length >= 3) {
+        ctx.lineTo(run[run.length - 1].x, plotBottomY);
+        ctx.lineTo(run[0].x, plotBottomY);
+        ctx.closePath();
+        const grad = ctx.createLinearGradient(0, 20, 0, plotBottomY);
+        grad.addColorStop(0, fillColorTop);
+        grad.addColorStop(1, fillColorBot);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  // Автоматическое масштабирование верхней легенды канваса, чтобы в любой локализации она никогда не выходила за правую границу
+  function drawFittedCanvasLegend(ctx, legItems, padL, maxRightX, yPos) {
+    let fontSize = 10;
+    const gap = 16;
+    while (fontSize >= 7.5) {
+      ctx.font = `700 ${fontSize}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
+      let totalW = 0;
+      for (const item of legItems) {
+        totalW += 11 + ctx.measureText(item.txt).width + gap;
+      }
+      if (padL + totalW <= maxRightX || fontSize <= 7.5) break;
+      fontSize -= 0.5;
+    }
+    ctx.textAlign = "left";
+    let lx = padL;
+    for (const item of legItems) {
+      if (lx > maxRightX - 20) break;
+      ctx.fillStyle = item.col;
+      ctx.beginPath();
+      ctx.arc(lx + 4, yPos - 3, 3.0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillText(item.txt, lx + 10, yPos);
+      lx += 10 + ctx.measureText(item.txt).width + gap;
+    }
+  }
+
+  // Многострочный перенос текста для полноэкранного пустого канваса
+  function drawWrappedCanvasText(ctx, text, cx, startY, maxWidth, lineHeight) {
+    const words = String(text || "").split(/\s+/);
+    let line = "";
+    let y = startY;
+    for (let n = 0; n < words.length; n++) {
+      const testLine = line ? (line + " " + words[n]) : words[n];
+      if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+        ctx.fillText(line, cx, y);
+        line = words[n];
+        y += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+    if (line) {
+      ctx.fillText(line, cx, y);
+      y += lineHeight;
+    }
+    return y;
+  }
+
+  // ==========================================================================
+  // 1. ГРАФИК #1: КРИВАЯ БЛЕСКА (MAG vs JD Mid) — ТОЛЬКО НАБЛЮДЕНИЯ ПОЛЬЗОВАТЕЛЯ
+  // ==========================================================================
+  window.renderUserOnlyLightCurveCard = function(linesInput, targetCanvasOverride = null, customW = null, customH = null) {
+    const currentPts = parseCurrentCsvPoints(linesInput);
+    const domStar = (document.getElementById("starid")?.value || "").trim();
+    const catStar = (window.STATE && window.STATE.catalogStarName) ? String(window.STATE.catalogStarName).trim() : "";
+    const starFromCsv = currentPts.length > 0 ? currentPts[0].star : "";
+    const activeStar = domStar || catStar || starFromCsv || "";
+    STATE_CURVES.star = activeStar;
+
+    const pastPts = activeStar ? getPastConvertedPointsExcludingCurrent(activeStar, currentPts) : [];
+    STATE_CURVES.currentSessionPoints = currentPts;
+    STATE_CURVES.pastConvertedPoints = pastPts;
+
+    const showCur = document.getElementById("chkLayerCurrentSession")?.checked !== false;
+    const showHist = document.getElementById("chkLayerLocalHistory")?.checked !== false;
+
+    const visibleCur = showCur ? currentPts : [];
+    const visibleHist = showHist ? pastPts : [];
+    const allVisible = [...visibleHist, ...visibleCur];
+
+    if (!targetCanvasOverride) {
+      const alertEl = document.getElementById("lcDataStatusAlerts");
+      if (alertEl) {
+        if (currentPts.length > 0 && pastPts.length === 0) {
+          alertEl.style.display = "block";
+          alertEl.innerHTML = `ℹ️ ${trCurve("noUserHistoryNote")}`;
+        } else {
+          alertEl.style.display = "none";
+          alertEl.textContent = "";
+        }
+      }
+    }
+
+    const box = document.getElementById("lightCurveBox");
+    const emptyEl = document.getElementById("lightCurveEmptyState");
+    const statsEl = document.getElementById("lightCurveStats");
+    const canvas = targetCanvasOverride || document.getElementById("lightCurveCanvas");
+    if (!canvas) return;
+
+    const isLight = document.body.getAttribute("data-theme") === "light";
+
+    if (!targetCanvasOverride && currentPts.length === 0 && pastPts.length === 0) {
+      if (box) box.style.display = "none";
+      if (emptyEl) emptyEl.style.display = "flex";
+      if (statsEl) {
+        statsEl.textContent = "";
+        statsEl.style.display = "none";
+      }
+      window._lastLightCurveScreenPts = [];
+      return;
+    }
+
+    if (!targetCanvasOverride) {
+      if (box) box.style.display = "block";
+      if (emptyEl) emptyEl.style.display = "none";
+    }
+
+    const dpr = Math.max(2, window.devicePixelRatio || 2);
+    const parentW = canvas.parentElement ? canvas.parentElement.clientWidth : 640;
+    const cssW = customW || Math.max(320, parentW || 640);
+    const cssH = customH || 220;
+
+    if (!customW) {
+      canvas.style.width = "100%";
+      canvas.style.height = `${cssH}px`;
+    }
+    if (canvas.width !== Math.round(cssW * dpr) || canvas.height !== Math.round(cssH * dpr)) {
+      canvas.width = Math.round(cssW * dpr);
+      canvas.height = Math.round(cssH * dpr);
+    }
+
+    const ctx = canvas.getContext("2d");
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+
+    ctx.fillStyle = isLight ? "#f8fafc" : "#070b14";
+    ctx.fillRect(0, 0, cssW, cssH);
+
+    if (allVisible.length === 0) {
+      ctx.strokeStyle = isLight ? "rgba(15,23,42,0.12)" : "rgba(148,163,184,0.22)";
+      ctx.strokeRect(12, 12, cssW - 24, cssH - 24);
+      ctx.fillStyle = isLight ? "#475569" : "#94a3b8";
+      ctx.font = "600 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      ctx.textAlign = "center";
+      drawWrappedCanvasText(ctx, trCurve("noUserCurveTitle"), cssW / 2, cssH / 2 - 4, cssW - 64, 18);
+      if (targetCanvasOverride) {
+        window._lastFullPageScreenPts = [];
+      } else {
+        window._lastLightCurveScreenPts = [];
+      }
+      ctx.restore();
+      return;
+    }
+
+    let minMag = Infinity, maxMag = -Infinity;
+    for (const p of allVisible) {
+      const err = Number(p.merr) || 0.015;
+      if (p.mag - err < minMag) minMag = p.mag - err;
+      if (p.mag + err > maxMag) maxMag = p.mag + err;
+    }
+    const magSpan = Math.max(0.04, maxMag - minMag);
+    minMag -= magSpan * 0.08;
+    maxMag += magSpan * 0.08;
+
+    const padL = 54, padR = 18, padT = 30, padB = 28;
+    const plotW = cssW - padL - padR;
+    const plotH = cssH - padT - padB;
+
+    const timeMap = buildContinuousSessionTimeMapping(allVisible, padL, plotW);
+    const getX = jd => timeMap.mapJdToX(jd);
+    const getY = mag => padT + ((mag - minMag) / (maxMag - minMag || 0.04)) * plotH;
+
+    // Сетка по оси Y (Звёздная величина MAG)
+    ctx.strokeStyle = isLight ? "rgba(15,23,42,0.10)" : "rgba(148,163,184,0.15)";
+    ctx.lineWidth = 1;
+    for (let k = 0; k <= 4; k++) {
+      const y = padT + (plotH * k) / 4;
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(cssW - padR, y);
+      ctx.stroke();
+
+      const mVal = minMag + ((maxMag - minMag) * k) / 4;
+      ctx.fillStyle = isLight ? "#334155" : "#94a3b8";
+      ctx.font = "10px monospace";
+      ctx.textAlign = "right";
+      ctx.fillText(mVal.toFixed(2) + "m", padL - 6, y + 3);
+    }
+
+    if (timeMap.dividers && timeMap.dividers.length > 0) {
+      ctx.save();
+      ctx.strokeStyle = isLight ? "rgba(100,116,139,0.4)" : "rgba(148,163,184,0.35)";
+      ctx.setLineDash([3, 3]);
+      for (const dx of timeMap.dividers) {
+        ctx.beginPath();
+        ctx.moveTo(dx, padT);
+        ctx.lineTo(dx, padT + plotH);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    ctx.fillStyle = isLight ? "#475569" : "#94a3b8";
+    ctx.font = "10px monospace";
+    ctx.textAlign = "left";
+    ctx.fillText(`JD ${timeMap.minJd.toFixed(3)}`, padL, cssH - 8);
+    ctx.textAlign = "center";
+    ctx.fillText(trCurve("axisTime"), padL + plotW / 2, cssH - 8);
+    ctx.textAlign = "right";
+    ctx.fillText(`JD ${timeMap.maxJd.toFixed(3)}`, cssW - padR, cssH - 8);
+
+    const colCur = isLight ? "#d97706" : "#f59e0b";
+    const colHist = isLight ? "#059669" : "#10b981";
+    drawFittedCanvasLegend(
+      ctx,
+      [
+        { col: colCur, txt: `${trCurve("legCurrent")}: ${visibleCur.length}` },
+        { col: colHist, txt: `${trCurve("legHistory")}: ${visibleHist.length}` }
+      ],
+      padL,
+      cssW - padR,
+      16
+    );
+
+    const screenPts = [];
+
+    // 1. Слой прошлых конвертаций (Зелёный, компактный радиус 1.8 px)
+    const histScreen = visibleHist.map((p, idx) => ({
+      x: getX(p.jd),
+      y: getY(p.mag),
+      yTop: getY(p.mag - (p.merr || 0.015)),
+      yBot: getY(p.mag + (p.merr || 0.015)),
+      jd: p.jd,
+      mag: p.mag,
+      merr: p.merr || 0.015,
+      idx: idx + 1,
+      layer: "history"
+    }));
+    drawSmoothSessionCurve(
+      ctx,
+      histScreen,
+      colHist,
+      isLight ? "rgba(5, 150, 105, 0.14)" : "rgba(16, 185, 129, 0.15)",
+      "rgba(16, 185, 129, 0.0)",
+      padT + plotH,
+      1.4,
+      false
+    );
+    for (const sp of histScreen) {
+      ctx.strokeStyle = isLight ? "rgba(5, 150, 105, 0.45)" : "rgba(52, 211, 153, 0.45)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(sp.x, sp.yTop);
+      ctx.lineTo(sp.x, sp.yBot);
+      ctx.stroke();
+
+      ctx.fillStyle = colHist;
+      ctx.beginPath();
+      ctx.arc(sp.x, sp.y, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+      screenPts.push(sp);
+    }
+
+    // 2. Слой текущей сессии (Жёлто-оранжевый, компактный радиус 2.0 px)
+    const curScreen = visibleCur.map((p, idx) => ({
+      x: getX(p.jd),
+      y: getY(p.mag),
+      yTop: getY(p.mag - (p.merr || 0.012)),
+      yBot: getY(p.mag + (p.merr || 0.012)),
+      jd: p.jd,
+      mag: p.mag,
+      merr: p.merr || 0.012,
+      idx: idx + 1,
+      layer: "current"
+    }));
+    drawSmoothSessionCurve(
+      ctx,
+      curScreen,
+      colCur,
+      isLight ? "rgba(217, 119, 6, 0.18)" : "rgba(245, 158, 11, 0.20)",
+      "rgba(245, 158, 11, 0.0)",
+      padT + plotH,
+      1.6,
+      false
+    );
+    for (const sp of curScreen) {
+      ctx.strokeStyle = isLight ? "rgba(217, 119, 6, 0.50)" : "rgba(251, 191, 36, 0.50)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(sp.x, sp.yTop);
+      ctx.lineTo(sp.x, sp.yBot);
+      ctx.stroke();
+
+      ctx.fillStyle = colCur;
+      ctx.beginPath();
+      ctx.arc(sp.x, sp.y, 2.0, 0, Math.PI * 2);
+      ctx.fill();
+      screenPts.push(sp);
+    }
+
+    if (!targetCanvasOverride) {
+      window._lastLightCurveScreenPts = screenPts;
+      if (statsEl) {
+        const dm = (maxMag - minMag).toFixed(3);
+        statsEl.textContent = trCurve("statsUserFmt")
+          .replace("{cur}", currentPts.length)
+          .replace("{hist}", pastPts.length)
+          .replace("{dm}", dm);
+        statsEl.style.display = "inline-flex";
+      }
+    } else {
+      window._lastFullPageScreenPts = screenPts;
+    }
+
+    ctx.restore();
+  };
+
+  // ==========================================================================
+  // 2. ГРАФИК #2 (#dssFallbackCanvas в #starImageBox):
+  //    «ИЗВЕСТНАЯ КРИВАЯ БЛЕСКА AAVSO (AID) И ВАШ ВКЛАД»
+  // ==========================================================================
+  async function fetchAavsoCurveSeriesForStar(starName, userObscode = "") {
+    const cleanStar = String(starName || "").trim();
+    if (!cleanStar) {
+      return { ok: false, hasEnoughData: false, points: [] };
+    }
+
+    let rawAavsoPts = [];
+
+    try {
+      let rpcRes = null;
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_fetch_aavso_light_curve === "function") {
+        rpcRes = await window.pywebview.api.backend_fetch_aavso_light_curve({
+          star: cleanStar,
+          daysBack: 240,
+          obscode: userObscode
+        });
+      } else {
+        const r = await fetch("http://127.0.0.1:18765/api/rpc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "fetch_aavso_light_curve", star: cleanStar, daysBack: 240, obscode: userObscode }),
+          signal: AbortSignal.timeout(6500)
+        });
+        if (r.ok) rpcRes = await r.json();
+      }
+      if (rpcRes && Array.isArray(rpcRes.otherObserversPoints) && rpcRes.otherObserversPoints.length > 0) {
+        rawAavsoPts = rpcRes.otherObserversPoints;
+      }
+    } catch (_) {}
+
+    if (rawAavsoPts.length === 0) {
+      const encStar = encodeURIComponent(cleanStar);
+      const nowJd = Date.now() / 86400000 + 2440587.5;
+      const fromJd = (nowJd - 240).toFixed(2);
+      const urls = [
+        `https://app.aavso.org/webobs/results/?star=${encStar}&num_results=200&obs_types=ccd+dslr`,
+        `https://www.aavso.org/vsx/index.php?view=api.delim&ident=${encStar}&fromjd=${fromJd}&tojd=${nowJd.toFixed(2)}&delimiter=,`
+      ];
+      for (const u of urls) {
+        try {
+          const resp = await fetch(u, { signal: AbortSignal.timeout(5500) });
+          if (!resp.ok) continue;
+          const txt = await resp.text();
+          if (txt.includes("<table")) {
+            const trRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+            let m;
+            while ((m = trRe.exec(txt)) !== null) {
+              const cells = [];
+              const tdRe = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+              let cm;
+              while ((cm = tdRe.exec(m[1])) !== null) {
+                cells.push(cm[1].replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").trim());
+              }
+              if (cells.length >= 6) {
+                let jdV = null, magV = null, errV = 0.02, bandV = "V", obsV = "AAVSO";
+                for (let ci = 0; ci < Math.min(cells.length, 6); ci++) {
+                  const v = parseFloat(cells[ci]);
+                  if (!isNaN(v) && v > 2400000 && v < 2500000) {
+                    jdV = v;
+                    if (ci + 1 < cells.length) {
+                      const mv = parseFloat(cells[ci + 1].replace("<", "").trim());
+                      if (!isNaN(mv) && mv > -5 && mv < 25) magV = mv;
+                    }
+                    if (ci + 2 < cells.length) {
+                      const ev = parseFloat(cells[ci + 2]);
+                      if (!isNaN(ev) && ev >= 0 && ev < 5) errV = ev;
+                    }
+                    if (ci + 3 < cells.length) bandV = cells[ci + 3] || "V";
+                    if (ci + 4 < cells.length) obsV = cells[ci + 4] || "AAVSO";
+                    break;
+                  }
+                }
+                if (jdV !== null && magV !== null) {
+                  rawAavsoPts.push({ jd: Number(jdV.toFixed(6)), mag: Number(magV.toFixed(4)), merr: Number(errV.toFixed(4)), band: bandV, obscode: obsV });
+                }
+              }
+            }
+          } else {
+            const lines = txt.split(/\r?\n/);
+            if (lines.length < 2) continue;
+            const hdr = lines[0].toLowerCase().split(",");
+            const jdIdx = hdr.findIndex(h => h.includes("jd"));
+            const magIdx = hdr.findIndex(h => h === "mag" || h.includes("magnitude"));
+            const errIdx = hdr.findIndex(h => h.includes("uncert") || h.includes("err"));
+            const bandIdx = hdr.findIndex(h => h.includes("band") || h.includes("filter"));
+            const obsIdx = hdr.findIndex(h => h.includes("by") || h.includes("obs"));
+            if (jdIdx === -1 || magIdx === -1) continue;
+            for (let i = 1; i < lines.length; i++) {
+              const cols = lines[i].split(",");
+              if (cols.length <= Math.max(jdIdx, magIdx)) continue;
+              const rawM = String(cols[magIdx] || "").trim();
+              if (rawM.startsWith("<")) continue;
+              const jdV = parseFloat(cols[jdIdx]);
+              const magV = parseFloat(rawM);
+              if (!Number.isFinite(jdV) || !Number.isFinite(magV)) continue;
+              rawAavsoPts.push({
+                jd: Number(jdV.toFixed(6)),
+                mag: Number(magV.toFixed(4)),
+                merr: errIdx !== -1 ? (parseFloat(cols[errIdx]) || 0.02) : 0.02,
+                band: bandIdx !== -1 ? String(cols[bandIdx] || "V").trim() : "V",
+                obscode: obsIdx !== -1 ? String(cols[obsIdx] || "").trim().toUpperCase() : "AAVSO"
+              });
+            }
+          }
+          if (rawAavsoPts.length > 0) break;
+        } catch (_) {}
+      }
+    }
+
+    rawAavsoPts.sort((a, b) => a.jd - b.jd);
+    if (rawAavsoPts.length < 5) {
+      return { ok: false, hasEnoughData: false, points: [] };
+    }
+
+    const runs = [];
+    let curRun = [rawAavsoPts[0]];
+    for (let i = 1; i < rawAavsoPts.length; i++) {
+      if (rawAavsoPts[i].jd - rawAavsoPts[i - 1].jd > 0.045) {
+        runs.push(curRun);
+        curRun = [rawAavsoPts[i]];
+      } else {
+        curRun.push(rawAavsoPts[i]);
+      }
+    }
+    runs.push(curRun);
+
+    const denseRuns = runs.filter(r => r.length >= 5);
+    let cleanedAavsoPts = [];
+    if (denseRuns.length > 0) {
+      denseRuns.sort((a, b) => b.length - a.length);
+      const topRuns = denseRuns.slice(0, 2).sort((a, b) => a[0].jd - b[0].jd);
+      for (const r of topRuns) cleanedAavsoPts.push(...r);
+    } else if (rawAavsoPts.length >= 8) {
+      cleanedAavsoPts = rawAavsoPts.slice(-120);
+    } else {
+      return { ok: false, hasEnoughData: false, points: [] };
+    }
+
+    return { ok: true, hasEnoughData: cleanedAavsoPts.length >= 5, points: cleanedAavsoPts };
+  }
+
+  window.renderAavsoAndContributionWidget = async function(explicitStar = "", forceFetch = false, targetCanvasOverride = null, customW = null, customH = null) {
+    const myClearGen = window._clearGenerationCounter || 0;
+    const canvas = targetCanvasOverride || document.getElementById("dssFallbackCanvas");
+    const dssWrap = document.getElementById("dssViewportWrap");
+    const aavsoEmpty = document.getElementById("aavsoCurveEmptyState");
+    const aavsoTitle = document.getElementById("aavsoEmptyTitle");
+    const aavsoDesc = document.getElementById("aavsoEmptyDesc");
+    const capEl = document.getElementById("starImageCaption");
+    if (!canvas) return;
+
+    const currentPts = parseCurrentCsvPoints();
+    const domStar = (document.getElementById("starid")?.value || "").trim();
+    const catStar = (window.STATE && window.STATE.catalogStarName) ? String(window.STATE.catalogStarName).trim() : "";
+    const csvStar = currentPts.length > 0 ? String(currentPts[0].star || "").trim() : "";
+
+    // КРИТИЧЕСКОЕ ПРАВИЛО ПУНКТА 3:
+    // Если поля звезды и CSV-файл пусты (при первом запуске или после нажатия «Очистить»),
+    // activeStar СТРОГО пустой (""), даже если кто-то передал старый explicitStar!
+    const liveStar = domStar || catStar || csvStar || "";
+    const activeStar = liveStar ? String(explicitStar || liveStar).trim() : "";
+    STATE_CURVES.star = activeStar;
+
+    const pastPts = activeStar ? getPastConvertedPointsExcludingCurrent(activeStar, currentPts) : [];
+    const obsCode = (document.getElementById("obscode")?.value || document.getElementById("headerObscodeQuick")?.value || "").trim().toUpperCase();
+
+    if (activeStar && (forceFetch || STATE_CURVES.aavsoLoadedForStar !== normStarKey(activeStar))) {
+      STATE_CURVES.aavsoLoadedForStar = normStarKey(activeStar);
+      const aavsoRes = await fetchAavsoCurveSeriesForStar(activeStar, obsCode);
+
+      // Если во время ожидания ответа пользователь нажал кнопку «Очистить» — немедленно прерываем отрисовку!
+      if (myClearGen !== (window._clearGenerationCounter || 0)) {
+        return;
+      }
+      const domStarNow = (document.getElementById("starid")?.value || "").trim();
+      const catStarNow = (window.STATE && window.STATE.catalogStarName) ? String(window.STATE.catalogStarName).trim() : "";
+      const csvStarNow = (parseCurrentCsvPoints()[0]?.star || "").trim();
+      if (!domStarNow && !catStarNow && !csvStarNow) {
+        STATE_CURVES.aavsoHasEnoughData = false;
+        STATE_CURVES.aavsoOtherPoints = [];
+        STATE_CURVES.aavsoLoadedForStar = "";
+        return;
+      }
+
+      STATE_CURVES.aavsoHasEnoughData = Boolean(aavsoRes.hasEnoughData);
+      STATE_CURVES.aavsoOtherPoints = aavsoRes.points || [];
+    } else if (!activeStar) {
+      STATE_CURVES.aavsoHasEnoughData = false;
+      STATE_CURVES.aavsoOtherPoints = [];
+      STATE_CURVES.aavsoLoadedForStar = "";
+    }
+
+    const showAavso = document.getElementById("chkAavsoWidgetOthers")?.checked !== false;
+    const showUser = document.getElementById("chkAavsoWidgetUser")?.checked !== false;
+
+    const aavsoPts = (activeStar && showAavso && STATE_CURVES.aavsoHasEnoughData) ? STATE_CURVES.aavsoOtherPoints : [];
+    const userCurPts = (activeStar && showUser) ? currentPts : [];
+    const userPastPts = (activeStar && showUser) ? pastPts : [];
+    const totalUserCount = currentPts.length + pastPts.length;
+    const allToPlot = [...aavsoPts, ...userPastPts, ...userCurPts];
+
+    const isLight = document.body.getAttribute("data-theme") === "light";
+
+    // ПУНКТ 1 и ПУНКТ 3: Если точек для построения нет (при первом запуске, после «Очистить» или если у звезды 0 точек) —
+    // НЕ рисуем текст внутри канваса-таблицы #dssFallbackCanvas, а показываем чистый адаптивный HTML-блок #aavsoCurveEmptyState!
+    if (allToPlot.length === 0) {
+      if (!targetCanvasOverride) {
+        const ctxEmpty = canvas.getContext("2d");
+        ctxEmpty.clearRect(0, 0, canvas.width, canvas.height);
+        if (dssWrap) dssWrap.style.display = "none";
+        if (capEl) {
+          capEl.textContent = "";
+          capEl.style.display = "none";
+        }
+        if (aavsoEmpty) aavsoEmpty.style.display = "flex";
+        if (aavsoTitle) {
+          aavsoTitle.textContent = activeStar
+            ? trCurve("noAavsoDataTitleFmt").replace("{star}", activeStar)
+            : trCurve("aavsoInitialTitle");
+        }
+        if (aavsoDesc) {
+          aavsoDesc.textContent = activeStar
+            ? trCurve("noAavsoDataSub")
+            : trCurve("aavsoInitialDesc");
+        }
+        window._lastAavsoWidgetScreenPts = [];
+      } else {
+        // Полноэкранный режим при отсутствии точек
+        const dprFp = Math.max(2, window.devicePixelRatio || 2);
+        const cssWFp = customW || 800;
+        const cssHFp = customH || 520;
+        canvas.width = Math.round(cssWFp * dprFp);
+        canvas.height = Math.round(cssHFp * dprFp);
+        const ctxFp = canvas.getContext("2d");
+        ctxFp.save();
+        ctxFp.setTransform(dprFp, 0, 0, dprFp, 0, 0);
+        ctxFp.clearRect(0, 0, cssWFp, cssHFp);
+        ctxFp.fillStyle = isLight ? "#f8fafc" : "#070b14";
+        ctxFp.fillRect(0, 0, cssWFp, cssHFp);
+        ctxFp.strokeStyle = isLight ? "rgba(15,23,42,0.12)" : "rgba(148,163,184,0.22)";
+        ctxFp.strokeRect(16, 16, cssWFp - 32, cssHFp - 32);
+        ctxFp.fillStyle = isLight ? "#0f172a" : "#e2e8f0";
+        ctxFp.font = "700 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+        ctxFp.textAlign = "center";
+        const fpTitle = activeStar
+          ? trCurve("noAavsoDataTitleFmt").replace("{star}", activeStar)
+          : trCurve("aavsoInitialTitle");
+        const nextY = drawWrappedCanvasText(ctxFp, fpTitle, cssWFp / 2, cssHFp / 2 - 18, cssWFp - 80, 22);
+        ctxFp.fillStyle = isLight ? "#475569" : "#94a3b8";
+        ctxFp.font = "500 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+        drawWrappedCanvasText(ctxFp, activeStar ? trCurve("noAavsoDataSub") : trCurve("aavsoInitialDesc"), cssWFp / 2, nextY + 6, cssWFp - 80, 18);
+        ctxFp.restore();
+        window._lastFullPageScreenPts = [];
+      }
+      return;
+    }
+
+    if (!targetCanvasOverride) {
+      if (aavsoEmpty) aavsoEmpty.style.display = "none";
+      if (dssWrap) dssWrap.style.display = "block";
+    }
+
+    const dpr = Math.max(2, window.devicePixelRatio || 2);
+    const parentW = canvas.parentElement ? canvas.parentElement.clientWidth : 520;
+    const cssW = customW || Math.max(320, parentW || 520);
+    const cssH = customH || 250;
+
+    if (!customW) {
+      canvas.style.width = "100%";
+      canvas.style.height = `${cssH}px`;
+    }
+    if (canvas.width !== Math.round(cssW * dpr) || canvas.height !== Math.round(cssH * dpr)) {
+      canvas.width = Math.round(cssW * dpr);
+      canvas.height = Math.round(cssH * dpr);
+    }
+
+    const ctx = canvas.getContext("2d");
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+
+    ctx.fillStyle = isLight ? "#f8fafc" : "#070b14";
+    ctx.fillRect(0, 0, cssW, cssH);
+
+    let minMag = Infinity, maxMag = -Infinity;
+    for (const p of allToPlot) {
+      const err = Number(p.merr) || 0.02;
+      if (p.mag - err < minMag) minMag = p.mag - err;
+      if (p.mag + err > maxMag) maxMag = p.mag + err;
+    }
+    const magSpan = Math.max(0.05, maxMag - minMag);
+    minMag -= magSpan * 0.08;
+    maxMag += magSpan * 0.08;
+
+    const padL = 54, padR = 16, padT = 30, padB = 28;
+    const plotW = cssW - padL - padR;
+    const plotH = cssH - padT - padB;
+
+    const timeMap = buildContinuousSessionTimeMapping(allToPlot, padL, plotW);
+    const getX = jd => timeMap.mapJdToX(jd);
+    const getY = mag => padT + ((mag - minMag) / (maxMag - minMag || 0.05)) * plotH;
+
+    ctx.strokeStyle = isLight ? "rgba(15,23,42,0.10)" : "rgba(148,163,184,0.14)";
+    ctx.lineWidth = 1;
+    for (let k = 0; k <= 4; k++) {
+      const y = padT + (plotH * k) / 4;
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(cssW - padR, y);
+      ctx.stroke();
+
+      const mVal = minMag + ((maxMag - minMag) * k) / 4;
+      ctx.fillStyle = isLight ? "#334155" : "#94a3b8";
+      ctx.font = "10px monospace";
+      ctx.textAlign = "right";
+      ctx.fillText(mVal.toFixed(2) + "m", padL - 6, y + 3);
+    }
+
+    if (timeMap.dividers && timeMap.dividers.length > 0) {
+      ctx.save();
+      ctx.strokeStyle = isLight ? "rgba(100,116,139,0.4)" : "rgba(148,163,184,0.32)";
+      ctx.setLineDash([3, 3]);
+      for (const dx of timeMap.dividers) {
+        ctx.beginPath();
+        ctx.moveTo(dx, padT);
+        ctx.lineTo(dx, padT + plotH);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    ctx.fillStyle = isLight ? "#475569" : "#94a3b8";
+    ctx.font = "10px monospace";
+    ctx.textAlign = "left";
+    ctx.fillText(`JD ${timeMap.minJd.toFixed(3)}`, padL, cssH - 8);
+    ctx.textAlign = "center";
+    ctx.fillText(trCurve("axisTime"), padL + plotW / 2, cssH - 8);
+    ctx.textAlign = "right";
+    ctx.fillText(`JD ${timeMap.maxJd.toFixed(3)}`, cssW - padR, cssH - 8);
+
+    const aavsoCol = isLight ? "#0284c7" : "#38bdf8";
+    const histCol = isLight ? "#059669" : "#10b981";
+    const curCol = isLight ? "#d97706" : "#f59e0b";
+
+    // Компактная легенда сверху (без текста внутри поля таблицы!)
+    drawFittedCanvasLegend(
+      ctx,
+      [
+        { col: aavsoCol, txt: `${trCurve("legAavso")}: ${aavsoPts.length}` },
+        { col: histCol, txt: `${trCurve("legHistory")}: ${userPastPts.length}` },
+        { col: curCol, txt: `${trCurve("legCurrent")}: ${userCurPts.length}` }
+      ],
+      padL,
+      cssW - padR,
+      16
+    );
+
+    const widgetScreenPts = [];
+
+    // 1. Слой других участников AAVSO (Голубой, радиус точки 1.7 px)
+    const aavsoScreen = aavsoPts.map((p, i) => ({
+      x: getX(p.jd),
+      y: getY(p.mag),
+      yTop: getY(p.mag - (p.merr || 0.02)),
+      yBot: getY(p.mag + (p.merr || 0.02)),
+      jd: p.jd,
+      mag: p.mag,
+      merr: p.merr || 0.02,
+      idx: i + 1,
+      label: `AAVSO (${p.obscode || "AID"})`
+    }));
+    drawSmoothSessionCurve(
+      ctx,
+      aavsoScreen,
+      aavsoCol,
+      isLight ? "rgba(2, 132, 199, 0.16)" : "rgba(56, 189, 248, 0.16)",
+      "rgba(56, 189, 248, 0.0)",
+      padT + plotH,
+      1.4,
+      false
+    );
+    for (const sp of aavsoScreen) {
+      ctx.fillStyle = aavsoCol;
+      ctx.beginPath();
+      ctx.arc(sp.x, sp.y, 1.7, 0, Math.PI * 2);
+      ctx.fill();
+      widgetScreenPts.push(sp);
+    }
+
+    // 2. Слой прошлых конвертаций пользователя (Зелёный, компактный радиус 1.8 px)
+    const pastScreen = userPastPts.map((p, i) => ({
+      x: getX(p.jd),
+      y: getY(p.mag),
+      yTop: getY(p.mag - (p.merr || 0.015)),
+      yBot: getY(p.mag + (p.merr || 0.015)),
+      jd: p.jd,
+      mag: p.mag,
+      merr: p.merr || 0.015,
+      idx: i + 1,
+      label: trCurve("legHistory")
+    }));
+    drawSmoothSessionCurve(ctx, pastScreen, histCol, null, null, padT + plotH, 1.35, false);
+    for (const sp of pastScreen) {
+      ctx.fillStyle = histCol;
+      ctx.beginPath();
+      ctx.arc(sp.x, sp.y, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+      widgetScreenPts.push(sp);
+    }
+
+    // 3. Слой текущей сессии пользователя (Жёлто-оранжевый, компактный радиус 2.0 px)
+    const curScreen = userCurPts.map((p, i) => ({
+      x: getX(p.jd),
+      y: getY(p.mag),
+      yTop: getY(p.mag - (p.merr || 0.012)),
+      yBot: getY(p.mag + (p.merr || 0.012)),
+      jd: p.jd,
+      mag: p.mag,
+      merr: p.merr || 0.012,
+      idx: i + 1,
+      label: trCurve("legCurrent")
+    }));
+    drawSmoothSessionCurve(ctx, curScreen, curCol, null, null, padT + plotH, 1.5, false);
+    for (const sp of curScreen) {
+      ctx.fillStyle = curCol;
+      ctx.beginPath();
+      ctx.arc(sp.x, sp.y, 2.0, 0, Math.PI * 2);
+      ctx.fill();
+      widgetScreenPts.push(sp);
+    }
+
+    if (!targetCanvasOverride) {
+      window._lastAavsoWidgetScreenPts = widgetScreenPts;
+      if (capEl) {
+        capEl.style.display = "block";
+        if (STATE_CURVES.aavsoHasEnoughData) {
+          capEl.innerHTML = trCurve("captionAavsoFmt")
+            .replace("{star}", activeStar || "—")
+            .replace("{user}", totalUserCount)
+            .replace("{cur}", currentPts.length)
+            .replace("{hist}", pastPts.length)
+            .replace("{aavso}", STATE_CURVES.aavsoOtherPoints.length);
+        } else {
+          capEl.innerHTML = trCurve("captionNoAavsoFmt")
+            .replace("{star}", activeStar || "—")
+            .replace("{user}", totalUserCount);
+        }
+      }
+    } else {
+      window._lastFullPageScreenPts = widgetScreenPts;
+    }
+
+    ctx.restore();
+  };
+
+  // ==========================================================================
+  // 3. ПОЛНОЭКРАННОЕ ОКНО «НА ВЕСЬ ЭКРАН» (#fullPageLightCurveModal)
+  // ==========================================================================
+  function renderFullPageScrollableChart() {
+    const modal = document.getElementById("fullPageLightCurveModal");
+    if (!modal || !modal.classList.contains("open")) return;
+
+    const zoomFactor = parseFloat(document.getElementById("fullPageZoomSelect")?.value || "2") || 2;
+    const heightPx = parseInt(document.getElementById("fullPageHeightSelect")?.value || "520", 10) || 520;
+    const scrollContainer = document.getElementById("fullPageLcScrollContainer");
+    const innerWrap = document.getElementById("fullPageLcInnerWrap");
+    const fpCanvas = document.getElementById("fullPageLightCurveCanvas");
+    const titleEl = document.getElementById("fullPageLcTitle");
+    if (!scrollContainer || !innerWrap || !fpCanvas) return;
+
+    const liveCurPts = parseCurrentCsvPoints();
+    const domStar = (document.getElementById("starid")?.value || "").trim();
+    const catStar = (window.STATE && window.STATE.catalogStarName) ? String(window.STATE.catalogStarName).trim() : "";
+    const activeStar = domStar || catStar || (liveCurPts.length > 0 ? liveCurPts[0].star : "");
+    const livePastPts = activeStar ? getPastConvertedPointsExcludingCurrent(activeStar, liveCurPts) : [];
+
+    const baseViewportW = Math.max(720, (scrollContainer.clientWidth || 1100) - 28);
+    const totalPtsCount = STATE_CURVES.fullPageMode === "user_only"
+      ? (liveCurPts.length + livePastPts.length)
+      : (liveCurPts.length + livePastPts.length + (activeStar ? STATE_CURVES.aavsoOtherPoints.length : 0));
+
+    const minScrollW = totalPtsCount > 0 ? Math.max(baseViewportW, totalPtsCount * 7 * (zoomFactor / 2)) : baseViewportW;
+    const targetW = totalPtsCount > 0 ? Math.round(Math.max(baseViewportW * zoomFactor, minScrollW)) : baseViewportW;
+
+    innerWrap.style.width = `${targetW}px`;
+    innerWrap.style.height = `${heightPx}px`;
+    fpCanvas.style.width = `${targetW}px`;
+    fpCanvas.style.height = `${heightPx}px`;
+
+    if (STATE_CURVES.fullPageMode === "user_only") {
+      if (titleEl) titleEl.textContent = trCurve("lblLightCurve") + (activeStar ? ` — ${activeStar}` : "");
+      window.renderUserOnlyLightCurveCard(null, fpCanvas, targetW, heightPx);
+    } else {
+      if (titleEl) titleEl.textContent = trCurve("lblStarFieldPhoto") + (activeStar ? ` — ${activeStar}` : "");
+      window.renderAavsoAndContributionWidget(activeStar, false, fpCanvas, targetW, heightPx);
+    }
+  }
+
+  function openFullPageLightCurveModal(mode = "user_only") {
+    STATE_CURVES.fullPageMode = mode;
+    const modal = document.getElementById("fullPageLightCurveModal");
+    if (!modal) return;
+    modal.classList.add("open");
+    document.body.classList.add("modal-open");
+    setTimeout(() => renderFullPageScrollableChart(), 30);
+  }
+
+  function closeFullPageLightCurveModal() {
+    const modal = document.getElementById("fullPageLightCurveModal");
+    if (!modal) return;
+    modal.classList.remove("open");
+    document.body.classList.remove("modal-open");
+  }
+
+  document.getElementById("btnExpandLcFullPage")?.addEventListener("click", () => openFullPageLightCurveModal("user_only"));
+  document.getElementById("btnExpandAavsoCurveFullPage")?.addEventListener("click", () => openFullPageLightCurveModal("aavso_combined"));
+  document.getElementById("btnCloseFullPageLc")?.addEventListener("click", closeFullPageLightCurveModal);
+  document.getElementById("fullPageZoomSelect")?.addEventListener("change", renderFullPageScrollableChart);
+  document.getElementById("fullPageHeightSelect")?.addEventListener("change", renderFullPageScrollableChart);
+
+  const fpModalEl = document.getElementById("fullPageLightCurveModal");
+  if (fpModalEl) {
+    fpModalEl.addEventListener("click", (e) => {
+      if (e.target === fpModalEl) closeFullPageLightCurveModal();
+    });
+  }
+
+  function bindHoverTooltip(canvasId, tooltipId, getPtsFn) {
+    const cv = document.getElementById(canvasId);
+    const tip = document.getElementById(tooltipId);
+    if (!cv || !tip) return;
+    cv.addEventListener("mousemove", (e) => {
+      const pts = getPtsFn() || [];
+      if (!pts.length) { tip.style.display = "none"; return; }
+      const rect = cv.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      let best = null, minDist = 18;
+      for (const p of pts) {
+        const d = Math.hypot(p.x - mx, p.y - my);
+        if (d < minDist) { minDist = d; best = p; }
+      }
+      if (best) {
+        tip.style.display = "block";
+        tip.textContent = `${best.label || (best.layer === "history" ? trCurve("legHistory") : trCurve("legCurrent"))} | JD ${best.jd.toFixed(5)} | MAG ${best.mag.toFixed(4)} ± ${best.merr.toFixed(4)}`;
+        tip.style.left = `${Math.max(8, Math.min(rect.width - 260, best.x - 100))}px`;
+        tip.style.top = `${Math.max(6, best.y - 34)}px`;
+      } else {
+        tip.style.display = "none";
+      }
+    });
+    cv.addEventListener("mouseleave", () => { tip.style.display = "none"; });
+  }
+
+  bindHoverTooltip("dssFallbackCanvas", "aavsoWidgetHoverTooltip", () => window._lastAavsoWidgetScreenPts);
+  bindHoverTooltip("fullPageLightCurveCanvas", "fullPageLcHoverTooltip", () => window._lastFullPageScreenPts);
+
+  ["chkLayerCurrentSession", "chkLayerLocalHistory"].forEach(id => {
+    document.getElementById(id)?.addEventListener("change", () => {
+      window.renderUserOnlyLightCurveCard();
+      renderFullPageScrollableChart();
+    });
+  });
+  ["chkAavsoWidgetOthers", "chkAavsoWidgetUser"].forEach(id => {
+    document.getElementById(id)?.addEventListener("change", () => {
+      window.renderAavsoAndContributionWidget(STATE_CURVES.star, false);
+      renderFullPageScrollableChart();
+    });
+  });
+
+  document.getElementById("btnReloadAavsoCurve")?.addEventListener("click", () => {
+    const st = (document.getElementById("starid")?.value || STATE_CURVES.star || "").trim();
+    window.renderAavsoAndContributionWidget(st, true);
+  });
+
+  document.getElementById("btnOpenStorageFolderTop")?.addEventListener("click", async () => {
+    try {
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_open_converted_storage_folder === "function") {
+        await window.pywebview.api.backend_open_converted_storage_folder();
+        return;
+      }
+    } catch (_) {}
+    if (typeof showIosNotification === "function") {
+      showIosNotification("📁 Converted_Photometry_Storage", "Раздел папки программы для хранения всех ваших сконвертированных файлов фотометрии.", "", "info");
+    }
+  });
+
+  // При переключении цветовой темы (Тёмная / Светлая) перерисовываем оба графика и полноэкранный вид
+  document.querySelectorAll("[data-theme-btn]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      setTimeout(() => {
+        window.renderUserOnlyLightCurveCard();
+        window.renderAavsoAndContributionWidget(STATE_CURVES.star, false);
+        renderFullPageScrollableChart();
+      }, 25);
+    });
+  });
+
+  // При смене языка перерисовываем оба графика и обновляем пустое состояние
+  ["langSelect", "splashLangSelect"].forEach(selId => {
+    document.getElementById(selId)?.addEventListener("change", () => {
+      setTimeout(() => {
+        window.renderUserOnlyLightCurveCard();
+        window.renderAavsoAndContributionWidget(STATE_CURVES.star, false);
+        renderFullPageScrollableChart();
+      }, 25);
+    });
+  });
+
+  setTimeout(() => {
+    window.renderUserOnlyLightCurveCard();
+    window.renderAavsoAndContributionWidget("", false);
+  }, 80);
 })();

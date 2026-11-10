@@ -1,7 +1,7 @@
 {
   "name": "seestar-astrolab-aavso",
   "productName": "Seestar AstroLab AAVSO",
-  "version": "1.0.0",
+  "version": "1.1.0-alpha",
   "description": "Seestar AstroLab AAVSO — ZWO Seestar (S30, S30PRO, S50, S50PRO) to AAVSO Extended Photometry Converter, SIMBAD/VSP Check Star Resolver & Urgent Target Radar",
   "main": "pwa_mobile_and_electron/electron_main.js",
   "scripts": {

@@ -1,8 +1,8 @@
-APP_VERSION = "1.0.1"
+APP_VERSION = "1.1.0 alpha"
 import sys as _sys, os as _os
 try:
     _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
-    from backend.astrolab_backend_core import PhotometryBackendEngine, SCOPE_PROFILES as BACKEND_SCOPE_PROFILES
+    from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, SCOPE_PROFILES as BACKEND_SCOPE_PROFILES
 except Exception:
     PhotometryBackendEngine = None
     BACKEND_SCOPE_PROFILES = {}
