@@ -1,3 +1,45 @@
+/**
+ * ============================================================================
+ * SEESTAR ASTROLAB AAVSO (v1.0.1) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * ============================================================================
+ * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
+ *   This application converts raw photometry CSV logs from ZWO Seestar smart
+ *   telescopes (S30, S30PRO, S50, S50PRO) into the scientific AAVSO Extended
+ *   file format (#TYPE=EXTENDED) for submission to AAVSO WebObs.
+ *
+ *   Key Modules in this file (`astrolab_engine_bridge.js`):
+ *   - MODULE 1 (`AstroLabCore`): Pure scientific & algorithmic layer:
+ *       * Telescope optical & FOV profiles (`SCOPE_PROFILES`)
+ *       * IAU 88 Latin constellation genitive-to-abbreviation reducer (`IAU_CONSTELLATIONS`)
+ *       * Coordinate distance & Star ID equivalence verification (`compareStarIds`)
+ *   - MODULE 2 (`I18N` & `applyTranslations`): 6-language localization engine
+ *       * Supports Russian (`ru`), English (`en`), Spanish (`es`), German (`de`),
+ *         French (`fr`), and Simplified Chinese (`zh`).
+ *   - MODULE 3 (`showIosNotification`): Dynamic Island non-blocking toast system.
+ *   - MODULE 4 (`querySimbad`, `queryVsp`, `fetchVspUrlViaProxies`): Multi-mirror
+ *       astronomical catalog resolver querying CDS SIMBAD TAP (Strasbourg, Harvard,
+ *       IDIA), AAVSO VSP API v2, and VizieR APASS DR9 with automatic failover.
+ *   - MODULE 5 (`pickCheckStar`): Automatic non-variable Check Star (`KNAME`/`KMAG`)
+ *       selector optimized for the active Seestar sensor FOV and saturation limits.
+ *   - MODULE 6 (`drawLightCurve`): HiDPI HTML5 Canvas light curve plotter (`JD Mid`
+ *       vs inverted stellar magnitude `MAG ± MERR` error bars).
+ *   - MODULE 7 (`previewCsvText`, `checkMagCompatibility`, `checkMerrCompatibility`):
+ *       Pre-conversion parameter reconciliation table & critical mismatch guard.
+ *   - MODULE 8 (`setVspLoadingState`, `btnFetchAll`, `processFile`): Step-by-step
+ *       accordion state machine (Step 1: Observer & Star -> Step 2: CSV File ->
+ *       Step 3: Convert & Submit to AAVSO) and AAVSO Extended file generator.
+ *   - MODULE 9 (`AAVSO_URGENT_CATALOGUE`, `renderV6RadarDock`): Interactive AAVSO
+ *       Alert Notices & Priority Target Radar with scope-specific suitability filter.
+ *   - MODULE 10 (`obsTrackerModal`, `initLocalizedObsDatePicker`): Personal
+ *       observation log tracker with custom 6-language calendar & spline chart.
+ *
+ * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.0.1.
+ *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
+ *   языках для удобства сопровождения разработчиками из любой страны мира.
+ * ============================================================================
+ */
+
 (() => {
   "use strict";
 
@@ -2438,7 +2480,35 @@
     "vspStep1Loading": "⏳ Шаг 1/2: Опрос мировых зеркал SIMBAD (получение координат RA/DEC)...",
     "vspStep2Loading": "⏳ Шаг 2/2: Загрузка карты AAVSO VSP (CHART, KNAME, KMAG)...",
     "lblConvertWait": "Ожидание шагов 1 и 2",
-    "lblConvertReady": "✓ Готово к конвертации"
+    "lblConvertReady": "✓ Готово к конвертации",
+    "phFieldLoading": "⏳ Загрузка...",
+    "vspStep1Simbad": "Шаг 1/2: Опрос мировых зеркал SIMBAD (получение координат RA/DEC и канонического ID звезды)...",
+    "vspStep2Ports": "Шаг 2/2: Координаты RA/DEC загружены! Идет загрузка CHART (VSP), KNAME (AUID) и KMAG по всем портам и зеркалам...",
+    "vspStepAttemptFmt": "Попытка {cur}/{total}: опрос AAVSO VSP через 6 портов и прокси-зеркал...",
+    "vspStepGatewayReplyFmt": "Получен ответ от {name} ({ms} мс)",
+    "vspStepFallbackSimbad": "Переключение на резервные мировые зеркала CDS SIMBAD TAP (Strasbourg, Harvard, IDIA)...",
+    "vspStepFallbackVizier": "Опрос 4 мировых зеркал VizieR (Strasbourg, Harvard, Tokyo, Cape Town)...",
+    "previewWaitSimbadStatus": "Файл Seestar прочитан. Нажмите «🔭 Загрузить SIMBAD + VSP» в разделе 1 для сверки с каталогом.",
+    "merrToleranceLabelFmt": "≤ {ref} m (допуск ≤ 0.15m)",
+    "magOutOfRangeFmt": "{bad} (MAG {mag} вне диапазона {label})",
+    "merrInvalidFmt": "{bad} (некорректная погрешность MERR: {merr})",
+    "merrExceedsFmt": "{bad} (погрешность MERR {merr}m превышает предел 0.1500m)",
+    "critLockBannerMsg": "🔒 Обнаружено критическое расхождение данных. Конвертация заблокирована. Проверьте правильность выбранной звезды и файла.",
+    "critDefaultDetailLine": "Проверьте соответствие координат RA/DEC, имени звезды (STARID) и звёздной величины (MAG).",
+    "critReasonStarFmt": "Не совпадает звезда (STARID): в файле Seestar «{file}», в каталоге SIMBAD «{cat}»",
+    "critReasonRaFmt": "Критическое расхождение координаты RA (> 0.05°): файл {file}° vs SIMBAD {cat}°",
+    "critReasonDecFmt": "Критическое расхождение координаты DEC (> 0.05°): файл {file}° vs SIMBAD {cat}°",
+    "critReasonMagFmt": "Критическое расхождение звёздной величины (MAG): в файле {file}m vs каталог {cat}",
+    "critReasonMerrFmt": "Критическое превышение погрешности (MERR): в файле {file}m vs норматив {cat}",
+    "obsTooltipFramesFmt": "Записей в файле:",
+    "obsTooltipScopeFmt": "Телескоп:",
+    "verifyErrNoExtended": "отсутствует заголовок #TYPE=EXTENDED",
+    "verifyErrNoObscode": "не указан личный код наблюдателя в #OBSCODE",
+    "verifyErrBadObstypeFmt": "неверный #OBSTYPE={val} (требуется #OBSTYPE=DSLR)",
+    "verifyErrNoDataRows": "нет строк фотометрических измерений",
+    "verifyErrColCountFmt": "неверное число колонок ({count} вместо 15)",
+    "verifyErrStarNameFmt": "имя звезды «{raw}» содержит неканонический падеж/подчеркивание (требуется «{norm}»)",
+    "mmUnit": "мм"
   },
   "en": {
     "lcEmptyTitle": "Light curve will appear after loading CSV",
@@ -2474,7 +2544,35 @@
     "vspStep1Loading": "⏳ Step 1/2: Querying global SIMBAD mirrors (fetching RA/DEC)...",
     "vspStep2Loading": "⏳ Step 2/2: Fetching AAVSO VSP chart & check star (CHART, KNAME, KMAG)...",
     "lblConvertWait": "Waiting for Steps 1 & 2",
-    "lblConvertReady": "✓ Ready to convert"
+    "lblConvertReady": "✓ Ready to convert",
+    "phFieldLoading": "⏳ Loading...",
+    "vspStep1Simbad": "Step 1/2: Querying global SIMBAD mirrors (fetching RA/DEC coordinates & canonical star ID)...",
+    "vspStep2Ports": "Step 2/2: RA/DEC coordinates loaded! Fetching CHART (VSP), KNAME (AUID) & KMAG across all ports and mirrors...",
+    "vspStepAttemptFmt": "Attempt {cur}/{total}: querying AAVSO VSP across 6 ports & proxy mirrors...",
+    "vspStepGatewayReplyFmt": "Received response from {name} ({ms} ms)",
+    "vspStepFallbackSimbad": "Switching to fallback global CDS SIMBAD TAP mirrors (Strasbourg, Harvard, IDIA)...",
+    "vspStepFallbackVizier": "Querying 4 global VizieR mirrors (Strasbourg, Harvard, Tokyo, Cape Town)...",
+    "previewWaitSimbadStatus": "Seestar file parsed. Click '🔭 Load SIMBAD + VSP' in Section 1 to verify against the catalog.",
+    "merrToleranceLabelFmt": "≤ {ref} m (tol. ≤ 0.15m)",
+    "magOutOfRangeFmt": "{bad} (MAG {mag} outside range {label})",
+    "merrInvalidFmt": "{bad} (invalid MERR uncertainty: {merr})",
+    "merrExceedsFmt": "{bad} (MERR {merr}m exceeds 0.1500m limit)",
+    "critLockBannerMsg": "🔒 Critical data mismatch detected. Conversion is locked. Please verify the selected star and CSV file.",
+    "critDefaultDetailLine": "Please verify RA/DEC coordinates, target star name (STARID), and stellar magnitude (MAG).",
+    "critReasonStarFmt": "Target star (STARID) mismatch: Seestar file has '{file}', SIMBAD catalog has '{cat}'",
+    "critReasonRaFmt": "Critical RA coordinate mismatch (> 0.05°): file {file}° vs SIMBAD {cat}°",
+    "critReasonDecFmt": "Critical DEC coordinate mismatch (> 0.05°): file {file}° vs SIMBAD {cat}°",
+    "critReasonMagFmt": "Critical stellar magnitude (MAG) mismatch: file {file}m vs catalog {cat}",
+    "critReasonMerrFmt": "Critical uncertainty (MERR) exceeded: file {file}m vs threshold {cat}",
+    "obsTooltipFramesFmt": "Records in file:",
+    "obsTooltipScopeFmt": "Telescope:",
+    "verifyErrNoExtended": "missing #TYPE=EXTENDED header",
+    "verifyErrNoObscode": "missing personal observer code in #OBSCODE",
+    "verifyErrBadObstypeFmt": "invalid #OBSTYPE={val} (#OBSTYPE=DSLR required)",
+    "verifyErrNoDataRows": "no photometric measurement rows found",
+    "verifyErrColCountFmt": "invalid column count ({count} instead of 15)",
+    "verifyErrStarNameFmt": "star name '{raw}' uses non-canonical case/underscore ('{norm}' required)",
+    "mmUnit": "mm"
   },
   "es": {
     "lcEmptyTitle": "La curva de luz aparecerá tras cargar el CSV",
@@ -2535,7 +2633,35 @@
     "vspStep1Loading": "⏳ Paso 1/2: Consultando espejos SIMBAD...",
     "vspStep2Loading": "⏳ Paso 2/2: Cargando carta AAVSO VSP...",
     "lblConvertWait": "Esperando pasos 1 y 2",
-    "lblConvertReady": "✓ Listo para convertir"
+    "lblConvertReady": "✓ Listo para convertir",
+    "phFieldLoading": "⏳ Cargando...",
+    "vspStep1Simbad": "Paso 1/2: Consultando espejos globales de SIMBAD (obteniendo coordenadas RA/DEC e ID canónico)...",
+    "vspStep2Ports": "Paso 2/2: ¡Coordenadas RA/DEC cargadas! Obteniendo CHART (VSP), KNAME (AUID) y KMAG en todos los puertos y espejos...",
+    "vspStepAttemptFmt": "Intento {cur}/{total}: consultando AAVSO VSP a través de 6 puertos y espejos proxy...",
+    "vspStepGatewayReplyFmt": "Respuesta recibida de {name} ({ms} ms)",
+    "vspStepFallbackSimbad": "Cambiando a espejos globales de respaldo CDS SIMBAD TAP (Strasbourg, Harvard, IDIA)...",
+    "vspStepFallbackVizier": "Consultando 4 espejos globales de VizieR (Strasbourg, Harvard, Tokyo, Cape Town)...",
+    "previewWaitSimbadStatus": "Archivo Seestar leído. Haga clic en '🔭 Cargar SIMBAD + VSP' en la Sección 1 para comparar con el catálogo.",
+    "merrToleranceLabelFmt": "≤ {ref} m (tol. ≤ 0.15m)",
+    "magOutOfRangeFmt": "{bad} (MAG {mag} fuera del rango {label})",
+    "merrInvalidFmt": "{bad} (incertidumbre MERR no válida: {merr})",
+    "merrExceedsFmt": "{bad} (MERR {merr}m supera el límite de 0.1500m)",
+    "critLockBannerMsg": "🔒 Se detectó una discrepancia crítica de datos. Conversión bloqueada. Verifique la estrella y el archivo CSV.",
+    "critDefaultDetailLine": "Verifique la correspondencia de coordenadas RA/DEC, nombre de estrella (STARID) y magnitud (MAG).",
+    "critReasonStarFmt": "No coincide la estrella (STARID): archivo Seestar «{file}», catálogo SIMBAD «{cat}»",
+    "critReasonRaFmt": "Discrepancia crítica en coordenada RA (> 0.05°): archivo {file}° vs SIMBAD {cat}°",
+    "critReasonDecFmt": "Discrepancia crítica en coordenada DEC (> 0.05°): archivo {file}° vs SIMBAD {cat}°",
+    "critReasonMagFmt": "Discrepancia crítica de magnitud estelar (MAG): archivo {file}m vs catálogo {cat}",
+    "critReasonMerrFmt": "Superación crítica de incertidumbre (MERR): archivo {file}m vs límite {cat}",
+    "obsTooltipFramesFmt": "Registros en archivo:",
+    "obsTooltipScopeFmt": "Telescopio:",
+    "verifyErrNoExtended": "falta el encabezado #TYPE=EXTENDED",
+    "verifyErrNoObscode": "falta el código personal de observador en #OBSCODE",
+    "verifyErrBadObstypeFmt": "#OBSTYPE={val} incorrecto (se requiere #OBSTYPE=DSLR)",
+    "verifyErrNoDataRows": "no hay filas de mediciones fotométricas",
+    "verifyErrColCountFmt": "número de columnas incorrecto ({count} en lugar de 15)",
+    "verifyErrStarNameFmt": "el nombre de la estrella «{raw}» no es canónico (se requiere «{norm}»)",
+    "mmUnit": "mm"
   },
   "de": {
     "lcEmptyTitle": "Lichtkurve erscheint nach dem Laden der CSV-Datei",
@@ -2607,7 +2733,35 @@
     "vspStep1Loading": "⏳ Schritt 1/2: SIMBAD-Spiegelserver werden abgefragt...",
     "vspStep2Loading": "⏳ Schritt 2/2: AAVSO VSP-Karte wird geladen...",
     "lblConvertWait": "Warte auf Schritt 1 & 2",
-    "lblConvertReady": "✓ Bereit zur Konvertierung"
+    "lblConvertReady": "✓ Bereit zur Konvertierung",
+    "phFieldLoading": "⏳ Lädt...",
+    "vspStep1Simbad": "Schritt 1/2: Abfrage globaler SIMBAD-Spiegelserver (RA/DEC-Koordinaten & kanonische Stern-ID)...",
+    "vspStep2Ports": "Schritt 2/2: RA/DEC-Koordinaten geladen! Lade CHART (VSP), KNAME (AUID) & KMAG über alle Ports und Spiegel...",
+    "vspStepAttemptFmt": "Versuch {cur}/{total}: Abfrage von AAVSO VSP über 6 Ports und Proxy-Spiegel...",
+    "vspStepGatewayReplyFmt": "Antwort erhalten von {name} ({ms} ms)",
+    "vspStepFallbackSimbad": "Wechsel zu globalen CDS SIMBAD TAP-Ausweichspiegeln (Strasbourg, Harvard, IDIA)...",
+    "vspStepFallbackVizier": "Abfrage von 4 globalen VizieR-Spiegelservern (Strasbourg, Harvard, Tokyo, Cape Town)...",
+    "previewWaitSimbadStatus": "Seestar-Datei gelesen. Klicken Sie in Abschnitt 1 auf '🔭 SIMBAD + VSP laden' für den Katalogabgleich.",
+    "merrToleranceLabelFmt": "≤ {ref} m (Tol. ≤ 0.15m)",
+    "magOutOfRangeFmt": "{bad} (MAG {mag} außerhalb Bereich {label})",
+    "merrInvalidFmt": "{bad} (ungültiger MERR-Fehlerwert: {merr})",
+    "merrExceedsFmt": "{bad} (MERR {merr}m überschreitet Grenze 0.1500m)",
+    "critLockBannerMsg": "🔒 Kritische Datenabweichung erkannt. Konvertierung gesperrt. Bitte Stern und CSV-Datei prüfen.",
+    "critDefaultDetailLine": "Bitte überprüfen Sie RA/DEC-Koordinaten, Sternname (STARID) und Helligkeit (MAG).",
+    "critReasonStarFmt": "Stern (STARID) stimmt nicht überein: Seestar-Datei „{file}“, SIMBAD-Katalog „{cat}“",
+    "critReasonRaFmt": "Kritische RA-Koordinatenabweichung (> 0.05°): Datei {file}° vs SIMBAD {cat}°",
+    "critReasonDecFmt": "Kritische DEC-Koordinatenabweichung (> 0.05°): Datei {file}° vs SIMBAD {cat}°",
+    "critReasonMagFmt": "Kritische Helligkeitsabweichung (MAG): Datei {file}m vs Katalog {cat}",
+    "critReasonMerrFmt": "Kritische Überschreitung des Messfehlers (MERR): Datei {file}m vs Grenzwert {cat}",
+    "obsTooltipFramesFmt": "Einträge in Datei:",
+    "obsTooltipScopeFmt": "Teleskop:",
+    "verifyErrNoExtended": "Kopfzeile #TYPE=EXTENDED fehlt",
+    "verifyErrNoObscode": "persönlicher Beobachtercode in #OBSCODE fehlt",
+    "verifyErrBadObstypeFmt": "ungültiger #OBSTYPE={val} (#OBSTYPE=DSLR erforderlich)",
+    "verifyErrNoDataRows": "keine fotometrischen Messzeilen vorhanden",
+    "verifyErrColCountFmt": "falsche Spaltenanzahl ({count} statt 15)",
+    "verifyErrStarNameFmt": "Sternname „{raw}“ ist nicht kanonisch („{norm}“ erforderlich)",
+    "mmUnit": "mm"
   },
   "fr": {
     "lcEmptyTitle": "La courbe de lumière s'affichera après le chargement du CSV",
@@ -2679,7 +2833,35 @@
     "vspStep1Loading": "⏳ Étape 1/2 : Interrogation des miroirs SIMBAD...",
     "vspStep2Loading": "⏳ Étape 2/2 : Chargement de la carte AAVSO VSP...",
     "lblConvertWait": "En attente des étapes 1 et 2",
-    "lblConvertReady": "✓ Prêt à convertir"
+    "lblConvertReady": "✓ Prêt à convertir",
+    "phFieldLoading": "⏳ Chargement...",
+    "vspStep1Simbad": "Étape 1/2 : Interrogation des miroirs mondiaux SIMBAD (coordonnées RA/DEC et ID canonique)...",
+    "vspStep2Ports": "Étape 2/2 : Coordonnées RA/DEC chargées ! Récupération de CHART (VSP), KNAME (AUID) et KMAG sur tous les miroirs...",
+    "vspStepAttemptFmt": "Tentative {cur}/{total} : interrogation d'AAVSO VSP via 6 ports et miroirs proxy...",
+    "vspStepGatewayReplyFmt": "Réponse reçue de {name} ({ms} ms)",
+    "vspStepFallbackSimbad": "Basculement vers les miroirs mondiaux de secours CDS SIMBAD TAP (Strasbourg, Harvard, IDIA)...",
+    "vspStepFallbackVizier": "Interrogation de 4 miroirs mondiaux VizieR (Strasbourg, Harvard, Tokyo, Cape Town)...",
+    "previewWaitSimbadStatus": "Fichier Seestar lu. Cliquez sur '🔭 Charger SIMBAD + VSP' dans la Section 1 pour comparer au catalogue.",
+    "merrToleranceLabelFmt": "≤ {ref} m (tol. ≤ 0.15m)",
+    "magOutOfRangeFmt": "{bad} (MAG {mag} hors plage {label})",
+    "merrInvalidFmt": "{bad} (incertitude MERR invalide : {merr})",
+    "merrExceedsFmt": "{bad} (MERR {merr}m dépasse la limite de 0.1500m)",
+    "critLockBannerMsg": "🔒 Divergence critique des données détectée. Conversion bloquée. Vérifiez l'étoile et le fichier CSV.",
+    "critDefaultDetailLine": "Veuillez vérifier la concordance des coordonnées RA/DEC, du nom d'étoile (STARID) et de la magnitude (MAG).",
+    "critReasonStarFmt": "Étoile (STARID) différente : fichier Seestar « {file} », catalogue SIMBAD « {cat} »",
+    "critReasonRaFmt": "Écart critique de coordonnée RA (> 0.05°) : fichier {file}° vs SIMBAD {cat}°",
+    "critReasonDecFmt": "Écart critique de coordonnée DEC (> 0.05°) : fichier {file}° vs SIMBAD {cat}°",
+    "critReasonMagFmt": "Écart critique de magnitude stellaire (MAG) : fichier {file}m vs catalogue {cat}",
+    "critReasonMerrFmt": "Dépassement critique d'incertitude (MERR) : fichier {file}m vs seuil {cat}",
+    "obsTooltipFramesFmt": "Mesures dans le fichier :",
+    "obsTooltipScopeFmt": "Télescope :",
+    "verifyErrNoExtended": "en-tête #TYPE=EXTENDED manquant",
+    "verifyErrNoObscode": "code d'observateur personnel manquant dans #OBSCODE",
+    "verifyErrBadObstypeFmt": "#OBSTYPE={val} invalide (#OBSTYPE=DSLR requis)",
+    "verifyErrNoDataRows": "aucune ligne de mesure photométrique",
+    "verifyErrColCountFmt": "nombre de colonnes incorrect ({count} au lieu de 15)",
+    "verifyErrStarNameFmt": "le nom d'étoile « {raw} » n'est pas canonique (« {norm} » requis)",
+    "mmUnit": "mm"
   },
   "zh": {
     "lcEmptyTitle": "加载 CSV 文件后将显示光变曲线",
@@ -2751,7 +2933,35 @@
     "vspStep1Loading": "⏳ 第 1/2 步：正在查询全球 SIMBAD 镜像服务器...",
     "vspStep2Loading": "⏳ 第 2/2 步：正在加载 AAVSO VSP 星图与检验星...",
     "lblConvertWait": "等待完成第 1 和第 2 步",
-    "lblConvertReady": "✓ 准备转换"
+    "lblConvertReady": "✓ 准备转换",
+    "phFieldLoading": "⏳ 正在加载...",
+    "vspStep1Simbad": "第 1/2 步：正在查询全球 SIMBAD 镜像服务器（获取 RA/DEC 坐标与标准恒星 ID）...",
+    "vspStep2Ports": "第 2/2 步：RA/DEC 坐标已加载！正在通过所有端口与镜像获取 CHART (VSP)、KNAME (AUID) 与 KMAG...",
+    "vspStepAttemptFmt": "第 {cur}/{total} 次尝试：正在通过 6 个端口与代理镜像查询 AAVSO VSP...",
+    "vspStepGatewayReplyFmt": "已收到来自 {name} 的响应 ({ms} 毫秒)",
+    "vspStepFallbackSimbad": "正在切换至备用全球 CDS SIMBAD TAP 镜像服务器 (Strasbourg, Harvard, IDIA)...",
+    "vspStepFallbackVizier": "正在查询 4 个全球 VizieR 镜像服务器 (Strasbourg, Harvard, Tokyo, Cape Town)...",
+    "previewWaitSimbadStatus": "已读取 Seestar 文件。请在第 1 步点击“🔭 获取 SIMBAD + VSP”以进行星表比对。",
+    "merrToleranceLabelFmt": "≤ {ref} m (容差 ≤ 0.15m)",
+    "magOutOfRangeFmt": "{bad} (MAG {mag} 超出星表范围 {label})",
+    "merrInvalidFmt": "{bad} (无效的 MERR 误差值: {merr})",
+    "merrExceedsFmt": "{bad} (MERR 误差 {merr}m 超出 0.1500m 上限)",
+    "critLockBannerMsg": "🔒 检测到关键数据存在重大差异，转换已锁定。请检查所选恒星与 CSV 文件是否正确。",
+    "critDefaultDetailLine": "请检查 RA/DEC 坐标、目标恒星名称 (STARID) 及视星等 (MAG) 是否一致。",
+    "critReasonStarFmt": "目标恒星 (STARID) 不匹配：Seestar 文件中为“{file}”，SIMBAD 星表中为“{cat}”",
+    "critReasonRaFmt": "赤经坐标 RA 存在严重偏差 (> 0.05°)：文件 {file}° 对比 SIMBAD {cat}°",
+    "critReasonDecFmt": "赤纬坐标 DEC 存在严重偏差 (> 0.05°)：文件 {file}° 对比 SIMBAD {cat}°",
+    "critReasonMagFmt": "视星等 (MAG) 存在严重偏差：文件 {file}m 对比星表范围 {cat}",
+    "critReasonMerrFmt": "测量误差 (MERR) 严重超标：文件 {file}m 对比标准阈值 {cat}",
+    "obsTooltipFramesFmt": "文件测量帧数：",
+    "obsTooltipScopeFmt": "望远镜型号：",
+    "verifyErrNoExtended": "缺少 #TYPE=EXTENDED 头部",
+    "verifyErrNoObscode": "#OBSCODE 中未填写个人观测者代码",
+    "verifyErrBadObstypeFmt": "#OBSTYPE={val} 无效（必须为 #OBSTYPE=DSLR）",
+    "verifyErrNoDataRows": "未找到测光数据行",
+    "verifyErrColCountFmt": "数据列数不正确（当前 {count} 列，标准为 15 列）",
+    "verifyErrStarNameFmt": "恒星名称“{raw}”包含非标准格变化或下划线（应为“{norm}”）",
+    "mmUnit": "毫米"
   }
 };
   Object.keys(COMPLETE_PATCH_I18N).forEach(lg => {
@@ -2769,7 +2979,10 @@
   let currentLang = detectLang();
   const t = key => (I18N[currentLang] && I18N[currentLang][key]) || (I18N.ru && I18N.ru[key]) || (I18N.en && I18N.en[key]) || key;
   const tSafe = key => (I18N[currentLang] && I18N[currentLang][key]) || (I18N.en && I18N.en[key]) || (I18N.ru && I18N.ru[key]) || null;
+  window.t = t;
 
+  // [EN] Applies active language translations (RU/EN/ES/DE/FR/ZH) across all DOM elements, tooltips, placeholders, and dynamic views.
+  // [RU] Применяет переводы выбранного языка (RU/EN/ES/DE/FR/ZH) ко всем элементам DOM, тултипам, плейсхолдерам и динамическим блокам.
   function applyTranslations() {
     document.documentElement.lang = currentLang;
     const tc = document.getElementById("toastContainer"); if (tc) tc.innerHTML = "";
@@ -2830,7 +3043,8 @@
 
   /**
    * ============================================================================
-   * МОДУЛЬ 3: СИСТЕМА УВЕДОМЛЕНИЙ DYNAMIC ISLAND С ПОДСКАЗКАМИ
+   * MODULE 3 [EN]: DYNAMIC ISLAND TOAST NOTIFICATION SYSTEM
+   * МОДУЛЬ 3 [RU]: СИСТЕМА УВЕДОМЛЕНИЙ DYNAMIC ISLAND С ПОДСКАЗКАМИ
    * Разработчику: Заменяет блокирующий window.alert() на дружелюбные iOS-баннеры,
    * в которых каждое уведомление сопровождается пояснением (explain).
    * ============================================================================
@@ -3438,7 +3652,7 @@
         if (!data || (!data.chartid && !data.photometry)) throw new Error("invalid VSP JSON");
         const ms = Math.round(performance.now() - t0);
         log(`    ✓ Шлюз ${entry.p.name} — ${ms}ms`);
-        if (onProgress) onProgress(`Получен ответ от ${entry.p.name} (${ms} мс)`);
+        if (onProgress) onProgress(t("vspStepGatewayReplyFmt").replace("{name}", entry.p.name).replace("{ms}", ms));
         entry.done = true;
         return { data, source: entry.p.name };
       } finally {
@@ -3451,6 +3665,8 @@
     return winner;
   }
 
+  // [EN] Queries AAVSO Variable Star Plotter (VSP) API across multiple mirrors with automatic fallback to CDS SIMBAD TAP and VizieR.
+  // [RU] Опрашивает API карт AAVSO VSP через прокси-шлюзы с автоматическим переключением на резервные зеркала CDS SIMBAD TAP и VizieR.
   async function queryVsp(starName, log, simbadObj = null, onProgress = null) {
     const normStar = normalizeStarForVsp(starName, simbadObj && simbadObj.main_id);
     const cached = getCached(CACHE.vsp, normStar, null) || getCached(CACHE.vsp, starName, null);
@@ -3483,7 +3699,7 @@
     log(t("msgVspProxy"));
     for (let idx = 0; idx < urlsToTry.length; idx++) {
       checkStop();
-      if (onProgress) onProgress(`Попытка ${idx + 1}/${urlsToTry.length}: опрос AAVSO VSP через 6 портов и прокси-зеркал...`, 40 + idx * 15);
+      if (onProgress) onProgress(t("vspStepAttemptFmt").replace("{cur}", idx + 1).replace("{total}", urlsToTry.length), 40 + idx * 15);
       try {
         const res = await fetchVspUrlViaProxies(urlsToTry[idx], log, onProgress);
         if (res && res.data && res.data.chartid) {
@@ -3496,7 +3712,7 @@
 
     // Уровень 2: Если AAVSO VSP не ответил, опрашиваем 3 мировых зеркала CDS SIMBAD TAP (Strasbourg, IDIA, Harvard)
     if (!isNaN(raVal) && !isNaN(decVal)) {
-      if (onProgress) onProgress("Переключение на резервные мировые зеркала CDS SIMBAD TAP (Strasbourg, Harvard, IDIA)...", 75);
+      if (onProgress) onProgress(t("vspStepFallbackSimbad"), 75);
       try {
         const fallbackData = await querySimbadFieldCheckStar(raVal, decVal, normStar, log);
         if (fallbackData) {
@@ -3509,7 +3725,7 @@
       }
 
       // Уровень 3: Опрашиваем 4 мировых зеркала VizieR (Strasbourg, Harvard, Tokyo, IDIA)
-      if (onProgress) onProgress("Опрос 4 мировых зеркал VizieR (Strasbourg, Harvard, Tokyo, Cape Town)...", 88);
+      if (onProgress) onProgress(t("vspStepFallbackVizier"), 88);
       try {
         const vizData = await queryVizierMirrorsCheckStar(raVal, decVal, normStar, log);
         if (vizData) {
@@ -3907,7 +4123,7 @@
     const hasCsv = Boolean(currentCsvText && String(currentCsvText).trim());
     if (!hasCsv && STATE.simbadCatalogLoaded && STATE.catalogStarName) {
       pill.style.display = "inline-flex";
-      pill.textContent = `✓ Данные SIMBAD (${STATE.catalogStarName}) загружены — выберите CSV-файл Seestar для сверки`;
+      pill.textContent = t("simbadPreloadedFmt").replace("{star}", STATE.catalogStarName);
     } else {
       pill.style.display = "none";
     }
@@ -3949,6 +4165,8 @@
     return { minMag: 3.0, maxMag: 15.5, label: "3.00 – 15.50 m (SIMBAD)" };
   }
 
+  // [EN] Validates instrumental Seestar TG magnitude against the star's catalog brightness range (AAVSO VSX / SIMBAD / VSP KMAG).
+  // [RU] Проверяет соответствие инструментальной звездной величины MAG из файла Seestar каталожному диапазону блеска звезды.
   function checkMagCompatibility(fileMag, starName, kmagVal) {
     const bounds = extractCatalogMagBounds(starName, kmagVal);
     if (isNaN(fileMag) || fileMag < -1.5 || fileMag > 18.5) {
@@ -3970,10 +4188,12 @@
     return {
       status: "bad",
       catalogRefText: bounds.label,
-      msg: `${t("matchBad")} (MAG ${fileMag} вне каталожного коридора ${bounds.label})`
+      msg: `${t("matchBad")} (MAG ${fileMag} вне диапазона ${bounds.label})`
     };
   }
 
+  // [EN] Validates photometric uncertainty MERR against optimal (<=0.03m) and acceptable (<=0.15m) differential photometry thresholds.
+  // [RU] Проверяет погрешность фотометрии MERR относительно оптимального (<=0.03m) и допустимого (<=0.15m) порогов.
   function checkMerrCompatibility(fileMerr) {
     const refErr = (STATE.catalogVspMerr != null && !isNaN(STATE.catalogVspMerr))
       ? Number(STATE.catalogVspMerr)
@@ -4066,6 +4286,8 @@
     }
   }
 
+  // [EN] Parses raw Seestar CSV content, reconciles parameters against SIMBAD/VSP catalog data, and renders the comparison table & light curve.
+  // [RU] Парсит CSV-файл Seestar, сверяет параметры с каталогом SIMBAD/VSP и отрисовывает таблицу сравнения и кривую блеска.
   function previewCsvText(text, options = {}) {
     const triggerModalOnMismatch = options.triggerModal !== false;
     const previewCard = document.getElementById("previewCard");
@@ -4136,8 +4358,8 @@
       setFieldStatus("ra", "raHint", null, "");
       setFieldStatus("dec", "decHint", null, "");
 
-      const waitingBadge = `<span style="color:var(--ios-text-secondary); font-size:11px;">⏳ Ожидается SIMBAD</span>`;
-      const notLoadedCell = `<span style="color:var(--ios-text-secondary); font-style:italic;">— (Не загружено)</span>`;
+      const waitingBadge = `<span style="color:var(--ios-text-secondary); font-size:11px;">${escapeHtml(t("waitingSimbadBadge"))}</span>`;
+      const notLoadedCell = `<span style="color:var(--ios-text-secondary); font-style:italic;">${escapeHtml(t("notLoadedSimbadCell"))}</span>`;
 
       tbody.innerHTML = `
         <tr><td>STARID</td><td>${escapeHtml(row.starId)}</td><td>${notLoadedCell}</td><td id="previewStarIdCheckCell">${waitingBadge}</td></tr>
@@ -4356,9 +4578,12 @@
 
   /**
    * ============================================================================
-   * МОДУЛЬ 8: ОБРАБОТЧИКИ КНОПОК ДЕЙСТВИЙ И КОНВЕРТАЦИИ AAVSO EXTENDED
+   * MODULE 8 [EN]: ACTION HANDLERS, PROGRESS TELEMETRY & AAVSO EXTENDED CONVERTER
+   * МОДУЛЬ 8 [RU]: ОБРАБОТЧИКИ КНОПОК ДЕЙСТВИЙ И КОНВЕРТАЦИИ AAVSO EXTENDED
    * ============================================================================
    */
+  // [EN] Updates the SIMBAD/VSP progress bar & localized step status inside Section 1.
+  // [RU] Обновляет индикатор прогресса и локализованный текст шага загрузки SIMBAD/VSP в разделе 1.
   function setVspLoadingState(isLoading, stepText = "", progressPct = 25) {
     const banner = document.getElementById("vspLoadingBanner");
     const stepEl = document.getElementById("vspLoadingStep");
@@ -4374,7 +4599,7 @@
         if (el) {
           el.classList.add("field-loading");
           el.dataset.prevPlaceholder = el.placeholder || "";
-          el.placeholder = "⏳ Загрузка...";
+          el.placeholder = t("phFieldLoading");
         }
       });
     } else {
@@ -4424,7 +4649,7 @@
 
     // Очистим старые значения CHART, KNAME, KMAG перед новой загрузкой и включим наглядный индикатор прогресса (Пункт 4)
     ["chart", "kname", "kmag"].forEach(id => { document.getElementById(id).value = ""; });
-    setVspLoadingState(true, "Шаг 1/2: Опрос мировых зеркал SIMBAD (получение координат RA/DEC и канонического ID звезды)...", 20);
+    setVspLoadingState(true, t("vspStep1Simbad"), 20);
 
     const log = beginLog(`══ SIMBAD & VSP: "${rawStarInput}" ══`, t("fetchingSimbad"));
 
@@ -4453,7 +4678,7 @@
       if (canonicalStar && canonicalStar !== rawStarInput) {
         document.getElementById("starid").value = canonicalStar;
         log(`✓ Каталожная коррекция имени (VSX/SIMBAD): "${rawStarInput}" → "${canonicalStar}"`);
-        setFieldStatus("starid", "staridHint", "warn", `✓ Присвоено каталожное имя VSX: ${canonicalStar} (вместо "${rawStarInput}")`);
+        setFieldStatus("starid", "staridHint", "warn", t("starIdAutoAssigned").replace("{cat}", canonicalStar).replace("{file}", rawStarInput));
       }
 
       document.getElementById("previewCard").style.display = "block";
@@ -4476,7 +4701,7 @@
 
     log("");
     log(t("fetchingVsp"));
-    setVspLoadingState(true, "Шаг 2/2: Координаты RA/DEC загружены! Идет загрузка CHART (VSP), KNAME (AUID) и KMAG по всем портам и зеркалам...", 45);
+    setVspLoadingState(true, t("vspStep2Ports"), 45);
 
     try {
       const { data, source } = await queryVsp(canonicalStar, log, simbadObj, (stepMsg, pct) => {
@@ -5184,7 +5409,7 @@
       const obstypeHeader = headerLines.find(h => h.toUpperCase().startsWith("#OBSTYPE="));
       const obstypeVal = obstypeHeader && obstypeHeader.includes("=") ? obstypeHeader.split("=")[1].trim().toUpperCase() : "";
       if (obstypeVal !== "DSLR") {
-        issues.push(`неверный #OBSTYPE=${obstypeVal || "нет"} (требуется #OBSTYPE=DSLR)`);
+        issues.push(`неверный #OBSTYPE=${obstypeVal || "NONE"} (требуется #OBSTYPE=DSLR)`);
       }
       if (dataLines.length === 0) {
         issues.push("нет строк фотометрических измерений");
@@ -5196,7 +5421,7 @@
           const starRaw = firstCols[0].trim();
           const starNorm = normalizeStarForVsp(starRaw, "");
           if (starRaw !== starNorm || starRaw.includes("_")) {
-            issues.push(`имя звезды «${starRaw}» содержит неканонический падеж/подчеркивание (требуется «${starNorm}»)`);
+            issues.push(`имя звезды "${starRaw}" содержит неканонический падеж/подчеркивание (требуется "${starNorm}")`);
           }
         }
       }
@@ -6649,16 +6874,26 @@
     if (!sortedDesc.length) {
       tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:18px; color:var(--ios-text-secondary);">${escapeHtml(t("obsEmptyTableMsg"))}</td></tr>`;
     } else {
-      tbody.innerHTML = sortedDesc.map(rec => `
-        <tr data-obs-id="${escapeHtml(rec.id)}">
+      tbody.innerHTML = sortedDesc.map((rec, rowIdx) => `
+        <tr data-obs-id="${escapeHtml(String(rec.id || ""))}">
           <td><strong>${escapeHtml(rec.star)}</strong></td>
           <td style="font-family:var(--font-mono);">${escapeHtml(rec.date)}</td>
           <td><strong>${Number(rec.durationMin) || 0}</strong> ${escapeHtml(t("obsMinUnit"))}</td>
           <td><strong>${Number(rec.frames) || 0}</strong> ${escapeHtml(t("obsFramesUnit"))} (${escapeHtml(rec.filter || "TG")})</td>
           <td>Seestar ${escapeHtml(rec.scope || "S50")}</td>
-          <td>
-            <button type="button" class="ios-btn secondary tiny btn-obs-del" data-del-id="${escapeHtml(rec.id)}" style="width:auto; padding:3px 8px;">
-              🗑️ ${escapeHtml(t("btnObsDelete"))}
+          <td style="text-align:center;">
+            <button type="button" class="ios-btn secondary tiny btn-obs-del"
+                    data-del-id="${escapeHtml(String(rec.id || ""))}"
+                    data-del-idx="${rowIdx}"
+                    title="${escapeHtml(t("btnObsDelete"))}"
+                    aria-label="${escapeHtml(t("btnObsDelete"))}">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                <path d="M10 11v6"></path>
+                <path d="M14 11v6"></path>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+              </svg>
             </button>
           </td>
         </tr>
@@ -6666,11 +6901,27 @@
     }
 
     tbody.querySelectorAll(".btn-obs-del").forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
         const delId = btn.getAttribute("data-del-id");
-        obsTrackerRecords = obsTrackerRecords.filter(r => r.id !== delId);
+        const delIdx = parseInt(btn.getAttribute("data-del-idx"), 10);
+        const targetRec = (!isNaN(delIdx) && sortedDesc[delIdx]) ? sortedDesc[delIdx] : null;
+        const prevLen = obsTrackerRecords.length;
+        if (delId) {
+          obsTrackerRecords = obsTrackerRecords.filter(r => String(r && r.id || "") !== String(delId));
+        }
+        if (obsTrackerRecords.length === prevLen && targetRec) {
+          const exactPos = obsTrackerRecords.indexOf(targetRec);
+          if (exactPos !== -1) {
+            obsTrackerRecords.splice(exactPos, 1);
+          }
+        }
         saveObsTrackerDb(obsTrackerRecords);
         renderObsTrackerModal();
+        if (typeof window.refreshLocalizedObsDatePicker === "function") {
+          window.refreshLocalizedObsDatePicker();
+        }
       });
     });
 
@@ -6940,6 +7191,8 @@
   window.previewCsvText = previewCsvText;
   window.hideRadarObjectTooltip = hideRadarObjectTooltip;
   window.I18N = I18N;
+  window.t = t;
+  window.updateAccordionSummaryBadges = updateAccordionSummaryBadges;
   applyTranslations();
   applyScopeModelUI(false);
   applyColorTheme(currentColorTheme, false);
@@ -7800,7 +8053,7 @@
     function getRecordedDatesSet() {
       const set = new Set();
       try {
-        const raw = localStorage.getItem("seestar_obs_tracker_v1");
+        const raw = localStorage.getItem("seestar_obs_tracker_db_v1") || localStorage.getItem("seestar_obs_tracker_v1");
         if (raw) {
           const arr = JSON.parse(raw);
           if (Array.isArray(arr)) arr.forEach(r => { if (r && r.date) set.add(String(r.date)); });

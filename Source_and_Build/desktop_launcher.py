@@ -411,6 +411,20 @@ def main():
     os.makedirs(wv_storage_dir, exist_ok=True)
 
     # КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ ПУНКТОВ 2 и 3: private_mode=False и постоянный storage_path!
+    def _on_closed():
+        try:
+            lock_file = os.path.join(get_persistent_data_dir(), "running_instance.lock")
+            if os.path.exists(lock_file):
+                os.remove(lock_file)
+        except Exception:
+            pass
+        os._exit(0)
+
+    try:
+        window.events.closed += _on_closed
+    except Exception:
+        pass
+
     try:
         webview.start(gui="edgechromium", debug=False, private_mode=False, storage_path=wv_storage_dir)
     except TypeError:
@@ -419,7 +433,7 @@ def main():
         except TypeError:
             webview.start(gui="edgechromium", debug=False)
 
-    sys.exit(0)
+    _on_closed()
 
 
 
