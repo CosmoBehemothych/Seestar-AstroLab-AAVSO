@@ -729,6 +729,11 @@
       btnFetchAll: "🔭 Загрузить SIMBAD + VSP",
       btnDiagnose: "🧪 Диагностика сети и зеркал",
       btnStop: "⏹ Остановить",
+      btnOpenStorageFolder: "📁 Папка Converted_Photometry_Storage",
+      btnAutoCity: "🎯 Авто",
+      lblCityAutoStatus: "Автоопределение активно • координаты синхронизированы с радаром и эфемеридами",
+      previewFileReadHint: "Файл Seestar прочитан. Нажмите «🔭 Загрузить данные AAVSO» в разделе 1 для сверки с каталогом.",
+      critLockBanner: "🔒 Обнаружено критическое расхождение данных. Конвертация заблокирована. Проверьте правильность выбранной звезды и файла.",
       btnClearAll: "🗑 Очистить",
       btnConvert: "Сконвертировать данные для загрузки на AAVSO",
       btnPrevPage: "< Назад",
@@ -1018,7 +1023,7 @@
       minimalNotice: "🍃 Minimal mode enabled: streamlined 1-2 click workflow.",
       compactNotice: "⚡ Compact dashboard: side-by-side parameters and light curve.",
       fullNotice: "🔭 Full Studio enabled: complete multi-step scientific suite and telemetry.",
-      pageTitle: "Seestar AstroLab AAVSO — Фотометрия и Радар целей",
+      pageTitle: "Seestar AstroLab AAVSO — Photometry & Target Radar",
       appTitle: "Seestar AstroLab AAVSO",
       subtitle: "Fetch SIMBAD & AAVSO VSP data with auto-selected check star",
       viewDesktop: "💻 PC (Desktop)",
@@ -1074,6 +1079,11 @@
       btnFetchAll: "🔭 Load SIMBAD + VSP",
       btnDiagnose: "🧪 Network & Mirror Diagnostics",
       btnStop: "⏹ Stop",
+      btnOpenStorageFolder: "📁 Converted_Photometry_Storage Folder",
+      btnAutoCity: "🎯 Auto",
+      lblCityAutoStatus: "Auto-detection active • coordinates synced with radar & ephemerides",
+      previewFileReadHint: "Seestar CSV loaded. Click «🔭 Fetch AAVSO Data» in Step 1 to verify against the catalog.",
+      critLockBanner: "🔒 Critical data mismatch detected. Conversion is locked. Verify the selected star and CSV file.",
       btnClearAll: "🗑 Clear All",
       btnConvert: "Convert Data for AAVSO Upload",
       btnPrevPage: "< Prev",
@@ -1427,6 +1437,11 @@
       btnFetchAll: "🔭 Cargar SIMBAD + VSP",
       btnDiagnose: "🧪 Diagnóstico de Red",
       btnStop: "⏹ Detener",
+      btnOpenStorageFolder: "📁 Carpeta Converted_Photometry_Storage",
+      btnAutoCity: "🎯 Auto",
+      lblCityAutoStatus: "Detección automática activa • coordenadas sincronizadas con radar y efemérides",
+      previewFileReadHint: "Archivo Seestar cargado. Pulse «🔭 Cargar datos AAVSO» en el paso 1 para verificar con el catálogo.",
+      critLockBanner: "🔒 Discrepancia crítica detectada. Conversión bloqueada. Verifique la estrella y el archivo.",
       btnClearAll: "🗑 Borrar Todo",
       btnConvert: "Convertir datos para carga en AAVSO",
       btnPrevPage: "< Anterior",
@@ -1735,6 +1750,11 @@
       btnFetchAll: "🔭 SIMBAD + VSP laden",
       btnDiagnose: "🧪 Netzwerk-Diagnose",
       btnStop: "⏹ Stoppen",
+      btnOpenStorageFolder: "📁 Ordner Converted_Photometry_Storage",
+      btnAutoCity: "🎯 Auto",
+      lblCityAutoStatus: "Auto-Erkennung aktiv • Koordinaten mit Radar & Ephemeriden synchronisiert",
+      previewFileReadHint: "Seestar-Datei geladen. Klicken Sie in Schritt 1 auf «🔭 AAVSO-Daten laden» für den Katalogabgleich.",
+      critLockBanner: "🔒 Kritische Datenabweichung erkannt. Konvertierung gesperrt. Prüfen Sie Stern und Datei.",
       btnClearAll: "🗑 Alles löschen",
       btnConvert: "Daten für AAVSO-Upload konvertieren",
       btnPrevPage: "< Zurück",
@@ -2040,6 +2060,11 @@
       btnFetchAll: "🔭 Charger SIMBAD + VSP",
       btnDiagnose: "🧪 Diagnostic Réseau",
       btnStop: "⏹ Arrêter",
+      btnOpenStorageFolder: "📁 Dossier Converted_Photometry_Storage",
+      btnAutoCity: "🎯 Auto",
+      lblCityAutoStatus: "Détection auto active • coordonnées synchronisées avec le radar et les éphémérides",
+      previewFileReadHint: "Fichier Seestar chargé. Cliquez sur «🔭 Charger les données AAVSO» à l'étape 1 pour vérifier.",
+      critLockBanner: "🔒 Divergence critique détectée. Conversion verrouillée. Vérifiez l'étoile et le fichier.",
       btnClearAll: "🗑 Tout effacer",
       btnConvert: "Convertir les données pour envoi AAVSO",
       btnPrevPage: "< Préc.",
@@ -2347,6 +2372,11 @@
       btnFetchAll: "🔭 获取 SIMBAD + VSP",
       btnDiagnose: "🧪 网络与镜像诊断",
       btnStop: "⏹ 停止",
+      btnOpenStorageFolder: "📁 Converted_Photometry_Storage 文件夹",
+      btnAutoCity: "🎯 自动",
+      lblCityAutoStatus: "自动定位已启用 • 坐标已与目标雷达及星历同步",
+      previewFileReadHint: "已读取 Seestar 文件。请在第 1 步点击“🔭 加载 AAVSO 数据”进行星表核对。",
+      critLockBanner: "🔒 检测到严重数据不匹配，已锁定转换。请检查所选目标星与 CSV 文件。",
       btnClearAll: "🗑 清空所有",
       btnConvert: "转换数据以上传至 AAVSO",
       btnPrevPage: "< 上一页",
@@ -4473,7 +4503,7 @@ function revealAndFocusField(inputId) {
     if (lockBanner) {
       if (isCritical) {
         lockBanner.style.display = "block";
-        lockBanner.textContent = "🔒 Обнаружено критическое расхождение данных. Конвертация заблокирована. Проверьте правильность выбранной звезды и файла.";
+        lockBanner.textContent = t("critLockBanner");
       } else {
         lockBanner.style.display = "none";
         lockBanner.textContent = "";
@@ -4599,7 +4629,7 @@ function revealAndFocusField(inputId) {
       // показываем только столбец «Данные из Seestar», а столбец «Данные из Каталога SIMBAD» оставляем пустым ("— (Не загружено)") без ложной сверки!
       if (previewStatus) {
         previewStatus.style.display = "block";
-        previewStatus.textContent = "Файл Seestar прочитан. Нажмите «🔭 Загрузить SIMBAD + VSP» в разделе 1 для сверки с каталогом.";
+        previewStatus.textContent = t("previewFileReadHint");
       }
       setFieldStatus("starid", "staridHint", null, "");
       setFieldStatus("ra", "raHint", null, "");
@@ -6143,7 +6173,7 @@ function revealAndFocusField(inputId) {
           </div>
           <div class="urgent-compact-meta">
             ${escapeHtml(item.type)} • <span style="color:${magColor}; font-weight:700;">${escapeHtml(item.magRange.split('(')[0].trim())}</span><br>
-            <span data-live-coords="${escapeHtml(item.star)}">RA ${item.ra.toFixed(4)}° DEC ${item.dec >= 0 ? '+' : ''}${item.dec.toFixed(4)}°</span> • <span data-live-status="${escapeHtml(item.star)}" style="color:${vspColor}; font-weight:700;">✓ VSP ${escapeHtml(item.chart)}</span> <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ("📐 макс. " + Math.round(window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec).maxCulmAltDeg) + "° • сейчас " + (Math.round(window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec).currentAltDeg) >= 0 ? "+" : "") + Math.round(window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec).currentAltDeg) + "°") : ""}</span>
+            <span data-live-coords="${escapeHtml(item.star)}">RA ${item.ra.toFixed(4)}° DEC ${item.dec >= 0 ? '+' : ''}${item.dec.toFixed(4)}°</span> • <span data-live-status="${escapeHtml(item.star)}" style="color:${vspColor}; font-weight:700;">✓ VSP ${escapeHtml(item.chart)}</span> <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高"}[_l]||"max."; const _nw = {ru:"сейчас",en:"now",es:"ahora",de:"jetzt",fr:"maint.",zh:"当前"}[_l]||"now"; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_nw} ${Math.round(_a.currentAltDeg)>=0?"+":""}${Math.round(_a.currentAltDeg)}°`; })()) : ""}</span>
           </div>
         </div>
         <div class="urgent-compact-actions">
@@ -6807,7 +6837,7 @@ function revealAndFocusField(inputId) {
             <span class="v6-target-name">${escapeHtml(item.star)} <small style="color:${conColor}; font-weight:500;">(${escapeHtml(item.con)})</small></span>
             <span class="v6-target-badge">${escapeHtml(item.priority)}</span>
           </div>
-          <div class="v6-target-meta">${escapeHtml(item.type)} • AUID: ${escapeHtml(item.auid)} <span class="sky-alt-pill" title="Максимальная высота кульминации и текущая высота над горизонтом выбранного города">${window.computeStarAltitudeForCity ? ("📐 макс. " + Math.round(window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec).maxCulmAltDeg) + "°") : ""}</span></div>
+          <div class="v6-target-meta">${escapeHtml(item.type)} • AUID: ${escapeHtml(item.auid)} <span class="sky-alt-pill" title="Максимальная высота кульминации и текущая высота над горизонтом выбранного города">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高"}[_l]||"max."; return `📐 ${_mx} ${Math.round(window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec).maxCulmAltDeg)}°`; })()) : ""}</span></div>
           <div class="v6-target-scope-fit ${scopeEval.status === 'warn' ? 'scope-warn' : ''}">
             🔭 ${escapeHtml(scopeEval.badgeText)}
           </div>
@@ -13074,6 +13104,24 @@ function revealAndFocusField(inputId) {
   // 14.11. ИНТЕГРАЦИЯ: ЧИСТОТА НЕБА В ВЫБРАННОМ ГОРОДЕ (OPEN-METEO API, 10 МИН),
   //        ФАЗА И ВЫСОТА ЛУНЫ ПО РЕГИОНУ (USNO API v4.0) И ФИЛЬТР ПО ПОЛУШАРИЮ
   // ==========================================================================
+  function getLocalizedCityName(rawCity) {
+    const lang = (typeof currentLang !== "undefined") ? currentLang : (document.getElementById("langSelect")?.value || "ru");
+    if (lang === "ru") return rawCity;
+    const map = {
+      "Чебоксары": "Cheboksary",
+      "Москва": "Moscow",
+      "Санкт-Петербург": "St. Petersburg",
+      "Казань": "Kazan",
+      "Нижний Новгород": "Nizhny Novgorod",
+      "Екатеринбург": "Yekaterinburg",
+      "Новосибирск": "Novosibirsk",
+      "Сочи": "Sochi",
+      "Владивосток": "Vladivostok",
+      "Sydney (Австралия)": "Sydney (Australia)"
+    };
+    return map[rawCity] || rawCity;
+  }
+
   const OBSERVER_GEO_STATE = {
     lat: 56.1439,
     lon: 47.2489,
@@ -13356,8 +13404,8 @@ function revealAndFocusField(inputId) {
 
     if (cityAutoStatusEl) {
       cityAutoStatusEl.textContent = lg === "ru"
-        ? `Активный город: ${OBSERVER_GEO_STATE.city} (${coordsShort}) • ${hemiStr}`
-        : `Active city: ${OBSERVER_GEO_STATE.city} (${coordsShort}) • ${hemiStr}`;
+        ? `Активный город: ${getLocalizedCityName(OBSERVER_GEO_STATE.city)} (${coordsShort}) • ${hemiStr}`
+        : `Active city: ${getLocalizedCityName(OBSERVER_GEO_STATE.city)} (${coordsShort}) • ${hemiStr}`;
     }
 
     // 1. Обновляем расширенный виджет Луны (Пункт 5 — вся информация видна сразу без наведения)
@@ -13385,12 +13433,12 @@ function revealAndFocusField(inputId) {
     }
     if (moonSubTextEl) {
       moonSubTextEl.textContent = lg === "ru"
-        ? `🌍 ${OBSERVER_GEO_STATE.city} (${hemiStr}) • Высота: ${lunar.topoAltDeg >= 0 ? "+" : ""}${lunar.topoAltDeg}° • ${statusStr}`
-        : `🌍 ${OBSERVER_GEO_STATE.city} (${hemiStr}) • Alt: ${lunar.topoAltDeg >= 0 ? "+" : ""}${lunar.topoAltDeg}° • ${statusStr}`;
+        ? `🌍 ${getLocalizedCityName(OBSERVER_GEO_STATE.city)} (${hemiStr}) • Высота: ${lunar.topoAltDeg >= 0 ? "+" : ""}${lunar.topoAltDeg}° • ${statusStr}`
+        : `🌍 ${getLocalizedCityName(OBSERVER_GEO_STATE.city)} (${hemiStr}) • Alt: ${lunar.topoAltDeg >= 0 ? "+" : ""}${lunar.topoAltDeg}° • ${statusStr}`;
     }
     if (moonChipEl) {
       moonChipEl.title = trSky("moonTipFmt")
-        .replace("{city}", OBSERVER_GEO_STATE.city)
+        .replace("{city}", getLocalizedCityName(OBSERVER_GEO_STATE.city))
         .replace("{hemi}", hemiStr)
         .replace("{phase}", phaseLabel)
         .replace("{illum}", finalIllum)
@@ -13413,7 +13461,7 @@ function revealAndFocusField(inputId) {
         ? (cl >= 75 ? "Отлично для наблюдений" : (cl >= 40 ? "Переменная облачность" : "Плотная облачность"))
         : (cl >= 75 ? "Excellent for Photometry" : (cl >= 40 ? "Partly Cloudy" : "Overcast / Poor"));
 
-      skyTextEl.textContent = `${trSky("skyFmt").replace("{city}", OBSERVER_GEO_STATE.city).replace("{clarity}", cl)} — ${qualityWord}`;
+      skyTextEl.textContent = `${trSky("skyFmt").replace("{city}", getLocalizedCityName(OBSERVER_GEO_STATE.city)).replace("{clarity}", cl)} — ${qualityWord}`;
 
       if (skySyncBadgeEl) {
         skySyncBadgeEl.textContent = lg === "ru"
@@ -13430,7 +13478,7 @@ function revealAndFocusField(inputId) {
       }
       if (skyBtnEl) {
         skyBtnEl.title = trSky("skyTipFmt")
-          .replace("{city}", OBSERVER_GEO_STATE.city)
+          .replace("{city}", getLocalizedCityName(OBSERVER_GEO_STATE.city))
           .replace("{lat}", OBSERVER_GEO_STATE.lat.toFixed(2))
           .replace("{lon}", OBSERVER_GEO_STATE.lon.toFixed(2))
           .replace("{clarity}", cl)
@@ -13551,11 +13599,11 @@ function revealAndFocusField(inputId) {
 
           const citySel = document.getElementById("headerCitySelect");
           if (citySel) {
-            const valStr = `${OBSERVER_GEO_STATE.lat.toFixed(4)},${OBSERVER_GEO_STATE.lon.toFixed(4)},${OBSERVER_GEO_STATE.city}`;
+            const valStr = `${OBSERVER_GEO_STATE.lat.toFixed(4)},${OBSERVER_GEO_STATE.lon.toFixed(4)},${getLocalizedCityName(OBSERVER_GEO_STATE.city)}`;
             const opt = document.createElement("option");
             opt.value = valStr;
             const hemiChar = OBSERVER_GEO_STATE.lat >= 0 ? "N" : "S";
-            opt.textContent = `${OBSERVER_GEO_STATE.city} (${Math.abs(OBSERVER_GEO_STATE.lat).toFixed(1)}°${hemiChar})`;
+            opt.textContent = `${getLocalizedCityName(OBSERVER_GEO_STATE.city)} (${Math.abs(OBSERVER_GEO_STATE.lat).toFixed(1)}°${hemiChar})`;
             citySel.insertBefore(opt, citySel.firstChild);
             citySel.value = valStr;
           }
@@ -13635,7 +13683,7 @@ function revealAndFocusField(inputId) {
   function syncSelectWithObserverState() {
     const citySel = document.getElementById("headerCitySelect");
     if (!citySel) return;
-    const curCityNorm = String(OBSERVER_GEO_STATE.city || "").trim().toLowerCase();
+    const curCityNorm = String(getLocalizedCityName(OBSERVER_GEO_STATE.city) || "").trim().toLowerCase();
     const matchOpt = Array.from(citySel.options).find(opt => {
       if (!opt.value || opt.value === "custom") return false;
       const p = opt.value.split(",");
@@ -13650,7 +13698,7 @@ function revealAndFocusField(inputId) {
     if (matchOpt) {
       citySel.value = matchOpt.value;
     } else {
-      const valStr = `${OBSERVER_GEO_STATE.lat.toFixed(4)},${OBSERVER_GEO_STATE.lon.toFixed(4)},${OBSERVER_GEO_STATE.city}`;
+      const valStr = `${OBSERVER_GEO_STATE.lat.toFixed(4)},${OBSERVER_GEO_STATE.lon.toFixed(4)},${getLocalizedCityName(OBSERVER_GEO_STATE.city)}`;
       const existing = Array.from(citySel.options).find(o => o.value === valStr);
       if (existing) {
         citySel.value = valStr;
@@ -13658,7 +13706,7 @@ function revealAndFocusField(inputId) {
         const opt = document.createElement("option");
         opt.value = valStr;
         const hemiChar = OBSERVER_GEO_STATE.lat >= 0 ? "N" : "S";
-        opt.textContent = `${OBSERVER_GEO_STATE.city} (${Math.abs(OBSERVER_GEO_STATE.lat).toFixed(1)}°${hemiChar})`;
+        opt.textContent = `${getLocalizedCityName(OBSERVER_GEO_STATE.city)} (${Math.abs(OBSERVER_GEO_STATE.lat).toFixed(1)}°${hemiChar})`;
         citySel.insertBefore(opt, citySel.firstChild);
         citySel.value = valStr;
       }
