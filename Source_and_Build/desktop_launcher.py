@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""
 ================================================================================
-Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.1.0 alpha)
+Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.1.0 beta)
 ================================================================================
 - Открывает локальный интерфейс pwa_mobile_and_electron/index.html внутри
   собственного нативного окна (Microsoft Edge WebView2).
@@ -34,8 +34,8 @@ except ImportError:
         start_background_rpc_server = None
 
 
-APP_VERSION = "1.1.0 alpha"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.1.0 alpha)"
+APP_VERSION = "1.1.0 beta"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.1.0 beta)"
 APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
 
 if sys.platform == "win32":
@@ -57,16 +57,49 @@ def get_base_dir():
 
 def get_html_path():
     base_dir = get_base_dir()
+    exe_dir = os.path.dirname(os.path.abspath(sys.argv[0])) if sys.argv else base_dir
+    local_appdata = os.environ.get("LOCALAPPDATA") or os.path.join(os.path.expanduser("~"), "AppData", "Local")
+    installed_default = os.path.join(local_appdata, "Programs", "Seestar_AstroLab")
+
     candidates = [
         os.path.join(base_dir, "pwa_mobile_and_electron", "index.html"),
+        os.path.join(exe_dir, "pwa_mobile_and_electron", "index.html"),
         os.path.join(os.path.dirname(base_dir), "pwa_mobile_and_electron", "index.html"),
+        os.path.join(os.path.dirname(exe_dir), "pwa_mobile_and_electron", "index.html"),
         os.path.join(base_dir, "Source_and_Build", "pwa_mobile_and_electron", "index.html"),
         os.path.join(os.path.dirname(base_dir), "Source_and_Build", "pwa_mobile_and_electron", "index.html"),
+        os.path.join(installed_default, "pwa_mobile_and_electron", "index.html"),
         os.path.join(base_dir, "index.html"),
     ]
     for p in candidates:
-        if os.path.isfile(p):
+        if p and os.path.isfile(p):
             return os.path.abspath(p)
+
+    # [RU] Резервная самораспаковка UI из собственного .exe архива (для автономного Portable-запуска из любой папки)
+    # [EN] Self-extract UI bundle from own .exe zip payload if index.html is not found in adjacent folders
+    try:
+        import zipfile as _zf
+        import io as _io
+        self_bin = os.path.abspath(sys.argv[0])
+        if os.path.isfile(self_bin):
+            with open(self_bin, "rb") as _bf:
+                _raw = _bf.read()
+            _pk = _raw.find(b"PK\x03\x04")
+            if _pk != -1:
+                _runtime_ui = os.path.join(get_persistent_data_dir(), "ui_runtime_v110_beta")
+                with _zf.ZipFile(_io.BytesIO(_raw[_pk:]), "r") as _z:
+                    for _m in _z.namelist():
+                        if _m.startswith("pwa_mobile_and_electron/") and not _m.endswith("/"):
+                            _dst = os.path.join(_runtime_ui, _m)
+                            os.makedirs(os.path.dirname(_dst), exist_ok=True)
+                            with open(_dst, "wb") as _outf:
+                                _outf.write(_z.read(_m))
+                _extr_html = os.path.join(_runtime_ui, "pwa_mobile_and_electron", "index.html")
+                if os.path.isfile(_extr_html):
+                    return os.path.abspath(_extr_html)
+    except Exception:
+        pass
+
     return os.path.abspath(candidates[0])
 
 
@@ -447,6 +480,19 @@ def main():
         sys.exit(1)
 
     apply_win32_window_icon(APP_TITLE, icon_file)
+
+    # [RU] Очищаем дисковый HTTP/JS-кэш WebView2 перед открытием окна, чтобы обновления интерфейса
+    #      (astrolab_view_template.js, astrolab_engine_bridge.js, astrolab_styles.css) всегда загружались свежими!
+    # [EN] Purge WebView2 disk cache before creating the window so updated JS/CSS bundles always load fresh.
+    try:
+        import shutil as _shutil
+        _wv_root = os.path.join(get_persistent_data_dir(), "WebView2_Storage", "EBWebView", "Default")
+        for _cache_sub in ("Cache", "Code Cache", "GPUCache", "Service Worker", "DawnCache"):
+            _cp = os.path.join(_wv_root, _cache_sub)
+            if os.path.isdir(_cp):
+                _shutil.rmtree(_cp, ignore_errors=True)
+    except Exception:
+        pass
 
     window = webview.create_window(
         title=APP_TITLE,

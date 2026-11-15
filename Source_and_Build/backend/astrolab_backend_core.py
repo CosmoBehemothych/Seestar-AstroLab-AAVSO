@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ================================================================================
-Seestar AstroLab AAVSO v1.0.1 — Unified Python Backend Core (Single Source of Truth)
+Seestar AstroLab AAVSO v1.1.0 beta — Unified Python Backend Core (Single Source of Truth)
 Author: CosmoBehemothych (https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO)
 ================================================================================
 Централизованное серверное/бэкенд-ядро бизнес-логики приложения:
@@ -42,7 +42,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-APP_VERSION = "1.0.1"
+APP_VERSION = "1.1.0 beta"
 CRITICAL_COORD_DIFF_DEG = 0.05
 EXACT_COORD_MATCH_DEG = 0.00001
 DSS2_SURVEY_FOV_DEG = 2.40
@@ -200,34 +200,76 @@ class PhotometryBackendEngine:
         prof["frameRect"] = {"x": x_px, "y": y_px, "w": w_px, "h": h_px}
         return prof
 
+    # ==========================================================================
+    # [RU] ОПТИМИЗАЦИЯ ПРОИЗВОДИТЕЛЬНОСТИ ДЛЯ БУДУЩИХ РАЗРАБОТЧИКОВ:
+    #   1) Таблица родительных падежей 88 созвездий IAU (_SORTED_CONSTELLATION_GENITIVES)
+    #      предварительно сортируется по убыванию длины ключа 1 раз при загрузке класса,
+    #      исключая повторный вызов sorted(...) при каждой проверке Star ID.
+    #   2) Скомпилированы регулярные выражения (_RE_STAR_PREFIX, _RE_MULTI_SPACE, _RE_NON_ALNUM)
+    #      и добавлен потокобезопасный in-memory кэш (_star_norm_cache, _canonical_key_cache)
+    #      для мгновенного O(1) сопоставления имен звезд при пакетной обработке CSV.
+    # [EN] DEVELOPER PERFORMANCE OPTIMIZATION NOTE:
+    #   1) Pre-sorted IAU 88 constellation genitive pairs (_SORTED_CONSTELLATION_GENITIVES)
+    #      once at class initialization instead of calling sorted() on every Star ID lookup.
+    #   2) Pre-compiled regex patterns and added in-memory memoization caches
+    #      (_star_norm_cache, _canonical_key_cache) for O(1) Star ID normalization.
+    # ==========================================================================
+    _SORTED_CONSTELLATION_GENITIVES: List[Tuple[str, str]] = sorted(
+        CONSTELLATION_GENITIVES.items(), key=lambda x: -len(x[0])
+    )
+    _RE_STAR_PREFIX = re.compile(r"^(?:V\*\s*|NAME\s*|\*\s*)", flags=re.I)
+    _RE_MULTI_SPACE = re.compile(r"\s+")
+    _RE_KEY_SEP = re.compile(r"[\s_\-]+")
+    _star_norm_cache: Dict[Tuple[str, str], str] = {}
+    _canonical_key_cache: Dict[str, str] = {}
+
     @classmethod
     def clean_star_token(cls, raw_name: Optional[str]) -> str:
         if not raw_name:
             return ""
-        s = re.sub(r"^(?:V\*\s*|NAME\s*|\*\s*)", "", str(raw_name).strip(), flags=re.I)
-        s = re.sub(r"\s+", " ", s).strip()
+        s = cls._RE_STAR_PREFIX.sub("", str(raw_name).strip())
+        s = cls._RE_MULTI_SPACE.sub(" ", s).strip()
         return s
 
     @classmethod
     def normalize_star_for_vsp(cls, raw_name: Optional[str], catalog_main_id: Optional[str] = None) -> str:
+        cache_key = (str(raw_name or ""), str(catalog_main_id or ""))
+        cached = cls._star_norm_cache.get(cache_key)
+        if cached is not None:
+            return cached
+
         candidate = cls.clean_star_token(catalog_main_id or raw_name or "")
         if not candidate:
             return ""
         lower = candidate.lower()
-        for gen_full, abbr in sorted(CONSTELLATION_GENITIVES.items(), key=lambda x: -len(x[0])):
+        result = candidate
+        for gen_full, abbr in cls._SORTED_CONSTELLATION_GENITIVES:
             if lower.endswith(" " + gen_full):
                 prefix = candidate[: -(len(gen_full) + 1)].strip()
                 if len(prefix) == 1 and prefix.isalpha():
                     prefix = prefix.upper()
                 elif len(prefix) == 2 and prefix.isalpha() and prefix[0].upper() in "RSTUVWXYZ":
                     prefix = prefix.upper()
-                return f"{prefix} {abbr}"
-        return candidate
+                result = f"{prefix} {abbr}"
+                break
+
+        if len(cls._star_norm_cache) > 4096:
+            cls._star_norm_cache.clear()
+        cls._star_norm_cache[cache_key] = result
+        return result
 
     @classmethod
     def get_canonical_star_key(cls, raw_name: Optional[str]) -> str:
-        norm = cls.normalize_star_for_vsp(raw_name)
-        return re.sub(r"[\s_\-]+", "", norm).upper()
+        raw_str = str(raw_name or "")
+        cached = cls._canonical_key_cache.get(raw_str)
+        if cached is not None:
+            return cached
+        norm = cls.normalize_star_for_vsp(raw_str)
+        res = cls._RE_KEY_SEP.sub("", norm).upper()
+        if len(cls._canonical_key_cache) > 4096:
+            cls._canonical_key_cache.clear()
+        cls._canonical_key_cache[raw_str] = res
+        return res
 
     @classmethod
     def are_same_star(cls, name_a: Optional[str], name_b: Optional[str]) -> bool:
@@ -309,24 +351,122 @@ class PhotometryBackendEngine:
         candidates.sort(key=lambda c: c["score"])
         return candidates[0]
 
+    # ==========================================================================
+    # [RU] УСТОЙЧИВЫЙ ПАРСЕР CSV SEESTAR И ФОРМАТИРОВАНИЕ ПОЛЯ NOTES (ПУНКТЫ 1–4 РЕВЬЮ):
+    #   Для будущих разработчиков:
+    #   1) _split_dirty_csv_line() устойчиво разбирает строки с лишними пробелами,
+    #      обрамляющими кавычками и нестандартными разделителями (',' или ';' после Excel).
+    #   2) validate_obscode() проверяет как отсутствие пустых значений / 'NA', так и
+    #      соответствие формату кода наблюдателя AAVSO (3–5 заглавных букв/цифр ^[A-Z0-9]{3,5}$).
+    #   3) build_safe_aavso_notes() документирует структуру поля NOTES:
+    #      UTC (время кадра) | EXP (выдержка, с) | SNR (сигнал/шум) | RefStars (число опорных звезд) |
+    #      RawMag (исходный блеск) | RawErr (исходная ошибка) | RA/DEC | X/Y (координаты на матрице),
+    #      удаляет запрещенные запятые и гарантирует соблюдение лимита длины поля AAVSO WebObs (<= 150 симв.).
+    # [EN] RESILIENT SEESTAR CSV PARSER & AAVSO NOTES FIELD BUILDER (REVIEW ITEMS 1-4):
+    #   Developer note:
+    #   1) _split_dirty_csv_line() handles extra whitespace, quotes, and ';' or ',' delimiters.
+    #   2) validate_obscode() checks non-empty/'NA' and validates AAVSO 3-5 char alphanumeric format.
+    #   3) build_safe_aavso_notes() documents all NOTES keys, strips commas, and enforces
+    #      the AAVSO Extended File Format length limit (<= 150 chars).
+    # ==========================================================================
+    _RE_OBSCODE_FORMAT = re.compile(r"^[A-Z0-9]{3,5}$")
+    MAX_AAVSO_NOTES_LEN = 150
+
+    @staticmethod
+    def _split_dirty_csv_line(raw_line: str) -> List[str]:
+        line = (raw_line or "").strip()
+        if not line:
+            return []
+        delim = ";" if (line.count(";") >= 18 and line.count(",") < 5) else ","
+        return [c.strip().strip('"').strip("'").strip() for c in line.split(delim)]
+
+    @classmethod
+    def validate_obscode(cls, obscode: str) -> Dict[str, Any]:
+        clean = str(obscode or "").strip().upper()
+        if not clean or clean == "NA":
+            return {
+                "valid": False,
+                "strictFormatOk": False,
+                "cleaned": clean,
+                "warning": "Код наблюдателя (OBSCODE) не указан или равен NA.",
+            }
+        strict_ok = bool(cls._RE_OBSCODE_FORMAT.match(clean))
+        warn_msg = (
+            ""
+            if strict_ok
+            else f"Код наблюдателя «{clean}» отличается от стандартного формата AAVSO (обычно 3–5 заглавных латинских букв/цифр)."
+        )
+        return {
+            "valid": True,
+            "strictFormatOk": strict_ok,
+            "cleaned": clean,
+            "warning": warn_msg,
+        }
+
+    @classmethod
+    def build_safe_aavso_notes(
+        cls,
+        utc_val: str,
+        exp_val: str,
+        snr_val: str,
+        ref_stars: str,
+        raw_mag: str,
+        raw_err: str,
+        ra_val: str,
+        dec_val: str,
+        x_val: str,
+        y_val: str,
+        max_len: int = 150,
+    ) -> str:
+        def _clean_token(v: Any, max_val_len: int = 22) -> str:
+            s = str(v if v is not None else "").replace(",", ".").replace("|", "/").replace("\n", " ").replace("\r", " ").strip()
+            return s[:max_val_len]
+
+        items = [
+            f"UTC={_clean_token(utc_val, 19)}",
+            f"EXP={_clean_token(exp_val, 8)}",
+            f"SNR={_clean_token(snr_val, 10)}",
+            f"RefStars={_clean_token(ref_stars, 6)}",
+            f"RawMag={_clean_token(raw_mag, 10)}",
+            f"RawErr={_clean_token(raw_err, 10)}",
+            f"RA={_clean_token(ra_val, 10)}",
+            f"DEC={_clean_token(dec_val, 10)}",
+            f"X={_clean_token(x_val, 8)}",
+            f"Y={_clean_token(y_val, 8)}",
+        ]
+        acc: List[str] = []
+        cur_len = 0
+        for part in items:
+            add_len = len(part) + (1 if acc else 0)
+            if cur_len + add_len <= max_len:
+                acc.append(part)
+                cur_len += add_len
+            else:
+                break
+        return "|".join(acc) if acc else "Seestar"
+
     @classmethod
     def extract_first_seestar_row(cls, csv_text: str) -> Optional[Dict[str, Any]]:
         for idx, raw_line in enumerate((csv_text or "").splitlines()):
             line = raw_line.strip()
-            if not line or (idx == 0 and line.lower().startswith("name,")):
+            if not line:
                 continue
-            cols = [c.strip() for c in line.split(",")]
+            cols = cls._split_dirty_csv_line(line)
+            if not cols or (idx == 0 and cols[0].lower() == "name"):
+                continue
             if len(cols) >= 19 and cols[1].lower() == "non-reference star":
                 try:
+                    jd_s = float(cols[12])
+                    jd_e = float(cols[15]) if cols[15] else jd_s
                     return {
                         "starId": cols[0],
-                        "ra": float(cols[2]),
-                        "dec": float(cols[3]),
+                        "ra": float(cols[2]) if cols[2] else 0.0,
+                        "dec": float(cols[3]) if cols[3] else 0.0,
                         "mag": float(cols[6]),
                         "merr": float(cols[7]),
                         "utc": cols[11],
-                        "jdStart": float(cols[12]),
-                        "jdEnd": float(cols[15]),
+                        "jdStart": jd_s,
+                        "jdEnd": jd_e,
                     }
                 except (TypeError, ValueError):
                     continue
@@ -457,35 +597,49 @@ class PhotometryBackendEngine:
             "#STARID,DATE,MAG,MERR,FILT,TRANS,MTYPE,CNAME,CMAG,KNAME,KMAG,AMASS,GROUP,CHART,NOTES",
         ]
 
+        obs_validation = cls.validate_obscode(obs_clean)
         count = 0
         skipped = 0
         bad = 0
+        rounding_warnings = 0
         first_utc = None
         first_raw_star = None
         diffs = []
 
         for idx, raw_line in enumerate((csv_text or "").splitlines()):
             raw = raw_line.strip()
-            if not raw or (idx == 0 and raw.lower().startswith("name,")):
+            if not raw:
                 skipped += 1
                 continue
-            cols = [c.strip() for c in raw.split(",")]
+            cols = cls._split_dirty_csv_line(raw)
+            if not cols or (idx == 0 and cols[0].lower() == "name"):
+                skipped += 1
+                continue
             if len(cols) < 19 or cols[1].lower() != "non-reference star":
                 skipped += 1
                 continue
             try:
                 mag_orig = float(cols[6])
                 err_orig = float(cols[7])
-                mag_conv = round(mag_orig, 4)
-                err_conv = round(err_orig, 4)
-                if abs(mag_orig - mag_conv) > 0.0001 or abs(err_orig - err_conv) > 0.0001:
+                if math.isnan(mag_orig) or math.isnan(err_orig) or math.isinf(mag_orig) or math.isinf(err_orig):
                     bad += 1
                     continue
 
-                jd_start = float(cols[12])
-                jd_end = float(cols[15])
+                mag_conv = round(mag_orig, 4)
+                err_conv = round(err_orig, 4)
+                # [RU] ПУНКТ 1 РЕВЬЮ: Не отбрасываем строку при высокой точности исходного float,
+                #      а логируем предупреждение округления (rounding_warnings), сохраняя измерение!
+                # [EN] REVIEW ITEM 1: Do not drop high-precision rows on rounding delta > 0.0001;
+                #      record a non-destructive rounding warning instead.
+                if abs(mag_orig - mag_conv) > 0.0001 or abs(err_orig - err_conv) > 0.0001:
+                    rounding_warnings += 1
+
+                jd_start_str = cols[12]
+                jd_end_str = cols[15] if cols[15] else cols[12]
+                jd_start = float(jd_start_str)
+                jd_end = float(jd_end_str)
                 from decimal import Decimal, ROUND_HALF_UP
-                jd_mid = str(((Decimal(cols[12]) + Decimal(cols[15])) / Decimal("2")).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP))
+                jd_mid = str(((Decimal(str(jd_start)) + Decimal(str(jd_end))) / Decimal("2")).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP))
 
                 if not first_utc:
                     first_utc = cols[11]
@@ -496,11 +650,19 @@ class PhotometryBackendEngine:
                 dec_final = str(dec_ui or cols[3]).strip()
                 star_final = canonical_target or cls.normalize_star_for_vsp(cols[0])
 
-                notes = "|".join([
-                    f"UTC={cols[11]}", f"EXP={cols[10]}", f"SNR={cols[18]}",
-                    f"RefStars={cols[4]}", f"RawMag={cols[6]}", f"RawErr={cols[7]}",
-                    f"RA={ra_final}", f"DEC={dec_final}", f"X={cols[8]}", f"Y={cols[9]}",
-                ])
+                notes = cls.build_safe_aavso_notes(
+                    utc_val=cols[11],
+                    exp_val=cols[10],
+                    snr_val=cols[18],
+                    ref_stars=cols[4],
+                    raw_mag=cols[6],
+                    raw_err=cols[7],
+                    ra_val=ra_final,
+                    dec_val=dec_final,
+                    x_val=cols[8],
+                    y_val=cols[9],
+                    max_len=cls.MAX_AAVSO_NOTES_LEN,
+                )
 
                 out_lines.append(",".join([
                     star_final, jd_mid, f"{mag_conv:.4f}", f"{err_conv:.4f}",
@@ -556,6 +718,8 @@ class PhotometryBackendEngine:
             "count": count,
             "skipped": skipped,
             "bad": bad,
+            "roundingWarnings": rounding_warnings,
+            "obscodeFormatWarning": obs_validation.get("warning", ""),
             "canonicalStar": canonical_target or first_raw_star,
             "firstRawStar": first_raw_star,
             "firstUtc": first_utc,
@@ -1024,6 +1188,19 @@ class AavsoNativeAndStorageService:
             )
         return result
 
+    @staticmethod
+    def jd_to_utc_str(jd_val: float) -> str:
+        """
+        [RU] Конвертирует Юлианскую дату (JD) контрольной точки в строку UTC (YYYY-MM-DD HH:MM:SS UTC).
+        [EN] Converts a checkpoint Julian Date (JD) into a human-readable UTC string (YYYY-MM-DD HH:MM:SS UTC).
+        """
+        try:
+            unix_ts = (float(jd_val) - 2440587.5) * 86400.0
+            dt = time.gmtime(unix_ts)
+            return time.strftime("%Y-%m-%d %H:%M:%S UTC", dt)
+        except Exception:
+            return ""
+
     @classmethod
     def fetch_aavso_light_curve(
         cls,
@@ -1100,6 +1277,7 @@ class AavsoNativeAndStorageService:
                         "band": band_map.get(b_raw, b_raw),
                         "obscode": str(item.get("obscode") or "").strip().upper(),
                         "source": "AAVSO_API_V2",
+                        "utc": cls.jd_to_utc_str(jd_v),
                     })
                 if raw_points:
                     source_used = "AAVSO API v2 (/v2/api/observations/photometry/)"
@@ -1139,6 +1317,7 @@ class AavsoNativeAndStorageService:
                             "band": band_v,
                             "obscode": obs_v,
                             "source": "AAVSO_AID_DELIM",
+                            "utc": cls.jd_to_utc_str(jd_v),
                         })
                         if len(raw_points) >= max_points:
                             break

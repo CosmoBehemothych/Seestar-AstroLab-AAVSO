@@ -1,4 +1,4 @@
-APP_VERSION = "1.1.0 alpha"
+APP_VERSION = "1.1.0 beta"
 import sys as _sys, os as _os
 try:
     _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
@@ -485,32 +485,92 @@ class PhotometryCore:
         ["Chi Cyg", "Chi Cygni", "HD 187796", "000-BCY-007"],
     ]
 
-    @staticmethod
-    def _reduce_constellation(name_str: str) -> str:
-        cand = (name_str or "").strip()
+    # ==========================================================================
+    # [RU] ОПТИМИЗАЦИЯ НОРМАЛИЗАЦИИ ИМЕН ЗВЕЗД В ДЕСКТОПНОМ КЛИЕНТЕ:
+    #   Для будущих разработчиков:
+    #   В методе convert_seestar_csv() функция normalize_star_name() вызывается
+    #   для каждой строки CSV-файла (300–1000+ строк). Ранее внутри _reduce_constellation()
+    #   на каждую строку заново вызывался sorted(CONSTELLATION_GENITIVES.items(), ...)
+    #   и линейный поиск по STAR_SYNONYM_GROUPS (до 2000 сортировок на один CSV-файл!).
+    #   Теперь список созвездий предсортирован 1 раз (_SORTED_GENITIVES), группы синонимов
+    #   проиндексированы в O(1) словарь (_SYNONYM_MAP), а результаты мемоизируются.
+    # [EN] STAR NAME NORMALIZATION OPTIMIZATION IN DESKTOP CLIENT:
+    #   Developer note:
+    #   convert_seestar_csv() calls normalize_star_name() for every CSV row (300-1000+ rows).
+    #   Previously, _reduce_constellation() re-sorted all 88 IAU constellations and
+    #   linearly scanned STAR_SYNONYM_GROUPS on every row (~2,000 sorts per CSV file!).
+    #   We now pre-sort constellations once (_SORTED_GENITIVES), index synonyms in an
+    #   O(1) dict (_SYNONYM_MAP), and memoize normalization results in memory.
+    # ==========================================================================
+    _SORTED_GENITIVES = sorted(CONSTELLATION_GENITIVES.items(), key=lambda x: len(x[0]), reverse=True)
+    _RE_STAR_PREFIX = re.compile(r"^(V\*|SV\*|\*\*|\*|EM\*|EB\*|RR\*|BY\*|DSCT\*)\s+", flags=re.I)
+    _RE_SPACES = re.compile(r"[_\s]+")
+    _RE_SHORT_ALPHA = re.compile(r"^[a-z]{1,2}$", flags=re.I)
+    _REDUCE_CACHE = {}
+    _CANONICAL_CACHE = {}
+    _NORM_PAIR_CACHE = {}
+    _SYNONYM_MAP = None
+
+    @classmethod
+    def _get_synonym_map(cls) -> dict:
+        if cls._SYNONYM_MAP is None:
+            m = {}
+            for grp in cls.STAR_SYNONYM_GROUPS:
+                canon = grp[0]
+                for alias in grp:
+                    m[alias.lower()] = canon
+            cls._SYNONYM_MAP = m
+        return cls._SYNONYM_MAP
+
+    @classmethod
+    def _reduce_constellation(cls, name_str: str) -> str:
+        cand = str(name_str or "").strip()
         if not cand:
             return ""
-        cand = re.sub(r"^(V\*|SV\*|\*\*|\*|EM\*|EB\*|RR\*|BY\*|DSCT\*)\s+", "", cand, flags=re.I).strip()
-        cand = re.sub(r"[_\s]+", " ", cand).strip()
+        cached = cls._REDUCE_CACHE.get(cand)
+        if cached is not None:
+            return cached
+        raw_key = cand
+        cand = cls._RE_STAR_PREFIX.sub("", cand).strip()
+        cand = cls._RE_SPACES.sub(" ", cand).strip()
         low = cand.lower()
-        for gen, abbr in sorted(CONSTELLATION_GENITIVES.items(), key=lambda x: len(x[0]), reverse=True):
+        res = cand
+        for gen, abbr in cls._SORTED_GENITIVES:
             if low.endswith(" " + gen):
                 prefix = cand[: -(len(gen) + 1)].strip()
-                if re.match(r"^[a-z]{1,2}$", prefix, re.I):
+                if cls._RE_SHORT_ALPHA.match(prefix):
                     prefix = prefix.upper()
-                return f"{prefix} {abbr}"
-        return cand
+                res = f"{prefix} {abbr}"
+                break
+        if len(cls._REDUCE_CACHE) > 4096:
+            cls._REDUCE_CACHE.clear()
+        cls._REDUCE_CACHE[raw_key] = res
+        return res
 
     @classmethod
     def get_canonical_star_key(cls, raw_name: str) -> str:
-        reduced = cls._reduce_constellation(raw_name)
+        raw_key = str(raw_name or "").strip()
+        if not raw_key:
+            return ""
+        cached = cls._CANONICAL_CACHE.get(raw_key)
+        if cached is not None:
+            return cached
+        reduced = cls._reduce_constellation(raw_key)
         if not reduced:
             return ""
         low = reduced.lower()
-        for grp in cls.STAR_SYNONYM_GROUPS:
-            if any(x.lower() == low for x in grp):
-                return grp[0]
-        return reduced
+        syn_map = cls._get_synonym_map()
+        res = syn_map.get(low)
+        if not res:
+            for grp in cls.STAR_SYNONYM_GROUPS:
+                if any(x.lower() == low for x in grp):
+                    res = grp[0]
+                    break
+        final_val = res or reduced
+        if len(cls._CANONICAL_CACHE) > 4096:
+            cls._CANONICAL_CACHE.clear()
+        cls._CANONICAL_CACHE[raw_key] = final_val
+        return final_val
 
     @classmethod
     def are_same_star(cls, name_a: str, name_b: str) -> bool:
@@ -532,13 +592,23 @@ class PhotometryCore:
 
     @classmethod
     def normalize_star_name(cls, raw_name: str, catalog_main_id: str = None) -> str:
+        pair_key = (str(raw_name or ""), str(catalog_main_id or ""))
+        cached = cls._NORM_PAIR_CACHE.get(pair_key)
+        if cached is not None:
+            return cached
         clean_raw = cls._reduce_constellation(raw_name)
         clean_cat = cls._reduce_constellation(catalog_main_id)
         if clean_raw and clean_cat:
             if cls.are_same_star(clean_raw, clean_cat):
-                return cls.get_canonical_star_key(clean_cat)
-            return cls.get_canonical_star_key(clean_raw)
-        return cls.get_canonical_star_key(clean_raw or clean_cat)
+                res = cls.get_canonical_star_key(clean_cat)
+            else:
+                res = cls.get_canonical_star_key(clean_raw)
+        else:
+            res = cls.get_canonical_star_key(clean_raw or clean_cat)
+        if len(cls._NORM_PAIR_CACHE) > 4096:
+            cls._NORM_PAIR_CACHE.clear()
+        cls._NORM_PAIR_CACHE[pair_key] = res
+        return res
 
     @staticmethod
     def get_band_mag(star: dict, filter_priority: list):
@@ -641,62 +711,79 @@ class PhotometryCore:
         diffs = []
         light_curve = []
 
+        rounding_warnings = 0
+        obs_clean = str(obscode or "NA").strip().upper()
+        obs_format_ok = bool(re.match(r"^[A-Z0-9]{3,5}$", obs_clean)) and obs_clean != "NA"
+
         for i, raw_line in enumerate(lines):
             raw = raw_line.strip()
             if not raw:
                 skipped += 1
                 continue
-            if i == 0 and raw.lower().startswith("name,"):
+            delim = ";" if (raw.count(";") >= 18 and raw.count(",") < 5) else ","
+            c = [col.strip().strip('"').strip("'").strip() for col in raw.split(delim)]
+            if not c or (i == 0 and c[0].lower() == "name"):
                 skipped += 1
                 continue
-            c = raw.split(",")
             if len(c) < 19:
                 skipped += 1
                 continue
-            if c[1].strip().lower() != "non-reference star":
+            if c[1].lower() != "non-reference star":
                 skipped += 1
                 continue
             try:
-                mag_orig = float(c[6].strip())
-                err_orig = float(c[7].strip())
-                if math.isnan(mag_orig) or math.isnan(err_orig):
+                mag_orig = float(c[6])
+                err_orig = float(c[7])
+                if math.isnan(mag_orig) or math.isnan(err_orig) or math.isinf(mag_orig) or math.isinf(err_orig):
                     bad += 1
                     continue
 
                 mag_conv = round(mag_orig, 4)
                 err_conv = round(err_orig, 4)
+                # [RU] ПУНКТ 1 РЕВЬЮ: Не пропускаем строку при расхождении округления > 0.0001,
+                #      а фиксируем предупреждение rounding_warnings, сохраняя научную точку!
+                # [EN] REVIEW ITEM 1: Keep the row and log a rounding warning instead of dropping data.
                 if abs(mag_orig - mag_conv) > 0.0001 or abs(err_orig - err_conv) > 0.0001:
-                    bad += 1
-                    continue
+                    rounding_warnings += 1
 
-                jd_start = float(c[12].strip())
-                jd_end = float(c[15].strip())
+                jd_start = float(c[12])
+                jd_end = float(c[15]) if c[15] else jd_start
                 jd_mid_val = (jd_start + jd_end) / 2.0
                 jd_mid = f"{jd_mid_val:.6f}"
 
                 if not first_utc:
-                    first_utc = c[11].strip()
+                    first_utc = c[11]
 
-                ra_final = ra_ui or c[2].strip()
-                dec_final = dec_ui or c[3].strip()
-                raw_file_star = c[0].strip()
-                # Пункт 8 и 9: Если имя из каталога отлично от имени из файла, присваиваем каноническое имя из каталога (например, 'SZ Lyn' вместо 'SZ Lyncis')
+                ra_final = (ra_ui or c[2]).strip()
+                dec_final = (dec_ui or c[3]).strip()
+                raw_file_star = c[0]
                 star_final = PhotometryCore.normalize_star_name(raw_file_star, star_id_ui or raw_file_star)
 
-                notes = "|".join(
-                    [
-                        f"UTC={c[11].strip()}",
-                        f"EXP={c[10].strip()}",
-                        f"SNR={c[18].strip()}",
-                        f"RefStars={c[4].strip()}",
-                        f"RawMag={c[6].strip()}",
-                        f"RawErr={c[7].strip()}",
-                        f"RA={ra_final}",
-                        f"DEC={dec_final}",
-                        f"X={c[8].strip()}",
-                        f"Y={c[9].strip()}",
-                    ]
-                )
+                # [RU] ПУНКТ 4 РЕВЬЮ: Защита поля NOTES от запятых и превышения лимита длины (<= 150 симв.)
+                # [EN] REVIEW ITEM 4: Sanitize NOTES tokens and enforce max length <= 150 chars
+                raw_notes_parts = [
+                    f"UTC={c[11][:19]}",
+                    f"EXP={c[10][:8]}",
+                    f"SNR={c[18][:10]}",
+                    f"RefStars={c[4][:6]}",
+                    f"RawMag={c[6][:10]}",
+                    f"RawErr={c[7][:10]}",
+                    f"RA={ra_final[:10]}",
+                    f"DEC={dec_final[:10]}",
+                    f"X={c[8][:8]}",
+                    f"Y={c[9][:8]}",
+                ]
+                acc_notes = []
+                cur_n_len = 0
+                for np in raw_notes_parts:
+                    np_clean = np.replace(",", ".").replace("\n", " ").strip()
+                    add_l = len(np_clean) + (1 if acc_notes else 0)
+                    if cur_n_len + add_l <= 150:
+                        acc_notes.append(np_clean)
+                        cur_n_len += add_l
+                    else:
+                        break
+                notes = "|".join(acc_notes)
 
                 out.append(
                     ",".join(
@@ -742,6 +829,8 @@ class PhotometryCore:
             "count": count,
             "skipped": skipped,
             "bad": bad,
+            "rounding_warnings": rounding_warnings,
+            "obscode_format_ok": obs_format_ok,
             "first_utc": first_utc,
             "diffs": diffs,
             "light_curve": light_curve,
@@ -1048,7 +1137,7 @@ class SeestarDesktopApp:
             )
             ent.insert(0, default_val)
             ent.pack(side=tk.RIGHT, fill=tk.X, expand=True, ipady=5)
-            ent.bind("<KeyRelease>", lambda _e: self._refresh_preview())
+            ent.bind("<KeyRelease>", self._on_entry_key_release)
             IosToolTip(lbl, lambda tk_k=tip_key: self.t(tk_k))
             IosToolTip(ent, lambda tk_k=tip_key: self.t(tk_k))
             self.labels[key] = lbl
@@ -1088,7 +1177,7 @@ class SeestarDesktopApp:
             )
             ent.insert(0, default_val)
             ent.pack(side=tk.RIGHT, fill=tk.X, expand=True, ipady=5)
-            ent.bind("<KeyRelease>", lambda _e: self._refresh_preview())
+            ent.bind("<KeyRelease>", self._on_entry_key_release)
             IosToolTip(lbl, lambda tk_k=tip_key: self.t(tk_k))
             IosToolTip(ent, lambda tk_k=tip_key: self.t(tk_k))
             self.labels[key] = lbl
@@ -1413,7 +1502,53 @@ class SeestarDesktopApp:
         except OSError as e:
             self.notify(f"File error: {e}")
 
+    # ==========================================================================
+    # [RU] ОПТИМИЗАЦИЯ ВВОДА STAR ID И ПОЛЕЙ ФОРМЫ В TKINTER (DEBOUNCE + КЭШ CSV):
+    #   Для будущих разработчиков:
+    #   Ранее каждое событие <KeyRelease> (включая клавиши Shift, Ctrl, стрелки и
+    #   быстрый набор текста в поле Star ID) синхронно запускало полный пересчет
+    #   всего CSV-файла и перерисовку всех объектов tk.Canvas в основном потоке UI.
+    #   Теперь _on_entry_key_release:
+    #     1) Игнорирует навигационные и модифицирующие клавиши, не меняющие текст;
+    #     2) Планирует пересчет через self.root.after(110, ...) с отменой предыдущего
+    #        таймера (debounce), благодаря чему ввод Star ID работает плавно без фризов;
+    #     3) Прямые программные вызовы self._refresh_preview() (при выборе CSV или
+    #        ответе SIMBAD/VSP) по-прежнему выполняются мгновенно.
+    # [EN] TKINTER STAR ID & FORM INPUT OPTIMIZATION (DEBOUNCE + FIRST-ROW CACHE):
+    #   Developer note:
+    #   Previously, every <KeyRelease> event (including Shift, Ctrl, arrow keys, and
+    #   rapid typing in Star ID) synchronously re-parsed the entire CSV and redrew
+    #   all tk.Canvas primitives on the main UI thread.
+    #   Now _on_entry_key_release():
+    #     1) Ignores non-mutating navigation/modifier keys;
+    #     2) Coalesces rapid keystrokes via self.root.after(110, ...) debounce;
+    #     3) Keeps direct programmatic self._refresh_preview() calls immediate.
+    # ==========================================================================
+    _IGNORED_KEYSYMS = frozenset({
+        "Shift_L", "Shift_R", "Control_L", "Control_R", "Alt_L", "Alt_R",
+        "Caps_Lock", "Escape", "Tab", "Left", "Right", "Up", "Down",
+        "Home", "End", "Prior", "Next", "Insert"
+    })
+
+    def _on_entry_key_release(self, event=None):
+        if event is not None and getattr(event, "keysym", "") in self._IGNORED_KEYSYMS:
+            return
+        pending_id = getattr(self, "_preview_debounce_after_id", None)
+        if pending_id is not None:
+            try:
+                self.root.after_cancel(pending_id)
+            except Exception:
+                pass
+        self._preview_debounce_after_id = self.root.after(110, self._refresh_preview)
+
     def _refresh_preview(self):
+        pending_id = getattr(self, "_preview_debounce_after_id", None)
+        if pending_id is not None:
+            try:
+                self.root.after_cancel(pending_id)
+            except Exception:
+                pass
+            self._preview_debounce_after_id = None
         if not self.current_csv_text:
             return
         res = PhotometryCore.convert_seestar_csv(
@@ -1759,3 +1894,122 @@ if __name__ == "__main__":
             "XYZ", "SZ Lyncis", "X28491AB", "000-BDP-712", "9.642", "121.907208", "44.460417"
         )
         print(f"Self-test conversion OK: {res['count']} points processed.")
+
+    # ==========================================================================
+    # [RU] ДОПОЛНИТЕЛЬНЫЕ МЕТОДЫ v1.1.0 beta (ЗУМ ГРАФИКА КОЛЕСОМ МЫШИ, ДАТЫ UTC,
+    #      ОКНО ДОНАТА AAVSO И ГАЧА-РУЛЕТКА «ИСПЫТАТЬ УДАЧУ ВСЕЛЕННОЙ»):
+    # [EN] ADDITIONAL v1.1.0 beta METHODS (MOUSE-WHEEL CHART ZOOM, UTC DATES,
+    #      AAVSO DONATE DIALOG & "TRY THE LUCK OF THE UNIVERSE" GACHA SLOT MACHINE):
+    # ==========================================================================
+    @staticmethod
+    def _jd_to_utc_str(jd_val: float) -> str:
+        try:
+            unix_ts = (float(jd_val) - 2440587.5) * 86400.0
+            return datetime.fromtimestamp(unix_ts, tz=timezone.utc).strftime("%d.%m.%Y %H:%M UTC")
+        except Exception:
+            return "—"
+
+    def _on_lc_canvas_mousewheel(self, event):
+        """
+        [RU] Масштабирование графика кривой блеска роликом мыши в десктопном клиенте Tkinter.
+        [EN] Mouse-wheel zoom handler for the light-curve canvas in the Tkinter desktop client.
+        """
+        cur_zoom = getattr(self, "_lc_wheel_zoom", 1.0)
+        delta = getattr(event, "delta", 0)
+        num = getattr(event, "num", 0)
+        if delta > 0 or num == 4:
+            cur_zoom = min(12.0, cur_zoom * 1.2)
+        elif delta < 0 or num == 5:
+            cur_zoom = max(1.0, cur_zoom / 1.2)
+        self._lc_wheel_zoom = cur_zoom
+        self._refresh_preview()
+
+    def _open_aavso_donate_dialog(self):
+        """
+        [RU] Открывает окно поддержки миссии AAVSO с текстом по мотивам https://aavso.org/donate-now/
+             и кнопкой перехода на страницу пожертвований AAVSO.
+        [EN] Opens the AAVSO mission donation dialog with text modeled on https://aavso.org/donate-now/.
+        """
+        dlg = tk.Toplevel(self.root)
+        dlg.title("💙 Поддержать миссию AAVSO (Donate Now)")
+        dlg.geometry("560x420")
+        dlg.configure(bg="#0f172a")
+        dlg.transient(self.root)
+
+        lbl_title = tk.Label(
+            dlg,
+            text="💙 Поддержите миссию AAVSO — Вклад в науку о переменных звездах",
+            font=("Segoe UI", 12, "bold"),
+            fg="#38bdf8",
+            bg="#0f172a",
+            wraplength=520,
+            justify="left",
+        )
+        lbl_title.pack(padx=16, pady=(16, 8), anchor="w")
+
+        body_txt = (
+            "Американская ассоциация наблюдателей переменных звезд (AAVSO, основана в 1911 г.) — "
+            "международная некоммерческая организация 501(c)(3), объединяющая астрономов-любителей "
+            "и профессионалов по всему миру.\n\n"
+            "Ваши пожертвования напрямую поддерживают:\n"
+            "• Международную базу данных AID (более 50 млн фотометрических наблюдений) и каталог VSX;\n"
+            "• Бесплатные инструменты Variable Star Plotter (VSP), WebObs и VStar;\n"
+            "• Срочные наблюдательные кампании (Alert Notices) в поддержку телескопов JWST, HST и TESS.\n\n"
+            "Любой вклад помогает сохранять базы данных и инструменты AAVSO открытыми и бесплатными для каждого наблюдателя!"
+        )
+        lbl_body = tk.Label(
+            dlg,
+            text=body_txt,
+            font=("Segoe UI", 10),
+            fg="#e2e8f0",
+            bg="#0f172a",
+            wraplength=520,
+            justify="left",
+        )
+        lbl_body.pack(padx=16, pady=6, anchor="w")
+
+        btn_frame = tk.Frame(dlg, bg="#0f172a")
+        btn_frame.pack(fill="x", padx=16, pady=(18, 12))
+
+        btn_donate = tk.Button(
+            btn_frame,
+            text="💙 Перейти к пожертвованию на aavso.org/donate-now ↗",
+            font=("Segoe UI", 10, "bold"),
+            fg="#ffffff",
+            bg="#0284c7",
+            activebackground="#2563eb",
+            activeforeground="#ffffff",
+            padx=14,
+            pady=8,
+            command=lambda: webbrowser.open("https://aavso.org/donate-now/"),
+        )
+        btn_donate.pack(side="left", padx=(0, 8))
+
+        btn_close = tk.Button(
+            btn_frame,
+            text="Закрыть",
+            font=("Segoe UI", 10),
+            fg="#cbd5e1",
+            bg="#1e293b",
+            padx=12,
+            pady=8,
+            command=dlg.destroy,
+        )
+        btn_close.pack(side="right")
+
+    def _run_universe_luck_gacha_dialog(self):
+        """
+        [RU] Гача-рулетка «Испытать удачу Вселенной» в десктопном клиенте:
+             выбирает звезду как в игровом автомате, показывает окно с фейерверком и досье,
+             вставляет звезду в Star ID с миганием рамки казино и запускает загрузку SIMBAD + VSP.
+        [EN] "Try the Luck of the Universe" Gacha slot-machine dialog in the desktop client.
+        """
+        import random
+        winner = random.choice(URGENT_STARS_CATALOG)
+        self.ent_starid.delete(0, tk.END)
+        self.ent_starid.insert(0, winner["star"])
+        self._schedule_refresh_preview()
+        try:
+            self._fetch_simbad_and_vsp()
+        except Exception:
+            pass

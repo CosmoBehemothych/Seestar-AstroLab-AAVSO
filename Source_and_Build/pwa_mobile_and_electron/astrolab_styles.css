@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Seestar AstroLab AAVSO v1.0.1 — Design System & Stylesheet (`astrolab_styles.css`)
+   Seestar AstroLab AAVSO v1.1.0 beta — Design System & Stylesheet (`astrolab_styles.css`)
    [EN] Design System & Responsive Stylesheet:
         - Supports Dark (`body[data-theme="dark"]`) and Light (`body[data-theme="light"]`) themes
         - Bento-grid observatory layout, collapsible `<details class="step-accordion">` animations,
@@ -4452,7 +4452,7 @@
     
   
     /* =========================================================================
-       SEESTAR ASTROLAB AAVSO v1.0.1 — SENIOR TEAM REFACTORING (ITEMS 2–9)
+       SEESTAR ASTROLAB AAVSO v1.1.0 beta — SENIOR TEAM REFACTORING (ITEMS 2–9)
        ========================================================================= */
     /* Пункт 2: Таблица сравнения с фиксированными пропорциями и переносом заголовков */
     .preview-table {
@@ -4971,7 +4971,7 @@
     .ui-theme-toolbar {
       border-radius: 0 0 20px 20px;
       position: relative;
-      z-index: 1610;
+      z-index: 10;
     }
     .settings-popover-menu {
       z-index: 3000 !important;
@@ -5271,7 +5271,7 @@ body[data-theme="light"] .obs-dp-action-btn {
 }
 
 
-/* === SEESTAR ASTROLAB v1.1.0 ALPHA: АДАПТИВНЫЕ ГРАНИЦЫ ТЕКСТА ВО ВСЕХ ЛОКАЛИЗАЦИЯХ И СВЕТЛАЯ ТЕМА === */
+/* === SEESTAR ASTROLAB v1.1.0 BETA: АДАПТИВНЫЕ ГРАНИЦЫ ТЕКСТА ВО ВСЕХ ЛОКАЛИЗАЦИЯХ И СВЕТЛАЯ ТЕМА === */
 .bento-bottom-grid {
   display: grid !important;
   grid-template-columns: 1fr !important;
@@ -5470,3 +5470,704 @@ body[data-theme="light"] #radarHoverTooltip {
 body[data-theme="light"] #radarHoverTooltip .radar-tt-desc {
   color: #1e293b !important;
 }
+
+
+/* ==========================================================================
+   [RU] СТИЛИ ДЛЯ 4 НОВЫХ МОДУЛЕЙ (ГРАФИКИ С ЗУМОМ, ДОНАТ AAVSO, ЛОГ ШАГА 4,
+        ГАЧА-АВТОМАТ «ИСПЫТАТЬ УДАЧУ ВСЕЛЕННОЙ» И МИГАЮЩАЯ РАМКА КАЗИНО)
+   [EN] STYLES FOR THE 4 NEW MODULES (CHART ZOOM/DATES, AAVSO DONATE MODAL,
+        STEP 4 DIFF LOG, GACHA SLOT MACHINE & CASINO JACKPOT BORDER FLASH)
+   ========================================================================== */
+
+/* 1. Панель периода наблюдений и масштабирования колесом мыши над графиками */
+.lc-period-zoom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 5px 10px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(56, 189, 248, 0.24);
+  font-size: 11px;
+  line-height: 1.35;
+}
+.lc-period-badge {
+  color: #e2e8f0;
+  font-weight: 600;
+  font-family: var(--font-mono, monospace);
+  word-break: break-word;
+}
+.lc-zoom-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+.lc-zoom-hint {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  white-space: nowrap;
+}
+body[data-theme="light"] .lc-period-zoom-bar {
+  background: #f1f5f9 !important;
+  border-color: rgba(2, 132, 199, 0.28) !important;
+}
+body[data-theme="light"] .lc-period-badge {
+  color: #0f172a !important;
+}
+body[data-theme="light"] .lc-zoom-hint {
+  color: #0369a1 !important;
+  background: rgba(2, 132, 199, 0.10) !important;
+}
+
+/* 2. Кнопка поддержки AAVSO в шапке и модальное окно доната AAVSO (спокойный читаемый стиль как у CosmoBehemothych) */
+.aavso-support-header-btn {
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.aavso-support-header-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(56, 189, 248, 0.55) !important;
+}
+.aavso-calm-badge {
+  background: rgba(2, 132, 199, 0.22) !important;
+  color: #7dd3fc !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+}
+body[data-theme="light"] .aavso-calm-badge {
+  background: rgba(2, 132, 199, 0.12) !important;
+  color: #0369a1 !important;
+  border-color: rgba(2, 132, 199, 0.30) !important;
+}
+body[data-theme="light"] .donate-inner-card {
+  background: #f8fafc !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+/* 3. Уведомление ожидания в свернутом блоке Шага 4 (Лог сравнения «До / После») */
+.diff-log-pending-notice {
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: rgba(56, 189, 248, 0.06);
+  border: 1px dashed rgba(56, 189, 248, 0.28);
+  color: var(--ios-text-secondary);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* 4. Кнопка «Испытать удачу Вселенной» и Колесо Лотереи (в благородном антично-золотом и обсидиановом стиле без кислотных цветов) */
+.v6-universe-luck-wrap {
+  padding: 0 0 8px 0;
+}
+.universe-luck-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  border: 1px solid rgba(212, 180, 117, 0.55);
+  background: linear-gradient(135deg, #1c1b18 0%, #2b261d 50%, #3a3122 100%);
+  color: #f3dfa2 !important;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+  transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.universe-luck-btn:hover {
+  transform: translateY(-1px);
+  border-color: #e5c888;
+  box-shadow: 0 4px 14px rgba(212, 180, 117, 0.22);
+}
+body[data-theme="light"] .universe-luck-btn {
+  background: linear-gradient(135deg, #2c271e 0%, #3d3425 100%);
+  color: #f7e6b5 !important;
+  border-color: #b89758;
+}
+
+.universe-luck-dialog {
+  max-width: 740px !important;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 22%, #1d1912 0%, #111216 65%, #090a0d 100%) !important;
+  border: 1px solid rgba(222, 192, 128, 0.55) !important;
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.85), inset 0 0 32px rgba(216, 186, 124, 0.06) !important;
+  color: #efe6d2 !important;
+}
+#universeLuckDialog .ios-modal-header {
+  border-bottom: 1px solid rgba(216, 186, 124, 0.28) !important;
+  padding-bottom: 10px !important;
+}
+#universeLuckModalTitle {
+  color: #f3dfa2 !important;
+  letter-spacing: 0.2px;
+}
+#btnToggleLuckSound,
+#universeLuckDialog .ios-modal-close {
+  background: rgba(20, 18, 14, 0.88) !important;
+  border: 1px solid rgba(216, 186, 124, 0.42) !important;
+  color: #f3dfa2 !important;
+}
+.luck-fireworks-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.lu-shu-wheel-stage {
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: radial-gradient(circle at 50% 44%, #1a1711 0%, #101115 68%, #090a0d 100%);
+  border: 1px solid rgba(222, 192, 128, 0.48);
+  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.75);
+  position: relative;
+}
+.lu-shu-wheel-canvas-wrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lu-shu-telemetry-bar {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1.1fr;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: rgba(11, 12, 15, 0.90);
+  border: 1px solid rgba(216, 186, 124, 0.34);
+}
+.gacha-reel-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 6px;
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgba(24, 21, 16, 0.92) 0%, rgba(14, 15, 18, 0.95) 100%);
+  border: 1px solid rgba(216, 186, 124, 0.26);
+  text-align: center;
+}
+.gacha-reel-col.main-star-reel {
+  border-color: rgba(229, 203, 142, 0.62);
+  background: linear-gradient(180deg, rgba(38, 32, 21, 0.88) 0%, rgba(20, 18, 13, 0.95) 100%);
+  box-shadow: inset 0 0 12px rgba(216, 186, 124, 0.12);
+}
+.gacha-reel-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #c2ab78;
+  margin-bottom: 3px;
+}
+.gacha-reel-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f3dfa2;
+  font-family: var(--font-mono, monospace);
+}
+.gacha-reel-col.main-star-reel .gacha-reel-value {
+  font-size: 16px;
+  color: #fff2c2;
+}
+.gacha-tofu-ticker {
+  margin-top: 7px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #f3dfa2;
+  text-align: center;
+  padding: 6px 10px;
+  border-radius: 7px;
+  background: linear-gradient(90deg, rgba(24, 21, 15, 0.9) 0%, rgba(42, 35, 22, 0.85) 50%, rgba(24, 21, 15, 0.9) 100%);
+  border: 1px solid rgba(222, 192, 128, 0.38);
+}
+
+.luck-winner-dossier {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  animation: luckDossierPopIn 0.32s ease-out;
+}
+@keyframes luckDossierPopIn {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.luck-winner-banner {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(32, 27, 19, 0.95) 0%, rgba(15, 16, 20, 0.96) 50%, rgba(32, 27, 19, 0.95) 100%) !important;
+  border: 1px solid rgba(222, 192, 128, 0.52) !important;
+  box-shadow: inset 0 0 18px rgba(216, 186, 124, 0.08);
+  text-align: center;
+}
+.luck-winner-star-badge {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: #fff0be !important;
+  letter-spacing: 0.3px;
+}
+.luck-winner-submeta {
+  font-size: 11px;
+  color: #d1ba88 !important;
+  margin-top: 3px;
+  font-family: var(--font-mono, monospace);
+}
+.luck-dossier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 8px;
+}
+.luck-dossier-card {
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: linear-gradient(180deg, rgba(24, 21, 16, 0.92) 0%, rgba(12, 13, 17, 0.96) 100%) !important;
+  border: 1px solid rgba(216, 186, 124, 0.36) !important;
+  box-shadow: inset 0 1px 0 rgba(243, 223, 162, 0.10);
+}
+.luck-dossier-card.urgent-highlight {
+  border-color: rgba(229, 203, 142, 0.55) !important;
+  background: linear-gradient(180deg, rgba(34, 29, 20, 0.94) 0%, rgba(15, 15, 18, 0.96) 100%) !important;
+}
+.luck-dossier-card-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #f0d596 !important;
+  margin-bottom: 5px;
+  letter-spacing: 0.2px;
+}
+.luck-dossier-card.urgent-highlight .luck-dossier-card-title {
+  color: #ffe8a8 !important;
+}
+.luck-dossier-card-text {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #ede3ce !important;
+}
+.luck-clear-skies-wish {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(20, 18, 14, 0.92) 0%, rgba(35, 29, 19, 0.92) 50%, rgba(20, 18, 14, 0.92) 100%) !important;
+  border: 1px solid rgba(222, 192, 128, 0.44) !important;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+  color: #f3dfa2 !important;
+}
+#btnAcceptUniverseLuckTarget {
+  background: linear-gradient(135deg, #b89047 0%, #e5c67e 50%, #a88038 100%) !important;
+  color: #14120c !important;
+  border: 1px solid #f3dfa2 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 10px rgba(216, 186, 124, 0.25) !important;
+}
+#linkLuckStarVsx {
+  background: rgba(20, 18, 14, 0.9) !important;
+  color: #f3dfa2 !important;
+  border: 1px solid rgba(216, 186, 124, 0.48) !important;
+  font-weight: 700 !important;
+}
+body[data-theme="light"] .luck-winner-banner,
+body[data-theme="light"] .luck-dossier-card,
+body[data-theme="light"] .luck-clear-skies-wish {
+  background: linear-gradient(180deg, rgba(24, 21, 16, 0.95) 0%, rgba(14, 15, 19, 0.98) 100%) !important;
+  border-color: rgba(216, 186, 124, 0.45) !important;
+  color: #ede3ce !important;
+}
+body[data-theme="light"] .luck-winner-star-badge,
+body[data-theme="light"] .luck-dossier-card-title,
+body[data-theme="light"] .luck-dossier-card.urgent-highlight .luck-dossier-card-title {
+  color: #f3dfa2 !important;
+}
+
+/* Спокойная золотистая подсветка выбранного поля Star ID (без радужного стробоскопа) */
+@keyframes calmGoldPulseStarId {
+  0%, 100% {
+    border-color: #d8be82 !important;
+    box-shadow: 0 0 0 2px rgba(216, 190, 130, 0.32), 0 0 12px rgba(216, 190, 130, 0.35) !important;
+  }
+  50% {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.28), 0 0 10px rgba(56, 189, 248, 0.30) !important;
+  }
+}
+input#starid.casino-jackpot-blink {
+  animation: calmGoldPulseStarId 1.6s ease-in-out infinite !important;
+  border-width: 1.5px !important;
+  font-weight: 700 !important;
+}
+.v6-target-card.casino-slot-highlight {
+  border-color: #d8be82 !important;
+  box-shadow: 0 0 10px rgba(216, 190, 130, 0.40) !important;
+}
+canvas#lightCurveCanvas,
+canvas#dssFallbackCanvas,
+canvas#fullPageLightCurveCanvas {
+  cursor: grab;
+}
+canvas#lightCurveCanvas:active,
+canvas#dssFallbackCanvas:active,
+canvas#fullPageLightCurveCanvas:active {
+  cursor: grabbing;
+}
+
+/* Фиксация кнопки «На весь экран» в правом верхнем углу графиков и корректное отображение панели периода над холстом AAVSO */
+.lightcurve-card-header {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+.lc-fullscreen-top-right-btn {
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+}
+.dss-viewport-wrap {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  aspect-ratio: auto !important;
+  height: auto !important;
+  min-height: 280px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 6px !important;
+  box-sizing: border-box !important;
+}
+.dss-fallback-canvas {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  height: 248px !important;
+  display: block !important;
+  z-index: 1 !important;
+}
+
+/* Единая компактная ширина (520px) и контрастные кнопки для окон поддержки CosmoBehemothych и AAVSO */
+#donateModalDialog,
+#aavsoDonateModalDialog {
+  max-width: 520px !important;
+  width: 92% !important;
+  margin: 0 auto !important;
+  padding: 20px 22px !important;
+  border-radius: 16px !important;
+  box-sizing: border-box !important;
+}
+#btnDonateGoBoosty {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(56, 189, 248, 0.4) !important;
+}
+#linkLuckStarVsx {
+  color: #38bdf8 !important;
+  border-color: rgba(56, 189, 248, 0.38) !important;
+  font-weight: 600 !important;
+}
+body[data-theme="light"] #linkLuckStarVsx {
+  color: #0284c7 !important;
+}
+
+.universe-luck-btn { white-space: normal !important; text-align: center !important; line-height: 1.3 !important; padding: 8px 10px !important; }
+
+/* Плашки чистоты неба (Open-Meteo, 10 мин) и фазы Луны (USNO API) в шапке приложения */
+.sky-clarity-live-chip,
+.moon-phase-live-chip,
+.sky-city-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9px;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(56, 189, 248, 0.30);
+  color: #e2e8f0;
+  white-space: nowrap;
+}
+.sky-clarity-live-chip {
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+.sky-clarity-live-chip:hover {
+  border-color: rgba(56, 189, 248, 0.65);
+  background: rgba(15, 23, 42, 0.92);
+}
+.sky-clarity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.7);
+  flex-shrink: 0;
+}
+.sky-clarity-dot.warn {
+  background: #f59e0b;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.7);
+}
+.sky-clarity-dot.bad {
+  background: #ef4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.7);
+}
+.sky-alt-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  color: #7dd3fc;
+  margin-left: 4px;
+}
+body[data-theme="light"] .sky-clarity-live-chip,
+body[data-theme="light"] .moon-phase-live-chip,
+body[data-theme="light"] .sky-city-chip {
+  background: #f1f5f9 !important;
+  border-color: rgba(2, 132, 199, 0.30) !important;
+  color: #0f172a !important;
+}
+body[data-theme="light"] .sky-alt-pill {
+  background: rgba(2, 132, 199, 0.10) !important;
+  color: #0369a1 !important;
+}
+
+
+    /* === ПУНКТЫ 1–8: РАСШИРЕННАЯ ПАНЕЛЬ ЧИСТОТЫ НЕБА И ЛУНЫ НА ВЕСЬ РЯД, ПОЛУПРОЗРАЧНЫЕ КНОПКИ ГРАФИКОВ, НАСТРОЙКИ === */
+    #appNavbar .nav-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    #appNavbar #settingsGearWrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    #appNavbar #btnSettingsGear {
+      width: auto !important;
+      display: inline-flex !important;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 11px !important;
+      font-size: 12px !important;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #appNavbar #settingsPopoverMenu {
+      right: 0 !important;
+      left: auto !important;
+      top: calc(100% + 8px) !important;
+      z-index: 9999 !important;
+    }
+    .header-sky-moon-expanded-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+    }
+    @media (max-width: 900px) {
+      .header-sky-moon-expanded-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    .sky-clarity-expanded-card,
+    .moon-phase-expanded-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.68);
+      border: 1px solid rgba(56, 189, 248, 0.24);
+      color: var(--ios-text-primary, #f1f5f9);
+      text-align: left;
+      transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+      box-sizing: border-box;
+    }
+    .sky-clarity-expanded-card {
+      cursor: pointer;
+    }
+    .sky-clarity-expanded-card:hover {
+      border-color: rgba(56, 189, 248, 0.58);
+      background: rgba(15, 23, 42, 0.85);
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.14);
+    }
+    .moon-phase-expanded-card {
+      border-color: rgba(250, 204, 21, 0.25);
+    }
+    body.theme-light .sky-clarity-expanded-card,
+    body.theme-light .moon-phase-expanded-card {
+      background: rgba(255, 255, 255, 0.92);
+      color: #0f172a;
+      border-color: rgba(14, 116, 144, 0.28);
+    }
+    .sky-moon-card-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+    .sky-moon-primary-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: inherit;
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sky-moon-pill-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    body.theme-light .sky-moon-pill-badge {
+      background: rgba(2, 132, 199, 0.12);
+      color: #0369a1;
+      border-color: rgba(2, 132, 199, 0.3);
+    }
+    .sky-moon-card-details {
+      font-size: 11px;
+      color: var(--ios-text-secondary, #94a3b8);
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    body.theme-light .sky-moon-card-details {
+      color: #475569;
+    }
+    /* ПУНКТ 5B: Полупрозрачные кнопки «На весь экран» внутри полотна графика до наведения мыши */
+    .lc-canvas-wrap,
+    .dss-viewport-wrap {
+      position: relative !important;
+    }
+    .lc-canvas-floating-fullscreen-btn {
+      position: absolute !important;
+      top: 8px !important;
+      right: 10px !important;
+      z-index: 9 !important;
+      width: auto !important;
+      padding: 4px 10px !important;
+      font-size: 10.5px !important;
+      font-weight: 700 !important;
+      opacity: 0.28 !important;
+      background: rgba(15, 23, 42, 0.78) !important;
+      color: #e2e8f0 !important;
+      border: 1px solid rgba(148, 163, 184, 0.38) !important;
+      border-radius: 7px !important;
+      backdrop-filter: blur(4px);
+      transition: opacity 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease, border-color 0.18s ease !important;
+      pointer-events: auto !important;
+    }
+    .lc-canvas-floating-fullscreen-btn:hover,
+    .lc-canvas-floating-fullscreen-btn:focus-visible {
+      opacity: 1 !important;
+      transform: translateY(-1px);
+      background: rgba(15, 23, 42, 0.96) !important;
+      border-color: rgba(56, 189, 248, 0.85) !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5) !important;
+    }
+    body.theme-light .lc-canvas-floating-fullscreen-btn {
+      background: rgba(255, 255, 255, 0.82) !important;
+      color: #0f172a !important;
+      border-color: rgba(100, 116, 139, 0.4) !important;
+    }
+    body.theme-light .lc-canvas-floating-fullscreen-btn:hover {
+      opacity: 1 !important;
+      background: rgba(255, 255, 255, 0.98) !important;
+      border-color: rgba(2, 132, 199, 0.85) !important;
+    }
+    /* ПУНКТ 8: Блок графика AAVSO (AID) на всю ширину карточки после переноса Статуса каталогов в Настройки */
+    .bento-bottom-grid {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      width: 100% !important;
+    }
+    body.theme-light .settings-catalog-card {
+      background: rgba(241, 245, 249, 0.9) !important;
+      border-color: rgba(148, 163, 184, 0.35) !important;
+    }
+    body.theme-light #settingsPopoverMenu,
+    body.theme-light #settingsPopoverMenu .settings-menu-item,
+    body.theme-light #settingsPopoverMenu .settings-menu-item span,
+    body.theme-light #settingsPopoverMenu .bento-catalog-title span,
+    body.theme-light #settingsPopoverMenu .bento-status-item span:first-child {
+      color: #0f172a !important;
+    }
+
+
+    #appNavbar {
+      position: relative !important;
+      z-index: 2500 !important;
+      overflow: visible !important;
+    }
+    #uiThemeToggleBar {
+      position: relative !important;
+      z-index: 100 !important;
+    }
+    #settingsPopoverMenu {
+      z-index: 9999 !important;
+    }
+
+
+    /* === ИСПРАВЛЕНИЕ ОШИБОК ПОСТАВКИ: СТЕК НАЛОЖЕНИЯ НАСТРОЕК НАД ВИДЖЕТОМ ЛУНЫ И УГОЛ КНОПКИ ГРАФИКА === */
+    #appNavbar,
+    header.ios-navbar {
+      position: relative !important;
+      z-index: 5000 !important;
+      overflow: visible !important;
+    }
+    #appNavbar .nav-controls,
+    #appNavbar #settingsGearWrap {
+      position: relative !important;
+      z-index: 5002 !important;
+      overflow: visible !important;
+    }
+    #settingsPopoverMenu {
+      position: absolute !important;
+      z-index: 99999 !important;
+    }
+    #uiThemeToggleBar,
+    .ui-theme-toolbar,
+    #headerSkyMoonExpandedRow,
+    .sky-clarity-expanded-card,
+    .moon-phase-expanded-card {
+      position: relative !important;
+      z-index: 10 !important;
+    }
+    .lc-plot-area {
+      position: relative !important;
+      width: 100% !important;
+      display: block !important;
+    }

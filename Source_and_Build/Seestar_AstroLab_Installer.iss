@@ -1,6 +1,6 @@
 #define MyAppName "Seestar AstroLab AAVSO"
 #define MyAppFullTitle "Seestar AstroLab AAVSO — Радар целей и фотометрия"
-#define MyAppVersion "1.1.0 alpha"
+#define MyAppVersion "1.1.0 beta"
 #define MyAppPublisher "CosmoBehemothych AstroLab"
 #define MyAppURL "https://boosty.to/cosmobehemothych"
 #define MyAppRepoURL "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO"
@@ -45,8 +45,8 @@ OutputDir=dist_installer
 OutputBaseFilename=Seestar_AstroLab_Setup
 
 [Languages]
-Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "german"; MessagesFile: "compiler:Languages\German.isl"
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
