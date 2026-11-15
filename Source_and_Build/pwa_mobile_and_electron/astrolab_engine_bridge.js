@@ -734,6 +734,9 @@
       lblCityAutoStatus: "Автоопределение активно • координаты синхронизированы с радаром и эфемеридами",
       previewFileReadHint: "Файл Seestar прочитан. Нажмите «🔭 Загрузить данные AAVSO» в разделе 1 для сверки с каталогом.",
       critLockBanner: "🔒 Обнаружено критическое расхождение данных. Конвертация заблокирована. Проверьте правильность выбранной звезды и файла.",
+      phCustomCity: "Введите город...",
+      optCustomCity: "🔍 Другой город...",
+      optFullWindow: "Во всё окно",
       btnClearAll: "🗑 Очистить",
       btnConvert: "Сконвертировать данные для загрузки на AAVSO",
       btnPrevPage: "< Назад",
@@ -3108,6 +3111,15 @@
     }
     document.getElementById("langSelect").value = currentLang;
     const splashSel = document.getElementById("splashLangSelect"); if (splashSel) splashSel.value = currentLang;
+    try { if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations(); } catch (_e) {}
+    try { if (typeof window.updateZoomUiBadge === "function") { window.updateZoomUiBadge("lightCurveCanvas"); window.updateZoomUiBadge("dssFallbackCanvas"); } } catch (_e) {}
+    try { if (typeof window.localizeCitySelectDropdown === "function") window.localizeCitySelectDropdown(); } catch (_e) {}
+    try { if (typeof window.renderSkyClarityAndMoonHeader === "function") window.renderSkyClarityAndMoonHeader(); } catch (_e) {}
+    try { if (typeof renderV6TargetRadar === "function") renderV6TargetRadar(); } catch (_e) {}
+    try { if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards(); } catch (_e) {}
+    try { if (typeof renderObsTrackerModal === "function") renderObsTrackerModal(); } catch (_e) {}
+    try { if (typeof window.renderUserOnlyLightCurveCard === "function") window.renderUserOnlyLightCurveCard(); } catch (_e) {}
+    try { if (typeof window.renderAavsoAndContributionWidget === "function") window.renderAavsoAndContributionWidget((window.STATE && window.STATE.catalogStarName) || "", false); } catch (_e) {}
   }
 
   /**
@@ -7656,8 +7668,9 @@ function revealAndFocusField(inputId) {
       try { localStorage.setItem(k, String(v)); } catch (_) {}
     });
     const restoredLang = String(storeObj.lang || storeObj.seestar_lang || "").trim().toLowerCase().slice(0, 2);
-    if (restoredLang && I18N[restoredLang] && restoredLang !== currentLang) {
+    if (restoredLang && I18N[restoredLang]) {
       currentLang = restoredLang;
+      try { localStorage.setItem("lang", restoredLang); localStorage.setItem("seestar_lang", restoredLang); } catch (_) {}
       applyTranslations();
       renderUrgentStarsCards();
       renderV6RadarDock();
@@ -9466,6 +9479,8 @@ function revealAndFocusField(inputId) {
     const isLight = document.body.getAttribute("data-theme") === "light";
 
     if (!targetCanvasOverride && currentPts.length === 0 && pastPts.length === 0) {
+      if (periodEl) periodEl.textContent = `${trM14("periodUserPrefix")} —`;
+      updateZoomUiBadge("lightCurveCanvas");
       if (box) box.style.display = "none";
       if (emptyEl) emptyEl.style.display = "flex";
       if (statsEl) {
@@ -9932,6 +9947,8 @@ function revealAndFocusField(inputId) {
     // НЕ рисуем текст внутри канваса-таблицы #dssFallbackCanvas, а показываем чистый адаптивный HTML-блок #aavsoCurveEmptyState!
     if (allToPlot.length === 0) {
       if (!targetCanvasOverride) {
+        if (periodEl) periodEl.textContent = `${trM14("periodAavsoPrefix")} —`;
+        updateZoomUiBadge("dssFallbackCanvas");
         const ctxEmpty = canvas.getContext("2d");
         ctxEmpty.clearRect(0, 0, canvas.width, canvas.height);
         if (dssWrap) dssWrap.style.display = "none";
@@ -10610,6 +10627,7 @@ function revealAndFocusField(inputId) {
   }
 
   function syncAllModule14Translations() {
+    window.syncAllModule14Translations = syncAllModule14Translations;
     document.querySelectorAll("[data-i18n]").forEach(el => {
       const k = el.getAttribute("data-i18n");
       if (k && MODULE14_I18N.ru[k]) {
@@ -10758,6 +10776,7 @@ function revealAndFocusField(inputId) {
     state.offsetY = 0;
   }
 
+  window.updateZoomUiBadge = updateZoomUiBadge;
   function updateZoomUiBadge(canvasId) {
     const st = CHART_ZOOM_STATE[canvasId];
     if (!st) return;
@@ -10964,6 +10983,8 @@ function revealAndFocusField(inputId) {
     const isLight = document.body.getAttribute("data-theme") === "light";
 
     if (!targetCanvasOverride && currentPts.length === 0 && pastPts.length === 0) {
+      if (periodEl) periodEl.textContent = `${trM14("periodUserPrefix")} —`;
+      updateZoomUiBadge("lightCurveCanvas");
       if (box) box.style.display = "none";
       if (emptyEl) emptyEl.style.display = "flex";
       if (statsEl) {
@@ -11286,6 +11307,8 @@ function revealAndFocusField(inputId) {
 
     if (allToPlot.length === 0) {
       if (!targetCanvasOverride) {
+        if (periodEl) periodEl.textContent = `${trM14("periodAavsoPrefix")} —`;
+        updateZoomUiBadge("dssFallbackCanvas");
         const ctxEmpty = canvas.getContext("2d");
         ctxEmpty.clearRect(0, 0, canvas.width, canvas.height);
         if (dssWrap) dssWrap.style.display = "none";
@@ -13121,6 +13144,26 @@ function revealAndFocusField(inputId) {
     };
     return map[rawCity] || rawCity;
   }
+
+  function localizeCitySelectDropdown() {
+    const sel = document.getElementById("headerCitySelect");
+    if (!sel) return;
+    Array.from(sel.options).forEach(opt => {
+      if (!opt.value || opt.value === "custom") {
+        if (opt.value === "custom") opt.textContent = t("optCustomCity");
+        return;
+      }
+      const p = opt.value.split(",");
+      if (p.length >= 3) {
+        const latNum = parseFloat(p[0]);
+        const rawC = p.slice(2).join(",").trim();
+        const locC = getLocalizedCityName(rawC);
+        const hemiChar = latNum >= 0 ? "N" : "S";
+        opt.textContent = `${locC} (${Math.abs(latNum).toFixed(1)}°${hemiChar})`;
+      }
+    });
+  }
+  window.localizeCitySelectDropdown = localizeCitySelectDropdown;
 
   const OBSERVER_GEO_STATE = {
     lat: 56.1439,

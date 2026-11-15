@@ -165,12 +165,13 @@ class AstroLabDiskBridge:
             for cand_settings in [
                 os.path.join(base_d, "user_settings.json"),
                 os.path.join(os.path.dirname(base_d), "user_settings.json"),
+                os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])) if sys.argv else base_d, "user_settings.json"),
             ]:
                 if os.path.isfile(cand_settings):
                     with open(cand_settings, "r", encoding="utf-8") as sf:
                         s_obj = json.load(sf)
                     inst_lang = s_obj.get("lang") or s_obj.get("seestar_lang")
-                    if inst_lang and not store.get("lang"):
+                    if inst_lang:
                         store["lang"] = str(inst_lang)
                         store["seestar_lang"] = str(inst_lang)
                     break
