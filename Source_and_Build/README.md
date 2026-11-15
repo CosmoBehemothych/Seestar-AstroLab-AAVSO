@@ -1,41 +1,41 @@
 # 🔭 Seestar AstroLab AAVSO (`v1.1.0 beta` & `v1.0.1 Stable`)
 
-🌟 **Seestar AstroLab AAVSO** is a specialized desktop application for owners of **ZWO Seestar smart telescopes (`S30`, `S30PRO`, `S50`, `S50PRO`)** and variable star observers affiliated with the [AAVSO (American Association of Variable Star Observers)](https://www.google.com/search?q=https%3A%2F%2Fwww.aavso.org).
+🌟 **Seestar AstroLab AAVSO** is a specialized desktop application for owners of **ZWO Seestar smart telescopes (`S30`, `S30PRO`, `S50`, `S50PRO`)** and variable star observers affiliated with the [AAVSO (American Association of Variable Star Observers)](https://www.aavso.org).
 
-The program bridges the technical gap between the built-in photometry tool of [ZWO Seestar](https://www.google.com/search?q=https%3A%2F%2Fwww.seestar.com) telescopes and the scientific [AAVSO WebObs](https://www.google.com/search?q=https%3A%2F%2Fwww.aavso.org%2Fwebobs) & [AAVSO International Database (AID)](https://www.aavso.org/aavso-international-database-aid): it automatically converts raw Seestar photometric CSV files into the international **AAVSO Extended** standard, verifies star coordinates and identifiers via [AAVSO VSX](https://www.aavso.org/vsx/), [AAVSO VSP (Variable Star Plotter)](https://www.google.com/search?q=https%3A%2F%2Fapp.aavso.org%2Fvsp%2F), and [CDS SIMBAD](https://www.google.com/search?q=https%3A%2F%2Fsimbad.cds.unistra.fr%2Fsimbad%2F), automatically selects the optimal check star (`Check Star`: `KNAME` / `KMAG`) within the field of view of each Seestar model, plots multi-layer light curves with horizontal mouse-drag panning and a static magnitude axis, maintains a local archive of all your converted sessions (`Converted_Photometry_Storage/`), monitors real-time **Sky Clarity** ([Open-Meteo API](https://www.google.com/search?q=https%3A%2F%2Fopen-meteo.com%2F)) and **Regional Moon Phase & Altitude** ([USNO Astronomical API v4.0](https://aa.usno.navy.mil/data/api)) every 10 minutes, filters priority targets by your observer hemisphere and city latitude, and includes an interactive **Celestial Wheel Random Star Selector**.
+The program bridges the technical gap between the built-in photometry tool of [ZWO Seestar](https://www.seestar.com) telescopes and the scientific [AAVSO WebObs](https://www.aavso.org/webobs) & [AAVSO International Database (AID)](https://www.aavso.org/aavso-international-database-aid): it automatically converts raw Seestar photometric CSV files into the international **AAVSO Extended** standard, verifies star coordinates and identifiers via [AAVSO VSX](https://www.aavso.org/vsx/), [AAVSO VSP (Variable Star Plotter)](https://app.aavso.org/vsp/), and [CDS SIMBAD](https://simbad.cds.unistra.fr/simbad/), automatically selects the optimal check star (`Check Star`: `KNAME` / `KMAG`) within the field of view of each Seestar model, plots multi-layer light curves with horizontal mouse-drag panning and a static magnitude axis, maintains a local archive of all your converted sessions (`Converted_Photometry_Storage/`), monitors real-time **Sky Clarity** ([Open-Meteo API](https://open-meteo.com/)) and **Regional Moon Phase & Altitude** ([USNO Astronomical API v4.0](https://aa.usno.navy.mil/data/api)) every 10 minutes, filters priority targets by your observer hemisphere and city latitude, and includes an interactive **Celestial Wheel Random Star Selector**.
 
 ## 📦 Version Selection (Both Versions Available on GitHub)
 
-We preserve all previous releases in the [GitHub Releases](https://www.google.com/search?q=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dhttps%3A%2F%2Fgithub.com%2FCosmoBehemothych%2FSeestar-AstroLab-AAVSO%2Freleases) section and repository so every observer can choose the version that best fits their workflow:
+We preserve all previous releases in the [GitHub Releases](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) section and repository so every observer can choose the version that best fits their workflow:
 
 | 🏷️ Version | 📌 Status | ⬇️ Installer / Portable Package | 🔍 Summary | 
 | ----- | ----- | ----- | ----- | 
-| **`v1.1.0 beta`** | 🧪 **New Feature Release (Beta)** | [Seestar_AstroLab_Setup_v1.1.0-beta.exe](https://www.google.com/search?q=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dhttps%3A%2F%2Fgithub.com%2FCosmoBehemothych%2FSeestar-AstroLab-AAVSO%2Freleases%2Ftag%2Fv1.1.0-beta) / [Portable/Seestar_AstroLab_Portable_v1.1.0-beta.exe](https://www.google.com/search?q=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3DPortable%2FSeestar_AstroLab_Portable_v1.1.0-beta.exe) | Direct AAVSO (`VSX` + `VSP` + `AID`) integration, 52 priority targets with Hemisphere & City Latitude visibility filtering, live Sky Clarity (Open-Meteo, 10-min auto-refresh) & Regional Moon Phase/Altitude (USNO API) in the header, Celestial Black-Hole & Rocket Random Star Selector (scope- & latitude-aware), 2 independent light-curve engines with static-Y mouse drag, full-screen viewer, `Converted_Photometry_Storage` archive, and English-default 6-language installer | 
-| **`v1.0.0` / `v1.0.1`** | ✅ **Classic Initial Release** | [Available in GitHub Releases (v1.0.0)](https://www.google.com/search?q=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dhttps%3A%2F%2Fgithub.com%2FCosmoBehemothych%2FSeestar-AstroLab-AAVSO%2Freleases%2Ftag%2Fv1.0.0) | Original initial release with SIMBAD + VSP synchronization, basic Seestar CSV → AAVSO Extended conversion, and basic target radar | 
+| **`v1.1.0 beta`** | 🧪 **New Feature Release (Beta)** | [Seestar_AstroLab_Setup_v1.1.0-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.0-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Direct AAVSO (`VSX` + `VSP` + `AID`) integration, 52 priority targets with Hemisphere & City Latitude visibility filtering, live Sky Clarity (Open-Meteo, 10-min auto-refresh) & Regional Moon Phase/Altitude (USNO API) in the header, Celestial Black-Hole & Rocket Random Star Selector (scope- & latitude-aware), 2 independent light-curve engines with static-Y mouse drag, full-screen viewer, `Converted_Photometry_Storage` archive, and English-default 6-language installer | 
+| **`v1.0.0` / `v1.0.1`** | ✅ **Classic Initial Release** | [Available in GitHub Releases (v1.0.0)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.0.0) | Original initial release with SIMBAD + VSP synchronization, basic Seestar CSV → AAVSO Extended conversion, and basic target radar | 
 
 ## 📑 Table of Contents
 
-* [📦 Version Selection](https://www.google.com/search?q=%23-version-selection-both-versions-available-on-github)
+* [📦 Version Selection](#-version-selection-both-versions-available-on-github)
 
-* [🚀 What's New in v1.1.0 beta (Compared to GitHub v1.0.0)](https://www.google.com/search?q=%23-whats-new-in-v110-beta-compared-to-github-v100)
+* [🚀 What's New in v1.1.0 beta (Compared to GitHub v1.0.0)](#-whats-new-in-v110-beta-compared-to-github-v100)
 
-* [📸 Screenshots (`v1.1.0 beta`)](https://www.google.com/search?q=%23-screenshots-v110-beta)
+* [📸 Screenshots (`v1.1.0 beta`)](#-screenshots-v110-beta)
 
-* [✨ Key Features](https://www.google.com/search?q=%23-key-features)
+* [✨ Key Features](#-key-features)
 
-* [🔭 Supported Seestar Models](https://www.google.com/search?q=%23-supported-seestar-models)
+* [🔭 Supported Seestar Models](#-supported-seestar-models)
 
-* [🧭 Step-by-Step Guide](https://www.google.com/search?q=%23-step-by-step-guide-from-seestar-imaging-to-aavso-webobs-submission)
+* [🧭 Step-by-Step Guide](#-step-by-step-guide-from-seestar-imaging-to-aavso-webobs-submission)
 
-* [👨‍💻 Authorship & Support](https://www.google.com/search?q=%23-authorship--support)
+* [👨‍💻 Authorship & Support](#-authorship--support)
 
-* [🇷🇺 Русская версия (Russian Version)](https://www.google.com/search?q=%23-%D1%80%D1%83%D1%81%D1%81%D0%BA%D0%B0%D1%8F-%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D1%8F-russian-version)
+* [🇷🇺 Русская версия (Russian Version)](#-русская-версия-russian-version)
 
 ## 🚀 What's New in `v1.1.0 beta` (Compared to GitHub `v1.0.0`)
 
 1. **🛰️ Direct AAVSO (`VSX` + `VSP` + `AID`) Integration & Full 52-Target Priority Sync**:
 
-   * Prioritizes official [AAVSO VSX](https://www.aavso.org/vsx/) and [AAVSO VSP](https://www.google.com/search?q=https%3A%2F%2Fapp.aavso.org%2Fvsp%2F) catalogs for target star identification, coordinates (`RA/DEC J2000`), comparison/check star selection (`CHART`, `KNAME`, `KMAG`), and full batch synchronization of all 52 priority targets without truncation.
+   * Prioritizes official [AAVSO VSX](https://www.aavso.org/vsx/) and [AAVSO VSP](https://app.aavso.org/vsp/) catalogs for target star identification, coordinates (`RA/DEC J2000`), comparison/check star selection (`CHART`, `KNAME`, `KMAG`), and full batch synchronization of all 52 priority targets without truncation.
 
 2. **🌌 Live Sky Clarity (Every 10 Min) & Regional Moon Phase / Altitude in the Header**:
 
@@ -77,17 +77,31 @@ We preserve all previous releases in the [GitHub Releases](https://www.google.co
 
 ### 1. Main dashboard, live Sky Clarity & Moon Phase header bar, Hemisphere visibility filter, and dual light curves (Dark theme)
 
+![Main dashboard and urgent radar (Dark theme)](screenshots/01_main_dashboard_and_urgent_radar_dark.png)
+
 ### 2. Interactive AAVSO Urgent Target Radar (`52 Priority Targets`, Hemisphere filter & Random Star Selection button)
+
+![Photometry converter and light curve](screenshots/02_photometry_converter_and_light_curve.png)
 
 ### 3. Celestial Wheel Random Star Selector (Black Hole, AAVSO Center Emblem, Upward Rocket & Obsidian-Gold Star Dossier)
 
+![Celestial Wheel Random Star Selector](screenshots/07_celestial_wheel_random_star_selector.png)
+
 ### 4. "My Observations" section & `Converted_Photometry_Storage` analytics
+
+![My Observations analytics](screenshots/03_my_observations_analytics.png)
 
 ### 5. Harmonized Light theme and multilingual interface (`Light Theme`)
 
+![Light theme and multilingual interface](screenshots/04_light_theme_and_multilang.png)
+
 ### 6. Installer menu localized into 6 languages (`EN English` selected by default)
 
+![Installer 6 languages UI](screenshots/05_installer_6_languages_ui.png)
+
 ### 7. Full-screen scrollable light curve analysis (`SZ Lyn` — full-window mode)
+
+![Full-screen light curve analysis](screenshots/06_fullscreen_light_curve_sz_lyn.png)
 
 ## ✨ Key Features
 
@@ -105,7 +119,7 @@ We preserve all previous releases in the [GitHub Releases](https://www.google.co
 
 * 🛰️ **Synchronization with AAVSO VSX, AAVSO VSP, AAVSO AID, and CDS SIMBAD**: automatic reduction of Latin constellation names according to IAU standards (e.g., `SZ Lyncis` → `SZ Lyn`), retrieval of the official chart identifier (`CHART ID`), and automatic selection of a non-variable check star (`KNAME`, `KMAG`).
 
-* 🌌 **Real-time Sky Clarity & Regional Moon Phase monitoring**: automatic 10-minute updates for any city via [Open-Meteo API](https://www.google.com/search?q=https%3A%2F%2Fopen-meteo.com%2F) and [USNO Astronomical API v4.0](https://aa.usno.navy.mil/data/api).
+* 🌌 **Real-time Sky Clarity & Regional Moon Phase monitoring**: automatic 10-minute updates for any city via [Open-Meteo API](https://open-meteo.com/) and [USNO Astronomical API v4.0](https://aa.usno.navy.mil/data/api).
 
 * 🌍 **Full localization of the application and installer into 6 languages**: English (`en-US`, default in installer), Russian (`ru-RU`), Spanish (`es-ES`), German (`de-DE`), French (`fr-FR`), and Chinese (`zh-CN`).
 
@@ -126,32 +140,32 @@ We preserve all previous releases in the [GitHub Releases](https://www.google.co
 
 3. ⭐ **Pick a Target Star**: Use the **AAVSO Target Radar** (filtered automatically to stars observable from your city's latitude) or click **«🧭 Random Star Selection for Your Observations»** to spin the 10-second Celestial Wheel.
 
-4. 📊 **Convert & Upload**: Load your Seestar CSV file in Section 2, inspect both light curves (`My Observations` and `Known AAVSO Light Curve & Your Contribution`), click **«Convert Data for AAVSO Upload»**, and upload the generated `#TYPE=EXTENDED` file to [AAVSO WebObs](https://www.google.com/search?q=https%3A%2F%2Fwww.aavso.org%2Fwebobs).
+4. 📊 **Convert & Upload**: Load your Seestar CSV file in Section 2, inspect both light curves (`My Observations` and `Known AAVSO Light Curve & Your Contribution`), click **«Convert Data for AAVSO Upload»**, and upload the generated `#TYPE=EXTENDED` file to [AAVSO WebObs](https://www.aavso.org/webobs).
 
 ## 👨‍💻 Authorship & Support
 
-* 🧑‍🚀 **Developer**: **CosmoBehemothych** ([https://github.com/CosmoBehemothych](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FCosmoBehemothych))
+* 🧑‍🚀 **Developer**: **CosmoBehemothych** ([https://github.com/CosmoBehemothych](https://github.com/CosmoBehemothych))
 
-* 🛡️ **Anti-Plagiarism Fingerprint**: `CBH-ASTROLAB-AAVSO-2026-9F8E4A21-7C3D-B601` (see [AUTHORSHIP_AND_COPYRIGHT_PROOF.md](https://www.google.com/search?q=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3DSource_and_Build%2Fdocs%2FAUTHORSHIP_AND_COPYRIGHT_PROOF.md))
+* 🛡️ **Anti-Plagiarism Fingerprint**: `CBH-ASTROLAB-AAVSO-2026-9F8E4A21-7C3D-B601` (see [AUTHORSHIP_AND_COPYRIGHT_PROOF.md](Source_and_Build/docs/AUTHORSHIP_AND_COPYRIGHT_PROOF.md))
 
-* ☕ **Support the project on Boosty**: [https://boosty.to/cosmobehemothych](https://www.google.com/search?q=https://boosty.to/cosmobehemothych)
+* ☕ **Support the project on Boosty**: [https://boosty.to/cosmobehemothych](https://boosty.to/cosmobehemothych)
 
 * 💙 **Support the AAVSO mission**: <https://aavso.org/donate-now/>
 
 ## 🇷🇺 Русская версия (Russian Version)
 
-> 📸 Все обновлённые скриншоты интерфейса `v1.1.0 beta` приведены выше в разделе [📸 Screenshots (`v1.1.0 beta`)](https://www.google.com/search?q=%23-screenshots-v110-beta).
+> 📸 Все обновлённые скриншоты интерфейса `v1.1.0 beta` приведены выше в разделе [📸 Screenshots (`v1.1.0 beta`)](#-screenshots-v110-beta).
 
-🌟 **Seestar AstroLab AAVSO** — специализированное десктопное приложение для владельцев умных телескопов **ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`)** и наблюдателей переменных звёзд [AAVSO (American Association of Variable Star Observers)](https://www.google.com/search?q=https%3A%2F%2Fwww.aavso.org).
+🌟 **Seestar AstroLab AAVSO** — специализированное десктопное приложение для владельцев умных телескопов **ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`)** и наблюдателей переменных звёзд [AAVSO (American Association of Variable Star Observers)](https://www.aavso.org).
 
 ### 📦 Выбор удобной версии на GitHub (Сохранены обе версии)
 
-При обновлении репозитория старая версия **не удаляется** — в разделе [Releases на GitHub](https://www.google.com/search?q=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dhttps%3A%2F%2Fgithub.com%2FCosmoBehemothych%2FSeestar-AstroLab-AAVSO%2Freleases) и в дереве репозитория доступны обе сборки:
+При обновлении репозитория старая версия **не удаляется** — в разделе [Releases на GitHub](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) и в дереве репозитория доступны обе сборки:
 
 | 🏷️ Версия | 📌 Статус | ⬇️ Установщик / Portable-сборка | 🔍 Описание версии | 
 | ----- | ----- | ----- | ----- | 
-| **`v1.1.0 beta`** | 🧪 **Новая расширенная сборка (Beta)** | [Seestar_AstroLab_Setup_v1.1.0-beta.exe](https://www.google.com/search?q=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dhttps%3A%2F%2Fgithub.com%2FCosmoBehemothych%2FSeestar-AstroLab-AAVSO%2Freleases%2Ftag%2Fv1.1.0-beta) / [Portable/Seestar_AstroLab_Portable_v1.1.0-beta.exe](https://www.google.com/search?q=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3DPortable%2FSeestar_AstroLab_Portable_v1.1.0-beta.exe) | Прямая интеграция с AAVSO (`VSX` + `VSP` + `AID`), 52 приоритетные цели с фильтрацией по полушарию и широте города, живая Чистота неба (Open-Meteo, каждые 10 мин) и Фаза/Высота Луны по региону (USNO API) в шапке, барабан случайного выбора звезды в центре чёрной дыры с ракетой и логотипом AAVSO, 2 графика кривой блеска со статичной осью Y при сдвиге ЛКМ, хранилище `Converted_Photometry_Storage` и английский по умолчанию в установщике | 
-| **`v1.0.0` / `v1.0.1`** | ✅ **Классическая первая версия** | [Доступна в разделе Releases (v1.0.0)](https://www.google.com/search?q=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dhttps%3A%2F%2Fgithub.com%2FCosmoBehemothych%2FSeestar-AstroLab-AAVSO%2Freleases%2Ftag%2Fv1.0.0) | Базовая первоначальная версия с синхронизацией SIMBAD + VSP и классическим конвертером CSV → AAVSO Extended | 
+| **`v1.1.0 beta`** | 🧪 **Новая расширенная сборка (Beta)** | [Seestar_AstroLab_Setup_v1.1.0-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.0-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Прямая интеграция с AAVSO (`VSX` + `VSP` + `AID`), 52 приоритетные цели с фильтрацией по полушарию и широте города, живая Чистота неба (Open-Meteo, каждые 10 мин) и Фаза/Высота Луны по региону (USNO API) в шапке, барабан случайного выбора звезды в центре чёрной дыры с ракетой и логотипом AAVSO, 2 графика кривой блеска со статичной осью Y при сдвиге ЛКМ, хранилище `Converted_Photometry_Storage` и английский по умолчанию в установщике | 
+| **`v1.0.0` / `v1.0.1`** | ✅ **Классическая первая версия** | [Доступна в разделе Releases (v1.0.0)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.0.0) | Базовая первоначальная версия с синхронизацией SIMBAD + VSP и классическим конвертером CSV → AAVSO Extended | 
 
 ### 🚀 Что нового в версии `v1.1.0 beta`
 
@@ -199,10 +213,28 @@ We preserve all previous releases in the [GitHub Releases](https://www.google.co
 
 ### ❤️ Авторство и поддержка проекта
 
-* 🧑‍🚀 **Разработчик**: **CosmoBehemothych** ([https://github.com/CosmoBehemothych](https://www.google.com/search?q=https%3A%2F%2Fgithub.com%2FCosmoBehemothych))
+* 🧑‍🚀 **Разработчик**: **CosmoBehemothych** ([https://github.com/CosmoBehemothych](https://github.com/CosmoBehemothych))
 
-* 🛡️ **Цифровой отпечаток авторства**: `CBH-ASTROLAB-AAVSO-2026-9F8E4A21-7C3D-B601` ([AUTHORSHIP_AND_COPYRIGHT_PROOF.md](https://www.google.com/search?q=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3DSource_and_Build%2Fdocs%2FAUTHORSHIP_AND_COPYRIGHT_PROOF.md))
+* 🛡️ **Цифровой отпечаток авторства**: `CBH-ASTROLAB-AAVSO-2026-9F8E4A21-7C3D-B601` ([AUTHORSHIP_AND_COPYRIGHT_PROOF.md](Source_and_Build/docs/AUTHORSHIP_AND_COPYRIGHT_PROOF.md))
 
-* ☕ **Поддержать автора на Boosty**: [https://boosty.to/cosmobehemothych](https://www.google.com/search?q=https://boosty.to/cosmobehemothych)
+* ☕ **Поддержать автора на Boosty**: [https://boosty.to/cosmobehemothych](https://boosty.to/cosmobehemothych)
 
 * 💙 **Поддержать ассоциацию AAVSO**: <https://aavso.org/donate-now/>
+
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://signpath.io/), certificate by [SignPath Foundation](https://signpath.org/).
+
+### Team roles
+- **Authors and Reviewers:** [CosmoBehemothych](https://github.com/CosmoBehemothych)
+- **Approvers:** [CosmoBehemothych](https://github.com/CosmoBehemothych)
+
+## Privacy policy
+
+This program will not transfer any personal or telemetry information to other networked systems unless specifically requested by the user or the person installing or operating it.
+
+When using online astronomical and weather features, the application sends read-only queries to public third-party services (AAVSO, CDS SIMBAD, Open-Meteo, and USNO) using only the target coordinates, star identifiers, or city selected by the user.
+
+## Uninstallation
+
+You can uninstall the application at any time via Windows **Settings → Apps → Installed apps** (or **Control Panel → Programs and Features**).

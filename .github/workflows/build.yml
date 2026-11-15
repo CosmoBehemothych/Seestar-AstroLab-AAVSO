@@ -1,0 +1,72 @@
+name: Build Seestar AstroLab AAVSO (Windows)
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pywebview
+
+      - name: Build application binary with PyInstaller
+        working-directory: Source_and_Build
+        shell: pwsh
+        run: |
+          $argsList = @(
+            "--noconfirm", "--onedir", "--windowed",
+            "--name", "Seestar AstroLab",
+            "--version-file", "version_info.txt",
+            "--add-data", "pwa_mobile_and_electron;pwa_mobile_and_electron",
+            "--add-data", "backend;backend",
+            "--add-data", "desktop_pc;desktop_pc",
+            "--add-data", "Converted_Photometry_Storage;Converted_Photometry_Storage"
+          )
+          if (Test-Path "assets/Seestar_AstroLab.ico") {
+            $argsList += @("--icon", "assets/Seestar_AstroLab.ico")
+          }
+          $argsList += "desktop_launcher.py"
+          pyinstaller @argsList
+
+      - name: Build Windows Installer (Inno Setup if assets present)
+        working-directory: Source_and_Build
+        shell: pwsh
+        run: |
+          if ((Test-Path "Seestar_AstroLab_Installer.iss") -and (Test-Path "assets/Seestar_AstroLab.ico") -and (Test-Path "assets/installer_header_fullwidth.bmp")) {
+            $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+            if (-not (Test-Path $iscc)) {
+              choco install innosetup -y
+            }
+            & $iscc Seestar_AstroLab_Installer.iss
+          } else {
+            Write-Host "Inno Setup assets not found; packaging PyInstaller output directly."
+            New-Item -ItemType Directory -Force -Path "dist_installer" | Out-Null
+            Compress-Archive -Path "dist/Seestar AstroLab/*" -DestinationPath "dist_installer/Seestar_AstroLab_Windows_CI.zip" -Force
+          }
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Seestar_AstroLab_Windows_Build
+          path: Source_and_Build/dist_installer/*
+          if-no-files-found: error
