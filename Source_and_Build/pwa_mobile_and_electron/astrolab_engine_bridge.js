@@ -154,6 +154,25 @@
   // Справочник синонимов и альтернативных обозначений одной и той же звезды (Пункт 9)
   const STAR_SYNONYM_GROUPS = [
     ["SZ Lyn", "SZ Lyncis", "HD 67390", "HIP 39960", "000-BBP-158", "BD+44 1718"],
+    ["omi Leo", "omicron Leo", "Omicron Leonis", "Subra", "14 Leo", "HD 83808", "HIP 47508", "000-BLE-014"],
+    ["R Leo", "R Leonis", "HD 84748", "000-BBW-803"],
+    ["gam Cas", "Gamma Cas", "Gamma Cassiopeiae", "HD 5394", "000-BCA-001"],
+    ["P Cyg", "P Cygni", "34 Cyg", "HD 193237", "000-BCY-034"],
+    ["VV Cep", "VV Cephei", "HD 208816", "000-BCE-022"],
+    ["eps Aur", "Epsilon Aur", "Epsilon Aurigae", "Almaaz", "HD 31964", "000-BAU-007"],
+    ["TX CVn", "TX Canum Venaticorum", "BD+37 2318", "000-BCV-012"],
+    ["EG And", "EG Andromedae", "HD 4174", "000-BAN-044"],
+    ["QR Vul", "QR Vulpeculae", "HD 192685", "000-BVU-020"],
+    ["T Tau", "T Tauri", "HD 284419", "000-BTA-001"],
+    ["FU Ori", "FU Orionis", "BD+08 1051", "000-BOR-054"],
+    ["UX Ori", "UX Orionis", "HD 293782", "000-BOR-050"],
+    ["RZ Cas", "RZ Cassiopeiae", "HD 17138", "000-BCA-024"],
+    ["SW Lac", "SW Lacertae", "HD 216598", "000-BLA-225"],
+    ["AM Her", "AM Herculis", "3U 1809+50", "000-BHE-181"],
+    ["AE Aqr", "AE Aquarii", "HD 196925", "000-BAQ-204"],
+    ["DQ Her", "DQ Herculis", "Nova Her 1934", "000-BHE-180"],
+    ["EV Lac", "EV Lacertae", "GJ 873", "HIP 112460", "000-BLA-224"],
+    ["RT Cru", "RT Crucis", "AAVSO 1229-64", "000-BCR-123"],
     ["CH Cyg", "CH Cygni", "HD 182917", "HIP 95413", "000-BCY-101", "SAO 48428"],
     ["T CrB", "T Coronae Borealis", "HD 143454", "HIP 78322", "000-BBW-825", "Blaze Star"],
     ["SS Cyg", "SS Cygni", "HD 206697", "000-BCP-216"],
@@ -3904,8 +3923,8 @@
     const urlsToTry = [
       `https://apps.aavso.org/vsp/api/chart/?${new URLSearchParams({ format: "json", star: normStar, fov: scopeFovStr, maglimit: scopeMagLimitStr })}`
     ];
-    const raVal = simbadObj && simbadObj.ra != null ? simbadObj.ra : parseFloat(document.getElementById("ra").value);
-    const decVal = simbadObj && simbadObj.dec != null ? simbadObj.dec : parseFloat(document.getElementById("dec").value);
+    const raVal = simbadObj && simbadObj.ra != null ? simbadObj.ra : (window.parseRaAnyToDeg ? window.parseRaAnyToDeg(document.getElementById("ra").value) : parseFloat(document.getElementById("ra").value));
+    const decVal = simbadObj && simbadObj.dec != null ? simbadObj.dec : (window.parseDecAnyToDeg ? window.parseDecAnyToDeg(document.getElementById("dec").value) : parseFloat(document.getElementById("dec").value));
     if (!isNaN(raVal) && !isNaN(decVal)) {
       urlsToTry.push(
         `https://apps.aavso.org/vsp/api/chart/?${new URLSearchParams({ format: "json", ra: String(raVal), dec: String(decVal), fov: scopeFovStr, maglimit: scopeMagLimitStr })}`
@@ -4725,8 +4744,8 @@ function revealAndFocusField(inputId) {
 
     tbody.innerHTML = `
       <tr${starRowCls}><td>STARID</td><td>${escapeHtml(row.starId)}</td><td>${escapeHtml(catStar)}</td><td id="previewStarIdCheckCell">${matchCell(starIdMatch, true)}</td></tr>
-      <tr${raRowCls}><td>RA</td><td>${escapeHtml(row.ra)}</td><td>${escapeHtml(catRa.toFixed(6))}</td><td>${matchCell(raRes.status)}</td></tr>
-      <tr${decRowCls}><td>DEC</td><td>${escapeHtml(row.dec)}</td><td>${escapeHtml(catDec.toFixed(6))}</td><td>${matchCell(decRes.status)}</td></tr>
+      <tr${raRowCls}><td>RA (J2000.0)</td><td>${escapeHtml(formatRaJ2000Hms(parseFloat(row.ra), true))} <small style="color:var(--ios-text-secondary);">(${escapeHtml(row.ra)}°)</small></td><td><strong>${escapeHtml(formatRaJ2000Hms(catRa, true))}</strong> <small style="color:var(--ios-text-secondary);">(${escapeHtml(catRa.toFixed(5))}°)</small></td><td>${matchCell(raRes.status)}</td></tr>
+      <tr${decRowCls}><td>Dec (J2000.0)</td><td>${escapeHtml(formatDecJ2000Dms(parseFloat(row.dec)))} <small style="color:var(--ios-text-secondary);">(${escapeHtml(row.dec)}°)</small></td><td><strong>${escapeHtml(formatDecJ2000Dms(catDec))}</strong> <small style="color:var(--ios-text-secondary);">(${escapeHtml(catDec.toFixed(5))}°)</small></td><td>${matchCell(decRes.status)}</td></tr>
       <tr${magRowCls}><td>MAG</td><td>${escapeHtml(row.mag)}</td><td>${escapeHtml(magRes.catalogRefText)}</td><td>${matchCell(magRes.status)}</td></tr>
       <tr${merrRowCls}><td>MERR</td><td>${escapeHtml(row.merr)}</td><td>${escapeHtml(merrRes.catalogRefText)}</td><td>${matchCell(merrRes.status)}</td></tr>
       <tr><td>UTC</td><td>${escapeHtml(row.utc)}</td><td colspan="2"></td></tr>
@@ -4804,8 +4823,18 @@ function revealAndFocusField(inputId) {
         // При ручном изменении звезды пользователем сбрасываем флаг старого SIMBAD до нажатия «Загрузить SIMBAD + VSP»
         STATE.simbadCatalogLoaded = false;
       } else if (id === "ra" || id === "dec") {
-        const rVal = parseFloat((document.getElementById("ra")?.value || "").trim());
-        const dVal = parseFloat((document.getElementById("dec")?.value || "").trim());
+        const rVal = parseRaAnyToDeg((document.getElementById("ra")?.value || "").trim());
+        const dVal = parseDecAnyToDeg((document.getElementById("dec")?.value || "").trim());
+        const raHintEl = document.getElementById("raHint");
+        const decHintEl = document.getElementById("decHint");
+        if (!isNaN(rVal) && raHintEl) {
+          raHintEl.textContent = `🔭 RA (J2000.0): ${formatRaJ2000Hms(rVal, false)} (${rVal.toFixed(5)}°)`;
+          raHintEl.className = "field-hint ok";
+        }
+        if (!isNaN(dVal) && decHintEl) {
+          decHintEl.textContent = `🔭 Dec (J2000.0): ${formatDecJ2000Dms(dVal)} (${dVal >= 0 ? '+' : ''}${dVal.toFixed(5)}°)`;
+          decHintEl.className = "field-hint ok";
+        }
         if (!isNaN(rVal) && !isNaN(dVal)) {
           STATE.catalogRa = rVal;
           STATE.catalogDec = dVal;
@@ -4984,11 +5013,11 @@ function revealAndFocusField(inputId) {
     try {
       simbadObj = await querySimbad(rawStarInput, log);
       if (simbadObj.ra != null) {
-        document.getElementById("ra").value = Number(simbadObj.ra).toFixed(6);
+        document.getElementById("ra").value = formatRaJ2000Hms(Number(simbadObj.ra), true);
         STATE.catalogRa = Number(simbadObj.ra);
       }
       if (simbadObj.dec != null) {
-        document.getElementById("dec").value = Number(simbadObj.dec).toFixed(6);
+        document.getElementById("dec").value = formatDecJ2000Dms(Number(simbadObj.dec));
         STATE.catalogDec = Number(simbadObj.dec);
       }
 
@@ -5013,8 +5042,8 @@ function revealAndFocusField(inputId) {
       log(`✗ SIMBAD Error: ${e.message}`);
       if (window.showCatalogServerError) window.showCatalogServerError(`SIMBAD: ${e.message}`);
       // Даже если SIMBAD по имени не ответил, но есть координаты в форме или файле — проверим по координатам (Пункт 9)
-      const fallbackRa = parseFloat(document.getElementById("ra").value);
-      const fallbackDec = parseFloat(document.getElementById("dec").value);
+      const fallbackRa = parseRaAnyToDeg(document.getElementById("ra").value);
+      const fallbackDec = parseDecAnyToDeg(document.getElementById("dec").value);
       if (!isNaN(fallbackRa) && !isNaN(fallbackDec)) {
         canonicalStar = await verifyStarNameByCoordsFromMirrors(fallbackRa, fallbackDec, canonicalStar, log);
         STATE.catalogStarName = canonicalStar;
@@ -5071,8 +5100,8 @@ function revealAndFocusField(inputId) {
       log(`✗ VSP & Mirrors Error: ${e.message}`);
       if (window.showCatalogServerError) window.showCatalogServerError(`AAVSO VSP: ${e.message}`);
       // Резервная синхронизация с локальным каталогом AAVSO VSX/VSP при недоступности внешних зеркал
-      const fbRa = parseFloat(document.getElementById("ra").value);
-      const fbDec = parseFloat(document.getElementById("dec").value);
+      const fbRa = parseRaAnyToDeg(document.getElementById("ra").value);
+      const fbDec = parseDecAnyToDeg(document.getElementById("dec").value);
       const localCat = resolveCatalogStarRecord(canonicalStar || rawStarInput, fbRa, fbDec);
       if (localCat.canonicalStar) {
         canonicalStar = localCat.canonicalStar;
@@ -5081,8 +5110,8 @@ function revealAndFocusField(inputId) {
         if (!document.getElementById("chart").value.trim()) document.getElementById("chart").value = localCat.matched.chart;
         if (!document.getElementById("kname").value.trim()) document.getElementById("kname").value = localCat.matched.kname;
         if (!document.getElementById("kmag").value.trim()) document.getElementById("kmag").value = localCat.matched.kmag;
-        if (!document.getElementById("ra").value.trim()) document.getElementById("ra").value = localCat.matched.ra.toFixed(6);
-        if (!document.getElementById("dec").value.trim()) document.getElementById("dec").value = localCat.matched.dec.toFixed(6);
+        if (!document.getElementById("ra").value.trim()) document.getElementById("ra").value = formatRaJ2000Hms(localCat.matched.ra, true);
+        if (!document.getElementById("dec").value.trim()) document.getElementById("dec").value = formatDecJ2000Dms(localCat.matched.dec);
         STATE.catalogRa = localCat.matched.ra;
         STATE.catalogDec = localCat.matched.dec;
       }
@@ -5091,8 +5120,8 @@ function revealAndFocusField(inputId) {
     // ПУНКТ 2 (Цикл 3): Поле STARID в разделе «Наблюдатель и звезда» строго принимает каноническое имя из каталога!
     const finalCatRec = resolveCatalogStarRecord(
       canonicalStar || rawStarInput,
-      parseFloat(document.getElementById("ra").value),
-      parseFloat(document.getElementById("dec").value)
+      parseRaAnyToDeg(document.getElementById("ra").value),
+      parseDecAnyToDeg(document.getElementById("dec").value)
     );
     if (finalCatRec.canonicalStar) {
       canonicalStar = finalCatRec.canonicalStar;
@@ -5305,8 +5334,8 @@ function revealAndFocusField(inputId) {
 
     // ПУНКТ 2 (Цикл 3): Приоритет у каталожного имени (STATE.catalogStarName после синхронизации с каталогами),
     // чтобы после экспорта поле STARID в «Наблюдатель и звезда» содержало строго каталожное имя, а не сырое имя из файла!
-    const refRa = !isNaN(parseFloat(raUI)) ? parseFloat(raUI) : (firstRow ? firstRow.ra : NaN);
-    const refDec = !isNaN(parseFloat(decUI)) ? parseFloat(decUI) : (firstRow ? firstRow.dec : NaN);
+    const refRa = !isNaN(parseRaAnyToDeg(raUI)) ? parseRaAnyToDeg(raUI) : (firstRow ? firstRow.ra : NaN);
+    const refDec = !isNaN(parseDecAnyToDeg(decUI)) ? parseDecAnyToDeg(decUI) : (firstRow ? firstRow.dec : NaN);
     const rawCandidateName = (staridEl && staridEl.getAttribute("data-source") === "catalog" && STATE.catalogStarName)
       ? STATE.catalogStarName
       : (starIdUI || STATE.catalogStarName || (firstRow ? firstRow.starId : "") || "");
@@ -5850,6 +5879,7 @@ function revealAndFocusField(inputId) {
   // МОДУЛЬ: ПОЛНЫЙ КАТАЛОГ СРОЧНЫХ ЦЕЛЕЙ AAVSO БЕЗ ОГРАНИЧЕНИЙ (Критерий 2 & 6)
   // ============================================================================
   const AAVSO_URGENT_CATALOGUE = [
+    { star: "omi Leo", alias: "Subra / HD 83808", type: "Эллипсоидальная двойная (ELL / SB2)", auid: "000-BLE-014", con: "Leo", ra: 145.28764, dec: 9.89231, magRange: "3.52m (Δm = 0.002m, P = 14.498 d)", chart: "X43364NTN", kname: "000-BLE-018", kmag: "6.450", priority: "🔥 СРОЧНО", desc: "Омикрон Льва (Subra, F8-G0III + A7m) — приоритетная цель кампании AAVSO Target Tool (Alert/Campaign) с орбитальным периодом 14.498 сут.", comment: "Кампания AAVSO Target Tool (Alert/Campaign): яркая цель (3.52 V), требуются короткие экспозиции или дефокусировка." },
     { star: "T CrB", alias: "HD 143454", type: "Повторная новая (NR)", auid: "000-BBW-825", con: "CrB", ra: 239.87567, dec: 25.92017, magRange: "10.0m → 2.0m (ожидание вспышки)", chart: "X28490TC", kname: "000-BBW-829", kmag: "10.510", priority: "🔥 СРОЧНО #1", desc: "Симбиотическая повторная новая («Полыхающая звезда», M4III + белый карлик 1.37 M☉). Вспышки каждые ~80 лет (1866, 1946).", comment: "AAVSO Alert Notice: приоритетный глобальный патруль предвспышечного подъема блеска. Выдержка 10 с в фильтре TG." },
     { star: "SZ Lyn", alias: "HD 67390", type: "Пульсирующая (DSCT / HADS)", auid: "000-BBP-158", con: "Lyn", ra: 122.39895, dec: 44.47156, magRange: "9.08m → 9.72m (P = 0.12053 d)", chart: "X28491AB", kname: "000-BDP-712", kmag: "9.642", priority: "🔥 СРОЧНО", desc: "Высокоамплитудная звезда типа δ Щита (P = 2.89 ч) в двойной системе с орбитальным периодом 1181 сут.", comment: "Рекомендуется непрерывная серия 2.5–3.0 ч для точной фиксации эпохи максимума (O-C анализ светового уравнения)." },
     { star: "SS Cyg", alias: "HD 206697", type: "Карликовая новая (UGSS)", auid: "000-BCP-216", con: "Cyg", ra: 325.67838, dec: 43.58608, magRange: "12.1m → 8.2m (цикл ~49 d)", chart: "X28492SC", kname: "000-BCP-224", kmag: "10.890", priority: "🔥 СРОЧНО", desc: "Эталонная катаклизмическая переменная (K5V + белый карлик, P_orb = 6.60 ч). Тепловая неустойчивость аккреционного диска.", comment: "В покое (~12m) выдержка 20 с, на подъеме и в максимуме (~8.3m) снизить выдержку до 10 с во избежание насыщения." },
@@ -5858,15 +5888,15 @@ function revealAndFocusField(inputId) {
     { star: "RS Oph", alias: "HD 162214", type: "Повторная новая (NR)", auid: "000-BBN-599", con: "Oph", ra: 267.55504, dec: -6.70789, magRange: "10.8m → 4.3m (P_orb = 453.6 d)", chart: "X28495RO", kname: "000-BBN-604", kmag: "11.020", priority: "🔥 СРОЧНО", desc: "Симбиотическая повторная новая (вспышки 1898, 1933, 1958, 1967, 1985, 2006, 2021). Активное восстановление диска.", comment: "Тайм-серии 1–2 часа с выдержкой 15–20 с для регистрации быстрого стохастического мерцания (flickering)." },
     { star: "W UMa", alias: "HD 83950", type: "Контактная затменная (EW)", auid: "000-BBP-815", con: "UMa", ra: 145.93929, dec: 55.95253, magRange: "7.75m → 8.48m (P = 0.33364 d)", chart: "X28496WU", kname: "000-BBP-818", kmag: "9.560", priority: "⚡ Эфемериды", desc: "Прототип контактных двойных систем (две компоненты F8V в общей конвективной оболочке).", comment: "Минимумы наступают каждые 4 часа. Серия 2–2.5 часа с выдержкой 10 с позволяет построить полный профиль затмения." },
     { star: "HD 189733", alias: "V452 Vul", type: "Транзит экзопланеты (EP)", auid: "000-BFP-955", con: "Vul", ra: 300.18213, dec: 22.71085, magRange: "7.67m (Δm = 0.028m / 28 mmag)", chart: "X28497HD", kname: "000-BFP-958", kmag: "9.120", priority: "🪐 Экзопланета", desc: "Яркий оранжевый карлик K2V с транзитным горячим юпитером HD 189733b (период 2.21858 сут, длительность 110 мин).", comment: "Секция экзопланет AAVSO: начинать съемку за 45 мин до входа в транзит, выдержка 10 с, ансамблевая калибровка." },
-    { star: "CH Cyg", alias: "HD 182917", type: "Симбиотическая переменная (ZAND+SR)", auid: "000-BCY-101", con: "Cyg", ra: 291.13458, dec: 50.23917, magRange: "5.6m → 10.5m (активные джеты)", chart: "X16201A", kname: "000-BCY-105", kmag: "8.850", priority: "🔥 СРОЧНО", desc: "Уникальная симбиотическая система (красный гигант M7III + аккрецирующий белый карлик), выбрасывающая релятивистские джеты.", comment: "Мониторинг резких падений блеска и быстрых оптических вспышек аккреции. Выдержка 10 с в полосе TG." },
+    { star: "CH Cyg", alias: "HD 182917", type: "Симбиотическая переменная (ZAND+SR)", auid: "000-BCY-101", con: "Cyg", ra: 291.13783, dec: 50.24142, magRange: "5.6m → 10.5m (активные джеты)", chart: "X16201A", kname: "000-BCY-105", kmag: "8.850", priority: "🔥 СРОЧНО", desc: "Уникальная симбиотическая система (красный гигант M7III + аккрецирующий белый карлик), выбрасывающая релятивистские джеты.", comment: "Мониторинг резких падений блеска и быстрых оптических вспышек аккреции. Выдержка 10 с в полосе TG." },
     { star: "Betelgeuse", alias: "Alpha Ori", type: "Красный сверхгигант (SRC)", auid: "000-BBW-100", con: "Ori", ra: 88.79292, dec: 7.40706, magRange: "0.0m → 1.6m (пульсации + пыль)", chart: "X14001A", kname: "000-BBW-102", kmag: "6.250", priority: "⚡ Кампания", desc: "Ближайший красный сверхгигант M1-M2Ia-Iab после события Великого потускнения (Great Dimming).", comment: "Очень яркий объект: для фотометрии на Seestar требуется нейтральный фильтр или короткие экспозиции с дефокусировкой." },
     { star: "V1309 Sco", alias: "Nova Sco 2008", type: "Слияние звёзд (LRN)", auid: "000-BSK-301", con: "Sco", ra: 260.28333, dec: -30.71667, magRange: "7.9m → 15.0m (остаток слияния)", chart: "X19482A", kname: "000-BSK-305", kmag: "11.200", priority: "⚡ Кампания", desc: "Доказанная яркая красная новая, возникшая в результате слияния контактной двойной системы в 2008 году.", comment: "Долгосрочный фотометрический контроль остывающего продукта слияния. Оптимальны S50 и S50PRO (выдержка 20–30 с)." },
     { star: "TX UMa", alias: "HD 93033", type: "Затменно-двойная (EA/SD)", auid: "000-BDP-820", con: "UMa", ra: 158.46875, dec: 45.56583, magRange: "7.06m → 8.80m (P = 3.063 d)", chart: "X18293B", kname: "000-BDP-822", kmag: "8.920", priority: "⚡ Затмения", desc: "Полуразделенная затменная система типа Алголя (B8V + G0III-IV) с заметным переносом массы и смещением периода.", comment: "Глубокий главный минимум (Δm = 1.74m). Отличная цель для S30, S30PRO, S50 и S50PRO с выдержкой 10 с." },
     { star: "Beta Lyr", alias: "Sheliak", type: "Эллипсоидальная двойная (EB)", auid: "000-BBL-001", con: "Lyr", ra: 282.51971, dec: 33.36267, magRange: "3.25m → 4.36m (P = 12.94 d)", chart: "X12093C", kname: "000-BBL-004", kmag: "7.150", priority: "⚡ Затмения", desc: "Прототип систем типа β Лиры с мощным газовым потоком и толстым аккреционным тором вокруг массивного компонента.", comment: "Орбитальный период увеличивается на ~19 секунд в год из-за быстрой перекачки вещества." },
-    { star: "Algol", alias: "Beta Per", type: "Прототип затменных (EA/SD)", auid: "000-BCC-102", con: "Per", ra: 47.08058, dec: 40.95565, magRange: "2.12m → 3.39m (P = 2.8673 d)", chart: "X14829A", kname: "000-BCC-106", kmag: "7.420", priority: "⚡ Эталон", desc: "Исторический прототип затменно-переменных звёзд типа EA в тройной иерархической системе.", comment: "Контроль вековых и циклических изменений периода (эффект Ярковского—О'Коннелла и магнитные циклы Applegate)." },
+    { star: "Algol", alias: "Beta Per", type: "Прототип затменных (EA/SD)", auid: "000-BCC-102", con: "Per", ra: 47.04221, dec: 40.95565, magRange: "2.12m → 3.39m (P = 2.8673 d)", chart: "X14829A", kname: "000-BCC-106", kmag: "7.420", priority: "⚡ Эталон", desc: "Исторический прототип затменно-переменных звёзд типа EA в тройной иерархической системе.", comment: "Контроль вековых и циклических изменений периода (эффект Ярковского—О'Коннелла и магнитные циклы Applegate)." },
     { star: "RW Aur", alias: "HD 246933", type: "Молодая звезда T Тельца (CTTS)", auid: "000-BAU-101", con: "Aur", ra: 76.95375, dec: 30.40111, magRange: "10.0m → 13.6m (пылевой диск)", chart: "X13901A", kname: "000-BAU-105", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Классическая звезда типа T Тельца с экстремальными нерегулярными затмениями протопланетным пылевым ветром.", comment: "Кампания AAVSO YSO: наблюдения каждую ясную ночь (выдержка 15–20 с в полосе TG) для отслеживания структуры диска." },
     { star: "CI Cyg", alias: "HIP 97594", type: "Симбиотическая затменная (ZAND+EA)", auid: "000-BCY-201", con: "Cyg", ra: 297.53000, dec: 35.68417, magRange: "10.5m → 13.0m (P = 855 d)", chart: "X16205B", kname: "000-BCY-208", kmag: "11.120", priority: "⚡ Симбиотическая", desc: "Затменная симбиотическая двойная система (M5.5III + горячий источник) с орбитальным периодом 2.34 года.", comment: "Регулярная оценка блеска раз в 3–5 суток. Отлично помещается в поле зрения всех телескопов Seestar." },
-    { star: "AG Dra", alias: "BD+67 922", type: "Жёлтая симбиотическая (ZAND)", auid: "000-BDR-101", con: "Dra", ra: 240.54083, dec: 66.80278, magRange: "8.5m → 11.8m (горячие вспышки)", chart: "X15401A", kname: "000-BDR-104", kmag: "9.820", priority: "⚡ Вспышки", desc: "Галактическая симбиотическая система населения II с гигантом спектрального класса K2III и горячим белым карликом.", comment: "Демонстрирует серии чередующихся холодных и горячих вспышек каждые 12–15 лет. Выдержка 10–15 с." },
+    { star: "AG Dra", alias: "BD+67 922", type: "Жёлтая симбиотическая (ZAND)", auid: "000-BDR-101", con: "Dra", ra: 240.42089, dec: 66.80282, magRange: "8.5m → 11.8m (горячие вспышки)", chart: "X15401A", kname: "000-BDR-104", kmag: "9.820", priority: "⚡ Вспышки", desc: "Галактическая симбиотическая система населения II с гигантом спектрального класса K2III и горячим белым карликом.", comment: "Демонстрирует серии чередующихся холодных и горячих вспышек каждые 12–15 лет. Выдержка 10–15 с." },
     { star: "Z And", alias: "HD 221658", type: "Прототип симбиотических (ZAND)", auid: "000-BAN-101", con: "And", ra: 353.30375, dec: 48.81806, magRange: "7.7m → 11.3m (P_orb = 759 d)", chart: "X11201A", kname: "000-BAN-105", kmag: "9.650", priority: "⚡ Эталон", desc: "Родоначальник класса переменных типа Z Андромеды, сочетающий холодный гигант M4.5III и ионизованную туманность.", comment: "Оптимальная цель для S30, S30PRO, S50 и S50PRO; контрольная звезда KMAG 9.650 mag в том же кадре." },
     { star: "V838 Mon", alias: "Nova Mon 2002", type: "Световое эхо / Слияние (LRN)", auid: "000-BMO-101", con: "Mon", ra: 106.01250, dec: -4.83194, magRange: "6.7m → 14.8m (пылевая оболочка)", chart: "X14201A", kname: "000-BMO-105", kmag: "12.100", priority: "⚡ Световое эхо", desc: "Знаменитая красная эруптивная переменная, породившая гигантское световое эхо и поглотившая спутник B3V.", comment: "В спокойном состоянии (~14.5m) рекомендуется съемка на S50 или S50PRO с выдержкой 20–30 с." },
     { star: "BL Lac", alias: "VER J2202+422", type: "Блазар / Лацертида (BLLAC)", auid: "000-BLA-101", con: "Lac", ra: 330.68042, dec: 42.27778, magRange: "12.2m → 15.2m (релятивистский джет)", chart: "X16901A", kname: "000-BLA-104", kmag: "12.800", priority: "🌌 Блазар", desc: "Прототип лацертид — активное ядро галактики с релятивистским джетом, направленным прямо на наблюдателя.", comment: "Высокая внутрисуточная переменность (intraday variability). Снимать сериями по 20–30 с на S30PRO, S50 или S50PRO." },
@@ -5878,7 +5908,7 @@ function revealAndFocusField(inputId) {
     { star: "WASP-12", alias: "HD 283759", type: "Ультрагорячий юпитер (EP)", auid: "000-BWA-101", con: "Aur", ra: 97.64000, dec: 29.67222, magRange: "11.57m (Δm = 0.016m, P = 1.091 d)", chart: "X13912A", kname: "000-BWA-105", kmag: "11.600", priority: "🪐 Экзопланета", desc: "Экзопланета WASP-12b на спирально сжимающейся орбите (приливное падение на звезду за ~3 млн лет).", comment: "Наблюдение моментов середины транзита (TTV) для измерения скорости орбитального распада dP/dt." },
     { star: "KIC 8462852", alias: "Tabby's Star", type: "Аномальные затмения (UXOR / DIP)", auid: "000-BKI-846", con: "Cyg", ra: 301.18375, dec: 44.45694, magRange: "11.7m → 12.1m (провалы до 22%)", chart: "X16846A", kname: "000-BKI-850", kmag: "11.820", priority: "⚡ Кампания", desc: "Звезда Бояджян (F3V) с апериодическими глубокими провалами блеска, вызванными роями кометно-пылевых фрагментов.", comment: "Ежедневная проверка блеска (3–5 кадров по 20 с) для фиксации начала новых асимметричных дипов." },
     { star: "Chi Cyg", alias: "HD 187796", type: "Экстремальная Мирида (M)", auid: "000-BCY-007", con: "Cyg", ra: 296.90375, dec: 32.91444, magRange: "3.3m → 14.2m (P = 408.05 d)", chart: "X16207A", kname: "000-BCY-010", kmag: "9.450", priority: "⚡ Мирида", desc: "Долгопериодическая переменная спектрального класса S с одной из крупнейших известных амплитуд блеска (до 11 mag).", comment: "Отличная цель для построения вековой фазовой кривой AAVSO LPV Section." },
-    { star: "Mira", alias: "Omicron Ceti", type: "Прототип Мирид + аккреция (M+ZAND)", auid: "000-BCE-001", con: "Cet", ra: 34.72125, dec: -2.97750, magRange: "2.0m → 10.1m (P = 331.96 d)", chart: "X12001A", kname: "000-BCE-005", kmag: "9.850", priority: "⚡ Эталон", desc: "Первая открытая переменная звезда (1596 г.) — пульсирующий гигант M7III в паре с аккрецирующим спутником Mira B.", comment: "Вблизи минимума (9–10m) доступна для коротких серий с регистрацией быстрой переменности диска Mira B." },
+    { star: "Mira", alias: "Omicron Ceti", type: "Прототип Мирид + аккреция (M+ZAND)", auid: "000-BCE-001", con: "Cet", ra: 34.83667, dec: -2.97764, magRange: "2.0m → 10.1m (P = 331.96 d)", chart: "X12001A", kname: "000-BCE-005", kmag: "9.850", priority: "⚡ Эталон", desc: "Первая открытая переменная звезда (1596 г.) — пульсирующий гигант M7III в паре с аккрецирующим спутником Mira B.", comment: "Вблизи минимума (9–10m) доступна для коротких серий с регистрацией быстрой переменности диска Mira B." },
     { star: "V1405 Cas", alias: "Nova Cas 2021", type: "Медленная новая с плато (NB)", auid: "000-BCA-140", con: "Cas", ra: 351.20250, dec: 61.19083, magRange: "5.2m → 14.2m (пылевые осцилляции)", chart: "X11405A", kname: "000-BCA-142", kmag: "10.600", priority: "⚡ Новая", desc: "Яркая новая Кассиопеи 2021 года с многомесячным плато и множественными вторичными максимумами.", comment: "Удобная северная цель (DEC +61°), доступная круглый год в средних широтах." },
     { star: "Z Cam", alias: "HD 68276", type: "Прототип карликовых новых с плато (UGZ)", auid: "000-BZC-101", con: "Cam", ra: 126.30458, dec: 73.11083, magRange: "10.0m → 14.5m (standstills)", chart: "X18401A", kname: "000-BZC-105", kmag: "10.920", priority: "🔥 СРОЧНО", desc: "Прототип звезд типа Z Жирафа, внезапно замирающих на промежуточном блеске (~11.5m) на месяцы или годы.", comment: "Околополярная цель (DEC +73°), идеально подходящая для круглогодичного патруля на всех моделях Seestar." },
     { star: "SU UMa", alias: "AAVSO 0803+62", type: "Прототип сверхвспышек (UGSU)", auid: "000-BSU-101", con: "UMa", ra: 123.10542, dec: 62.60611, magRange: "10.8m → 14.8m (superhumps)", chart: "X18402B", kname: "000-BSU-106", kmag: "11.340", priority: "🔥 СРОЧНО", desc: "Родоначальник подкласса карликовых новых со сверхвспышками (superoutbursts) и прецессирующим эксцентричным диском.", comment: "Во время сверхвспышек снимать непрерывные серии 3–4 часа для измерения периода сверхгорбов (superhumps)." },
@@ -5901,9 +5931,274 @@ function revealAndFocusField(inputId) {
     { star: "U Mon", alias: "HD 59693", type: "Бинарная система типа RV Tau (RVB)", auid: "000-BUM-101", con: "Mon", ra: 112.69750, dec: -9.77694, magRange: "5.4m → 7.8m (P_puls = 91.3 d)", chart: "X19504A", kname: "000-BUM-105", kmag: "7.920", priority: "⚡ Кампания", desc: "Прототип подкласса RVB с долгопериодическим затмением пылевым тором каждые ~2450 суток.", comment: "Мониторинг вековой модуляции среднего блеска. Выдержка 10 с." },
     { star: "TrES-3", alias: "GSC 03089-00929", type: "Глубокий транзит горячего юпитера (EP)", auid: "000-BTR-301", con: "Her", ra: 268.02917, dec: 37.54611, magRange: "12.40m (Δm = 0.029m / 29 mmag)", chart: "X19505A", kname: "000-BTR-305", kmag: "11.950", priority: "🪐 Экзопланета", desc: "Горячий юпитер TrES-3b со скользящим глубоким V-образным транзитом (период всего 1.306 суток, длительность 78 мин).", comment: "Идеальная цель для S30PRO, S50 и S50PRO в северном полушарии (DEC +37.5°); выдержка 20 с." },
     { star: "HAT-P-32", alias: "GSC 03281-00800", type: "Раздутый горячий юпитер (EP)", auid: "000-BHP-321", con: "And", ra: 31.04292, dec: 46.68778, magRange: "11.29m (Δm = 0.024m / 24 mmag)", chart: "X19506A", kname: "000-BHP-325", kmag: "11.120", priority: "🪐 Экзопланета", desc: "Экзопланета HAT-P-32b с одним из крупнейших радиусов (~1.8 R_J) и протяжённым гелиевым хвостом.", comment: "Высоко в зените для широт 45°–60°N; чёткий U-образный профиль транзита." },
-    { star: "Eta Car", alias: "HD 93308", type: "Яркая голубая переменная (LBV / SDOR)", auid: "000-BEC-101", con: "Car", ra: 161.26500, dec: -59.68444, magRange: "4.0m → 7.9m (орбитальный цикл 5.54 г.)", chart: "X19507S", kname: "000-BEC-105", kmag: "7.450", priority: "⚡ Кампания", desc: "Сверхмассивная двойная система Южного неба в туманности Гомункул (доступна только в Южном полушарии).", comment: "Объект глубокого южного неба (DEC −59.7°): виден из Австралии и Чили, не восходит в средних широтах РФ." }
+    { star: "Eta Car", alias: "HD 93308", type: "Яркая голубая переменная (LBV / SDOR)", auid: "000-BEC-101", con: "Car", ra: 161.26500, dec: -59.68444, magRange: "4.0m → 7.9m (орбитальный цикл 5.54 г.)", chart: "X19507S", kname: "000-BEC-105", kmag: "7.450", priority: "⚡ Кампания", desc: "Сверхмассивная двойная система Южного неба в туманности Гомункул (доступна только в Южном полушарии).", comment: "Объект глубокого южного неба (DEC −59.7°): виден из Австралии и Чили, не восходит в средних широтах РФ." },
+    { star: "R Leo", alias: "HD 84748", type: "Классическая Мирида (M)", auid: "000-BBW-803", con: "Leo", ra: 146.88958, dec: 11.42889, magRange: "4.4m → 11.3m (P = 309.95 d)", chart: "X43364NTN", kname: "000-BBW-809", kmag: "8.920", priority: "🔥 СРОЧНО", desc: "Одна из ярчайших и наиболее изученных мирид северного неба (M6e–M9.5e) в созвездии Льва.", comment: "Приоритетная цель секции LPV и кампаний AAVSO Target Tool; выдержка 10 с в фильтре TG." },
+    { star: "gam Cas", alias: "HD 5394", type: "Оболочечная Be-звезда + Рентген (GCAS+XP)", auid: "000-BCA-001", con: "Cas", ra: 14.17708, dec: 60.71667, magRange: "1.6m → 3.0m (эруптивный диск)", chart: "X11401A", kname: "000-BCA-005", kmag: "6.100", priority: "⚡ Кампания", desc: "Прототип эруптивных звезд типа γ Кассиопеи (B0.5IVpe) с околозвездным декреционным диском и жестким рентгеновским излучением.", comment: "Целевой объект AAVSO Target Tool (Alert/Campaign & HET)." },
+    { star: "P Cyg", alias: "34 Cyg / HD 193237", type: "Гипергигант S Золотой Рыбы (SDOR)", auid: "000-BCY-034", con: "Cyg", ra: 304.44667, dec: 38.03294, magRange: "4.7m → 5.3m (ветровые выбросы)", chart: "X16234A", kname: "000-BCY-038", kmag: "6.850", priority: "⚡ Кампания", desc: "Знаменитый голубой гипергигант B1Ia+ с мощным звездным ветром (профиль P Лебедя), вспыхнувший в 1600 году.", comment: "Приоритетная цель AAVSO Target Tool (Alert/Campaign); контроль медленных пульсаций оболочки." },
+    { star: "VV Cep", alias: "HD 208816", type: "Затменная сверхгигантская система (EA/GS+SRC)", auid: "000-BCE-022", con: "Cep", ra: 329.16292, dec: 63.62556, magRange: "4.8m → 5.4m (P = 7430 d / 20.3 г.)", chart: "X18422A", kname: "000-BCE-025", kmag: "7.240", priority: "⚡ Кампания", desc: "Грандиозная затменная двойная (красный сверхгигант M2epIa + горячий спутник B0V) с периодом 20.3 года.", comment: "Объект долгосрочного мониторинга AAVSO Target Tool (Alert/Campaign & EB)." },
+    { star: "eps Aur", alias: "Almaaz / HD 31964", type: "Сверхдолгопериодическая затменная (EA/GS)", auid: "000-BAU-007", con: "Aur", ra: 75.49208, dec: 43.82333, magRange: "2.9m → 3.8m (P = 9892 d / 27.1 г.)", chart: "X13907A", kname: "000-BAU-010", kmag: "6.950", priority: "⚡ Кампания", desc: "Затменная система с гигантским пылевым тором и внезатменными пульсациями сверхгиганта F0Ia (P_puls ≈ 67 сут).", comment: "Регулярный контроль внезатменных пульсаций в AAVSO Target Tool." },
+    { star: "TX CVn", alias: "BD+37 2318", type: "Симбиотическая типа Z And (ZAND)", auid: "000-BCV-012", con: "CVn", ra: 191.17458, dec: 36.76417, magRange: "9.1m → 11.8m (P_orb = 199 d)", chart: "X17212A", kname: "000-BCV-015", kmag: "10.120", priority: "🔥 СРОЧНО", desc: "Активная симбиотическая двойная система (B9Veq + K5III) из списка приоритетных кампаний AAVSO Target Tool.", comment: "Отличная весенне-летняя цель для всех моделей Seestar (S30, S30PRO, S50, S50PRO); выдержка 10–15 с." },
+    { star: "EG And", alias: "HD 4174", type: "Затменная симбиотическая (ZAND+E)", auid: "000-BAN-044", con: "And", ra: 11.15500, dec: 40.67944, magRange: "7.1m → 7.8m (P_orb = 482.6 d)", chart: "X11244A", kname: "000-BAN-048", kmag: "8.340", priority: "⚡ Кампания", desc: "Яркая симбиотическая двойная с красным гигантом M2III и эллипсоидальным эффектом.", comment: "Цель AAVSO Target Tool (Alert/Campaign & CV); выдержка 10 с в фильтре TG." },
+    { star: "QR Vul", alias: "HD 192685", type: "Эруптивная Be-звезда (GCAS)", auid: "000-BVU-020", con: "Vul", ra: 303.82917, dec: 25.58639, magRange: "4.6m → 5.0m (быстрые пульсации)", chart: "X18420A", kname: "000-BVU-024", kmag: "7.120", priority: "⚡ Кампания", desc: "Яркая переменная Be-звезда класса B3Ve в созвездии Лисички из списка AAVSO Target Tool (Alert/Campaign).", comment: "Контроль сброса газового диска и нерадиальных пульсаций." },
+    { star: "T Tau", alias: "HD 284419", type: "Прототип молодых звёзд (INT)", auid: "000-BTA-001", con: "Tau", ra: 65.49750, dec: 19.53500, magRange: "9.3m → 13.5m (аккреция + туманность Хайнда)", chart: "X13801A", kname: "000-BTA-005", kmag: "10.280", priority: "🔥 СРОЧНО", desc: "Фундаментальный прототип молодых звёзд типа T Тельца в тройной системе с переменной туманностью Хайнда (NGC 1555).", comment: "Ключевая цель секции YSO в AAVSO Target Tool; выдержка 15–20 с в полосе TG." },
+    { star: "FU Ori", alias: "BD+08 1051", type: "Прототип фуоров (FU)", auid: "000-BOR-054", con: "Ori", ra: 86.34333, dec: 9.07000, magRange: "8.9m → 16.5m (вспышка аккреции с 1937 г.)", chart: "X14054A", kname: "000-BOR-058", kmag: "9.940", priority: "⚡ Кампания", desc: "Родоначальник класса фуоров (FU Ori) — молодая звезда, увеличившая блеск на 6 величин из-за лавинной аккреции диска.", comment: "Секция YSO AAVSO Target Tool: блеск ~9.6m идеально подходит для всех моделей Seestar (выдержка 10–15 с)." },
+    { star: "UX Ori", alias: "HD 293782", type: "Прототип уксоров (UXOR)", auid: "000-BOR-050", con: "Ori", ra: 76.12500, dec: -3.78722, magRange: "8.7m → 12.8m (пылевые затмения + синение)", chart: "X14050A", kname: "000-BOR-053", kmag: "10.150", priority: "🔥 СРОЧНО", desc: "Прототип звезд типа UX Ориона с глубокими алголеподобными ослаблениями блеска облаками протопланетной пыли.", comment: "Приоритетная цель секции YSO AAVSO Target Tool; ежедневная проверка блеска (выдержка 15 с)." },
+    { star: "RZ Cas", alias: "HD 17138", type: "Затменная с пульсирующей δ Sct (EA/SD+DSCT)", auid: "000-BCA-024", con: "Cas", ra: 42.23125, dec: 69.63417, magRange: "6.18m → 7.72m (P = 1.19525 d)", chart: "X11424A", kname: "000-BCA-028", kmag: "7.880", priority: "⚡ Затмения", desc: "Яркая северная затменно-двойная система (A3V + K0IV) с быстрым глубоким главным минимумом длительностью 4.8 часа.", comment: "Незаходящая цель секции EB AAVSO Target Tool (DEC +69.6°); минимумы почти каждую ночь!" },
+    { star: "SW Lac", alias: "HD 216598", type: "Контактная затменная двойная (EW/KW)", auid: "000-BLA-225", con: "Lac", ra: 343.42417, dec: 37.93861, magRange: "8.51m → 9.49m (P = 0.320715 d)", chart: "X16925A", kname: "000-BLA-229", kmag: "9.620", priority: "⚡ Эфемериды", desc: "Короткопериодическая контактная система типа W UMa (период 7.70 часа, амплитуда ~1.0 mag) в созвездии Ящерицы.", comment: "Секция EB AAVSO Target Tool: за 4 часа съемки с выдержкой 10 с фиксируется полный минимум и максимум." },
+    { star: "AM Her", alias: "3U 1809+50", type: "Прототип магнитных поляров (AM/XPRM)", auid: "000-BHE-181", con: "Her", ra: 274.05542, dec: 49.86778, magRange: "12.0m → 15.5m (P_orb = 3.094 h)", chart: "X16181A", kname: "000-BHE-185", kmag: "12.640", priority: "🔥 СРОЧНО", desc: "Фундаментальный прототип поляров — катаклизмическая двойная со сверхсильным магнитным полем белого карлика (~14 МГс).", comment: "Секции CV и HET AAVSO Target Tool; рекомендуется съемка на S30PRO, S50 и S50PRO с выдержкой 20–30 с." },
+    { star: "AE Aqr", alias: "HD 196925", type: "Быстровращающийся магнитный пропеллер (DQ)", auid: "000-BAQ-204", con: "Aqr", ra: 310.03833, dec: -0.87083, magRange: "10.2m → 12.1m (P_spin = 33.08 с!)", chart: "X17204A", kname: "000-BAQ-208", kmag: "11.180", priority: "🔥 СРОЧНО", desc: "Уникальный промежуточный поляр в режиме магнитного пропеллера (белый карлик вращается с периодом 33 секунды) с мощными вспышками.", comment: "Секции CV и HET AAVSO Target Tool: непрерывные тайм-серии по 10–15 с показывают гигантские вспышки до 1.5 mag." },
+    { star: "DQ Her", alias: "Nova Her 1934", type: "Затменный промежуточный поляр (NB+EA+DQ)", auid: "000-BHE-180", con: "Her", ra: 271.87583, dec: 45.85917, magRange: "14.1m → 15.2m (P_orb = 4.65 h, P_spin = 71 с)", chart: "X16180A", kname: "000-BHE-184", kmag: "13.150", priority: "⚡ Новая", desc: "Историческая новая Геркулеса 1934 года и прототип промежуточных поляров типа DQ Her с глубокими затмениями диска.", comment: "Секция CV AAVSO Target Tool; оптимальна для S50 и S50PRO с выдержкой 30 с." },
+    { star: "EV Lac", alias: "GJ 873 / HIP 112460", type: "Экстремальная вспыхивающая звезда (UV)", auid: "000-BLA-224", con: "Lac", ra: 341.70708, dec: 44.33389, magRange: "10.0m → 10.3m (супервспышки до 5m!)", chart: "X16924A", kname: "000-BLA-228", kmag: "10.480", priority: "🔥 СРОЧНО", desc: "Близкий красный карлик M3.5Ve (16.5 св. лет), знаменитый мощнейшими рентгеновскими и оптическими супервспышками.", comment: "Патруль вспышек в AAVSO Target Tool: непрерывная серия с выдержкой 10 с в полосе TG." },
+    { star: "RT Cru", alias: "AAVSO 1229-64", type: "Жёсткая рентгеновская симбиотическая (ZAND)", auid: "000-BCR-123", con: "Cru", ra: 188.72083, dec: -64.56556, magRange: "10.9m → 13.3m (P = 325 d)", chart: "X19412S", kname: "000-BCR-127", kmag: "11.450", priority: "🔥 СРОЧНО", desc: "Симбиотическая система с массивным белым карликом, излучающая жесткий рентген (AAVSO Alert Notice 672).", comment: "Приоритетная южная цель AAVSO Target Tool (DEC −64.6°)." }
   ];
   window.AAVSO_URGENT_CATALOGUE = AAVSO_URGENT_CATALOGUE;
+
+  // ===========================================================================
+  // [RU] ФОРМАТИРОВАНИЕ И ПАРСИНГ КООРДИНАТ J2000.0 (HMS / DMS ДЛЯ SEESTAR И AAVSO TARGET TOOL)
+  //      И КЛАССИФИКАЦИЯ СЕКЦИЙ НАБЛЮДЕНИЙ AAVSO (AC, EP, CV, EB, SPP, LPV, YSO, HET, MISC)
+  // [EN] J2000.0 SEXAGESIMAL COORDINATE FORMATTERS/PARSERS (HMS / DMS FOR SEESTAR & AAVSO TARGET TOOL)
+  //      AND AAVSO OBSERVING SECTION CLASSIFIER (AC, EP, CV, EB, SPP, LPV, YSO, HET, MISC)
+  // ===========================================================================
+  function formatRaJ2000Hms(raDeg, useSuperscript = false) {
+    const num = Number(raDeg);
+    if (!Number.isFinite(num)) return "—";
+    const normDeg = ((num % 360) + 360) % 360;
+    const totalSec = Math.round((normDeg / 15.0) * 3600.0) % 86400;
+    const hh = String(Math.floor(totalSec / 3600)).padStart(2, "0");
+    const rem = totalSec % 3600;
+    const mm = String(Math.floor(rem / 60)).padStart(2, "0");
+    const ss = String(rem % 60).padStart(2, "0");
+    if (useSuperscript) {
+      return `${hh}ʰ ${mm}ᵐ ${ss}ˢ`;
+    }
+    return `${hh}h ${mm}m ${ss}s`;
+  }
+  window.formatRaJ2000Hms = formatRaJ2000Hms;
+
+  function formatDecJ2000Dms(decDeg) {
+    const num = Number(decDeg);
+    if (!Number.isFinite(num)) return "—";
+    const sign = num >= 0 ? "+" : "-";
+    const clamped = Math.min(90, Math.abs(num));
+    const totalSec = Math.round(clamped * 3600.0);
+    const dd = String(Math.floor(totalSec / 3600)).padStart(2, "0");
+    const rem = totalSec % 3600;
+    const mm = String(Math.floor(rem / 60)).padStart(2, "0");
+    const ss = String(rem % 60).padStart(2, "0");
+    return `${sign}${dd}° ${mm}' ${ss}"`;
+  }
+  window.formatDecJ2000Dms = formatDecJ2000Dms;
+
+  function parseRaAnyToDeg(rawVal) {
+    const s = String(rawVal || "").trim();
+    if (!s) return NaN;
+    const hmsMatch = s.match(/^(\d{1,2})\s*(?:h|ʰ|:|\s)\s*(\d{1,2})\s*(?:m|ᵐ|:|\s)\s*(\d{1,2}(?:\.\d+)?)\s*(?:s|ˢ)?$/i);
+    if (hmsMatch) {
+      const h = parseFloat(hmsMatch[1]);
+      const m = parseFloat(hmsMatch[2]);
+      const sec = parseFloat(hmsMatch[3]);
+      if (h >= 0 && h < 24 && m >= 0 && m < 60 && sec >= 0 && sec < 60) {
+        return (h + m / 60.0 + sec / 3600.0) * 15.0;
+      }
+    }
+    return parseFloat(s);
+  }
+  window.parseRaAnyToDeg = parseRaAnyToDeg;
+
+  function parseDecAnyToDeg(rawVal) {
+    const s = String(rawVal || "").trim();
+    if (!s) return NaN;
+    const dmsMatch = s.match(/^([+-]?)\s*(\d{1,2})\s*(?:°|d|:|\s)\s*(\d{1,2})\s*(?:'|′|m|:|\s)\s*(\d{1,2}(?:\.\d+)?)\s*(?:"|″|s)?$/i);
+    if (dmsMatch) {
+      const sign = dmsMatch[1] === "-" ? -1 : 1;
+      const d = parseFloat(dmsMatch[2]);
+      const m = parseFloat(dmsMatch[3]);
+      const sec = parseFloat(dmsMatch[4]);
+      if (d >= 0 && d <= 90 && m >= 0 && m < 60 && sec >= 0 && sec < 60) {
+        return sign * (d + m / 60.0 + sec / 3600.0);
+      }
+    }
+    return parseFloat(s);
+  }
+  window.parseDecAnyToDeg = parseDecAnyToDeg;
+
+  function getStarObservingSections(item) {
+    if (!item) return ["misc"];
+    const pStr = String(item.priority || "");
+    const tStr = String(item.type || "");
+    const secs = new Set();
+
+    // 1. Alerts/Campaigns (AC)
+    if (pStr.includes("СРОЧНО") || pStr.includes("Кампания") || pStr.includes("Вспышки") || pStr.includes("Чёрная дыра") || pStr.includes("Сверхбыстрая") || pStr.includes("Световое эхо") || tStr.includes("ELL") || tStr.includes("GCAS") || tStr.includes("SDOR")) {
+      secs.add("ac");
+    }
+    // 2. Exoplanets (EP)
+    if (pStr.includes("Экзопланета") || tStr.includes("(EP") || tStr.includes("EP+")) {
+      secs.add("ep");
+    }
+    // 3. Cataclysmic Variables (CV)
+    if (tStr.includes("UG") || tStr.includes("NR") || tStr.includes("NA") || tStr.includes("NB") || tStr.includes("NC") || tStr.includes("ZAND") || pStr.includes("Новая") || pStr.includes("Симбиотическая")) {
+      secs.add("cv");
+    }
+    // 4. Eclipsing Variables (EB)
+    if (tStr.includes("EA") || tStr.includes("EB") || tStr.includes("EW") || tStr.includes("ELL") || pStr.includes("Затмения")) {
+      secs.add("eb");
+    }
+    // 5. Short Period Pulsators (SPP)
+    if (tStr.includes("DSCT") || tStr.includes("RRAB") || tStr.includes("DCEP") || pStr.includes("Эфемериды")) {
+      secs.add("spp");
+    }
+    // 6. Long Period Variables (LPV)
+    if (tStr.includes("(M)") || tStr.includes("M+") || tStr.includes("SRC") || tStr.includes("RVA") || tStr.includes("RVB") || tStr.includes("+SR") || pStr.includes("Мирида")) {
+      secs.add("lpv");
+    }
+    // 7. Young Stellar Objects (YSO)
+    if (tStr.includes("CTTS") || tStr.includes("INA") || tStr.includes("INT") || tStr.includes("(FU)") || tStr.includes("UXOR")) {
+      secs.add("yso");
+    }
+    // 8. High Energy Targets (HET)
+    if (tStr.includes("BLLAC") || tStr.includes("XN") || tStr.includes("XP") || tStr.includes("DQ") || pStr.includes("Блазар") || pStr.includes("Двойная ЧД") || pStr.includes("Чёрная дыра") || item.star === "HL CMa" || item.star === "RS Oph" || item.star === "CH Cyg" || item.star === "AG Dra") {
+      secs.add("het");
+    }
+    // 9. Miscellaneous (Misc)
+    if (tStr.includes("RCB") || tStr.includes("LRN") || tStr.includes("LBV") || tStr.includes("DIP") || secs.size === 0) {
+      secs.add("misc");
+    }
+    return Array.from(secs);
+  }
+  window.getStarObservingSections = getStarObservingSections;
+
+  const AAVSO_SECTION_BADGE_I18N = {
+    ac:   { ru: "Срочно / Кампания (AC)", en: "Alert/Campaign (AC)", es: "Alerta/Campaña (AC)", de: "Alarm/Kampagne (AC)", fr: "Alerte/Campagne (AC)", zh: "警报/活动 (AC)" },
+    ep:   { ru: "Экзопланеты (EP)", en: "Exoplanets (EP)", es: "Exoplanetas (EP)", de: "Exoplaneten (EP)", fr: "Exoplanètes (EP)", zh: "系外行星 (EP)" },
+    cv:   { ru: "Катаклизмические (CV)", en: "Cataclysmic (CV)", es: "Cataclísmicas (CV)", de: "Kataklysmisch (CV)", fr: "Cataclysmiques (CV)", zh: "激变变星 (CV)" },
+    eb:   { ru: "Затменные (EB)", en: "Eclipsing (EB)", es: "Eclipsantes (EB)", de: "Bedeckung (EB)", fr: "Éclipses (EB)", zh: "食变星 (EB)" },
+    spp:  { ru: "Короткопериод. (SPP)", en: "Short Period (SPP)", es: "Corto Período (SPP)", de: "Kurzperiodisch (SPP)", fr: "Courte Période (SPP)", zh: "短周期脉动 (SPP)" },
+    lpv:  { ru: "Долгопериод. (LPV)", en: "Long Period (LPV)", es: "Largo Período (LPV)", de: "Langperiodisch (LPV)", fr: "Longue Période (LPV)", zh: "长周期变星 (LPV)" },
+    yso:  { ru: "Молодые звёзды (YSO)", en: "Young Stellar (YSO)", es: "Estrellas Jóvenes (YSO)", de: "Junge Sterne (YSO)", fr: "Jeunes Étoiles (YSO)", zh: "年轻恒星体 (YSO)" },
+    het:  { ru: "Выс. энергии (HET)", en: "High Energy (HET)", es: "Alta Energía (HET)", de: "Hochenergie (HET)", fr: "Haute Énergie (HET)", zh: "高能天体 (HET)" },
+    misc: { ru: "Прочие (Misc)", en: "Miscellaneous", es: "Misceláneos", de: "Sonstige (Misc)", fr: "Divers (Misc)", zh: "其他目标 (Misc)" }
+  };
+
+  function getStarObservingSectionLabel(item, langCode) {
+    const lg = langCode || (typeof currentLang !== "undefined" ? currentLang : "ru");
+    const secs = getStarObservingSections(item);
+    // Prioritize specific section if user filtered by a specific section, otherwise show primary section
+    let primary = secs[0] || "ac";
+    if (typeof currentRadarFilter === "string" && currentRadarFilter !== "all" && secs.includes(currentRadarFilter)) {
+      primary = currentRadarFilter;
+    } else if (secs.includes("ep")) {
+      primary = "ep";
+    } else if (secs.includes("yso")) {
+      primary = "yso";
+    } else if (secs.includes("het") && (String(item.type || "").includes("BLLAC") || String(item.type || "").includes("XN"))) {
+      primary = "het";
+    } else if (secs.includes("ac")) {
+      primary = "ac";
+    }
+    const map = AAVSO_SECTION_BADGE_I18N[primary] || AAVSO_SECTION_BADGE_I18N.ac;
+    return map[lg] || map.en;
+  }
+  window.getStarObservingSectionLabel = getStarObservingSectionLabel;
+
+  // Хранилище выбранных секций наблюдений AAVSO Target Tool (синхронизировано между #v6RadarDock и #urgentStarsModal)
+  let activeObservingSections = new Set(["all"]);
+  window._activeObservingSections = activeObservingSections;
+
+  function matchesObservingSectionFilter(item, filterCodeOrSet) {
+    if (!item) return false;
+    const itemSecs = getStarObservingSections(item);
+    if (filterCodeOrSet instanceof Set) {
+      if (filterCodeOrSet.size === 0 || filterCodeOrSet.has("all")) return true;
+      for (const s of filterCodeOrSet) {
+        if (itemSecs.includes(s)) return true;
+      }
+      return false;
+    }
+    const f = String(filterCodeOrSet || "all").toLowerCase();
+    if (!f || f === "all") return true;
+    if (itemSecs.includes(f)) return true;
+
+    // Legacy filter key compatibility
+    const pStr = String(item.priority || "");
+    const tStr = String(item.type || "");
+    const tLower = tStr.toLowerCase();
+    if (f === "urgent") return itemSecs.includes("ac");
+    if (f === "ephem") return itemSecs.includes("spp") || itemSecs.includes("eb");
+    if (f === "exo") return itemSecs.includes("ep");
+    if (f === "eclipse") return itemSecs.includes("eb");
+    if (f === "standard") return pStr.includes("Эталон") || itemSecs.includes("lpv") || itemSecs.includes("spp");
+    if (f === "campaign") return itemSecs.includes("ac");
+    if (f === "symbiotic") return tStr.includes("ZAND") || pStr.includes("Симбиотическая");
+    if (f === "nova") return tStr.includes("(NA") || tStr.includes("(NB") || tStr.includes("(NR") || tStr.includes("(NC") || tStr.includes("LRN") || pStr.includes("Новая");
+    return true;
+  }
+  window.matchesObservingSectionFilter = matchesObservingSectionFilter;
+
+  // Загрузка пользовательских звёзд, ранее добавленных в Радар через поиск SIMBAD
+  try {
+    const savedCustomRadar = JSON.parse(safeGetStorage("seestar_custom_radar_stars_v1", "[]") || "[]");
+    if (Array.isArray(savedCustomRadar)) {
+      savedCustomRadar.forEach(st => {
+        if (st && st.star && !AAVSO_URGENT_CATALOGUE.some(x => x.star.toLowerCase() === st.star.toLowerCase())) {
+          AAVSO_URGENT_CATALOGUE.push(st);
+        }
+      });
+    }
+  } catch (_) {}
+
+  async function fetchAndAddStarToRadarCatalog(rawStarQuery) {
+    const qClean = String(rawStarQuery || "").trim();
+    if (!qClean) return;
+    try {
+      const simbadObj = await querySimbad(qClean, () => {});
+      if (simbadObj && simbadObj.ra != null && simbadObj.dec != null) {
+        const canonName = normalizeStarForVsp(qClean, simbadObj.main_id) || qClean;
+        let existing = AAVSO_URGENT_CATALOGUE.find(x => x.star.toLowerCase() === canonName.toLowerCase());
+        if (!existing) {
+          existing = {
+            star: canonName,
+            alias: simbadObj.main_id || qClean,
+            type: `Переменная звезда (${simbadObj.otype_txt || "VAR"})`,
+            auid: "SIMBAD-VSX",
+            con: canonName.split(" ").pop() || "—",
+            ra: Number(simbadObj.ra),
+            dec: Number(simbadObj.dec),
+            magRange: "VSP / SIMBAD",
+            chart: "Auto-VSP",
+            kname: "Auto",
+            kmag: "10.000",
+            priority: "🔥 СРОЧНО",
+            pubDate: new Date().toISOString().slice(0, 10),
+            desc: `Объект ${canonName} загружен напрямую из астрономической базы CDS SIMBAD / AAVSO VSX.`,
+            comment: "Координаты J2000.0 (HMS / DMS) готовы для наведения телескопа Seestar."
+          };
+          AAVSO_URGENT_CATALOGUE.unshift(existing);
+          URGENT_CATALOG_LOOKUP_MAP.set(existing.star.toLowerCase(), existing);
+          try {
+            const savedList = JSON.parse(safeGetStorage("seestar_custom_radar_stars_v1", "[]") || "[]");
+            savedList.push(existing);
+            safeSetStorage("seestar_custom_radar_stars_v1", JSON.stringify(savedList.slice(-30)));
+          } catch (_) {}
+        }
+        // Сбрасываем ограничивающий фильтр направления, если звезда в другом секторе
+        const s1 = document.getElementById("v6HemisphereSelect");
+        const s2 = document.getElementById("urgentHemisphereSelect");
+        if (s1) s1.value = "all";
+        if (s2) s2.value = "all";
+        activeObservingSections.clear();
+        activeObservingSections.add("all");
+        syncObservingSectionsUI();
+        renderV6RadarDock();
+        renderUrgentStarsCards(document.getElementById("urgentSearchField")?.value || "");
+        selectRadarOrUrgentTarget(existing.star, existing.ra, existing.dec, existing.chart, existing.kname, existing.kmag);
+      }
+    } catch (err) {
+      showIosNotification("SIMBAD / VSX", `Не удалось найти звезду «${qClean}»: ${err.message}`, "", "warn");
+    }
+  }
+  window.fetchAndAddStarToRadarCatalog = fetchAndAddStarToRadarCatalog;
+
 
   // Заполняем datalist для поля #starid всеми звёздами каталога (Пункт 6a)
   const staridDatalist = document.getElementById("staridCatalogList");
@@ -6075,7 +6370,7 @@ function revealAndFocusField(inputId) {
       </div>
       <div class="radar-tt-desc">
         <strong>${escapeHtml(t("ttDescLabel"))}</strong> ${escapeHtml(item.desc || item.type)}<br>
-        <span style="color:${coordsColor}; font-family:var(--font-mono); font-size:10.5px;">RA ${item.ra.toFixed(5)}° | DEC ${item.dec >= 0 ? '+' : ''}${item.dec.toFixed(5)}° | ${escapeHtml(item.magRange)}</span>
+        <span style="color:${coordsColor}; font-family:var(--font-mono); font-size:10.5px;">RA (J2000.0): <strong>${formatRaJ2000Hms(rawItem.ra, false)}</strong> (${rawItem.ra.toFixed(4)}°) | Dec (J2000.0): <strong>${formatDecJ2000Dms(rawItem.dec)}</strong> (${rawItem.dec >= 0 ? '+' : ''}${rawItem.dec.toFixed(4)}°) | ${escapeHtml(item.magRange)}</span>
       </div>
       <div class="radar-tt-comment">
         💬 <strong>${escapeHtml(t("ttCommentLabel"))}</strong> ${escapeHtml(item.comment || t("ttDefaultComment"))}<br>
@@ -6150,11 +6445,33 @@ function revealAndFocusField(inputId) {
       if (typeof window.matchesObserverHemisphereFilter === "function" && !window.matchesObserverHemisphereFilter(item, visModeUrg)) {
         return false;
       }
+      if (!matchesObservingSectionFilter(item, activeObservingSections)) {
+        return false;
+      }
+      const qRa = (document.getElementById("urgentFilterRaInput")?.value || document.getElementById("v6FilterRaInput")?.value || "").trim().toLowerCase();
+      const qDec = (document.getElementById("urgentFilterDecInput")?.value || document.getElementById("v6FilterDecInput")?.value || "").trim().toLowerCase();
+      if (qRa) {
+        const hmsPlain = formatRaJ2000Hms(item.ra, false).toLowerCase();
+        const hmsSup = formatRaJ2000Hms(item.ra, true).toLowerCase();
+        const hmsColon = hmsPlain.replace(/[hms\s]+/g, ":").replace(/:$/, "");
+        if (!hmsPlain.includes(qRa) && !hmsSup.includes(qRa) && !hmsColon.includes(qRa) && !item.ra.toFixed(4).includes(qRa)) return false;
+      }
+      if (qDec) {
+        const dmsPlain = formatDecJ2000Dms(item.dec).toLowerCase();
+        const dmsColon = dmsPlain.replace(/[°'"\s]+/g, ":").replace(/:$/, "");
+        if (!dmsPlain.includes(qDec) && !dmsColon.includes(qDec) && !item.dec.toFixed(4).includes(qDec)) return false;
+      }
       if (!q) return true;
+      const locItem = getLocalizedCatalogItem(item);
+      const raHmsQ = formatRaJ2000Hms(item.ra, false).toLowerCase();
+      const decDmsQ = formatDecJ2000Dms(item.dec).toLowerCase();
       return item.star.toLowerCase().includes(q) ||
              (item.alias && item.alias.toLowerCase().includes(q)) ||
              item.type.toLowerCase().includes(q) ||
-             item.con.toLowerCase().includes(q);
+             (locItem.type && locItem.type.toLowerCase().includes(q)) ||
+             item.con.toLowerCase().includes(q) ||
+             raHmsQ.includes(q) ||
+             decDmsQ.includes(q);
     });
     const filtered = sortRadarCatalogItems(filteredRaw, sortMode);
 
@@ -6184,8 +6501,12 @@ function revealAndFocusField(inputId) {
             <span class="urgent-badge">${escapeHtml(item.priority)}</span>
           </div>
           <div class="urgent-compact-meta">
-            ${escapeHtml(item.type)} • <span style="color:${magColor}; font-weight:700;">${escapeHtml(item.magRange.split('(')[0].trim())}</span><br>
-            <span data-live-coords="${escapeHtml(item.star)}">RA ${item.ra.toFixed(4)}° DEC ${item.dec >= 0 ? '+' : ''}${item.dec.toFixed(4)}°</span> • <span data-live-status="${escapeHtml(item.star)}" style="color:${vspColor}; font-weight:700;">✓ VSP ${escapeHtml(item.chart)}</span> <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高"}[_l]||"max."; const _nw = {ru:"сейчас",en:"now",es:"ahora",de:"jetzt",fr:"maint.",zh:"当前"}[_l]||"now"; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_nw} ${Math.round(_a.currentAltDeg)>=0?"+":""}${Math.round(_a.currentAltDeg)}°`; })()) : ""}</span>
+            <span class="aavso-sec-pill">${escapeHtml(getStarObservingSectionLabel(rawItem))}</span> • ${escapeHtml(item.type)} • <span style="color:${magColor}; font-weight:700;">${escapeHtml(item.magRange.split('(')[0].trim())}</span>
+            <div class="urgent-coords-bar" data-live-coords="${escapeHtml(item.star)}" title="RA / Dec (J2000.0) — Seestar & AAVSO Target Tool (${rawItem.ra.toFixed(4)}°, ${rawItem.dec >= 0 ? '+' : ''}${rawItem.dec.toFixed(4)}°)">
+              <span>🔭 <strong>RA (J2000.0):</strong> ${formatRaJ2000Hms(rawItem.ra, true)} &nbsp;•&nbsp; <strong>Dec (J2000.0):</strong> ${formatDecJ2000Dms(rawItem.dec)}</span>
+              <button type="button" class="coord-copy-btn" data-copy-coords="${escapeHtml(formatRaJ2000Hms(rawItem.ra, false) + ' ' + formatDecJ2000Dms(rawItem.dec))}" data-copy-star="${escapeHtml(rawItem.star)}" title="Copy J2000.0 HMS/DMS">📋 J2000</button>
+            </div>
+            <span data-live-status="${escapeHtml(item.star)}" style="color:${vspColor}; font-weight:700;">✓ VSP ${escapeHtml(item.chart)}</span> • AUID: ${escapeHtml(rawItem.auid)} <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高"}[_l]||"max."; const _nw = {ru:"сейчас",en:"now",es:"ahora",de:"jetzt",fr:"maint.",zh:"当前"}[_l]||"now"; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_nw} ${Math.round(_a.currentAltDeg)>=0?"+":""}${Math.round(_a.currentAltDeg)}° (${_a.compassLabel || ""})`; })()) : ""}</span>
           </div>
         </div>
         <div class="urgent-compact-actions">
@@ -6213,6 +6534,25 @@ function revealAndFocusField(inputId) {
         card.addEventListener("mousemove", positionRadarTooltip);
         card.addEventListener("mouseleave", hideRadarObjectTooltip);
       }
+    });
+
+    container.querySelectorAll(".coord-copy-btn").forEach(copyBtn => {
+      copyBtn.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        const coordsText = copyBtn.getAttribute("data-copy-coords") || "";
+        const stName = copyBtn.getAttribute("data-copy-star") || "";
+        if (navigator.clipboard && coordsText) {
+          navigator.clipboard.writeText(coordsText).catch(() => {});
+        }
+        copyBtn.textContent = "✓ OK";
+        setTimeout(() => { copyBtn.textContent = "📋 J2000"; }, 1400);
+        showIosNotification(
+          `${stName} — J2000.0`,
+          `${t("toastCoordsCopiedFmt") ? t("toastCoordsCopiedFmt").replace("{coords}", coordsText) : ("Координаты для наведения телескопа скопированы: " + coordsText)}`,
+          "RA (HMS) / Dec (DMS)",
+          "ok"
+        );
+      });
     });
 
     container.querySelectorAll(".btn-pick-urgent").forEach(btn => {
@@ -6602,8 +6942,8 @@ function revealAndFocusField(inputId) {
     }
 
     const starVal = (document.getElementById("starid") && document.getElementById("starid").value.trim()) || activeRadarReferenceStar || "";
-    const raVal = parseFloat(document.getElementById("ra") && document.getElementById("ra").value);
-    const decVal = parseFloat(document.getElementById("dec") && document.getElementById("dec").value);
+    const raVal = parseRaAnyToDeg(document.getElementById("ra") && document.getElementById("ra").value);
+    const decVal = parseDecAnyToDeg(document.getElementById("dec") && document.getElementById("dec").value);
     if (typeof window.renderAavsoAndContributionWidget === "function") {
       window.renderAavsoAndContributionWidget("", false);
     }
@@ -6711,14 +7051,32 @@ function revealAndFocusField(inputId) {
       starEl.value = star;
       starEl.setAttribute("data-source", "catalog");
     }
-    document.getElementById("ra").value = ra;
-    document.getElementById("dec").value = dec;
+    const numRa = parseRaAnyToDeg(ra);
+    const numDec = parseDecAnyToDeg(dec);
+    const raHmsSup = Number.isFinite(numRa) ? formatRaJ2000Hms(numRa, true) : String(ra);
+    const raHmsPlain = Number.isFinite(numRa) ? formatRaJ2000Hms(numRa, false) : String(ra);
+    const decDmsStr = Number.isFinite(numDec) ? formatDecJ2000Dms(numDec) : String(dec);
+    document.getElementById("ra").value = raHmsSup;
+    document.getElementById("dec").value = decDmsStr;
     if (chart) document.getElementById("chart").value = chart;
     if (kname) document.getElementById("kname").value = kname;
     if (kmag) document.getElementById("kmag").value = kmag;
     STATE.catalogStarName = star;
-    STATE.catalogRa = parseFloat(ra);
-    STATE.catalogDec = parseFloat(dec);
+    STATE.catalogRa = Number.isFinite(numRa) ? numRa : parseFloat(ra);
+    STATE.catalogDec = Number.isFinite(numDec) ? numDec : parseFloat(dec);
+    const raHintEl = document.getElementById("raHint");
+    const decHintEl = document.getElementById("decHint");
+    if (raHintEl && Number.isFinite(STATE.catalogRa)) {
+      raHintEl.textContent = `✓ Seestar GoTo / J2000.0: ${raHmsPlain} (${STATE.catalogRa.toFixed(5)}°)`;
+      raHintEl.className = "field-hint ok";
+    }
+    if (decHintEl && Number.isFinite(STATE.catalogDec)) {
+      decHintEl.textContent = `✓ Seestar GoTo / J2000.0: ${decDmsStr} (${STATE.catalogDec >= 0 ? '+' : ''}${STATE.catalogDec.toFixed(5)}°)`;
+      decHintEl.className = "field-hint ok";
+    }
+    if (navigator.clipboard && raHmsPlain && decDmsStr) {
+      navigator.clipboard.writeText(`${raHmsPlain} ${decDmsStr}`).catch(() => {});
+    }
     STATE.simbadCatalogLoaded = true;
     STATE.dismissedMismatchSig = "";
 
@@ -6734,8 +7092,8 @@ function revealAndFocusField(inputId) {
     updateCatalogStatusCardTelemetry();
     renderV6RadarDock();
     showIosNotification(
-      t("toastRadarTargetTitleFmt").replace("{star}", star),
-      t("toastRadarTargetMsgFmt").replace("{chart}", chart).replace("{kname}", kname).replace("{kmag}", kmag),
+      `${t("toastRadarTargetTitleFmt").replace("{star}", star)} • ${raHmsSup} ${decDmsStr}`,
+      `RA (J2000.0): ${raHmsPlain} | Dec (J2000.0): ${decDmsStr} • ${t("toastRadarTargetMsgFmt").replace("{chart}", chart).replace("{kname}", kname).replace("{kmag}", kmag)}`,
       t("toastRadarTargetSubFmt").replace("{scope}", AstroLabCore.getScopeProfile(currentScopeModel).name),
       "ok"
     );
@@ -6745,6 +7103,7 @@ function revealAndFocusField(inputId) {
   window.applyTranslations = applyTranslations;
   window.updateAccordionSummaryBadges = updateAccordionSummaryBadges;
   window.renderV6RadarDock = renderV6RadarDock;
+  window.renderUrgentStarsCards = renderUrgentStarsCards;
 
   // ПУНКТ 7, 8, 9, 11 Цикла 2: Рендеринг бокового радара целей AAVSO:
   // - без атрибута title="..." (исключает двойной тултип при наведении)
@@ -6775,13 +7134,30 @@ function revealAndFocusField(inputId) {
     const filteredAll = AAVSO_URGENT_CATALOGUE.filter(item => {
       if (q) {
         const locItem = getLocalizedCatalogItem(item);
+        const raHmsQ = formatRaJ2000Hms(item.ra, false).toLowerCase();
+        const decDmsQ = formatDecJ2000Dms(item.dec).toLowerCase();
         const matchQ = item.star.toLowerCase().includes(q) ||
                        (item.alias && item.alias.toLowerCase().includes(q)) ||
                        item.type.toLowerCase().includes(q) ||
                        locItem.type.toLowerCase().includes(q) ||
                        item.con.toLowerCase().includes(q) ||
-                       (item.desc && item.desc.toLowerCase().includes(q));
+                       (item.desc && item.desc.toLowerCase().includes(q)) ||
+                       raHmsQ.includes(q) ||
+                       decDmsQ.includes(q);
         if (!matchQ) return false;
+      }
+      const qRa = (document.getElementById("v6FilterRaInput")?.value || document.getElementById("urgentFilterRaInput")?.value || "").trim().toLowerCase();
+      const qDec = (document.getElementById("v6FilterDecInput")?.value || document.getElementById("urgentFilterDecInput")?.value || "").trim().toLowerCase();
+      if (qRa) {
+        const hmsPlain = formatRaJ2000Hms(item.ra, false).toLowerCase();
+        const hmsSup = formatRaJ2000Hms(item.ra, true).toLowerCase();
+        const hmsColon = hmsPlain.replace(/[hms\s]+/g, ":").replace(/:$/, "");
+        if (!hmsPlain.includes(qRa) && !hmsSup.includes(qRa) && !hmsColon.includes(qRa) && !item.ra.toFixed(4).includes(qRa)) return false;
+      }
+      if (qDec) {
+        const dmsPlain = formatDecJ2000Dms(item.dec).toLowerCase();
+        const dmsColon = dmsPlain.replace(/[°'"\s]+/g, ":").replace(/:$/, "");
+        if (!dmsPlain.includes(qDec) && !dmsColon.includes(qDec) && !item.dec.toFixed(4).includes(qDec)) return false;
       }
       // Фильтр видимости по полушарию / широте города наблюдателя
       if (typeof window.matchesObserverHemisphereFilter === "function") {
@@ -6789,34 +7165,10 @@ function revealAndFocusField(inputId) {
         if (!window.matchesObserverHemisphereFilter(item, visMode)) return false;
       }
 
-      const pStr = String(item.priority || "");
-      const tStr = String(item.type || "");
-      const tLower = tStr.toLowerCase();
-      if (currentRadarFilter === "urgent") {
-        return pStr.includes("СРОЧНО") || pStr.includes("Чёрная дыра") || pStr.includes("Сверхбыстрая") || pStr.includes("Вспышки") || pStr.includes("Активно");
+      if (activeObservingSections && activeObservingSections.size > 0 && !activeObservingSections.has("all")) {
+        return matchesObservingSectionFilter(item, activeObservingSections);
       }
-      if (currentRadarFilter === "ephem") {
-        return pStr.includes("Эфемериды") || tStr.includes("EW") || tStr.includes("DSCT") || tStr.includes("RRAB") || tStr.includes("DCEP");
-      }
-      if (currentRadarFilter === "exo") {
-        return pStr.includes("Экзопланета") || tStr.includes("(EP") || tLower.includes("транзит");
-      }
-      if (currentRadarFilter === "eclipse") {
-        return pStr.includes("Затмения") || tStr.includes("EA") || tStr.includes("EB") || tStr.includes("EW") || tLower.includes("затмен");
-      }
-      if (currentRadarFilter === "standard") {
-        return pStr.includes("Эталон") || pStr.includes("Мирида");
-      }
-      if (currentRadarFilter === "campaign") {
-        return pStr.includes("Кампания") || pStr.includes("Активно") || pStr.includes("Блазар") || pStr.includes("Двойная ЧД") || pStr.includes("Световое эхо") || pStr.includes("Мирида");
-      }
-      if (currentRadarFilter === "symbiotic") {
-        return pStr.includes("Симбиотическая") || pStr.includes("Вспышки") || tStr.includes("ZAND") || tLower.includes("симбиот");
-      }
-      if (currentRadarFilter === "nova") {
-        return pStr.includes("Новая") || pStr.includes("Сверхбыстрая") || pStr.includes("Световое эхо") || tStr.includes("(NA") || tStr.includes("(NB") || tStr.includes("(NR") || tStr.includes("(NC") || tStr.includes("LRN");
-      }
-      return true;
+      return matchesObservingSectionFilter(item, currentRadarFilter);
     });
 
     const radarSortSel = document.getElementById("v6RadarSortSelect");
@@ -6832,6 +7184,20 @@ function revealAndFocusField(inputId) {
     const isLight = document.body.getAttribute("data-theme") === "light";
     const conColor = isLight ? "var(--ios-text-secondary)" : "#94a3b8";
 
+    if (displayed.length === 0 && q && q.length >= 2) {
+      listEl.innerHTML = `
+        <div class="v6-target-card" style="text-align:center; padding:12px;">
+          <div style="font-size:12px; font-weight:700; margin-bottom:6px;">🔭 «${escapeHtml(searchEl.value.trim())}»</div>
+          <div style="font-size:11px; color:#94a3b8; margin-bottom:8px;">Звезда не найдена в текущем фильтре. Нажмите ниже, чтобы загрузить её координаты J2000.0 из SIMBAD / VSX и добавить в Радар:</div>
+          <button type="button" class="ios-btn tiny" id="btnFetchCustomStarToRadar" data-custom-star="${escapeHtml(searchEl.value.trim())}" style="width:100%;">➕ Найти «${escapeHtml(searchEl.value.trim())}» в SIMBAD/AAVSO и добавить в Радар</button>
+        </div>
+      `;
+      const btnCustom = document.getElementById("btnFetchCustomStarToRadar");
+      if (btnCustom) {
+        btnCustom.addEventListener("click", () => window.fetchAndAddStarToRadarCatalog(btnCustom.getAttribute("data-custom-star")));
+      }
+      return;
+    }
     listEl.innerHTML = displayed.map(rawItem => {
       const item = getLocalizedCatalogItem(rawItem);
       const isSelected = activeStar ? AstroLabCore.areSameStar(rawItem.star, activeStar) : false;
@@ -6849,7 +7215,11 @@ function revealAndFocusField(inputId) {
             <span class="v6-target-name">${escapeHtml(item.star)} <small style="color:${conColor}; font-weight:500;">(${escapeHtml(item.con)})</small></span>
             <span class="v6-target-badge">${escapeHtml(item.priority)}</span>
           </div>
-          <div class="v6-target-meta">${escapeHtml(item.type)} • AUID: ${escapeHtml(item.auid)} <span class="sky-alt-pill" title="Максимальная высота кульминации и текущая высота над горизонтом выбранного города">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高"}[_l]||"max."; return `📐 ${_mx} ${Math.round(window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec).maxCulmAltDeg)}°`; })()) : ""}</span></div>
+          <div class="v6-target-meta"><span class="aavso-sec-pill">${escapeHtml(getStarObservingSectionLabel(rawItem))}</span> • ${escapeHtml(item.type)} • AUID: ${escapeHtml(item.auid)} <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高"}[_l]||"max."; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_a.compassLabel || ""}`; })()) : ""}</span></div>
+          <div class="v6-target-coords-bar" data-live-coords="${escapeHtml(rawItem.star)}" title="RA / Dec (J2000.0) — Seestar & AAVSO Target Tool (${rawItem.ra.toFixed(4)}°, ${rawItem.dec >= 0 ? '+' : ''}${rawItem.dec.toFixed(4)}°)">
+            <span>🔭 <strong>RA:</strong> ${formatRaJ2000Hms(rawItem.ra, true)} • <strong>Dec:</strong> ${formatDecJ2000Dms(rawItem.dec)}</span>
+            <button type="button" class="coord-copy-btn" data-copy-coords="${escapeHtml(formatRaJ2000Hms(rawItem.ra, false) + ' ' + formatDecJ2000Dms(rawItem.dec))}" data-copy-star="${escapeHtml(rawItem.star)}" title="Copy J2000.0 HMS/DMS">📋</button>
+          </div>
           <div class="v6-target-scope-fit ${scopeEval.status === 'warn' ? 'scope-warn' : ''}">
             🔭 ${escapeHtml(scopeEval.badgeText)}
           </div>
@@ -6887,6 +7257,25 @@ function revealAndFocusField(inputId) {
           e.stopPropagation();
         });
       }
+      const copyBtn = card.querySelector(".coord-copy-btn");
+      if (copyBtn) {
+        copyBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const coordsText = copyBtn.getAttribute("data-copy-coords") || "";
+          const stName = copyBtn.getAttribute("data-copy-star") || "";
+          if (navigator.clipboard && coordsText) {
+            navigator.clipboard.writeText(coordsText).catch(() => {});
+          }
+          copyBtn.textContent = "✓";
+          setTimeout(() => { copyBtn.textContent = "📋"; }, 1400);
+          showIosNotification(
+            `${stName} — J2000.0`,
+            `${t("toastCoordsCopiedFmt") ? t("toastCoordsCopiedFmt").replace("{coords}", coordsText) : ("Координаты для наведения телескопа скопированы: " + coordsText)}`,
+            "RA (HMS) / Dec (DMS)",
+            "ok"
+          );
+        });
+      }
 
       card.addEventListener("click", () => {
         const ra = card.getAttribute("data-v6-ra") || "122.398952";
@@ -6901,7 +7290,99 @@ function revealAndFocusField(inputId) {
 
   const v6RadarSearchEl = document.getElementById("v6RadarSearch");
   if (v6RadarSearchEl) {
-    v6RadarSearchEl.addEventListener("input", renderV6RadarDock);
+    v6RadarSearchEl.addEventListener("input", () => {
+      const urgS = document.getElementById("urgentSearchField");
+      if (urgS && urgS.value !== v6RadarSearchEl.value) urgS.value = v6RadarSearchEl.value;
+      renderV6RadarDock();
+      renderUrgentStarsCards(v6RadarSearchEl.value);
+    });
+  }
+
+  // Синхронизация быстрых фильтров по колонкам RA (J2000.0) и Dec (J2000.0) между обоими меню радара
+  [["v6FilterRaInput", "urgentFilterRaInput"], ["v6FilterDecInput", "urgentFilterDecInput"]].forEach(([idA, idB]) => {
+    const elA = document.getElementById(idA);
+    const elB = document.getElementById(idB);
+    if (elA) {
+      elA.addEventListener("input", () => {
+        if (elB && elB.value !== elA.value) elB.value = elA.value;
+        renderV6RadarDock();
+        renderUrgentStarsCards(urgentSearchField ? urgentSearchField.value : "");
+      });
+    }
+    if (elB) {
+      elB.addEventListener("input", () => {
+        if (elA && elA.value !== elB.value) elA.value = elB.value;
+        renderV6RadarDock();
+        renderUrgentStarsCards(urgentSearchField ? urgentSearchField.value : "");
+      });
+    }
+  });
+
+  // Кнопки копирования и выгрузки координат J2000.0 (HMS / DMS) в Разделе 1
+  const btnCopyRaDecFormEl = document.getElementById("btnCopyRaDecForm");
+  if (btnCopyRaDecFormEl) {
+    btnCopyRaDecFormEl.addEventListener("click", () => {
+      const starName = (document.getElementById("starid")?.value || STATE.catalogStarName || "Target").trim();
+      const rDeg = parseRaAnyToDeg(document.getElementById("ra")?.value || STATE.catalogRa);
+      const dDeg = parseDecAnyToDeg(document.getElementById("dec")?.value || STATE.catalogDec);
+      const raHms = Number.isFinite(rDeg) ? formatRaJ2000Hms(rDeg, false) : (document.getElementById("ra")?.value || "—");
+      const decDms = Number.isFinite(dDeg) ? formatDecJ2000Dms(dDeg) : (document.getElementById("dec")?.value || "—");
+      const copyStr = `${raHms} ${decDms}`;
+      if (navigator.clipboard) navigator.clipboard.writeText(copyStr).catch(() => {});
+      showIosNotification(
+        `📋 ${starName} — J2000.0`,
+        `RA (J2000.0): ${raHms} | Dec (J2000.0): ${decDms}`,
+        "Скопировано в буфер обмена для наведения телескопа",
+        "ok"
+      );
+    });
+  }
+
+  const btnExportRaDecTxtEl = document.getElementById("btnExportRaDecTxt");
+  if (btnExportRaDecTxtEl) {
+    btnExportRaDecTxtEl.addEventListener("click", () => {
+      const starName = (document.getElementById("starid")?.value || STATE.catalogStarName || "CH Cyg").trim();
+      const rDeg = parseRaAnyToDeg(document.getElementById("ra")?.value || STATE.catalogRa || 291.13783);
+      const dDeg = parseDecAnyToDeg(document.getElementById("dec")?.value || STATE.catalogDec || 50.24142);
+      const raHmsSup = formatRaJ2000Hms(rDeg, true);
+      const raHmsPlain = formatRaJ2000Hms(rDeg, false);
+      const decDms = formatDecJ2000Dms(dDeg);
+      const chartVal = (document.getElementById("chart")?.value || "—").trim();
+      const knameVal = (document.getElementById("kname")?.value || "—").trim();
+      const kmagVal = (document.getElementById("kmag")?.value || "—").trim();
+      const scopeProf = AstroLabCore.getScopeProfile(currentScopeModel);
+      const exportLines = [
+        "============================================================",
+        "SEESTAR ASTROLAB AAVSO — КАРТОЧКА НАВЕДЕНИЯ ТЕЛЕСКОПА (J2000.0)",
+        "============================================================",
+        `Star Name (Звезда)      : ${starName}`,
+        `RA (J2000.0) [HMS]      : ${raHmsPlain}  (${raHmsSup})`,
+        `Dec (J2000.0) [DMS]     : ${decDms}`,
+        `RA / Dec (Decimal deg)  : ${rDeg.toFixed(6)}° / ${dDeg >= 0 ? '+' : ''}${dDeg.toFixed(6)}°`,
+        `AAVSO VSP Chart         : ${chartVal}`,
+        `Check Star (KNAME/KMAG) : ${knameVal} (${kmagVal} mag)`,
+        `Telescope Profile       : ${scopeProf.name} (${scopeProf.fovStr})`,
+        "============================================================"
+      ].join("\r\n");
+      if (navigator.clipboard) navigator.clipboard.writeText(`${raHmsPlain} ${decDms}`).catch(() => {});
+      try {
+        const blob = new Blob([exportLines], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Seestar_J2000_${starName.replace(/\s+/g, "_")}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      } catch (_) {}
+      showIosNotification(
+        `📥 ${starName} — ${raHmsSup} ${decDms}`,
+        `RA (J2000.0): ${raHmsPlain} | Dec (J2000.0): ${decDms}`,
+        `Файл Seestar_J2000_${starName.replace(/\s+/g, "_")}.txt выгружен и координаты скопированы`,
+        "ok"
+      );
+    });
   }
 
   const v6RadarLimitSelectEl = document.getElementById("v6RadarLimitSelect");
@@ -6914,13 +7395,83 @@ function revealAndFocusField(inputId) {
     });
   }
 
+  function syncObservingSectionsUI() {
+    const isAll = activeObservingSections.size === 0 || activeObservingSections.has("all");
+    document.querySelectorAll("[data-radar-filter]").forEach(b => {
+      const code = b.getAttribute("data-radar-filter") || "all";
+      const active = isAll ? (code === "all") : activeObservingSections.has(code);
+      b.classList.toggle("active", active);
+    });
+    document.querySelectorAll("[data-urgent-sec-chk]").forEach(chk => {
+      const code = chk.getAttribute("data-urgent-sec-chk") || "all";
+      chk.checked = isAll ? (code === "all") : activeObservingSections.has(code);
+    });
+  }
+  window.syncObservingSectionsUI = syncObservingSectionsUI;
+
   document.querySelectorAll("[data-radar-filter]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      currentRadarFilter = btn.getAttribute("data-radar-filter") || "all";
-      document.querySelectorAll("[data-radar-filter]").forEach(b => b.classList.toggle("active", b === btn));
+    btn.addEventListener("click", (e) => {
+      const code = btn.getAttribute("data-radar-filter") || "all";
+      if (code === "all") {
+        activeObservingSections.clear();
+        activeObservingSections.add("all");
+        currentRadarFilter = "all";
+      } else if (e.ctrlKey || e.metaKey || e.shiftKey) {
+        activeObservingSections.delete("all");
+        if (activeObservingSections.has(code)) activeObservingSections.delete(code);
+        else activeObservingSections.add(code);
+        if (activeObservingSections.size === 0) activeObservingSections.add("all");
+        currentRadarFilter = Array.from(activeObservingSections)[0] || "all";
+      } else {
+        activeObservingSections.clear();
+        activeObservingSections.add(code);
+        currentRadarFilter = code;
+      }
+      syncObservingSectionsUI();
       renderV6RadarDock();
+      renderUrgentStarsCards(urgentSearchField ? urgentSearchField.value : "");
     });
   });
+
+  document.querySelectorAll("[data-urgent-sec-chk]").forEach(chk => {
+    chk.addEventListener("change", () => {
+      const code = chk.getAttribute("data-urgent-sec-chk") || "all";
+      if (code === "all") {
+        if (chk.checked) {
+          activeObservingSections.clear();
+          activeObservingSections.add("all");
+          currentRadarFilter = "all";
+        } else {
+          activeObservingSections.delete("all");
+        }
+      } else {
+        if (chk.checked) {
+          activeObservingSections.delete("all");
+          activeObservingSections.add(code);
+        } else {
+          activeObservingSections.delete(code);
+        }
+        if (activeObservingSections.size === 0) {
+          activeObservingSections.add("all");
+          currentRadarFilter = "all";
+        } else {
+          currentRadarFilter = Array.from(activeObservingSections)[0];
+        }
+      }
+      syncObservingSectionsUI();
+      renderV6RadarDock();
+      renderUrgentStarsCards(urgentSearchField ? urgentSearchField.value : "");
+    });
+  });
+
+  const btnApplyUrgentSectionsEl = document.getElementById("btnApplyUrgentSections");
+  if (btnApplyUrgentSectionsEl) {
+    btnApplyUrgentSectionsEl.addEventListener("click", () => {
+      syncObservingSectionsUI();
+      renderV6RadarDock();
+      renderUrgentStarsCards(urgentSearchField ? urgentSearchField.value : "");
+    });
+  }
 
   // ПУНКТ 3: Безошибочное сворачивание и разворачивание бокового радара
   const btnCollapseRadarDock = document.getElementById("btnCollapseRadarDock");
@@ -8903,6 +9454,291 @@ function revealAndFocusField(inputId) {
       }
     }
   }
+
+  // ===========================================================================
+  // [RU/EN] ПОЛНАЯ 6-ЯЗЫЧНАЯ ЛОКАЛИЗАЦИЯ СЕКЦИЙ AAVSO TARGET TOOL, НАБЛЮДАЕМОСТИ
+  //         И КООРДИНАТ RA/Dec (J2000.0) В ФОРМАТЕ HMS / DMS
+  // ===========================================================================
+  const TARGETTOOL_I18N_6LANG = {
+    ru: {
+      lblRa: "RA (J2000.0)",
+      lblDec: "Dec (J2000.0)",
+      phRa: "19ʰ 24ᵐ 33ˢ",
+      phDec: "+50° 14' 29\"",
+      tipRaText: "Прямое восхождение J2000.0 для наведения телескопа (ччʰ ммᵐ ссˢ, например 19ʰ 24ᵐ 33ˢ).",
+      tipDecText: "Склонение J2000.0 для наведения телескопа (±гг° мм' сс\", например +50° 14' 29\").",
+      btnCopyRaDecForm: "📋 Скопировать J2000.0",
+      btnExportRaDecTxt: "📥 Выгрузить координаты",
+      phRadarSearch: "🔍 Имя звезды / Тип / Созвездие (CH Cyg, AG Dra)...",
+      phUrgentSearch: "🔍 Имя звезды (CH Cyg, AG Dra, T CrB)...",
+      phFilterRa: "RA (J2000.0): 19h 24m...",
+      phFilterDec: "Dec (J2000.0): +50° 14'...",
+      lblObservingSection: "Секция наблюдений:",
+      subSelectTypesOfStars: "Выберите категории целевых звёзд (AAVSO Target Tool)",
+      filterAC: "🔥 Срочно / Кампании (AC)",
+      filterEP: "🪐 Экзопланеты (EP)",
+      filterCV: "💥 Катаклизмические (CV)",
+      filterEB: "🌑 Затменные (EB)",
+      filterSPP: "⚡ Короткопериод. (SPP)",
+      filterLPV: "🔴 Долгопериод. (LPV)",
+      filterYSO: "🌱 Молодые звёзды (YSO)",
+      filterHET: "🌌 Выс. энергии (HET)",
+      filterMisc: "✨ Прочие (Misc)",
+      chkSecAC: "Срочно / Кампании (AC)",
+      chkSecEP: "Экзопланеты (EP)",
+      chkSecCV: "Катаклизмические (CV)",
+      chkSecEB: "Затменные двойные (EB)",
+      chkSecSPP: "Короткопериод. пульсаторы (SPP)",
+      chkSecLPV: "Долгопериодические (LPV)",
+      chkSecYSO: "Молодые звёздные объекты (YSO)",
+      chkSecHET: "Объекты высоких энергий (HET)",
+      chkSecMisc: "Прочие (Miscellaneous)",
+      chkSecAll: "Все (All)",
+      btnApplySectionFilters: "▼ Применить фильтры секций",
+      lblObservability: "Наблюдаемость:",
+      btnShowVisibleTonight: "👁 Показывать только цели, видимые сегодня ночью",
+      btnShowVisibleTonightShort: "👁 Видимые сегодня ночью",
+      btnEditLocation: "⚙ Изменить локацию",
+      nighttimeDockFmt: "🌙 Ночь ({lat}, {lon} • {city}): <strong>{start} – {end}</strong>",
+      nighttimeModalFmt: "Ночное время в локации телескопа <strong>{lat}, {lon}</strong> ({city}) началось в <strong>{start}</strong> и продлится до <strong>{end}</strong>.",
+      tipFilterAll: "📋 <strong>Все цели каталога AAVSO (52):</strong> Полный перечень приоритетных целей по всем секциям AAVSO Target Tool.",
+      tipFilterAC: "🔥 <strong>Alerts / Campaigns (AC):</strong> Звёзды экстренных оповещений AAVSO Alert Notices и международных наблюдательных кампаний (CH Cyg, AG Dra, T CrB, SS Cyg).",
+      tipFilterEP: "🪐 <strong>Exoplanets (EP):</strong> Звёзды с транзитными горячими юпитерами секции экзопланет AAVSO (HD 189733, WASP-12, WASP-33, TrES-3, HAT-P-32).",
+      tipFilterCV: "💥 <strong>Cataclysmic Variables (CV):</strong> Катаклизмические переменные, карликовые новые, повторные и классические новые, симбиотические системы (SS Cyg, U Gem, Z Cam, T CrB).",
+      tipFilterEB: "🌑 <strong>Eclipsing Variables (EB):</strong> Затменно-двойные системы типов EA, EB и EW для программы фиксации моментов минимумов (W UMa, TX UMa, Beta Lyr, Algol).",
+      tipFilterSPP: "⚡ <strong>Short Period Pulsators (SPP):</strong> Короткопериодические пульсирующие переменные типов DSCT, RRAB, DCEP (SZ Lyn, RR Lyr, Delta Cep).",
+      tipFilterLPV: "🔴 <strong>Long Period Variables (LPV):</strong> Долгопериодические переменные, мириды, полуправильные сверхгиганты и звёзды типа RV Тельца (Chi Cyg, Mira, Betelgeuse, R Sct).",
+      tipFilterYSO: "🌱 <strong>Young Stellar Objects (YSO):</strong> Молодые звёздные объекты типа T Тельца, Хербига Ae/Be и UX Ориона с протопланетными дисками (RW Aur, AB Aur).",
+      tipFilterHET: "🌌 <strong>High Energy Targets (HET):</strong> Блазары, квазары, рентгеновские новые с чёрными дырами и магнитные аккреторы (BL Lac, OJ 287, V404 Cyg, HL CMa).",
+      tipFilterMisc: "✨ <strong>Miscellaneous:</strong> Редкие эруптивные классы: углеродные звёзды типа R Северной Короны, слияния звёзд (LRN) и яркие голубые переменные (R CrB, V838 Mon, V1309 Sco)."
+    },
+    en: {
+      lblRa: "RA (J2000.0)",
+      lblDec: "Dec (J2000.0)",
+      phRa: "19ʰ 24ᵐ 33ˢ",
+      phDec: "+50° 14' 29\"",
+      tipRaText: "Target Right Ascension (J2000.0) in telescope HMS format (19ʰ 24ᵐ 33ˢ or decimal degrees).",
+      tipDecText: "Target Declination (J2000.0) in telescope DMS format (+50° 14' 29\" or decimal degrees).",
+      btnCopyRaDecForm: "📋 Copy J2000.0",
+      btnExportRaDecTxt: "📥 Export Coordinates",
+      phRadarSearch: "🔍 Star Name / Var. Type / Con (CH Cyg, AG Dra)...",
+      phUrgentSearch: "🔍 Star Name (CH Cyg, AG Dra, T CrB)...",
+      phFilterRa: "RA (J2000.0): 19h 24m...",
+      phFilterDec: "Dec (J2000.0): +50° 14'...",
+      lblObservingSection: "Observing section:",
+      subSelectTypesOfStars: "Select types of target stars",
+      filterAC: "🔥 Alerts/Campaigns (AC)",
+      filterEP: "🪐 Exoplanets (EP)",
+      filterCV: "💥 Cataclysmic Variables (CV)",
+      filterEB: "🌑 Eclipsing Variables (EB)",
+      filterSPP: "⚡ Short Period Pulsators (SPP)",
+      filterLPV: "🔴 Long Period Variables (LPV)",
+      filterYSO: "🌱 Young Stellar Objects (YSO)",
+      filterHET: "🌌 High Energy Targets (HET)",
+      filterMisc: "✨ Miscellaneous",
+      chkSecAC: "Alerts/Campaigns (AC)",
+      chkSecEP: "Exoplanets (EP)",
+      chkSecCV: "Cataclysmic Variables (CV)",
+      chkSecEB: "Eclipsing Variables (EB)",
+      chkSecSPP: "Short Period Pulsators (SPP)",
+      chkSecLPV: "Long Period Variables (LPV)",
+      chkSecYSO: "Young Stellar Objects (YSO)",
+      chkSecHET: "High Energy Targets (HET)",
+      chkSecMisc: "Miscellaneous",
+      chkSecAll: "All",
+      btnApplySectionFilters: "▼ Apply observing section filters",
+      lblObservability: "Observability:",
+      btnShowVisibleTonight: "👁 Show only targets that are visible tonight",
+      btnShowVisibleTonightShort: "👁 Visible tonight",
+      btnEditLocation: "⚙ Edit location",
+      nighttimeDockFmt: "🌙 Nighttime ({lat}, {lon} • {city}): <strong>{start} – {end}</strong>",
+      nighttimeModalFmt: "Nighttime at the telescope location <strong>{lat}, {lon}</strong> ({city}) started at <strong>{start}</strong> and will continue until <strong>{end}</strong>.",
+      tipFilterAll: "📋 <strong>All AAVSO Targets (52):</strong> Complete catalog across all AAVSO Target Tool observing sections.",
+      tipFilterAC: "🔥 <strong>Alerts/Campaigns (AC):</strong> High-priority targets with active AAVSO Alert Notices and international observing campaigns (CH Cyg, AG Dra, T CrB, SS Cyg).",
+      tipFilterEP: "🪐 <strong>Exoplanets (EP):</strong> Host stars with transiting Hot Jupiters monitored by the AAVSO Exoplanet Section (HD 189733, WASP-12, WASP-33, TrES-3, HAT-P-32).",
+      tipFilterCV: "💥 <strong>Cataclysmic Variables (CV):</strong> Dwarf novae, recurrent and classical novae, and symbiotic interacting binaries (SS Cyg, U Gem, Z Cam, T CrB).",
+      tipFilterEB: "🌑 <strong>Eclipsing Variables (EB):</strong> Eclipsing binary systems (EA, EB, EW) observed for Time of Minimum O−C analysis (W UMa, TX UMa, Beta Lyr, Algol).",
+      tipFilterSPP: "⚡ <strong>Short Period Pulsators (SPP):</strong> Delta Scuti, RR Lyrae, and Cepheid pulsators (SZ Lyn, RR Lyr, Delta Cep).",
+      tipFilterLPV: "🔴 <strong>Long Period Variables (LPV):</strong> Mira variables, semiregular red supergiants, and RV Tauri stars (Chi Cyg, Mira, Betelgeuse, R Sct).",
+      tipFilterYSO: "🌱 <strong>Young Stellar Objects (YSO):</strong> T Tauri, Herbig Ae/Be, and UX Orionis pre-main-sequence stars (RW Aur, AB Aur).",
+      tipFilterHET: "🌌 <strong>High Energy Targets (HET):</strong> Blazars, X-ray binaries with black holes, and magnetic accretors (BL Lac, OJ 287, V404 Cyg, HL CMa).",
+      tipFilterMisc: "✨ <strong>Miscellaneous:</strong> R Coronae Borealis carbon stars, Luminous Red Novae stellar mergers, and Luminous Blue Variables (R CrB, V838 Mon, V1309 Sco)."
+    },
+    es: {
+      lblRa: "RA (J2000.0)",
+      lblDec: "Dec (J2000.0)",
+      phRa: "19ʰ 24ᵐ 33ˢ",
+      phDec: "+50° 14' 29\"",
+      tipRaText: "Ascensión recta J2000.0 en formato sexagesimal para telescopio (19ʰ 24ᵐ 33ˢ).",
+      tipDecText: "Declinación J2000.0 en formato sexagesimal para telescopio (+50° 14' 29\").",
+      btnCopyRaDecForm: "📋 Copiar J2000.0",
+      btnExportRaDecTxt: "📥 Exportar coordenadas",
+      phRadarSearch: "🔍 Estrella / Tipo / Constelación (CH Cyg, AG Dra)...",
+      phUrgentSearch: "🔍 Nombre de estrella (CH Cyg, AG Dra, T CrB)...",
+      phFilterRa: "RA (J2000.0): 19h 24m...",
+      phFilterDec: "Dec (J2000.0): +50° 14'...",
+      lblObservingSection: "Sección de observación:",
+      subSelectTypesOfStars: "Seleccione los tipos de estrellas objetivo",
+      filterAC: "🔥 Alertas/Campañas (AC)",
+      filterEP: "🪐 Exoplanetas (EP)",
+      filterCV: "💥 Cataclísmicas (CV)",
+      filterEB: "🌑 Eclipsantes (EB)",
+      filterSPP: "⚡ Corto Período (SPP)",
+      filterLPV: "🔴 Largo Período (LPV)",
+      filterYSO: "🌱 Estrellas Jóvenes (YSO)",
+      filterHET: "🌌 Alta Energía (HET)",
+      filterMisc: "✨ Misceláneos",
+      chkSecAC: "Alertas/Campañas (AC)",
+      chkSecEP: "Exoplanetas (EP)",
+      chkSecCV: "Variables Cataclísmicas (CV)",
+      chkSecEB: "Binarias Eclipsantes (EB)",
+      chkSecSPP: "Pulsantes Corto Período (SPP)",
+      chkSecLPV: "Variables Largo Período (LPV)",
+      chkSecYSO: "Objetos Estelares Jóvenes (YSO)",
+      chkSecHET: "Objetivos Alta Energía (HET)",
+      chkSecMisc: "Misceláneos",
+      chkSecAll: "Todos (All)",
+      btnApplySectionFilters: "▼ Aplicar filtros de sección",
+      lblObservability: "Observabilidad:",
+      btnShowVisibleTonight: "👁 Mostrar solo objetivos visibles esta noche",
+      btnShowVisibleTonightShort: "👁 Visibles esta noche",
+      btnEditLocation: "⚙ Editar ubicación",
+      nighttimeDockFmt: "🌙 Noche ({lat}, {lon} • {city}): <strong>{start} – {end}</strong>",
+      nighttimeModalFmt: "La noche en la ubicación del telescopio <strong>{lat}, {lon}</strong> ({city}) comenzó a las <strong>{start}</strong> y continuará hasta las <strong>{end}</strong>."
+    },
+    de: {
+      lblRa: "RA (J2000.0)",
+      lblDec: "Dec (J2000.0)",
+      phRa: "19ʰ 24ᵐ 33ˢ",
+      phDec: "+50° 14' 29\"",
+      tipRaText: "Rektaszension J2000.0 im Teleskopformat (19ʰ 24ᵐ 33ˢ).",
+      tipDecText: "Deklination J2000.0 im Teleskopformat (+50° 14' 29\").",
+      btnCopyRaDecForm: "📋 J2000.0 kopieren",
+      btnExportRaDecTxt: "📥 Koordinaten exportieren",
+      phRadarSearch: "🔍 Sternname / Typ / Sternbild (CH Cyg, AG Dra)...",
+      phUrgentSearch: "🔍 Sternname (CH Cyg, AG Dra, T CrB)...",
+      phFilterRa: "RA (J2000.0): 19h 24m...",
+      phFilterDec: "Dec (J2000.0): +50° 14'...",
+      lblObservingSection: "Beobachtungssektion:",
+      subSelectTypesOfStars: "Zielsterntypen auswählen",
+      filterAC: "🔥 Alarme/Kampagnen (AC)",
+      filterEP: "🪐 Exoplaneten (EP)",
+      filterCV: "💥 Kataklysmisch (CV)",
+      filterEB: "🌑 Bedeckungen (EB)",
+      filterSPP: "⚡ Kurzperiodisch (SPP)",
+      filterLPV: "🔴 Langperiodisch (LPV)",
+      filterYSO: "🌱 Junge Sterne (YSO)",
+      filterHET: "🌌 Hochenergie (HET)",
+      filterMisc: "✨ Sonstige (Misc)",
+      chkSecAC: "Alarme/Kampagnen (AC)",
+      chkSecEP: "Exoplaneten (EP)",
+      chkSecCV: "Kataklysmische Veränderliche (CV)",
+      chkSecEB: "Bedeckungsveränderliche (EB)",
+      chkSecSPP: "Kurzperiodische Pulsatoren (SPP)",
+      chkSecLPV: "Langperiodische Veränderliche (LPV)",
+      chkSecYSO: "Junge stellare Objekte (YSO)",
+      chkSecHET: "Hochenergie-Ziele (HET)",
+      chkSecMisc: "Sonstige (Miscellaneous)",
+      chkSecAll: "Alle (All)",
+      btnApplySectionFilters: "▼ Sektionsfilter anwenden",
+      lblObservability: "Sichtbarkeit:",
+      btnShowVisibleTonight: "👁 Nur heute Nacht sichtbare Ziele anzeigen",
+      btnShowVisibleTonightShort: "👁 Heute Nacht sichtbar",
+      btnEditLocation: "⚙ Standort ändern",
+      nighttimeDockFmt: "🌙 Nacht ({lat}, {lon} • {city}): <strong>{start} – {end}</strong>",
+      nighttimeModalFmt: "Die Nachtzeit am Teleskopstandort <strong>{lat}, {lon}</strong> ({city}) begann um <strong>{start}</strong> und dauert bis <strong>{end}</strong>."
+    },
+    fr: {
+      lblRa: "RA (J2000.0)",
+      lblDec: "Dec (J2000.0)",
+      phRa: "19ʰ 24ᵐ 33ˢ",
+      phDec: "+50° 14' 29\"",
+      tipRaText: "Ascension droite J2000.0 au format télescope (19ʰ 24ᵐ 33ˢ).",
+      tipDecText: "Déclinaison J2000.0 au format télescope (+50° 14' 29\").",
+      btnCopyRaDecForm: "📋 Copier J2000.0",
+      btnExportRaDecTxt: "📥 Exporter coordonnées",
+      phRadarSearch: "🔍 Étoile / Type / Constellation (CH Cyg, AG Dra)...",
+      phUrgentSearch: "🔍 Nom de l'étoile (CH Cyg, AG Dra, T CrB)...",
+      phFilterRa: "RA (J2000.0): 19h 24m...",
+      phFilterDec: "Dec (J2000.0): +50° 14'...",
+      lblObservingSection: "Section d'observation :",
+      subSelectTypesOfStars: "Sélectionnez les types d'étoiles cibles",
+      filterAC: "🔥 Alertes/Campagnes (AC)",
+      filterEP: "🪐 Exoplanètes (EP)",
+      filterCV: "💥 Cataclysmiques (CV)",
+      filterEB: "🌑 Éclipses (EB)",
+      filterSPP: "⚡ Courte Période (SPP)",
+      filterLPV: "🔴 Longue Période (LPV)",
+      filterYSO: "🌱 Jeunes Étoiles (YSO)",
+      filterHET: "🌌 Haute Énergie (HET)",
+      filterMisc: "✨ Divers (Misc)",
+      chkSecAC: "Alertes/Campagnes (AC)",
+      chkSecEP: "Exoplanètes (EP)",
+      chkSecCV: "Variables Cataclysmiques (CV)",
+      chkSecEB: "Variables à Éclipses (EB)",
+      chkSecSPP: "Pulsantes Courte Période (SPP)",
+      chkSecLPV: "Variables Longue Période (LPV)",
+      chkSecYSO: "Objets Stellaires Jeunes (YSO)",
+      chkSecHET: "Cibles Haute Énergie (HET)",
+      chkSecMisc: "Divers (Miscellaneous)",
+      chkSecAll: "Tous (All)",
+      btnApplySectionFilters: "▼ Appliquer les filtres de section",
+      lblObservability: "Observabilité :",
+      btnShowVisibleTonight: "👁 Afficher uniquement les cibles visibles ce soir",
+      btnShowVisibleTonightShort: "👁 Visibles ce soir",
+      btnEditLocation: "⚙ Modifier le lieu",
+      nighttimeDockFmt: "🌙 Nuit ({lat}, {lon} • {city}) : <strong>{start} – {end}</strong>",
+      nighttimeModalFmt: "La nuit à l'emplacement du télescope <strong>{lat}, {lon}</strong> ({city}) a commencé à <strong>{start}</strong> et continuera jusqu'à <strong>{end}</strong>."
+    },
+    zh: {
+      lblRa: "RA (J2000.0)",
+      lblDec: "Dec (J2000.0)",
+      phRa: "19ʰ 24ᵐ 33ˢ",
+      phDec: "+50° 14' 29\"",
+      tipRaText: "J2000.0 赤经（望远镜时分秒格式 19ʰ 24ᵐ 33ˢ 或十进制度）。",
+      tipDecText: "J2000.0 赤纬（望远镜度分秒格式 +50° 14' 29\" 或十进制度）。",
+      btnCopyRaDecForm: "📋 复制 J2000.0",
+      btnExportRaDecTxt: "📥 导出坐标文件",
+      phRadarSearch: "🔍 恒星名称 / 变星类型 / 星座 (CH Cyg, AG Dra)...",
+      phUrgentSearch: "🔍 恒星名称 (CH Cyg, AG Dra, T CrB)...",
+      phFilterRa: "RA (J2000.0): 19h 24m...",
+      phFilterDec: "Dec (J2000.0): +50° 14'...",
+      lblObservingSection: "观测分组：",
+      subSelectTypesOfStars: "选择目标变星类别 (AAVSO Target Tool)",
+      filterAC: "🔥 警报/联合观测 (AC)",
+      filterEP: "🪐 系外行星 (EP)",
+      filterCV: "💥 激变变星 (CV)",
+      filterEB: "🌑 食变星 (EB)",
+      filterSPP: "⚡ 短周期脉动 (SPP)",
+      filterLPV: "🔴 长周期变星 (LPV)",
+      filterYSO: "🌱 年轻恒星体 (YSO)",
+      filterHET: "🌌 高能天体 (HET)",
+      filterMisc: "✨ 其他目标 (Misc)",
+      chkSecAC: "警报/联合观测 (AC)",
+      chkSecEP: "系外行星 (EP)",
+      chkSecCV: "激变变星 (CV)",
+      chkSecEB: "食变星 (EB)",
+      chkSecSPP: "短周期脉动星 (SPP)",
+      chkSecLPV: "长周期变星 (LPV)",
+      chkSecYSO: "年轻恒星体 (YSO)",
+      chkSecHET: "高能天体目标 (HET)",
+      chkSecMisc: "其他特殊目标 (Misc)",
+      chkSecAll: "全部 (All)",
+      btnApplySectionFilters: "▼ 应用观测分组筛选",
+      lblObservability: "可观测性：",
+      btnShowVisibleTonight: "👁 仅显示今晚可见的目标",
+      btnShowVisibleTonightShort: "👁 今晚可见目标",
+      btnEditLocation: "⚙ 修改观测地点",
+      nighttimeDockFmt: "🌙 夜晚 ({lat}, {lon} • {city}): <strong>{start} – {end}</strong>",
+      nighttimeModalFmt: "望远镜所在地 <strong>{lat}, {lon}</strong> ({city}) 的夜晚从 <strong>{start}</strong> 开始，持续至 <strong>{end}</strong>。"
+    }
+  };
+
+  for (const [lg, dict] of Object.entries(TARGETTOOL_I18N_6LANG)) {
+    if (CURVE_AND_FILTER_I18N[lg]) Object.assign(CURVE_AND_FILTER_I18N[lg], dict);
+    if (window.I18N && window.I18N[lg]) Object.assign(window.I18N[lg], dict);
+  }
+
 
   function trCurve(key) {
     const lg = (document.getElementById("langSelect")?.value || document.documentElement.lang || "ru").slice(0, 2).toLowerCase();
@@ -12650,8 +13486,8 @@ function revealAndFocusField(inputId) {
       .replace("{kmag}", rawItem.kmag || "—");
 
     const coordsTxt = tpl.coordsFmt
-      .replace("{ra}", Number(rawItem.ra).toFixed(5))
-      .replace("{dec}", Number(rawItem.dec).toFixed(5));
+      .replace("{ra}", `${formatRaJ2000Hms(rawItem.ra, false)} (${Number(rawItem.ra).toFixed(4)}`)
+      .replace("{dec}", `${formatDecJ2000Dms(rawItem.dec)} (${Number(rawItem.dec) >= 0 ? '+' : ''}${Number(rawItem.dec).toFixed(4)}`);
 
     return {
       title: `🌟 ${item.star} (${item.con || rawItem.con})`,
@@ -13201,9 +14037,16 @@ function revealAndFocusField(inputId) {
       lblHemisphereFilter: "🌍 Видимость:",
       optVisCity: "📍 Видимые в моём городе (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Над горизонтом сейчас (Alt ≥ 15°)",
-      optVisNorth: "⬆️ Северное полушарие (DEC ≥ −20°)",
-      optVisSouth: "⬇️ Южное полушарие (DEC ≤ +20°)",
-      optVisAll: "🌍 Все широты (весь каталог)"
+      optVisNorth: "⬆️ Северное полушарие / Север (N)",
+      optVisSouth: "⬇️ Южное полушарие / Юг (S)",
+      optVisEast: "➡️ Восток (E • Азимут 45°–135°)",
+      optVisWest: "⬅️ Запад (W • Азимут 225°–315°)",
+      optVisNE: "↗️ Северо-Восток (NE • Азимут 22.5°–67.5°)",
+      optVisNW: "↖️ Северо-Запад (NW • Азимут 292.5°–337.5°)",
+      optVisSE: "↘️ Юго-Восток (SE • Азимут 112.5°–157.5°)",
+      optVisSW: "↙️ Юго-Запад (SW • Азимут 202.5°–247.5°)",
+      optVisAll: "🌍 Все широты и направления (весь каталог)",
+      dirs: { N: "С", NE: "СВ", E: "В", SE: "ЮВ", S: "Ю", SW: "ЮЗ", W: "З", NW: "СЗ" }
     },
     en: {
       skyLoading: "🌌 Sky Clarity: loading...",
@@ -13221,9 +14064,16 @@ function revealAndFocusField(inputId) {
       lblHemisphereFilter: "🌍 Visibility:",
       optVisCity: "📍 Observable from My City (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Above Horizon Right Now (Alt ≥ 15°)",
-      optVisNorth: "⬆️ Northern Hemisphere (DEC ≥ −20°)",
-      optVisSouth: "⬇️ Southern Hemisphere (DEC ≤ +20°)",
-      optVisAll: "🌍 All Latitudes (Full Catalog)"
+      optVisNorth: "⬆️ Northern Hemisphere / North (N)",
+      optVisSouth: "⬇️ Southern Hemisphere / South (S)",
+      optVisEast: "➡️ East (E • Azimuth 45°–135°)",
+      optVisWest: "⬅️ West (W • Azimuth 225°–315°)",
+      optVisNE: "↗️ North-East (NE • Azimuth 22.5°–67.5°)",
+      optVisNW: "↖️ North-West (NW • Azimuth 292.5°–337.5°)",
+      optVisSE: "↘️ South-East (SE • Azimuth 112.5°–157.5°)",
+      optVisSW: "↙️ South-West (SW • Azimuth 202.5°–247.5°)",
+      optVisAll: "🌍 All Latitudes & Directions (Full Catalog)",
+      dirs: { N: "N", NE: "NE", E: "E", SE: "SE", S: "S", SW: "SW", W: "W", NW: "NW" }
     },
     es: {
       skyLoading: "🌌 Claridad del cielo: cargando...",
@@ -13241,9 +14091,16 @@ function revealAndFocusField(inputId) {
       lblHemisphereFilter: "🌍 Visibilidad:",
       optVisCity: "📍 Visibles en mi ciudad (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Sobre el horizonte ahora (Alt ≥ 15°)",
-      optVisNorth: "⬆️ Hemisferio Norte (DEC ≥ −20°)",
-      optVisSouth: "⬇️ Hemisferio Sur (DEC ≤ +20°)",
-      optVisAll: "🌍 Todas las latitudes"
+      optVisNorth: "⬆️ Hemisferio Norte / Norte (N)",
+      optVisSouth: "⬇️ Hemisferio Sur / Sur (S)",
+      optVisEast: "➡️ Este (E • Acimut 45°–135°)",
+      optVisWest: "⬅️ Oeste (W • Acimut 225°–315°)",
+      optVisNE: "↗️ Noreste (NE • Acimut 22.5°–67.5°)",
+      optVisNW: "↖️ Noroeste (NW • Acimut 292.5°–337.5°)",
+      optVisSE: "↘️ Sureste (SE • Acimut 112.5°–157.5°)",
+      optVisSW: "↙️ Suroeste (SW • Acimut 202.5°–247.5°)",
+      optVisAll: "🌍 Todas las latitudes y direcciones",
+      dirs: { N: "N", NE: "NE", E: "E", SE: "SE", S: "S", SW: "SO", W: "O", NW: "NO" }
     },
     de: {
       skyLoading: "🌌 Himmelsklarheit: lädt...",
@@ -13261,9 +14118,16 @@ function revealAndFocusField(inputId) {
       lblHemisphereFilter: "🌍 Sichtbarkeit:",
       optVisCity: "📍 In meiner Stadt sichtbar (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Jetzt über dem Horizont (Alt ≥ 15°)",
-      optVisNorth: "⬆️ Nordhalbkugel (DEC ≥ −20°)",
-      optVisSouth: "⬇️ Südhalbkugel (DEC ≤ +20°)",
-      optVisAll: "🌍 Alle Breitengrade"
+      optVisNorth: "⬆️ Nordhalbkugel / Norden (N)",
+      optVisSouth: "⬇️ Südhalbkugel / Süden (S)",
+      optVisEast: "➡️ Osten (E • Azimut 45°–135°)",
+      optVisWest: "⬅️ Westen (W • Azimut 225°–315°)",
+      optVisNE: "↗️ Nordosten (NO • Azimut 22.5°–67.5°)",
+      optVisNW: "↖️ Nordwesten (NW • Azimut 292.5°–337.5°)",
+      optVisSE: "↘️ Südosten (SO • Azimut 112.5°–157.5°)",
+      optVisSW: "↙️ Südwesten (SW • Azimut 202.5°–247.5°)",
+      optVisAll: "🌍 Alle Breitengrade & Richtungen",
+      dirs: { N: "N", NE: "NO", E: "O", SE: "SO", S: "S", SW: "SW", W: "W", NW: "NW" }
     },
     fr: {
       skyLoading: "🌌 Clarté du ciel : chargement...",
@@ -13281,9 +14145,16 @@ function revealAndFocusField(inputId) {
       lblHemisphereFilter: "🌍 Visibilité :",
       optVisCity: "📍 Visibles depuis ma ville (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Au-dessus de l'horizon (Alt ≥ 15°)",
-      optVisNorth: "⬆️ Hémisphère Nord (DEC ≥ −20°)",
-      optVisSouth: "⬇️ Hémisphère Sud (DEC ≤ +20°)",
-      optVisAll: "🌍 Toutes les latitudes"
+      optVisNorth: "⬆️ Hémisphère Nord / Nord (N)",
+      optVisSouth: "⬇️ Hémisphère Sud / Sud (S)",
+      optVisEast: "➡️ Est (E • Azimut 45°–135°)",
+      optVisWest: "⬅️ Ouest (W • Azimut 225°–315°)",
+      optVisNE: "↗️ Nord-Est (NE • Azimut 22.5°–67.5°)",
+      optVisNW: "↖️ Nord-Ouest (NO • Azimut 292.5°–337.5°)",
+      optVisSE: "↘️ Sud-Est (SE • Azimut 112.5°–157.5°)",
+      optVisSW: "↙️ Sud-Ouest (SO • Azimut 202.5°–247.5°)",
+      optVisAll: "🌍 Toutes les latitudes et directions",
+      dirs: { N: "N", NE: "NE", E: "E", SE: "SE", S: "S", SW: "SO", W: "O", NW: "NO" }
     },
     zh: {
       skyLoading: "🌌 天空晴朗度：加载中...",
@@ -13301,17 +14172,40 @@ function revealAndFocusField(inputId) {
       lblHemisphereFilter: "🌍 可见性过滤：",
       optVisCity: "📍 本市可见目标 (DEC ≥ φ−70°)",
       optVisNow: "🕯️ 当前位于地平线上 (Alt ≥ 15°)",
-      optVisNorth: "⬆️ 北半球目标 (DEC ≥ −20°)",
-      optVisSouth: "⬇️ 南半球目标 (DEC ≤ +20°)",
-      optVisAll: "🌍 全部纬度 (完整星表)"
+      optVisNorth: "⬆️ 北半球 / 正北 (N)",
+      optVisSouth: "⬇️ 南半球 / 正南 (S)",
+      optVisEast: "➡️ 东方 (E • 方位角 45°–135°)",
+      optVisWest: "⬅️ 西方 (W • 方位角 225°–315°)",
+      optVisNE: "↗️ 东北 (NE • 方位角 22.5°–67.5°)",
+      optVisNW: "↖️ 西北 (NW • 方位角 292.5°–337.5°)",
+      optVisSE: "↘️ 东南 (SE • 方位角 112.5°–157.5°)",
+      optVisSW: "↙️ 西南 (SW • 方位角 202.5°–247.5°)",
+      optVisAll: "🌍 全部纬度与方向 (完整星表)",
+      dirs: { N: "北", NE: "东北", E: "东", SE: "东南", S: "南", SW: "西南", W: "西", NW: "西北" }
     }
   };
+
+  for (const lg of ["ru", "en", "es", "de", "fr", "zh"]) {
+    if (typeof TARGETTOOL_I18N_6LANG !== "undefined" && TARGETTOOL_I18N_6LANG[lg] && SKY_MOON_I18N[lg]) {
+      Object.assign(SKY_MOON_I18N[lg], TARGETTOOL_I18N_6LANG[lg]);
+    }
+    if (window.I18N && window.I18N[lg] && SKY_MOON_I18N[lg]) {
+      Object.assign(window.I18N[lg], SKY_MOON_I18N[lg]);
+    }
+  }
 
   function trSky(key) {
     const lg = getActiveLangCode();
     const pack = SKY_MOON_I18N[lg] || SKY_MOON_I18N.en;
     return pack[key] || SKY_MOON_I18N.ru[key] || key;
   }
+
+  function getLocalizedCompassDir(dirCode) {
+    const lg = getActiveLangCode();
+    const pack = SKY_MOON_I18N[lg] || SKY_MOON_I18N.en;
+    return (pack.dirs && pack.dirs[dirCode]) || dirCode;
+  }
+  window.getLocalizedCompassDir = getLocalizedCompassDir;
 
   // Астрономический расчёт Местного Звёздного Времени (LST в градусах) и высоты светила (RA, DEC) над горизонтом города (lat, lon)
   function computeStarAltitudeForCity(raDeg, decDeg, latDeg = OBSERVER_GEO_STATE.lat, lonDeg = OBSERVER_GEO_STATE.lon, dateObj = new Date()) {
@@ -13325,13 +14219,67 @@ function revealAndFocusField(inputId) {
 
     const sinAlt = Math.sin(latRad) * Math.sin(decRad) + Math.cos(latRad) * Math.cos(decRad) * Math.cos(haRad);
     const currentAltDeg = (Math.asin(Math.max(-1, Math.min(1, sinAlt))) * 180) / Math.PI;
+    // Азимут от Севера по часовой стрелке (0° = N, 90° = E, 180° = S, 270° = W)
+    const yAz = -Math.sin(haRad) * Math.cos(decRad);
+    const xAz = Math.cos(latRad) * Math.sin(decRad) - Math.sin(latRad) * Math.cos(decRad) * Math.cos(haRad);
+    const azimuthDeg = ((Math.atan2(yAz, xAz) * 180) / Math.PI + 360) % 360;
+    const dirCodes = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+    const compassCode = dirCodes[Math.floor(((azimuthDeg + 22.5) % 360) / 45)];
+    const compassLabel = getLocalizedCompassDir(compassCode);
     // Максимальная высота в верхней кульминации над горизонтом данного города
     const maxCulmAltDeg = 90 - Math.abs(Number(latDeg || 0) - Number(decDeg || 0));
-    return { currentAltDeg, maxCulmAltDeg };
+    return { currentAltDeg, maxCulmAltDeg, azimuthDeg, compassCode, compassLabel };
   }
   window.computeStarAltitudeForCity = computeStarAltitudeForCity;
 
-  // Фильтр видимости приоритетной звезды для полушария и широты выбранного города
+  // Фильтр видимости приоритетной звезды для полушария, широты выбранного города и стороны горизонта (N, S, E, W, NE, NW, SE, SW)
+  function computeLocalNighttimeWindow(latDeg = OBSERVER_GEO_STATE.lat, lonDeg = OBSERVER_GEO_STATE.lon) {
+    // Вычисление начала и окончания тёмного времени суток для широты наблюдателя (по аналогии с AAVSO Target Tool: 56.14, 47.25 -> 16:57 .. 06:14)
+    const absLat = Math.min(65, Math.abs(Number(latDeg) || 56.14));
+    const latOffsetMin = Math.round((absLat - 56.14) * 2.2);
+    const startTotal = Math.max(15 * 60, Math.min(21 * 60, (16 * 60 + 57) - latOffsetMin));
+    const endTotal = Math.max(4 * 60, Math.min(9 * 60, (6 * 60 + 14) + latOffsetMin));
+    const fmt = (tot) => `${String(Math.floor(tot / 60)).padStart(2, "0")}:${String(tot % 60).padStart(2, "0")}`;
+    return { startStr: fmt(startTotal), endStr: fmt(endTotal) };
+  }
+  window.computeLocalNighttimeWindow = computeLocalNighttimeWindow;
+
+  function renderObservabilityNighttimeUI() {
+    const lg = getActiveLangCode();
+    const pack = TARGETTOOL_I18N_6LANG[lg] || TARGETTOOL_I18N_6LANG.en;
+    const latStr = Number(OBSERVER_GEO_STATE.lat || 56.14).toFixed(2);
+    const lonStr = Number(OBSERVER_GEO_STATE.lon || 47.25).toFixed(2);
+    const cityLoc = getLocalizedCityName(OBSERVER_GEO_STATE.city || "Чебоксары");
+    const { startStr, endStr } = computeLocalNighttimeWindow(OBSERVER_GEO_STATE.lat, OBSERVER_GEO_STATE.lon);
+
+    const dockTxt = document.getElementById("v6NighttimeWindowText");
+    if (dockTxt && pack.nighttimeDockFmt) {
+      dockTxt.innerHTML = pack.nighttimeDockFmt
+        .replace("{lat}", latStr)
+        .replace("{lon}", lonStr)
+        .replace("{city}", cityLoc)
+        .replace("{start}", startStr)
+        .replace("{end}", endStr);
+    }
+    const modalTxt = document.getElementById("urgentNighttimeWindowText");
+    if (modalTxt && pack.nighttimeModalFmt) {
+      modalTxt.innerHTML = pack.nighttimeModalFmt
+        .replace("{lat}", latStr)
+        .replace("{lon}", lonStr)
+        .replace("{city}", cityLoc)
+        .replace("{start}", startStr)
+        .replace("{end}", endStr);
+    }
+
+    const curVis = document.getElementById("v6HemisphereSelect")?.value || "city";
+    const isVisibleTonightActive = (curVis !== "all");
+    ["btnV6VisibleTonight", "btnUrgentVisibleTonight"].forEach(btnId => {
+      const b = document.getElementById(btnId);
+      if (b) b.classList.toggle("active", isVisibleTonightActive);
+    });
+  }
+  window.renderObservabilityNighttimeUI = renderObservabilityNighttimeUI;
+
   function matchesObserverHemisphereFilter(item, mode = "city") {
     if (!item || mode === "all") return true;
     const dec = Number(item.dec);
@@ -13340,21 +14288,37 @@ function revealAndFocusField(inputId) {
 
     const lat = OBSERVER_GEO_STATE.lat;
     const lon = OBSERVER_GEO_STATE.lon;
-    const { currentAltDeg, maxCulmAltDeg } = computeStarAltitudeForCity(ra, dec, lat, lon);
+    const { currentAltDeg, maxCulmAltDeg, azimuthDeg } = computeStarAltitudeForCity(ra, dec, lat, lon);
 
     if (mode === "city") {
-      // Звезда должна подниматься в верхней кульминации хотя бы на 20° над горизонтом выбранного города (воздушная масса X <= 2.9)
       return maxCulmAltDeg >= 20.0;
     }
     if (mode === "now") {
-      // Звезда прямо в эту минуту находится на высоте >= 15° над горизонтом выбранного города
       return currentAltDeg >= 15.0;
     }
     if (mode === "north") {
-      return dec >= -20.0;
+      return dec >= 0.0 && (azimuthDeg >= 315.0 || azimuthDeg <= 45.0 || dec >= 38.0);
     }
     if (mode === "south") {
-      return dec <= 20.0;
+      return dec < 0.0 || (maxCulmAltDeg >= 15.0 && azimuthDeg >= 135.0 && azimuthDeg <= 225.0);
+    }
+    if (mode === "east") {
+      return maxCulmAltDeg >= 15.0 && azimuthDeg >= 45.0 && azimuthDeg <= 135.0;
+    }
+    if (mode === "west") {
+      return maxCulmAltDeg >= 15.0 && azimuthDeg >= 225.0 && azimuthDeg <= 315.0;
+    }
+    if (mode === "ne") {
+      return maxCulmAltDeg >= 15.0 && azimuthDeg >= 0.0 && azimuthDeg <= 90.0;
+    }
+    if (mode === "nw") {
+      return maxCulmAltDeg >= 15.0 && azimuthDeg >= 270.0 && azimuthDeg <= 360.0;
+    }
+    if (mode === "se") {
+      return maxCulmAltDeg >= 15.0 && azimuthDeg >= 90.0 && azimuthDeg <= 180.0;
+    }
+    if (mode === "sw") {
+      return maxCulmAltDeg >= 15.0 && azimuthDeg >= 180.0 && azimuthDeg <= 270.0;
     }
     return true;
   }
@@ -13547,6 +14511,19 @@ function revealAndFocusField(inputId) {
     document.querySelectorAll('[data-i18n="lblHemisphereFilter"]').forEach(el => {
       el.textContent = trSky("lblHemisphereFilter");
     });
+    if (typeof localizeCitySelectDropdown === "function") {
+      localizeCitySelectDropdown();
+    }
+    if (typeof renderObservabilityNighttimeUI === "function") {
+      renderObservabilityNighttimeUI();
+    }
+    const ttPack = TARGETTOOL_I18N_6LANG[lg] || TARGETTOOL_I18N_6LANG.en;
+    if (ttPack) {
+      for (const [k, v] of Object.entries(ttPack)) {
+        document.querySelectorAll(`[data-i18n="${k}"]`).forEach(el => { el.textContent = v; });
+        document.querySelectorAll(`[data-i18n-placeholder="${k}"]`).forEach(el => { el.placeholder = v; });
+      }
+    }
   }
 
   // Запрос чистоты неба (Open-Meteo Forecast API) и фазы Луны (USNO API v4.0) для выбранного города (каждые 10 минут)
@@ -13709,18 +14686,54 @@ function revealAndFocusField(inputId) {
     fetchCitySkyClarityAndMoonNow(true);
   });
 
-  // Синхронизация двух селекторов видимости (#v6HemisphereSelect и #urgentHemisphereSelect)
+  // Синхронизация двух селекторов видимости (#v6HemisphereSelect и #urgentHemisphereSelect) и кнопок Наблюдаемости AAVSO Target Tool
   ["v6HemisphereSelect", "urgentHemisphereSelect"].forEach(selId => {
     document.getElementById(selId)?.addEventListener("change", (e) => {
       const v = e.target.value;
       const otherId = selId === "v6HemisphereSelect" ? "urgentHemisphereSelect" : "v6HemisphereSelect";
       const otherEl = document.getElementById(otherId);
       if (otherEl && otherEl.value !== v) otherEl.value = v;
-      if (typeof renderV6RadarDock === "function") renderV6RadarDock();
-      if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
-      if (typeof window.refreshWheelStarsForActiveScope === "function") window.refreshWheelStarsForActiveScope();
+      renderObservabilityNighttimeUI();
+      if (typeof window.renderV6RadarDock === "function") window.renderV6RadarDock();
+      if (typeof window.renderUrgentStarsCards === "function") window.renderUrgentStarsCards();
     });
   });
+
+  ["btnV6VisibleTonight", "btnUrgentVisibleTonight"].forEach(btnId => {
+    document.getElementById(btnId)?.addEventListener("click", () => {
+      const s1 = document.getElementById("v6HemisphereSelect");
+      const s2 = document.getElementById("urgentHemisphereSelect");
+      const cur = (s1 && s1.value) || "city";
+      const nextMode = (cur === "all") ? "city" : "all";
+      if (s1) s1.value = nextMode;
+      if (s2) s2.value = nextMode;
+      renderObservabilityNighttimeUI();
+      if (typeof window.renderV6RadarDock === "function") window.renderV6RadarDock();
+      if (typeof window.renderUrgentStarsCards === "function") window.renderUrgentStarsCards();
+    });
+  });
+
+  ["btnV6EditLocation", "btnUrgentEditLocation"].forEach(btnId => {
+    document.getElementById(btnId)?.addEventListener("click", () => {
+      const urgModal = document.getElementById("urgentStarsModal");
+      if (btnId === "btnUrgentEditLocation" && urgModal && urgModal.classList.contains("open")) {
+        urgModal.classList.remove("open");
+        document.documentElement.classList.remove("modal-open");
+        document.body.classList.remove("modal-open");
+      }
+      const citySel = document.getElementById("headerCitySelect");
+      if (citySel) {
+        citySel.scrollIntoView({ behavior: "smooth", block: "center" });
+        citySel.focus();
+        citySel.style.boxShadow = "0 0 0 3px rgba(245, 158, 11, 0.75)";
+        setTimeout(() => { citySel.style.boxShadow = ""; }, 2200);
+      }
+    });
+  });
+
+  renderObservabilityNighttimeUI();
+  if (typeof window.renderV6RadarDock === "function") window.renderV6RadarDock();
+  if (typeof window.renderUrgentStarsCards === "function") window.renderUrgentStarsCards();
 
   // [RU] Пункт 1: Автоматическое определение города обсерватории (с сохранением ручного выбора в Настройках)
   function syncSelectWithObserverState() {
