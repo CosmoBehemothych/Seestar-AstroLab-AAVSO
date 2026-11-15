@@ -36,17 +36,16 @@ jobs:
           $argsList = @(
             "--noconfirm", "--onedir", "--windowed",
             "--name", "Seestar AstroLab",
-            "--version-file", "version_info.txt",
-            "--add-data", "pwa_mobile_and_electron;pwa_mobile_and_electron",
-            "--add-data", "backend;backend",
-            "--add-data", "desktop_pc;desktop_pc",
-            "--add-data", "Converted_Photometry_Storage;Converted_Photometry_Storage"
+            "--version-file", "version_info.txt"
           )
-          if (Test-Path "assets/Seestar_AstroLab.ico") {
-            $argsList += @("--icon", "assets/Seestar_AstroLab.ico")
-          }
+          if (Test-Path "pwa_mobile_and_electron") { $argsList += @("--add-data", "pwa_mobile_and_electron;pwa_mobile_and_electron") }
+          if (Test-Path "backend") { $argsList += @("--add-data", "backend;backend") }
+          if (Test-Path "desktop_pc") { $argsList += @("--add-data", "desktop_pc;desktop_pc") }
+          if (Test-Path "../Converted_Photometry_Storage") { $argsList += @("--add-data", "../Converted_Photometry_Storage;Converted_Photometry_Storage") }
+          if (Test-Path "assets/Seestar_AstroLab.ico") { $argsList += @("--icon", "assets/Seestar_AstroLab.ico") }
           $argsList += "desktop_launcher.py"
           pyinstaller @argsList
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build Windows Installer (Inno Setup if assets present)
         working-directory: Source_and_Build
