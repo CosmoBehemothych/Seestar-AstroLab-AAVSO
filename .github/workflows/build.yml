@@ -16,6 +16,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: build-release-seestar-astrolab-windows
+  cancel-in-progress: true
+
 env:
   APP_NAME: "Seestar AstroLab"
   APP_VERSION: "1.1.2-beta"
@@ -38,17 +42,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "pip"
 
       - name: Install build and runtime dependencies
         shell: pwsh
         run: |
           $ErrorActionPreference = "Continue"
           python -m pip install --upgrade pip wheel setuptools
-          pip install pyinstaller>=6.0.0 pywebview>=5.0 pythonnet>=3.0.3 clr-loader>=0.2.6 bottle proxy_tools typing_extensions pillow
-          if (Test-Path "Source_and_Build/requirements.txt") {
-              pip install -r "Source_and_Build/requirements.txt"
-          }
+          python -m pip install pyinstaller pywebview pythonnet clr-loader bottle proxy_tools typing_extensions pillow
 
       - name: Build single-file EXE with PyInstaller (AV-safe --onefile --windowed --noupx)
         shell: pwsh
@@ -129,16 +129,24 @@ jobs:
           $PSNativeCommandUseErrorActionPreference = $false
           Write-Host "=== Генерация сертификата издателя CosmoBehemothych и сборка Inno Setup 6 ===" -ForegroundColor Cyan
 
-          $cert = New-SelfSignedCertificate `
-              -Type CodeSigningCert `
-              -Subject "CN=CosmoBehemothych, O=CosmoBehemothych AstroLab, C=RU" `
-              -KeyAlgorithm RSA `
-              -KeyLength 2048 `
-              -HashAlgorithm "SHA256" `
-              -CertStoreLocation "Cert:\CurrentUser\My" `
-              -NotAfter (Get-Date).AddYears(5)
+          $cert = $null
+          try {
+              $cert = New-SelfSignedCertificate `
+                  -Type CodeSigningCert `
+                  -Subject "CN=CosmoBehemothych, O=CosmoBehemothych AstroLab, C=RU" `
+                  -KeyAlgorithm RSA `
+                  -KeyLength 2048 `
+                  -HashAlgorithm "SHA256" `
+                  -CertStoreLocation "Cert:\CurrentUser\My" `
+                  -NotAfter (Get-Date).AddYears(5)
 
-          Set-AuthenticodeSignature -FilePath "dist/Seestar AstroLab.exe" -Certificate $cert -HashAlgorithm SHA256 | Out-Null
+              if ($cert) {
+                  Set-AuthenticodeSignature -FilePath "dist/Seestar AstroLab.exe" -Certificate $cert -HashAlgorithm SHA256 | Out-Null
+                  Write-Host "Подписан файл: dist/Seestar AstroLab.exe" -ForegroundColor Green
+              }
+          } catch {
+              Write-Host "Предупреждение при создании самоподписанного сертификата: $_" -ForegroundColor Yellow
+          }
 
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
           if (-not (Test-Path $iscc)) {
@@ -147,8 +155,16 @@ jobs:
           & $iscc "Seestar_AstroLab_Installer.iss"
 
           $setupExe = "dist_installer/Seestar_AstroLab_Setup_v$($env:APP_VERSION).exe"
-          if (Test-Path $setupExe) {
-              Set-AuthenticodeSignature -FilePath $setupExe -Certificate $cert -HashAlgorithm SHA256 | Out-Null
+          if (-not (Test-Path $setupExe)) {
+              Write-Error "КРИТИЧЕСКАЯ ОШИБКА: Установщик $setupExe не был создан Inno Setup!"
+              exit 1
+          }
+
+          if ($cert) {
+              try {
+                  Set-AuthenticodeSignature -FilePath $setupExe -Certificate $cert -HashAlgorithm SHA256 | Out-Null
+                  Write-Host "Подписан установщик: $setupExe" -ForegroundColor Green
+              } catch {}
           }
 
           if (Test-Path "../Run_Setup_Without_SmartScreen_Warning.bat") {
@@ -217,18 +233,16 @@ jobs:
           Write-Host "Целевой тег: $tag. Файлы релиза:" -ForegroundColor Yellow
           $files | ForEach-Object { Write-Host "  -> $_" }
 
-          # 1. Пробуем удалить старый релиз для этого тега (если он есть)
+          # 1. Удаляем старый релиз для этого тега (если он есть), чтобы обойти блокировку
           cmd /c "gh release delete $tag --yes >nul 2>nul"
 
           # 2. Создаём черновик (draft) и загружаем в него файлы (.exe, .zip, .bat)
-          gh release create $tag $files --title "Seestar AstroLab AAVSO v1.1.2 beta" --draft --generate-notes
+          gh release create $tag $files --title "Seestar AstroLab AAVSO v1.1.2 beta" --draft --generate-notes --target $env:GITHUB_SHA
           if ($LASTEXITCODE -ne 0) {
-              # Если политика Immutable Releases заблокировала повторное использование имени тега $tag,
-              # создаём свежий под-тег с номером сборки, чтобы релиз гарантированно опубликовался!
               $fallbackTag = "$tag.$($env:GITHUB_RUN_NUMBER)"
-              Write-Host "Тег $tag заблокирован политикой Immutable Releases — публикуем под новым тегом $fallbackTag..." -ForegroundColor Yellow
+              Write-Host "Тег $tag заблокирован политикой Immutable Releases — создаём релиз с тегом $fallbackTag..." -ForegroundColor Yellow
               $tag = $fallbackTag
-              gh release create $tag $files --title "Seestar AstroLab AAVSO v1.1.2 beta (Build #$($env:GITHUB_RUN_NUMBER))" --draft --generate-notes
+              gh release create $tag $files --title "Seestar AstroLab AAVSO v1.1.2 beta (Build #$($env:GITHUB_RUN_NUMBER))" --draft --generate-notes --target $env:GITHUB_SHA
           }
 
           # 3. Опубликовываем черновик
