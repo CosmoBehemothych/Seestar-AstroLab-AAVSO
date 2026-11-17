@@ -1,11 +1,18 @@
+; =============================================================================
+; [RU] Скрипт сборки автономного установщика Seestar AstroLab AAVSO (Inno Setup 6)
+; [EN] Standalone installer build script for Seestar AstroLab AAVSO (Inno Setup 6)
+; =============================================================================
 #define MyAppName "Seestar AstroLab AAVSO"
 #define MyAppFullTitle "Seestar AstroLab AAVSO — Радар целей и фотометрия"
-#define MyAppVersion "1.1.0 beta"
+#define MyAppVersion "1.1.2 beta"
+#define MyAppNumericVersion "1.1.2.0"
 #define MyAppPublisher "CosmoBehemothych AstroLab"
+#define MyAppCopyright "Copyright (C) 2026 Andrey Pisarev (CosmoBehemothych). MIT License."
 #define MyAppURL "https://boosty.to/cosmobehemothych"
 #define MyAppRepoURL "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO"
 #define MyAppExeName "Seestar AstroLab.exe"
 #define MyAppIconRelPath "assets\Seestar_AstroLab.ico"
+#define MyAppHeaderBmpRelPath "assets\installer_header_fullwidth.bmp"
 #define MyAppId "SeestarAstroLab_is1"
 
 [Setup]
@@ -17,6 +24,19 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppRepoURL}
 AppUpdatesURL={#MyAppRepoURL}
+AppCopyright={#MyAppCopyright}
+
+VersionInfoVersion={#MyAppNumericVersion}
+VersionInfoCompany={#MyAppPublisher}
+VersionInfoDescription={#MyAppName} Standalone Windows Installer (AAVSO Photometry & Target Radar)
+VersionInfoTextVersion={#MyAppVersion}
+VersionInfoCopyright={#MyAppCopyright}
+VersionInfoProductName={#MyAppName}
+VersionInfoProductVersion={#MyAppNumericVersion}
+VersionInfoProductTextVersion={#MyAppVersion}
+VersionInfoOriginalFileName=Seestar_AstroLab_Setup.exe
+
+LicenseFile=..\LICENSE
 
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
@@ -32,117 +52,136 @@ CloseApplications=force
 RestartApplications=no
 
 WizardStyle=modern
-WizardSmallImageFile=assets\installer_header_fullwidth.bmp
+#if FileExists(AddBackslash(SourcePath) + MyAppHeaderBmpRelPath)
+WizardSmallImageFile={#MyAppHeaderBmpRelPath}
 WizardImageStretch=no
 WizardImageAlphaFormat=defined
+#endif
+#if FileExists(AddBackslash(SourcePath) + MyAppIconRelPath)
 SetupIconFile={#MyAppIconRelPath}
 UninstallDisplayIcon={app}\{#MyAppIconRelPath}
+#else
+UninstallDisplayIcon={app}\{#MyAppExeName}
+#endif
 UninstallDisplayName={cm:AppFullTitle}
 
 Compression=lzma2/fast
 SolidCompression=no
 OutputDir=dist_installer
-OutputBaseFilename=Seestar_AstroLab_Setup
+OutputBaseFilename=Seestar_AstroLab_Setup_v{#MyAppVersion}
 
 [Languages]
-Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
-Name: "german"; MessagesFile: "compiler:Languages\German.isl"
-Name: "french"; MessagesFile: "compiler:Languages\French.isl"
-Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
+Name: "german";  MessagesFile: "compiler:Languages\German.isl"
+Name: "french";  MessagesFile: "compiler:Languages\French.isl"
+Name: "chinese"; MessagesFile: "compiler:Default.isl"
 
 [CustomMessages]
-; 1. Русский (ru-RU)
-russian.AppFullTitle=Seestar AstroLab AAVSO — Радар целей и фотометрия v{#MyAppVersion} (Первая версия)
-russian.AppSubtitle=Радар срочных целей AAVSO и конвертер фотометрии Seestar S30 / S30PRO / S50 / S50PRO
-russian.CreateStartMenuFolder=Создать папку с фирменной иконкой в меню «Пуск» (Seestar AstroLab AAVSO)
-russian.WebUIShortcutComment=Открыть веб-интерфейс Seestar AstroLab AAVSO
-russian.UninstallShortcutName=Удалить Seestar AstroLab AAVSO
-russian.UninstallShortcutComment=Удалить Seestar AstroLab AAVSO с компьютера
+russian.AppFullTitle=Seestar AstroLab AAVSO — Радар целей и фотометрия
+russian.LaunchProgram=Запустить Seestar AstroLab AAVSO после завершения установки
+russian.OpenBoosty=Поддержать проект на Boosty (CosmoBehemothych)
+russian.CreateDesktopIcon=Создать ярлык на Рабочем столе
+russian.CleanOldInstall=Обнаружена предыдущая версия программы. Выполняется чистая установка с сохранением пользовательских данных...
 
-; 2. English (en-US)
-english.AppFullTitle=Seestar AstroLab AAVSO — Target Radar & Photometry v{#MyAppVersion} (First Release)
-english.AppSubtitle=AAVSO Urgent Target Radar & Seestar S30 / S30PRO / S50 / S50PRO Photometry Converter
-english.CreateStartMenuFolder=Create Start Menu folder with custom icon (Seestar AstroLab AAVSO)
-english.WebUIShortcutComment=Open Seestar AstroLab AAVSO Web Interface
-english.UninstallShortcutName=Uninstall Seestar AstroLab AAVSO
-english.UninstallShortcutComment=Uninstall Seestar AstroLab AAVSO from your computer
+english.AppFullTitle=Seestar AstroLab AAVSO — Target Radar & Photometry
+english.LaunchProgram=Launch Seestar AstroLab AAVSO after installation finishes
+english.OpenBoosty=Support the project on Boosty (CosmoBehemothych)
+english.CreateDesktopIcon=Create a Desktop shortcut
+english.CleanOldInstall=Previous version detected. Performing clean upgrade while preserving user data...
 
-; 3. Español (es-ES)
-spanish.AppFullTitle=Seestar AstroLab AAVSO — Radar de Objetivos y Fotometría v{#MyAppVersion} (Primera versión)
-spanish.AppSubtitle=Radar de alertas AAVSO y convertidor fotométrico Seestar S30 / S30PRO / S50 / S50PRO
-spanish.CreateStartMenuFolder=Crear carpeta con icono en el Menú Inicio (Seestar AstroLab AAVSO)
-spanish.WebUIShortcutComment=Abrir interfaz web de Seestar AstroLab AAVSO
-spanish.UninstallShortcutName=Desinstalar Seestar AstroLab AAVSO
-spanish.UninstallShortcutComment=Desinstalar Seestar AstroLab AAVSO del equipo
+spanish.AppFullTitle=Seestar AstroLab AAVSO — Radar de Objetivos y Fotometría
+spanish.LaunchProgram=Iniciar Seestar AstroLab AAVSO al finalizar la instalación
+spanish.OpenBoosty=Apoyar el proyecto en Boosty (CosmoBehemothych)
+spanish.CreateDesktopIcon=Crear un acceso directo en el Escritorio
+spanish.CleanOldInstall=Versión anterior detectada. Actualizando limpiamente conservando sus datos...
 
-; 4. Deutsch (de-DE)
-german.AppFullTitle=Seestar AstroLab AAVSO — Zielradar & Photometrie v{#MyAppVersion} (Erste Version)
-german.AppSubtitle=AAVSO-Zielradar & Seestar S30 / S30PRO / S50 / S50PRO Photometrie-Konverter
-german.CreateStartMenuFolder=Startmenü-Ordner mit App-Symbol erstellen (Seestar AstroLab AAVSO)
-german.WebUIShortcutComment=Seestar AstroLab AAVSO Web-Oberfläche öffnen
-german.UninstallShortcutName=Seestar AstroLab AAVSO deinstallieren
-german.UninstallShortcutComment=Seestar AstroLab AAVSO vollständig vom Computer entfernen
+german.AppFullTitle=Seestar AstroLab AAVSO — Ziel-Radar & Photometrie
+german.LaunchProgram=Seestar AstroLab AAVSO nach der Installation starten
+german.OpenBoosty=Projekt auf Boosty unterstützen (CosmoBehemothych)
+german.CreateDesktopIcon=Desktop-Verknüpfung erstellen
+german.CleanOldInstall=Vorherige Version erkannt. Sauberes Update unter Beibehaltung der Benutzerdaten...
 
-; 5. Français (fr-FR)
-french.AppFullTitle=Seestar AstroLab AAVSO — Radar de Cibles & Photométrie v{#MyAppVersion} (Première version)
-french.AppSubtitle=Radar d'alertes AAVSO et convertisseur photométrique Seestar S30 / S30PRO / S50 / S50PRO
-french.CreateStartMenuFolder=Créer un dossier avec icône dans le menu Démarrer (Seestar AstroLab AAVSO)
-french.WebUIShortcutComment=Ouvrir l'interface Web Seestar AstroLab AAVSO
-french.UninstallShortcutName=Désinstaller Seestar AstroLab AAVSO
-french.UninstallShortcutComment=Désinstaller complètement Seestar AstroLab AAVSO de l'ordinateur
+french.AppFullTitle=Seestar AstroLab AAVSO — Radar de Cibles & Photométrie
+french.LaunchProgram=Lancer Seestar AstroLab AAVSO après l'installation
+french.OpenBoosty=Soutenir le projet sur Boosty (CosmoBehemothych)
+french.CreateDesktopIcon=Créer un raccourci sur le Bureau
+french.CleanOldInstall=Version précédente détectée. Mise à jour propre avec conservation des données...
 
-; 6. 中文 (zh-CN)
-chinesesimplified.AppFullTitle=Seestar AstroLab AAVSO — 变星目标雷达与测光套件 v{#MyAppVersion} (第一版)
-chinesesimplified.AppSubtitle=AAVSO 紧急目标雷达与 Seestar S30 / S30PRO / S50 / S50PRO 测光转换器
-chinesesimplified.CreateStartMenuFolder=在「开始」菜单创建带应用图标的文件夹 (Seestar AstroLab AAVSO)
-chinesesimplified.WebUIShortcutComment=打开 Seestar AstroLab AAVSO 网页界面
-chinesesimplified.UninstallShortcutName=卸载 Seestar AstroLab AAVSO
-chinesesimplified.UninstallShortcutComment=从计算机完全卸载 Seestar AstroLab AAVSO
+chinese.AppFullTitle=Seestar AstroLab AAVSO — 变星目标雷达与测光工作站
+chinese.LaunchProgram=安装完成后立即启动 Seestar AstroLab AAVSO
+chinese.OpenBoosty=在 Boosty 上支持开发者 (CosmoBehemothych)
+chinese.CreateDesktopIcon=创建桌面快捷方式
+chinese.CleanOldInstall=检测到旧版本，正在保留用户数据并执行全新升级...
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
-Name: "startmenuicon"; Description: "{cm:CreateStartMenuFolder}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [InstallDelete]
-Type: files; Name: "{userprograms}\{#MyAppName}\desktop.ini"
-Type: files; Name: "{userprograms}\{#MyAppName}\Документация Seestar AstroLab.lnk"
-Type: files; Name: "{userprograms}\{#MyAppName}\Seestar AstroLab Documentation.lnk"
+Type: filesandordirs; Name: "{app}\_internal"
+Type: filesandordirs; Name: "{app}\pwa_mobile_and_electron"
+Type: filesandordirs; Name: "{app}\backend"
+Type: filesandordirs; Name: "{app}\desktop_pc"
+Type: files; Name: "{app}\{#MyAppExeName}"
+Type: files; Name: "{app}\desktop_launcher.py"
+
+[Dirs]
+Name: "{app}\Converted_Photometry_Storage"
 
 [Files]
-Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion
-Source: "dist\Seestar AstroLab\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "assets\Seestar_AstroLab.ico"; DestDir: "{app}\assets"; Flags: ignoreversion
+Source: "dist\Seestar AstroLab.exe"; DestDir: "{app}"; Flags: ignoreversion
+#if FileExists(AddBackslash(SourcePath) + MyAppIconRelPath)
+Source: "{#MyAppIconRelPath}"; DestDir: "{app}\assets"; Flags: ignoreversion
+#endif
+#if FileExists(AddBackslash(SourcePath) + "pwa_mobile_and_electron\index.html")
 Source: "pwa_mobile_and_electron\*"; DestDir: "{app}\pwa_mobile_and_electron"; Flags: ignoreversion recursesubdirs createallsubdirs
+#endif
+#if FileExists(AddBackslash(SourcePath) + "backend\astrolab_backend_core.py")
+Source: "backend\*"; DestDir: "{app}\backend"; Flags: ignoreversion recursesubdirs createallsubdirs
+#endif
+#if FileExists(AddBackslash(SourcePath) + "desktop_pc\seestar_aavso_desktop_pc.py")
 Source: "desktop_pc\*"; DestDir: "{app}\desktop_pc"; Flags: ignoreversion recursesubdirs createallsubdirs
-
-[INI]
-Filename: "{userprograms}\{#MyAppName}\desktop.ini"; Section: ".ShellClassInfo"; Key: "IconResource"; String: "{app}\{#MyAppIconRelPath},0"
-Filename: "{userprograms}\{#MyAppName}\desktop.ini"; Section: ".ShellClassInfo"; Key: "IconFile"; String: "{app}\{#MyAppIconRelPath}"
-Filename: "{userprograms}\{#MyAppName}\desktop.ini"; Section: ".ShellClassInfo"; Key: "IconIndex"; String: "0"
-Filename: "{userprograms}\{#MyAppName}\desktop.ini"; Section: ".ShellClassInfo"; Key: "InfoTip"; String: "{cm:AppFullTitle}"
+#endif
+#if FileExists(AddBackslash(SourcePath) + "..\Converted_Photometry_Storage\README_STORAGE.txt")
+Source: "..\Converted_Photometry_Storage\README_STORAGE.txt"; DestDir: "{app}\Converted_Photometry_Storage"; Flags: ignoreversion
+#endif
+#if FileExists(AddBackslash(SourcePath) + "..\Converted_Photometry_Storage\user_converted_photometry_db.json")
+Source: "..\Converted_Photometry_Storage\user_converted_photometry_db.json"; DestDir: "{app}\Converted_Photometry_Storage"; Flags: onlyifdoesntexist uninsneveruninstall
+#endif
 
 [Icons]
-Name: "{userprograms}\{#MyAppName}\Seestar AstroLab AAVSO"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppIconRelPath}"; AppUserModelID: "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"; Comment: "{cm:AppFullTitle}"
-Name: "{userprograms}\{#MyAppName}\Seestar AstroLab AAVSO Web"; Filename: "{app}\pwa_mobile_and_electron\index.html"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppIconRelPath}"; Comment: "{cm:WebUIShortcutComment}"
-Name: "{userprograms}\{#MyAppName}\{cm:UninstallShortcutName}"; Filename: "{uninstallexe}"; Parameters: "--uninstall"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppIconRelPath}"; Comment: "{cm:UninstallShortcutComment}"
-Name: "{userdesktop}\Seestar AstroLab AAVSO"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppIconRelPath}"; AppUserModelID: "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"; Tasks: desktopicon; Comment: "{cm:AppFullTitle}"
+#if FileExists(AddBackslash(SourcePath) + MyAppIconRelPath)
+Name: "{group}\{cm:AppFullTitle}"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppIconRelPath}"
+Name: "{autodesktop}\{cm:AppFullTitle}"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppIconRelPath}"; Tasks: desktopicon
+#else
+Name: "{group}\{cm:AppFullTitle}"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"
+Name: "{autodesktop}\{cm:AppFullTitle}"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; Tasks: desktopicon
+#endif
+Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
+
+[Run]
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram}"; WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent
+Filename: "{#MyAppURL}"; Description: "{cm:OpenBoosty}"; Flags: shellexec runasoriginaluser postinstall skipifsilent unchecked
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{app}\_internal"
+Type: filesandordirs; Name: "{app}\pwa_mobile_and_electron"
+Type: filesandordirs; Name: "{app}\backend"
+Type: filesandordirs; Name: "{app}\desktop_pc"
 
 [Code]
 procedure InitializeWizard();
 begin
-  WizardForm.MainPanel.Height := 160;
+  WizardForm.Color := $0020120B;
+  WizardForm.MainPanel.Color := $0020120B;
+  WizardForm.PageNameLabel.Font.Color := $00F8FAFC;
+  WizardForm.PageNameLabel.Font.Style := [fsBold];
+  WizardForm.PageDescriptionLabel.Font.Color := $00CBD5E1;
   WizardForm.WizardSmallBitmapImage.Left := 0;
   WizardForm.WizardSmallBitmapImage.Top := 0;
   WizardForm.WizardSmallBitmapImage.Width := WizardForm.MainPanel.Width;
   WizardForm.WizardSmallBitmapImage.Height := WizardForm.MainPanel.Height;
-  WizardForm.WizardSmallBitmapImage.Stretch := True;
-  WizardForm.PageNameLabel.Visible := False;
-  WizardForm.PageDescriptionLabel.Visible := False;
+  WizardForm.PageNameLabel.Width := WizardForm.MainPanel.Width - ScaleX(180);
+  WizardForm.PageDescriptionLabel.Width := WizardForm.MainPanel.Width - ScaleX(180);
 end;
-
-[Run]
-Filename: "attrib.exe"; Parameters: "+s ""{userprograms}\{#MyAppName}"""; Flags: runhidden nowait
-Filename: "attrib.exe"; Parameters: "+h +s ""{userprograms}\{#MyAppName}\desktop.ini"""; Flags: runhidden nowait
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
