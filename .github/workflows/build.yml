@@ -1,254 +1,145 @@
-name: Build and Release Seestar AstroLab Windows
+name: Build Seestar AstroLab AAVSO (Windows)
 
 on:
   push:
-    branches:
-      - main
-    tags:
-      - "v*"
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
-    inputs:
-      release_tag:
-        description: "Тег релиза для публикации (например, v1.1.2-beta)"
-        required: false
-        default: "v1.1.2-beta"
 
 permissions:
   contents: write
 
-concurrency:
-  group: build-release-seestar-astrolab-windows
-  cancel-in-progress: true
-
-env:
-  APP_NAME: "Seestar AstroLab"
-  APP_VERSION: "1.1.2-beta"
-  APP_VERSION_DISPLAY: "1.1.2 beta"
-  DEFAULT_TAG: "v1.1.2-beta"
-  PYTHONUTF8: "1"
-
 jobs:
   build-windows:
-    name: Build Single-File EXE, Inno Setup & Publish Release (v1.1.2 beta)
     runs-on: windows-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
-      - name: Install build and runtime dependencies
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = "Continue"
-          python -m pip install --upgrade pip wheel setuptools
-          python -m pip install pyinstaller pywebview pythonnet clr-loader bottle proxy_tools typing_extensions pillow
-
-      - name: Build single-file EXE with PyInstaller (AV-safe --onefile --windowed --noupx)
-        shell: pwsh
+      - name: Install build dependencies & verify installer assets
         working-directory: Source_and_Build
         run: |
-          $ErrorActionPreference = "Continue"
-          $PSNativeCommandUseErrorActionPreference = $false
-          Write-Host "=== Сборка единичного файла Seestar AstroLab.exe (v$env:APP_VERSION_DISPLAY) ===" -ForegroundColor Cyan
+          python -m pip install --upgrade pip
+          pip install pyinstaller pywebview pythonnet clr-loader pillow
+          python -c "import os; from PIL import Image, ImageDraw; os.makedirs('assets', exist_ok=True); ico='assets/Seestar_AstroLab.ico'; bmp='assets/installer_header_fullwidth.bmp'; (lambda: (img:=Image.new('RGBA',(256,256),(11,18,32,255)), d:=ImageDraw.Draw(img), d.ellipse((16,16,240,240),outline=(56,189,248,255),width=10), d.ellipse((44,44,212,212),outline=(129,140,248,230),width=6), d.ellipse((86,86,170,170),fill=(15,23,42,255),outline=(186,230,253,255),width=5), d.ellipse((114,114,142,142),fill=(56,189,248,255)), img.save(ico,format='ICO',sizes=[(256,256),(128,128),(64,64),(48,48),(32,32),(16,16)])))() if not os.path.isfile(ico) else None; (lambda: (b:=Image.new('RGB',(500,160),(11,18,32)), bd:=ImageDraw.Draw(b), [bd.line([(x,0),(x,160)],fill=(int(11+(x/500)*18),int(18+(x/500)*28),int(32+(x/500)*48))) for x in range(500)], bd.ellipse((370,20,490,140),outline=(56,189,248),width=4), b.save(bmp,format='BMP')))() if not os.path.isfile(bmp) else None"
 
-          if (Test-Path "build") { Remove-Item -Recurse -Force "build" }
-          if (Test-Path "dist") { Remove-Item -Recurse -Force "dist" }
-          if (Test-Path "dist_installer") { Remove-Item -Recurse -Force "dist_installer" }
-          New-Item -ItemType Directory -Force -Path "dist_installer" | Out-Null
-
-          $pyiArgs = @(
-              "--noconfirm",
-              "--clean",
-              "--onefile",
-              "--windowed",
-              "--noupx",
-              "--name", "Seestar AstroLab",
-              "--collect-all", "webview",
-              "--collect-all", "pythonnet",
-              "--collect-all", "clr_loader",
-              "--hidden-import", "webview.platforms.edgechromium",
-              "--hidden-import", "webview.platforms.winforms",
-              "--hidden-import", "bottle",
-              "--hidden-import", "clr"
+      - name: Build standalone application binary with PyInstaller
+        working-directory: Source_and_Build
+        shell: pwsh
+        run: |
+          # ВАЖНО: Используется --console вместо --windowed для исправления ошибки pythonw.exe
+          $argsList = @(
+            "--noconfirm", "--clean", "--onefile", "--console", "--noupx",
+            "--name", "Seestar AstroLab",
+            "--version-file", "version_info.txt",
+            "--collect-all", "webview",
+            "--collect-all", "pythonnet",
+            "--collect-all", "clr_loader",
+            "--hidden-import", "webview.platforms.edgechromium"
           )
+          if (Test-Path "pwa_mobile_and_electron") { $argsList += @("--add-data", "pwa_mobile_and_electron;pwa_mobile_and_electron") }
+          if (Test-Path "backend") { $argsList += @("--add-data", "backend;backend") }
+          if (Test-Path "desktop_pc") { $argsList += @("--add-data", "desktop_pc;desktop_pc") }
+          if (Test-Path "Converted_Photometry_Storage") { $argsList += @("--add-data", "Converted_Photometry_Storage;Converted_Photometry_Storage") }
+          if (Test-Path "../Converted_Photometry_Storage") { $argsList += @("--add-data", "../Converted_Photometry_Storage;Converted_Photometry_Storage") }
+          if (Test-Path "assets/Seestar_AstroLab.ico") { $argsList += @("--icon", "assets/Seestar_AstroLab.ico") }
+          $argsList += "desktop_launcher.py"
+          pyinstaller @argsList
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-          if (Test-Path "assets/Seestar_AstroLab.ico") {
-              $pyiArgs += @("--icon", "assets/Seestar_AstroLab.ico")
-              $pyiArgs += @("--add-data", "assets;assets")
-          } elseif (Test-Path "Seestar_AstroLab.ico") {
-              $pyiArgs += @("--icon", "Seestar_AstroLab.ico")
-              $pyiArgs += @("--add-data", "Seestar_AstroLab.ico;.")
-          }
-
-          if (Test-Path "version_info.txt") {
-              $pyiArgs += @("--version-file", "version_info.txt")
-          }
-
-          if (Test-Path "pwa_mobile_and_electron") {
-              $pyiArgs += @("--add-data", "pwa_mobile_and_electron;pwa_mobile_and_electron")
-          }
-
-          if (Test-Path "backend") {
-              $pyiArgs += @("--add-data", "backend;backend")
-          }
-
-          if (Test-Path "desktop_pc") {
-              $pyiArgs += @("--add-data", "desktop_pc;desktop_pc")
-          }
-
-          if (Test-Path "docs") {
-              $pyiArgs += @("--add-data", "docs;docs")
-          }
-
-          if (Test-Path "../Converted_Photometry_Storage") {
-              $pyiArgs += @("--add-data", "../Converted_Photometry_Storage;Converted_Photometry_Storage")
-          }
-
-          $pyiArgs += "desktop_launcher.py"
-
-          Write-Host "Выполняется: pyinstaller $($pyiArgs -join ' ')" -ForegroundColor Yellow
-          pyinstaller @pyiArgs
-
-          if (-not (Test-Path "dist/Seestar AstroLab.exe")) {
-              Write-Error "КРИТИЧЕСКАЯ ОШИБКА: dist/Seestar AstroLab.exe не создан!"
-              exit 1
-          }
-
-      - name: Sign EXE and Compile Inno Setup 6 Installer
-        shell: pwsh
+      - name: Prepare Authenticode Code Signing Certificate (optional)
         working-directory: Source_and_Build
-        run: |
-          $ErrorActionPreference = "Continue"
-          $PSNativeCommandUseErrorActionPreference = $false
-          Write-Host "=== Генерация сертификата издателя CosmoBehemothych и сборка Inno Setup 6 ===" -ForegroundColor Cyan
-
-          $cert = $null
-          try {
-              $cert = New-SelfSignedCertificate `
-                  -Type CodeSigningCert `
-                  -Subject "CN=CosmoBehemothych, O=CosmoBehemothych AstroLab, C=RU" `
-                  -KeyAlgorithm RSA `
-                  -KeyLength 2048 `
-                  -HashAlgorithm "SHA256" `
-                  -CertStoreLocation "Cert:\CurrentUser\My" `
-                  -NotAfter (Get-Date).AddYears(5)
-
-              if ($cert) {
-                  Set-AuthenticodeSignature -FilePath "dist/Seestar AstroLab.exe" -Certificate $cert -HashAlgorithm SHA256 | Out-Null
-                  Write-Host "Подписан файл: dist/Seestar AstroLab.exe" -ForegroundColor Green
-              }
-          } catch {
-              Write-Host "Предупреждение при создании самоподписанного сертификата: $_" -ForegroundColor Yellow
-          }
-
-          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
-          if (-not (Test-Path $iscc)) {
-              choco install innosetup -y --no-progress
-          }
-          & $iscc "Seestar_AstroLab_Installer.iss"
-
-          $setupExe = "dist_installer/Seestar_AstroLab_Setup_v$($env:APP_VERSION).exe"
-          if (-not (Test-Path $setupExe)) {
-              Write-Error "КРИТИЧЕСКАЯ ОШИБКА: Установщик $setupExe не был создан Inno Setup!"
-              exit 1
-          }
-
-          if ($cert) {
-              try {
-                  Set-AuthenticodeSignature -FilePath $setupExe -Certificate $cert -HashAlgorithm SHA256 | Out-Null
-                  Write-Host "Подписан установщик: $setupExe" -ForegroundColor Green
-              } catch {}
-          }
-
-          if (Test-Path "../Run_Setup_Without_SmartScreen_Warning.bat") {
-              Copy-Item "../Run_Setup_Without_SmartScreen_Warning.bat" -Destination "dist_installer/Run_Setup_Without_SmartScreen_Warning.bat" -Force
-          } elseif (Test-Path "Run_Setup_Without_SmartScreen_Warning.bat") {
-              Copy-Item "Run_Setup_Without_SmartScreen_Warning.bat" -Destination "dist_installer/Run_Setup_Without_SmartScreen_Warning.bat" -Force
-          }
-
-          $portableStage = "dist/Portable_Single"
-          New-Item -ItemType Directory -Force -Path $portableStage | Out-Null
-          Copy-Item "dist/Seestar AstroLab.exe" -Destination "$portableStage/Seestar_AstroLab_Portable_v$($env:APP_VERSION).exe" -Force
-          if (Test-Path "dist_installer/Run_Setup_Without_SmartScreen_Warning.bat") {
-              Copy-Item "dist_installer/Run_Setup_Without_SmartScreen_Warning.bat" -Destination "$portableStage/Run_Setup_Without_SmartScreen_Warning.bat" -Force
-          }
-          if (Test-Path "../LICENSE") {
-              Copy-Item "../LICENSE" -Destination "$portableStage/LICENSE" -Force
-          }
-          if (Test-Path "../README.md") {
-              Copy-Item "../README.md" -Destination "$portableStage/README.md" -Force
-          }
-
-          $zipPath = "dist_installer/Seestar_AstroLab_Portable_v$($env:APP_VERSION).zip"
-          Compress-Archive -Path "$portableStage/*" -DestinationPath $zipPath -Force
-
-          Get-ChildItem -Path "dist_installer" | Format-Table Name, Length, LastWriteTime -AutoSize
-
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: Seestar_AstroLab_Windows_v1.1.2-beta
-          path: |
-            Source_and_Build/dist_installer/*.exe
-            Source_and_Build/dist_installer/*.zip
-            Source_and_Build/dist_installer/*.bat
-          if-no-files-found: error
-
-      - name: Publish Release via GitHub CLI (Draft -> Upload -> Publish)
         shell: pwsh
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CODESIGN_PFX_BASE64: ${{ secrets.CODESIGN_PFX_BASE64 }}
+          CODESIGN_PFX_PASSWORD: ${{ secrets.CODESIGN_PFX_PASSWORD }}
         run: |
-          $ErrorActionPreference = "Continue"
-          $PSNativeCommandUseErrorActionPreference = $false
-          Write-Host "=== Публикация релиза через GitHub CLI (обход Immutable Releases) ===" -ForegroundColor Cyan
-
-          if ($env:GITHUB_REF -like "refs/tags/*") {
-              $tag = $env:GITHUB_REF_NAME
-          } elseif ("${{ github.event.inputs.release_tag }}" -ne "") {
-              $tag = "${{ github.event.inputs.release_tag }}"
+          New-Item -ItemType Directory -Force -Path "dist_installer" | Out-Null
+          if ($env:CODESIGN_PFX_BASE64) {
+            $pfxPath = "$PWD\dist_installer\CosmoBehemothych_CodeSign.pfx"
+            $pwdPlain = if ($env:CODESIGN_PFX_PASSWORD) { $env:CODESIGN_PFX_PASSWORD } else { "" }
+            $secPwd = ConvertTo-SecureString -String $pwdPlain -Force -AsPlainText
+            [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String($env:CODESIGN_PFX_BASE64))
+            $cert = Import-PfxCertificate -FilePath $pfxPath -CertStoreLocation "Cert:\CurrentUser\My" -Password $secPwd -Exportable
+            "CERT_THUMBPRINT=$($cert.Thumbprint)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           } else {
-              $tag = $env:DEFAULT_TAG
+            Write-Host "No code signing certificate provided. Skipping signing."
           }
 
-          $installerDir = "Source_and_Build/dist_installer"
-          $fileItems = @()
-          $fileItems += Get-ChildItem -Path $installerDir -Filter "*.exe" -File -ErrorAction SilentlyContinue
-          $fileItems += Get-ChildItem -Path $installerDir -Filter "*.zip" -File -ErrorAction SilentlyContinue
-          $fileItems += Get-ChildItem -Path $installerDir -Filter "*.bat" -File -ErrorAction SilentlyContinue
-
-          if ($fileItems.Count -eq 0) {
-              Write-Error "В папке $installerDir нет файлов для публикации релиза!"
-              exit 1
+      - name: Sign Application Binary (if certificate available)
+        working-directory: Source_and_Build
+        shell: pwsh
+        run: |
+          if (-not $env:CERT_THUMBPRINT) { Write-Host "Skipping: no certificate."; exit 0 }
+          $signtool = Get-ChildItem -Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Filter "signtool.exe" -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1 -ExpandProperty FullName
+          $appExe = "$PWD\dist\Seestar AstroLab.exe"
+          if ($signtool -and (Test-Path $appExe)) {
+            & $signtool sign /fd SHA256 /sha1 $env:CERT_THUMBPRINT /tr "http://timestamp.digicert.com" /td SHA256 /d "Seestar AstroLab AAVSO" $appExe
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
 
-          $files = $fileItems | ForEach-Object { $_.FullName }
-          Write-Host "Целевой тег: $tag. Файлы релиза:" -ForegroundColor Yellow
-          $files | ForEach-Object { Write-Host "  -> $_" }
+      - name: Package Portable Windows Archive
+        working-directory: Source_and_Build
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "dist_installer" | Out-Null
+          Compress-Archive -Path "dist/Seestar AstroLab.exe" -DestinationPath "dist_installer/Seestar_AstroLab_Portable_Windows.zip" -Force
 
-          # 1. Удаляем старый релиз для этого тега (если он есть), чтобы обойти блокировку
-          cmd /c "gh release delete $tag --yes >nul 2>nul"
-
-          # 2. Создаём черновик (draft) и загружаем в него файлы (.exe, .zip, .bat)
-          gh release create $tag $files --title "Seestar AstroLab AAVSO v1.1.2 beta" --draft --generate-notes --target $env:GITHUB_SHA
-          if ($LASTEXITCODE -ne 0) {
-              $fallbackTag = "$tag.$($env:GITHUB_RUN_NUMBER)"
-              Write-Host "Тег $tag заблокирован политикой Immutable Releases — создаём релиз с тегом $fallbackTag..." -ForegroundColor Yellow
-              $tag = $fallbackTag
-              gh release create $tag $files --title "Seestar AstroLab AAVSO v1.1.2 beta (Build #$($env:GITHUB_RUN_NUMBER))" --draft --generate-notes --target $env:GITHUB_SHA
+      - name: Build Standalone Windows Installer (Inno Setup 6)
+        working-directory: Source_and_Build
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "assets" | Out-Null
+          if (-not (Test-Path "assets\installer_header_fullwidth.bmp")) {
+            python -c "from PIL import Image, ImageDraw; b = Image.new('RGB', (500,160), (11,18,32)); bd = ImageDraw.Draw(b); [bd.line([(x,0),(x,160)], fill=(int(11+(x/500)*18), int(18+(x/500)*28), int(32+(x/500)*48))) for x in range(500)]; bd.ellipse((370,20,490,140), outline=(56,189,248), width=4); b.save('assets/installer_header_fullwidth.bmp', format='BMP')"
           }
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y }
+          & $iscc ".\Seestar_AstroLab_Installer.iss"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-          # 3. Опубликовываем черновик
-          gh release edit $tag --draft=false --latest
-          if ($LASTEXITCODE -ne 0) {
-              gh release edit $tag --draft=false
+      - name: Sign Standalone Installer (if certificate available)
+        working-directory: Source_and_Build
+        shell: pwsh
+        run: |
+          if (-not $env:CERT_THUMBPRINT) { Write-Host "Skipping: no certificate."; exit 0 }
+          $signtool = Get-ChildItem -Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Filter "signtool.exe" -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1 -ExpandProperty FullName
+          $setupExe = "$PWD\dist_installer\Seestar_AstroLab_Setup_v1.1.2 beta.exe"
+          if ($signtool -and (Test-Path $setupExe)) {
+            & $signtool sign /fd SHA256 /sha1 $env:CERT_THUMBPRINT /tr "http://timestamp.digicert.com" /td SHA256 /d "Seestar AstroLab AAVSO Setup" $setupExe
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
+          Remove-Item -Path "$PWD\dist_installer\CosmoBehemothych_CodeSign.pfx" -Force -ErrorAction SilentlyContinue
 
-          Write-Host "Релиз $tag успешно опубликован!" -ForegroundColor Green
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Seestar_AstroLab_Windows_Build
+          path: Source_and_Build/dist_installer/*
+          if-no-files-found: error
+
+      - name: Publish Release Assets on Tag Push
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          if (-not $tag) { $tag = "v1.1.2-beta" } 
+          
+          $files = @(
+            "Source_and_Build/dist_installer/Seestar_AstroLab_Setup_v1.1.2 beta.exe",
+            "Source_and_Build/dist_installer/Seestar_AstroLab_Portable_Windows.zip"
+          )
+          
+          gh release delete $tag --yes 2>$null
+          gh release create $tag $files --draft --generate-notes
+          gh release edit $tag --draft=false
