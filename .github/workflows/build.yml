@@ -28,17 +28,23 @@ jobs:
         working-directory: Source_and_Build
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller pywebview pillow
+          # Добавлены pythonnet и clr-loader для работы pywebview
+          pip install pyinstaller pywebview pythonnet clr-loader pillow
           python -c "import os; from PIL import Image, ImageDraw; os.makedirs('assets', exist_ok=True); ico='assets/Seestar_AstroLab.ico'; bmp='assets/installer_header_fullwidth.bmp'; (lambda: (img:=Image.new('RGBA',(256,256),(11,18,32,255)), d:=ImageDraw.Draw(img), d.ellipse((16,16,240,240),outline=(56,189,248,255),width=10), d.ellipse((44,44,212,212),outline=(129,140,248,230),width=6), d.ellipse((86,86,170,170),fill=(15,23,42,255),outline=(186,230,253,255),width=5), d.ellipse((114,114,142,142),fill=(56,189,248,255)), img.save(ico,format='ICO',sizes=[(256,256),(128,128),(64,64),(48,48),(32,32),(16,16)])))() if not os.path.isfile(ico) else None; (lambda: (b:=Image.new('RGB',(500,160),(11,18,32)), bd:=ImageDraw.Draw(b), [bd.line([(x,0),(x,160)],fill=(int(11+(x/500)*18),int(18+(x/500)*28),int(32+(x/500)*48))) for x in range(500)], bd.ellipse((370,20,490,140),outline=(56,189,248),width=4), b.save(bmp,format='BMP')))() if not os.path.isfile(bmp) else None"
 
-      - name: Build standalone application binary with PyInstaller (--onefile)
+      - name: Build standalone application binary with PyInstaller
         working-directory: Source_and_Build
         shell: pwsh
         run: |
+          # Добавлены флаги --collect-all и --hidden-import для корректной сборки pywebview
           $argsList = @(
             "--noconfirm", "--onefile", "--windowed", "--noupx",
             "--name", "Seestar AstroLab",
-            "--version-file", "version_info.txt"
+            "--version-file", "version_info.txt",
+            "--collect-all", "webview",
+            "--collect-all", "pythonnet",
+            "--collect-all", "clr_loader",
+            "--hidden-import", "webview.platforms.edgechromium"
           )
           if (Test-Path "pwa_mobile_and_electron") { $argsList += @("--add-data", "pwa_mobile_and_electron;pwa_mobile_and_electron") }
           if (Test-Path "backend") { $argsList += @("--add-data", "backend;backend") }
