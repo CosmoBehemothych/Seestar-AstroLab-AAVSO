@@ -2,15 +2,10 @@
 # -*- coding: utf-8 -*-
 r"""
 ================================================================================
-Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.1.2 beta)
+Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.1.0 beta)
 ================================================================================
 - Открывает локальный интерфейс pwa_mobile_and_electron/index.html внутри
   собственного нативного окна (Microsoft Edge WebView2).
-- Сборка выполняется в единичный .exe (--onefile --windowed --noupx).
-- Для предотвращения ошибки 'Fatal Error in Launcher: Unable to create process
-  using "pythonw.exe"' и падения встроенного сервера bottle при sys.stdout=None
-  сразу после импортов инициализируется безопасный буфер _NullStdStream,
-  не требующий открытия и скрытия консольного окна (0 ложных срабатываний АВ).
 - Гарантирует 100% сохранение пользовательских данных (OBSCODE, «Мои наблюдения»,
   тема, модель телескопа) между перезапусками приложения через:
   1) Постоянное хранилище на диске `%APPDATA%\Seestar_AstroLab\user_persistent_store.json`
@@ -19,59 +14,19 @@ Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.1.2 beta)
 ================================================================================
 """
 
-import io
 import json
 import os
+import subprocess
 import sys
 import threading
 
-
-# ==============================================================================
-# ЗАЩИТА ПОТОКОВ STDOUT/STDERR (СПОСОБ 1: ЧИСТЫЙ GUI БЕЗ ОШИБКИ pythonw.exe И АВ-ТРИГГЕРОВ)
-# ==============================================================================
-class _NullStdStream(io.StringIO):
-    """
-    Безопасный неблокирующий поток ввода-вывода для режима PyInstaller --windowed.
-    Предотвращает падение библиотеки bottle (зависимость pywebview) при обращении к
-    sys.stdout.write() / sys.stderr.write(), когда стандартные потоки равны None,
-    и не требует вызова Win32 ShowWindow(SW_HIDE), вызывающего подозрения антивирусов.
-    """
-
-    def fileno(self) -> int:
-        return -1
-
-    def write(self, s: str) -> int:
-        return len(s) if isinstance(s, str) else 0
-
-    def flush(self) -> None:
-        pass
-
-
-if sys.stdout is None:
-    sys.stdout = _NullStdStream()
-if sys.stderr is None:
-    sys.stderr = _NullStdStream()
-
-os.environ.setdefault("PYWEBVIEW_LOG", "off")
-
-
 # Подключение единого серверного ядра бизнес-логики PhotometryBackendEngine
 try:
-    from backend.astrolab_backend_core import (
-        PhotometryBackendEngine,
-        AavsoNativeAndStorageService,
-        get_program_converted_storage_dir,
-        start_background_rpc_server,
-    )
+    from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server
 except ImportError:
     try:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        from backend.astrolab_backend_core import (
-            PhotometryBackendEngine,
-            AavsoNativeAndStorageService,
-            get_program_converted_storage_dir,
-            start_background_rpc_server,
-        )
+        from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server
     except ImportError:
         PhotometryBackendEngine = None
         AavsoNativeAndStorageService = None
@@ -79,9 +34,9 @@ except ImportError:
         start_background_rpc_server = None
 
 
-APP_VERSION = "1.1.2 beta"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.1.2 beta)"
-APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.1.2"
+APP_VERSION = "1.1.0 beta"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.1.0 beta)"
+APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
 
 if sys.platform == "win32":
     try:
@@ -120,7 +75,8 @@ def get_html_path():
         if p and os.path.isfile(p):
             return os.path.abspath(p)
 
-    # Резервная самораспаковка UI из собственного .exe архива (если запущен внешний контейнер)
+    # [RU] Резервная самораспаковка UI из собственного .exe архива (для автономного Portable-запуска из любой папки)
+    # [EN] Self-extract UI bundle from own .exe zip payload if index.html is not found in adjacent folders
     try:
         import zipfile as _zf
         import io as _io
@@ -130,7 +86,7 @@ def get_html_path():
                 _raw = _bf.read()
             _pk = _raw.find(b"PK\x03\x04")
             if _pk != -1:
-                _runtime_ui = os.path.join(get_persistent_data_dir(), "ui_runtime_v112_beta")
+                _runtime_ui = os.path.join(get_persistent_data_dir(), "ui_runtime_v110_beta")
                 with _zf.ZipFile(_io.BytesIO(_raw[_pk:]), "r") as _z:
                     for _m in _z.namelist():
                         if _m.startswith("pwa_mobile_and_electron/") and not _m.endswith("/"):
@@ -191,7 +147,7 @@ class AstroLabDiskBridge:
         except Exception:
             cnt = 1
         self._store["seestar_donate_launch_count"] = str(cnt)
-        self._store["seestar_host_counted_this_launch"] = "1"
+        self._store["seestar_host_counted_this_launch"] = "1" 
 
     def _load_from_disk(self):
         store = {}
@@ -203,6 +159,7 @@ class AstroLabDiskBridge:
                     store.update(data)
             except Exception:
                 pass
+        # ПУНКТ 2: Подхватываем язык, выбранный пользователем в установщике (из user_settings.json или user_persistent_store.js)
         try:
             base_d = get_base_dir()
             for cand_settings in [
@@ -262,6 +219,7 @@ class AstroLabDiskBridge:
             self._store.pop(str(key), None)
             self._save_to_disk()
         return True
+
 
     def get_all_store(self):
         with self._lock:
@@ -358,6 +316,10 @@ class AstroLabDiskBridge:
             os.makedirs(folder, exist_ok=True)
             if sys.platform == "win32":
                 os.startfile(folder)
+            elif sys.platform == "darwin":
+                subprocess.Popen(["open", folder])
+            else:
+                subprocess.Popen(["xdg-open", folder])
             return {"ok": True, "path": folder}
         except Exception as e:
             return {"ok": False, "error": str(e)}
@@ -402,20 +364,38 @@ def apply_win32_window_icon(window_title, icon_path):
 
 
 def try_install_pywebview():
-    """
-    Отключено в v1.1.2 beta:
-    Вызов pip через subprocess в замороженном .exe (PyInstaller) приводил к
-    ошибке 'Fatal Error in Launcher: Unable to create process using pythonw.exe'
-    на чистых ПК без установленного Python. Все зависимости вшиты внутрь .exe.
-    """
-    return False
+    try:
+        import tkinter as tk
+        from tkinter import messagebox
+        root = tk.Tk()
+        root.withdraw()
+        ans = messagebox.askyesno(
+            "Seestar AstroLab Desktop",
+            "Для запуска в собственном изолированном окне (Microsoft Edge WebView2) "
+            "требуется библиотека pywebview.\n\n"
+            "Установить её автоматически прямо сейчас?"
+        )
+        root.destroy()
+        if not ans:
+            return False
+
+        flags = getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000) if sys.platform == "win32" else 0
+        proc = subprocess.run(
+            [sys.executable, "-m", "pip", "install", "pywebview"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            creationflags=flags
+        )
+        return proc.returncode == 0
+    except Exception:
+        return False
+
 
 
 _APP_MUTEX_HANDLE = None
 
-
 def _acquire_running_app_mutex():
-    """Создаёт именованный мьютекс Windows и lock-файл на время работы окна приложения."""
+    """Создаёт именованный мьютекс Windows и lock-файл на время работы окна приложения (Пункт 7)."""
     global _APP_MUTEX_HANDLE
     lock_file = os.path.join(get_persistent_data_dir(), "running_instance.lock")
     try:
@@ -434,7 +414,6 @@ def _acquire_running_app_mutex():
             pass
 
     import atexit
-
     def _cleanup_running_lock():
         global _APP_MUTEX_HANDLE
         try:
@@ -449,7 +428,6 @@ def _acquire_running_app_mutex():
             except Exception:
                 pass
             _APP_MUTEX_HANDLE = None
-
     atexit.register(_cleanup_running_lock)
 
 
@@ -494,8 +472,8 @@ def main():
             root.withdraw()
             messagebox.showinfo(
                 "Требуется pywebview",
-                "Не удалось инициализировать встроенный модуль pywebview.\n"
-                "Пожалуйста, запустите приложение через официальный установщик Seestar_AstroLab_Setup_v1.1.2-beta.exe."
+                "Для запуска десктопного окна выполните в командной строке:\n\n"
+                "pip install pywebview"
             )
             root.destroy()
         except Exception:
@@ -504,7 +482,9 @@ def main():
 
     apply_win32_window_icon(APP_TITLE, icon_file)
 
-    # Очищаем дисковый HTTP/JS-кэш WebView2 перед открытием окна
+    # [RU] Очищаем дисковый HTTP/JS-кэш WebView2 перед открытием окна, чтобы обновления интерфейса
+    #      (astrolab_view_template.js, astrolab_engine_bridge.js, astrolab_styles.css) всегда загружались свежими!
+    # [EN] Purge WebView2 disk cache before creating the window so updated JS/CSS bundles always load fresh.
     try:
         import shutil as _shutil
         _wv_root = os.path.join(get_persistent_data_dir(), "WebView2_Storage", "EBWebView", "Default")
@@ -544,6 +524,7 @@ def main():
     wv_storage_dir = os.path.join(get_persistent_data_dir(), "WebView2_Storage")
     os.makedirs(wv_storage_dir, exist_ok=True)
 
+    # КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ ПУНКТОВ 2 и 3: private_mode=False и постоянный storage_path!
     def _on_closed():
         try:
             lock_file = os.path.join(get_persistent_data_dir(), "running_instance.lock")
@@ -567,6 +548,8 @@ def main():
             webview.start(gui="edgechromium", debug=False)
 
     _on_closed()
+
+
 
 
 # =============================================================================

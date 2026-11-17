@@ -1,4 +1,4 @@
-# 🔭 Seestar AstroLab AAVSO (`v1.1.2 beta` & `v1.0.1 Stable`)
+# 🔭 Seestar AstroLab AAVSO (`v1.1.0 beta` & `v1.0.1 Stable`)
 
 🌟 **Seestar AstroLab AAVSO** is a specialized desktop application for owners of **ZWO Seestar smart telescopes (`S30`, `S30PRO`, `S50`, `S50PRO`)** and variable star observers affiliated with the [AAVSO (American Association of Variable Star Observers)](https://www.aavso.org).
 
@@ -10,16 +10,16 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 | 🏷️ Version | 📌 Status | ⬇️ Installer / Portable Package | 🔍 Summary | 
 | ----- | ----- | ----- | ----- | 
-| **`v1.1.2 beta`** | 🧪 **New Feature Release (Beta)** | [Seestar_AstroLab_Setup_v1.1.2-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.2-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Direct AAVSO (`VSX` + `VSP` + `AID`) integration, 246+ AAVSO Target Tool priority targets with Hemisphere & City Latitude visibility filtering, live Sky Clarity (Open-Meteo, 10-min auto-refresh) & Regional Moon Phase/Altitude (USNO API) in the header, Celestial Black-Hole & Rocket Random Star Selector (scope- & latitude-aware), 2 independent light-curve engines with static-Y mouse drag, full-screen viewer, `Converted_Photometry_Storage` archive, and English-default 6-language installer | 
+| **`v1.1.0 beta`** | 🧪 **New Feature Release (Beta)** | [Seestar_AstroLab_Setup_v1.1.0-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.0-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Direct AAVSO (`VSX` + `VSP` + `AID`) integration, 246+ AAVSO Target Tool priority targets with Hemisphere & City Latitude visibility filtering, live Sky Clarity (Open-Meteo, 10-min auto-refresh) & Regional Moon Phase/Altitude (USNO API) in the header, Celestial Black-Hole & Rocket Random Star Selector (scope- & latitude-aware), 2 independent light-curve engines with static-Y mouse drag, full-screen viewer, `Converted_Photometry_Storage` archive, and English-default 6-language installer | 
 | **`v1.0.0` / `v1.0.1`** | ✅ **Classic Initial Release** | [Available in GitHub Releases (v1.0.0)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.0.0) | Original initial release with SIMBAD + VSP synchronization, basic Seestar CSV → AAVSO Extended conversion, and basic target radar | 
 
 ## 📑 Table of Contents
 
 * [📦 Version Selection](#-version-selection-both-versions-available-on-github)
 
-* [🚀 What's New in v1.1.2 beta (Compared to GitHub v1.0.0)](#-whats-new-in-v110-beta-compared-to-github-v100)
+* [🚀 What's New in v1.1.0 beta (Compared to GitHub v1.0.0)](#-whats-new-in-v110-beta-compared-to-github-v100)
 
-* [📸 Screenshots (`v1.1.2 beta`)](#-screenshots-v110-beta)
+* [📸 Screenshots (`v1.1.0 beta`)](#-screenshots-v110-beta)
 
 * [✨ Key Features](#-key-features)
 
@@ -31,7 +31,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 * [🇷🇺 Русская версия (Russian Version)](#-русская-версия-russian-version)
 
-## 🚀 What's New in `v1.1.2 beta` (Compared to GitHub `v1.0.0`)
+## 🚀 What's New in `v1.1.0 beta` (Compared to GitHub `v1.0.0`)
 
 1. **🛰️ Direct AAVSO (`VSX` + `VSP` + `AID`) Integration & Full 52-Target Priority Sync**:
 
@@ -85,7 +85,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
    * **Custom Desktop Backgrounds & Free Block Dragging**: choose from 7 cosmic/studio background themes or upload your own astrophoto from disk, and freely drag menu blocks across the screen (`✥`).
 
-## 📸 Screenshots (`v1.1.2 beta`)
+## 📸 Screenshots (`v1.1.0 beta`)
 
 ### 1. Main dashboard, live Sky Clarity & Moon Phase header bar, Hemisphere visibility filter, and dual light curves (Dark theme)
 
@@ -146,7 +146,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 ## 🧭 Step-by-Step Guide (From Seestar Imaging to AAVSO WebObs Submission)
 
-1. ⬇️ **Install or Run Portable**: Run **`Seestar_AstroLab_Setup_v1.1.2-beta.exe`** (English is active by default; switch to `RU | EN | ES | DE | FR | ZH` in one click) or launch **`Portable/Seestar_AstroLab_Portable_v1.1.2-beta.exe`**.
+1. ⬇️ **Install or Run Portable**: Run **`Seestar_AstroLab_Setup_v1.1.0-beta.exe`** (English is active by default; switch to `RU | EN | ES | DE | FR | ZH` in one click) or launch **`Portable/Seestar_AstroLab_Portable_v1.1.0-beta.exe`**.
 
 2. 📍 **Select Your City & Telescope**: In the top bar, choose your city (e.g., `Чебоксары (56.1°N)` or search any city) to see live **Sky Clarity (`%`)**, **Moon Phase & Altitude**, and select your telescope (`S30`, `S30PRO`, `S50`, `S50PRO`).
 
@@ -166,7 +166,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 ## 🇷🇺 Русская версия (Russian Version)
 
-> 📸 Все обновлённые скриншоты интерфейса `v1.1.2 beta` приведены выше в разделе [📸 Screenshots (`v1.1.2 beta`)](#-screenshots-v110-beta).
+> 📸 Все обновлённые скриншоты интерфейса `v1.1.0 beta` приведены выше в разделе [📸 Screenshots (`v1.1.0 beta`)](#-screenshots-v110-beta).
 
 🌟 **Seestar AstroLab AAVSO** — специализированное десктопное приложение для владельцев умных телескопов **ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`)** и наблюдателей переменных звёзд [AAVSO (American Association of Variable Star Observers)](https://www.aavso.org).
 
@@ -176,10 +176,10 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 | 🏷️ Версия | 📌 Статус | ⬇️ Установщик / Portable-сборка | 🔍 Описание версии | 
 | ----- | ----- | ----- | ----- | 
-| **`v1.1.2 beta`** | 🧪 **Новая расширенная сборка (Beta)** | [Seestar_AstroLab_Setup_v1.1.2-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.2-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Прямая интеграция с AAVSO (`VSX` + `VSP` + `AID`), 52 приоритетные цели с фильтрацией по полушарию и широте города, живая Чистота неба (Open-Meteo, каждые 10 мин) и Фаза/Высота Луны по региону (USNO API) в шапке, барабан случайного выбора звезды в центре чёрной дыры с ракетой и логотипом AAVSO, 2 графика кривой блеска со статичной осью Y при сдвиге ЛКМ, хранилище `Converted_Photometry_Storage` и английский по умолчанию в установщике | 
+| **`v1.1.0 beta`** | 🧪 **Новая расширенная сборка (Beta)** | [Seestar_AstroLab_Setup_v1.1.0-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.0-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Прямая интеграция с AAVSO (`VSX` + `VSP` + `AID`), 52 приоритетные цели с фильтрацией по полушарию и широте города, живая Чистота неба (Open-Meteo, каждые 10 мин) и Фаза/Высота Луны по региону (USNO API) в шапке, барабан случайного выбора звезды в центре чёрной дыры с ракетой и логотипом AAVSO, 2 графика кривой блеска со статичной осью Y при сдвиге ЛКМ, хранилище `Converted_Photometry_Storage` и английский по умолчанию в установщике | 
 | **`v1.0.0` / `v1.0.1`** | ✅ **Классическая первая версия** | [Доступна в разделе Releases (v1.0.0)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.0.0) | Базовая первоначальная версия с синхронизацией SIMBAD + VSP и классическим конвертером CSV → AAVSO Extended | 
 
-### 🚀 Что нового в версии `v1.1.2 beta`
+### 🚀 Что нового в версии `v1.1.0 beta`
 
 1. **🛰️ Полная синхронизация 52 приоритетных объектов AAVSO (`VSX` + `VSP` + `AID`)**:
 
@@ -233,10 +233,13 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 * 💙 **Поддержать ассоциацию AAVSO**: <https://aavso.org/donate-now/>
 
-## Windows SmartScreen & Publisher Certificate
+## Code signing policy
 
-Release packages include **`Run_Setup_Without_SmartScreen_Warning.bat`**, which automatically removes the `Zone.Identifier` (Mark-of-the-Web) flag, installs the **CosmoBehemothych** publisher certificate into Windows `TrustedPublisher`, and launches `Seestar_AstroLab_Setup_v1.1.2-beta.exe`.
+Free code signing provided by [SignPath.io](https://signpath.io/), certificate by [SignPath Foundation](https://signpath.org/).
 
+### Team roles
+- **Authors and Reviewers:** [CosmoBehemothych](https://github.com/CosmoBehemothych)
+- **Approvers:** [CosmoBehemothych](https://github.com/CosmoBehemothych)
 
 ## Privacy policy
 

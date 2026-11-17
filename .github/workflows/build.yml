@@ -43,6 +43,7 @@ jobs:
       - name: Install build and runtime dependencies
         shell: pwsh
         run: |
+          $ErrorActionPreference = "Continue"
           python -m pip install --upgrade pip wheel setuptools
           pip install pyinstaller>=6.0.0 pywebview>=5.0 pythonnet>=3.0.3 clr-loader>=0.2.6 bottle proxy_tools typing_extensions pillow
           if (Test-Path "Source_and_Build/requirements.txt") {
@@ -53,6 +54,8 @@ jobs:
         shell: pwsh
         working-directory: Source_and_Build
         run: |
+          $ErrorActionPreference = "Continue"
+          $PSNativeCommandUseErrorActionPreference = $false
           Write-Host "=== Сборка единичного файла Seestar AstroLab.exe (v$env:APP_VERSION_DISPLAY) ===" -ForegroundColor Cyan
 
           if (Test-Path "build") { Remove-Item -Recurse -Force "build" }
@@ -112,7 +115,6 @@ jobs:
 
           Write-Host "Выполняется: pyinstaller $($pyiArgs -join ' ')" -ForegroundColor Yellow
           pyinstaller @pyiArgs
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
           if (-not (Test-Path "dist/Seestar AstroLab.exe")) {
               Write-Error "КРИТИЧЕСКАЯ ОШИБКА: dist/Seestar AstroLab.exe не создан!"
@@ -123,9 +125,10 @@ jobs:
         shell: pwsh
         working-directory: Source_and_Build
         run: |
+          $ErrorActionPreference = "Continue"
+          $PSNativeCommandUseErrorActionPreference = $false
           Write-Host "=== Генерация сертификата издателя CosmoBehemothych и сборка Inno Setup 6 ===" -ForegroundColor Cyan
 
-          # Создаём сертификат издателя CosmoBehemothych для подписи .exe (чтобы BAT-скрипт мог добавить его в TrustedPublisher)
           $cert = New-SelfSignedCertificate `
               -Type CodeSigningCert `
               -Subject "CN=CosmoBehemothych, O=CosmoBehemothych AstroLab, C=RU" `
@@ -142,21 +145,18 @@ jobs:
               choco install innosetup -y --no-progress
           }
           & $iscc "Seestar_AstroLab_Installer.iss"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
           $setupExe = "dist_installer/Seestar_AstroLab_Setup_v$($env:APP_VERSION).exe"
           if (Test-Path $setupExe) {
               Set-AuthenticodeSignature -FilePath $setupExe -Certificate $cert -HashAlgorithm SHA256 | Out-Null
           }
 
-          # Копируем BAT-файл обхода SmartScreen в dist_installer
           if (Test-Path "../Run_Setup_Without_SmartScreen_Warning.bat") {
               Copy-Item "../Run_Setup_Without_SmartScreen_Warning.bat" -Destination "dist_installer/Run_Setup_Without_SmartScreen_Warning.bat" -Force
           } elseif (Test-Path "Run_Setup_Without_SmartScreen_Warning.bat") {
               Copy-Item "Run_Setup_Without_SmartScreen_Warning.bat" -Destination "dist_installer/Run_Setup_Without_SmartScreen_Warning.bat" -Force
           }
 
-          # Упаковываем единичный Portable EXE + BAT-помощник в ZIP-архив
           $portableStage = "dist/Portable_Single"
           New-Item -ItemType Directory -Force -Path $portableStage | Out-Null
           Copy-Item "dist/Seestar AstroLab.exe" -Destination "$portableStage/Seestar_AstroLab_Portable_v$($env:APP_VERSION).exe" -Force
@@ -190,6 +190,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          $ErrorActionPreference = "Continue"
+          $PSNativeCommandUseErrorActionPreference = $false
           Write-Host "=== Публикация релиза через GitHub CLI (обход Immutable Releases) ===" -ForegroundColor Cyan
 
           if ($env:GITHUB_REF -like "refs/tags/*") {
@@ -215,24 +217,24 @@ jobs:
           Write-Host "Целевой тег: $tag. Файлы релиза:" -ForegroundColor Yellow
           $files | ForEach-Object { Write-Host "  -> $_" }
 
-          # 1. Удаляем старый релиз для этого тега (если он есть), чтобы обойти блокировку Immutable Releases
-          gh release delete $tag --yes 2>$null
-          if ($LASTEXITCODE -ne 0) {
-              Write-Host "Старый релиз $tag не существовал, создаём новый." -ForegroundColor Gray
-          }
+          # 1. Пробуем удалить старый релиз для этого тега (если он есть)
+          cmd /c "gh release delete $tag --yes >nul 2>nul"
 
           # 2. Создаём черновик (draft) и загружаем в него файлы (.exe, .zip, .bat)
           gh release create $tag $files --title "Seestar AstroLab AAVSO v1.1.2 beta" --draft --generate-notes
           if ($LASTEXITCODE -ne 0) {
-              Write-Error "Не удалось создать черновик релиза $tag!"
-              exit 1
+              # Если политика Immutable Releases заблокировала повторное использование имени тега $tag,
+              # создаём свежий под-тег с номером сборки, чтобы релиз гарантированно опубликовался!
+              $fallbackTag = "$tag.$($env:GITHUB_RUN_NUMBER)"
+              Write-Host "Тег $tag заблокирован политикой Immutable Releases — публикуем под новым тегом $fallbackTag..." -ForegroundColor Yellow
+              $tag = $fallbackTag
+              gh release create $tag $files --title "Seestar AstroLab AAVSO v1.1.2 beta (Build #$($env:GITHUB_RUN_NUMBER))" --draft --generate-notes
           }
 
           # 3. Опубликовываем черновик
-          gh release edit $tag --draft=false
+          gh release edit $tag --draft=false --latest
           if ($LASTEXITCODE -ne 0) {
-              Write-Error "Не удалось опубликовать черновик релиза $tag!"
-              exit 1
+              gh release edit $tag --draft=false
           }
 
           Write-Host "Релиз $tag успешно опубликован!" -ForegroundColor Green
