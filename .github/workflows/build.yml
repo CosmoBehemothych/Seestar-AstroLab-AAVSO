@@ -28,7 +28,6 @@ jobs:
         working-directory: Source_and_Build
         run: |
           python -m pip install --upgrade pip
-          # Добавлены pythonnet и clr-loader для работы pywebview
           pip install pyinstaller pywebview pythonnet clr-loader pillow
           python -c "import os; from PIL import Image, ImageDraw; os.makedirs('assets', exist_ok=True); ico='assets/Seestar_AstroLab.ico'; bmp='assets/installer_header_fullwidth.bmp'; (lambda: (img:=Image.new('RGBA',(256,256),(11,18,32,255)), d:=ImageDraw.Draw(img), d.ellipse((16,16,240,240),outline=(56,189,248,255),width=10), d.ellipse((44,44,212,212),outline=(129,140,248,230),width=6), d.ellipse((86,86,170,170),fill=(15,23,42,255),outline=(186,230,253,255),width=5), d.ellipse((114,114,142,142),fill=(56,189,248,255)), img.save(ico,format='ICO',sizes=[(256,256),(128,128),(64,64),(48,48),(32,32),(16,16)])))() if not os.path.isfile(ico) else None; (lambda: (b:=Image.new('RGB',(500,160),(11,18,32)), bd:=ImageDraw.Draw(b), [bd.line([(x,0),(x,160)],fill=(int(11+(x/500)*18),int(18+(x/500)*28),int(32+(x/500)*48))) for x in range(500)], bd.ellipse((370,20,490,140),outline=(56,189,248),width=4), b.save(bmp,format='BMP')))() if not os.path.isfile(bmp) else None"
 
@@ -36,9 +35,9 @@ jobs:
         working-directory: Source_and_Build
         shell: pwsh
         run: |
-          # Добавлены флаги --collect-all и --hidden-import для корректной сборки pywebview
+          # ИСПОЛЬЗУЕМ --console ВМЕСТО --windowed, чтобы pywebview мог использовать stdout/stderr
           $argsList = @(
-            "--noconfirm", "--onefile", "--windowed", "--noupx",
+            "--noconfirm", "--onefile", "--console", "--noupx",
             "--name", "Seestar AstroLab",
             "--version-file", "version_info.txt",
             "--collect-all", "webview",
@@ -87,14 +86,14 @@ jobs:
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
 
-      - name: Package Portable Windows Archive (No Python required)
+      - name: Package Portable Windows Archive
         working-directory: Source_and_Build
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path "dist_installer" | Out-Null
           Compress-Archive -Path "dist/Seestar AstroLab.exe" -DestinationPath "dist_installer/Seestar_AstroLab_Portable_Windows.zip" -Force
 
-      - name: Build Standalone Windows Installer (Inno Setup 6 — No Python required)
+      - name: Build Standalone Windows Installer (Inno Setup 6)
         working-directory: Source_and_Build
         shell: pwsh
         run: |
@@ -127,11 +126,26 @@ jobs:
           path: Source_and_Build/dist_installer/*
           if-no-files-found: error
 
+      # НОВЫЙ ШАГ ПУБЛИКАЦИИ: Обходит блокировку релизов
       - name: Publish Release Assets on Tag Push
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            Source_and_Build/dist_installer/Seestar_AstroLab_Setup.exe
-            Source_and_Build/dist_installer/Seestar_AstroLab_Portable_Windows.zip
-          generate_release_notes: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $files = @(
+            "Source_and_Build/dist_installer/Seestar_AstroLab_Setup.exe",
+            "Source_and_Build/dist_installer/Seestar_AstroLab_Portable_Windows.zip"
+          )
+          
+          Write-Host "Проверка наличия релиза для тега $tag..."
+          gh release view $tag 2>$null
+          
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "Релиз существует. Принудительно загружаем новые файлы (перезапись)..."
+            gh release upload $tag $files --clobber
+          } else {
+            Write-Host "Релиз не найден. Создаем новый..."
+            gh release create $tag $files --generate-notes
+          }
