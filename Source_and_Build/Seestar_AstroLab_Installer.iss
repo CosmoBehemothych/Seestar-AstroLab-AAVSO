@@ -6,6 +6,7 @@
 #define MyAppRepoURL "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO"
 #define MyAppExeName "Seestar AstroLab.exe"
 #define MyAppIconRelPath "assets\Seestar_AstroLab.ico"
+#define MyAppHeaderBmpRelPath "assets\installer_header_fullwidth.bmp"
 #define MyAppId "SeestarAstroLab_is1"
 
 [Setup]
@@ -17,6 +18,8 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppRepoURL}
 AppUpdatesURL={#MyAppRepoURL}
+
+SourceDir={#SourcePath}
 
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
@@ -32,7 +35,17 @@ CloseApplications=force
 RestartApplications=no
 
 WizardStyle=modern
+#if FileExists(AddBackslash(SourcePath) + MyAppHeaderBmpRelPath)
+WizardSmallImageFile={#MyAppHeaderBmpRelPath}
+WizardImageStretch=no
+WizardImageAlphaFormat=defined
+#endif
+#if FileExists(AddBackslash(SourcePath) + MyAppIconRelPath)
+SetupIconFile={#MyAppIconRelPath}
+UninstallDisplayIcon={app}\{#MyAppIconRelPath}
+#else
 UninstallDisplayIcon={app}\{#MyAppExeName}
+#endif
 UninstallDisplayName={cm:AppFullTitle}
 
 Compression=lzma2/fast
@@ -109,6 +122,9 @@ Type: files; Name: "{userprograms}\{#MyAppName}\Seestar AstroLab Documentation.l
 [Files]
 Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\Seestar AstroLab\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+#if FileExists(AddBackslash(SourcePath) + MyAppIconRelPath)
+Source: "{#MyAppIconRelPath}"; DestDir: "{app}\assets"; Flags: ignoreversion
+#endif
 Source: "pwa_mobile_and_electron\*"; DestDir: "{app}\pwa_mobile_and_electron"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "desktop_pc\*"; DestDir: "{app}\desktop_pc"; Flags: ignoreversion recursesubdirs createallsubdirs
 
@@ -117,6 +133,21 @@ Name: "{userprograms}\{#MyAppName}\Seestar AstroLab AAVSO"; Filename: "{app}\{#M
 Name: "{userprograms}\{#MyAppName}\Seestar AstroLab AAVSO Web"; Filename: "{app}\pwa_mobile_and_electron\index.html"; WorkingDir: "{app}"; Comment: "{cm:WebUIShortcutComment}"
 Name: "{userprograms}\{#MyAppName}\{cm:UninstallShortcutName}"; Filename: "{uninstallexe}"; Parameters: "--uninstall"; WorkingDir: "{app}"; Comment: "{cm:UninstallShortcutComment}"
 Name: "{userdesktop}\Seestar AstroLab AAVSO"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; AppUserModelID: "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"; Tasks: desktopicon; Comment: "{cm:AppFullTitle}"
+
+#if FileExists(AddBackslash(SourcePath) + MyAppHeaderBmpRelPath)
+[Code]
+procedure InitializeWizard();
+begin
+  WizardForm.MainPanel.Height := 160;
+  WizardForm.WizardSmallBitmapImage.Left := 0;
+  WizardForm.WizardSmallBitmapImage.Top := 0;
+  WizardForm.WizardSmallBitmapImage.Width := WizardForm.MainPanel.Width;
+  WizardForm.WizardSmallBitmapImage.Height := WizardForm.MainPanel.Height;
+  WizardForm.WizardSmallBitmapImage.Stretch := True;
+  WizardForm.PageNameLabel.Visible := False;
+  WizardForm.PageDescriptionLabel.Visible := False;
+end;
+#endif
 
 [Run]
 Filename: "attrib.exe"; Parameters: "+s ""{userprograms}\{#MyAppName}"""; Flags: runhidden nowait

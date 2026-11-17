@@ -61,11 +61,16 @@ jobs:
         working-directory: Source_and_Build
         shell: pwsh
         run: |
+          Set-Location "$env:GITHUB_WORKSPACE\Source_and_Build"
+          New-Item -ItemType Directory -Force -Path "assets" | Out-Null
+          if (-not (Test-Path "assets\installer_header_fullwidth.bmp")) {
+            python -c "import struct; w,h=500,160; rs=(w*3+3)&~3; pa=rs*h; open('assets/installer_header_fullwidth.bmp','wb').write(struct.pack('<2sIHHI',b'BM',54+pa,0,0,54)+struct.pack('<IiiHHIIiiII',40,w,h,1,24,0,pa,2835,2835,0,0)+(b'\x20\x12\x0b'*w+b'\x00'*(rs-w*3))*h)"
+          }
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
           if (-not (Test-Path $iscc)) {
             choco install innosetup -y
           }
-          & $iscc Seestar_AstroLab_Installer.iss
+          & $iscc ".\Seestar_AstroLab_Installer.iss"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Upload build artifacts
