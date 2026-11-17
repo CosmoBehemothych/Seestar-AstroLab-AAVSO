@@ -3043,28 +3043,6 @@
   });
   window.I18N = I18N;
   function detectLang() {
-    try {
-      const qsLang = new URLSearchParams(window.location.search || "").get("lang");
-      if (qsLang) {
-        const cleanQs = String(qsLang).trim().toLowerCase().slice(0, 2);
-        if (I18N[cleanQs]) {
-          safeSetStorage("lang", cleanQs);
-          safeSetStorage("seestar_lang", cleanQs);
-          return cleanQs;
-        }
-      }
-    } catch (_) {}
-    try {
-      const ds = window.__SEESTAR_DISK_STORE__;
-      if (ds && typeof ds === "object") {
-        const instL = String(ds.installer_lang || ds.lang || ds.seestar_lang || "").trim().toLowerCase().slice(0, 2);
-        if (instL && I18N[instL]) {
-          safeSetStorage("lang", instL);
-          safeSetStorage("seestar_lang", instL);
-          return instL;
-        }
-      }
-    } catch (_) {}
     const stored = safeGetStorage("lang", null) || safeGetStorage("seestar_lang", null);
     if (stored && I18N[stored]) return stored;
     return "ru";
@@ -8492,17 +8470,11 @@ function revealAndFocusField(inputId) {
     Object.entries(storeObj).forEach(([k, v]) => {
       try { localStorage.setItem(k, String(v)); } catch (_) {}
     });
-    const restoredLang = String(storeObj.installer_lang || storeObj.lang || storeObj.seestar_lang || "").trim().toLowerCase().slice(0, 2);
+    const restoredLang = String(storeObj.lang || storeObj.seestar_lang || "").trim().toLowerCase().slice(0, 2);
     if (restoredLang && I18N[restoredLang]) {
       currentLang = restoredLang;
       try { localStorage.setItem("lang", restoredLang); localStorage.setItem("seestar_lang", restoredLang); } catch (_) {}
-      const lsEl = document.getElementById("langSelect");
-      if (lsEl) lsEl.value = restoredLang;
-      const spEl = document.getElementById("splashLangSelect");
-      if (spEl) spEl.value = restoredLang;
       applyTranslations();
-      if (typeof renderSkyAndMoonHeaderWidgets === "function") renderSkyAndMoonHeaderWidgets();
-      if (typeof applyScopeModelUI === "function") applyScopeModelUI(false);
       renderUrgentStarsCards();
       renderV6RadarDock();
     }
@@ -14350,15 +14322,15 @@ function revealAndFocusField(inputId) {
       lblHemisphereFilter: "🧭 Азимут:",
       optVisCity: "📍 Видимые в моём городе (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Над горизонтом сейчас (Alt ≥ 15°)",
-      optVisNorth: "⬆️ Север (N • Азимут 315°–45°)",
-      optVisSouth: "⬇️ Юг (S • Азимут 135°–225°)",
+      optVisNorth: "⬆️ Северное полушарие / Север (N)",
+      optVisSouth: "⬇️ Южное полушарие / Юг (S)",
       optVisEast: "➡️ Восток (E • Азимут 45°–135°)",
       optVisWest: "⬅️ Запад (W • Азимут 225°–315°)",
       optVisNE: "↗️ Северо-Восток (NE • Азимут 22.5°–67.5°)",
       optVisNW: "↖️ Северо-Запад (NW • Азимут 292.5°–337.5°)",
       optVisSE: "↘️ Юго-Восток (SE • Азимут 112.5°–157.5°)",
       optVisSW: "↙️ Юго-Запад (SW • Азимут 202.5°–247.5°)",
-      optVisAll: "🧭 Все направления (360°)",
+      optVisAll: "🌍 Все широты и направления (весь каталог)",
       dirs: { N: "С", NE: "СВ", E: "В", SE: "ЮВ", S: "Ю", SW: "ЮЗ", W: "З", NW: "СЗ" }
     },
     en: {
@@ -14383,15 +14355,15 @@ function revealAndFocusField(inputId) {
       lblHemisphereFilter: "🧭 Azimuth:",
       optVisCity: "📍 Observable from My City (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Above Horizon Right Now (Alt ≥ 15°)",
-      optVisNorth: "⬆️ North (N • Azimuth 315°–45°)",
-      optVisSouth: "⬇️ South (S • Azimuth 135°–225°)",
+      optVisNorth: "⬆️ Northern Hemisphere / North (N)",
+      optVisSouth: "⬇️ Southern Hemisphere / South (S)",
       optVisEast: "➡️ East (E • Azimuth 45°–135°)",
       optVisWest: "⬅️ West (W • Azimuth 225°–315°)",
       optVisNE: "↗️ North-East (NE • Azimuth 22.5°–67.5°)",
       optVisNW: "↖️ North-West (NW • Azimuth 292.5°–337.5°)",
       optVisSE: "↘️ South-East (SE • Azimuth 112.5°–157.5°)",
       optVisSW: "↙️ South-West (SW • Azimuth 202.5°–247.5°)",
-      optVisAll: "🧭 All Directions (360°)",
+      optVisAll: "🌍 All Latitudes & Directions (Full Catalog)",
       dirs: { N: "N", NE: "NE", E: "E", SE: "SE", S: "S", SW: "SW", W: "W", NW: "NW" }
     },
     es: {
@@ -14416,15 +14388,15 @@ function revealAndFocusField(inputId) {
       lblHemisphereFilter: "🧭 Acimut:",
       optVisCity: "📍 Visibles en mi ciudad (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Sobre el horizonte ahora (Alt ≥ 15°)",
-      optVisNorth: "⬆️ Norte (N • Acimut 315°–45°)",
-      optVisSouth: "⬇️ Sur (S • Acimut 135°–225°)",
+      optVisNorth: "⬆️ Hemisferio Norte / Norte (N)",
+      optVisSouth: "⬇️ Hemisferio Sur / Sur (S)",
       optVisEast: "➡️ Este (E • Acimut 45°–135°)",
       optVisWest: "⬅️ Oeste (W • Acimut 225°–315°)",
       optVisNE: "↗️ Noreste (NE • Acimut 22.5°–67.5°)",
       optVisNW: "↖️ Noroeste (NW • Acimut 292.5°–337.5°)",
       optVisSE: "↘️ Sureste (SE • Acimut 112.5°–157.5°)",
       optVisSW: "↙️ Suroeste (SW • Acimut 202.5°–247.5°)",
-      optVisAll: "🧭 Todas las direcciones (360°)",
+      optVisAll: "🌍 Todas las latitudes y direcciones",
       dirs: { N: "N", NE: "NE", E: "E", SE: "SE", S: "S", SW: "SO", W: "O", NW: "NO" }
     },
     de: {
@@ -14449,15 +14421,15 @@ function revealAndFocusField(inputId) {
       lblHemisphereFilter: "🧭 Azimut:",
       optVisCity: "📍 In meiner Stadt sichtbar (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Jetzt über dem Horizont (Alt ≥ 15°)",
-      optVisNorth: "⬆️ Norden (N • Azimut 315°–45°)",
-      optVisSouth: "⬇️ Süden (S • Azimut 135°–225°)",
+      optVisNorth: "⬆️ Nordhalbkugel / Norden (N)",
+      optVisSouth: "⬇️ Südhalbkugel / Süden (S)",
       optVisEast: "➡️ Osten (E • Azimut 45°–135°)",
       optVisWest: "⬅️ Westen (W • Azimut 225°–315°)",
       optVisNE: "↗️ Nordosten (NO • Azimut 22.5°–67.5°)",
       optVisNW: "↖️ Nordwesten (NW • Azimut 292.5°–337.5°)",
       optVisSE: "↘️ Südosten (SO • Azimut 112.5°–157.5°)",
       optVisSW: "↙️ Südwesten (SW • Azimut 202.5°–247.5°)",
-      optVisAll: "🧭 Alle Richtungen (360°)",
+      optVisAll: "🌍 Alle Breitengrade & Richtungen",
       dirs: { N: "N", NE: "NO", E: "O", SE: "SO", S: "S", SW: "SW", W: "W", NW: "NW" }
     },
     fr: {
@@ -14482,15 +14454,15 @@ function revealAndFocusField(inputId) {
       lblHemisphereFilter: "🧭 Azimut :",
       optVisCity: "📍 Visibles depuis ma ville (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Au-dessus de l'horizon (Alt ≥ 15°)",
-      optVisNorth: "⬆️ Nord (N • Azimut 315°–45°)",
-      optVisSouth: "⬇️ Sud (S • Azimut 135°–225°)",
+      optVisNorth: "⬆️ Hémisphère Nord / Nord (N)",
+      optVisSouth: "⬇️ Hémisphère Sud / Sud (S)",
       optVisEast: "➡️ Est (E • Azimut 45°–135°)",
       optVisWest: "⬅️ Ouest (W • Azimut 225°–315°)",
       optVisNE: "↗️ Nord-Est (NE • Azimut 22.5°–67.5°)",
       optVisNW: "↖️ Nord-Ouest (NO • Azimut 292.5°–337.5°)",
       optVisSE: "↘️ Sud-Est (SE • Azimut 112.5°–157.5°)",
       optVisSW: "↙️ Sud-Ouest (SO • Azimut 202.5°–247.5°)",
-      optVisAll: "🧭 Toutes les directions (360°)",
+      optVisAll: "🌍 Toutes les latitudes et directions",
       dirs: { N: "N", NE: "NE", E: "E", SE: "SE", S: "S", SW: "SO", W: "O", NW: "NO" }
     },
     zh: {
@@ -14515,15 +14487,15 @@ function revealAndFocusField(inputId) {
       lblHemisphereFilter: "🧭 方位角：",
       optVisCity: "📍 本市可见目标 (DEC ≥ φ−70°)",
       optVisNow: "🕯️ 当前位于地平线上 (Alt ≥ 15°)",
-      optVisNorth: "⬆️ 正北 (N • 方位角 315°–45°)",
-      optVisSouth: "⬇️ 正南 (S • 方位角 135°–225°)",
+      optVisNorth: "⬆️ 北半球 / 正北 (N)",
+      optVisSouth: "⬇️ 南半球 / 正南 (S)",
       optVisEast: "➡️ 东方 (E • 方位角 45°–135°)",
       optVisWest: "⬅️ 西方 (W • 方位角 225°–315°)",
       optVisNE: "↗️ 东北 (NE • 方位角 22.5°–67.5°)",
       optVisNW: "↖️ 西北 (NW • 方位角 292.5°–337.5°)",
       optVisSE: "↘️ 东南 (SE • 方位角 112.5°–157.5°)",
       optVisSW: "↙️ 西南 (SW • 方位角 202.5°–247.5°)",
-      optVisAll: "🧭 全部方向 (360°)",
+      optVisAll: "🌍 全部纬度与方向 (完整星表)",
       dirs: { N: "北", NE: "东北", E: "东", SE: "东南", S: "南", SW: "西南", W: "西", NW: "西北" }
     }
   };
@@ -14633,41 +14605,33 @@ function revealAndFocusField(inputId) {
     const lon = OBSERVER_GEO_STATE.lon;
     const { currentAltDeg, maxCulmAltDeg, azimuthDeg } = computeStarAltitudeForCity(ra, dec, lat, lon);
 
-    const isObserverNorth = (lat >= 0.0);
-    const matchesCityVisibility = (
-      (isObserverNorth ? (dec >= 0.0) : (dec < 0.0)) &&
-      maxCulmAltDeg >= 25.0 &&
-      Math.abs(lat - dec) <= 48.0
-    );
-
     if (!ignoreDomCheckboxes) {
-      // [ПУНКТ 9] Отдельный фильтр Полушария (Северное: 188 целей / Южное: 58 целей / Все: 246 целей)
+      // [ПУНКТ 9] Отдельный фильтр Полушария (Северное / Южное)
       const hemiOnlyVal = document.getElementById("v6HemiOnlySelect")?.value || "all";
       if (hemiOnlyVal === "north" && dec < 0.0) return false;
       if (hemiOnlyVal === "south" && dec >= 0.0) return false;
 
-      // [ПУНКТ 10] Отдельный чекбокс «Видимые в моём городе» (строгое подмножество полушария города наблюдателя!)
+      // [ПУНКТ 10] Отдельный чекбокс «Видимые в моём городе»
       const chkCityEl = document.getElementById("v6ChkVisCity");
-      if (chkCityEl && chkCityEl.checked && !matchesCityVisibility) return false;
+      if (chkCityEl && chkCityEl.checked && maxCulmAltDeg < 20.0) return false;
 
-      // [ПУНКТ 11] Отдельный чекбокс «Над горизонтом сейчас» (строго над горизонтом в данный момент в полушарии города)
+      // [ПУНКТ 11] Отдельный чекбокс «Над горизонтом сейчас»
       const chkNowEl = document.getElementById("v6ChkVisNow");
-      if (chkNowEl && chkNowEl.checked && !((isObserverNorth ? (dec >= 0.0) : (dec < 0.0)) && currentAltDeg >= 15.0)) return false;
+      if (chkNowEl && chkNowEl.checked && currentAltDeg < 15.0) return false;
     }
 
-    // [ТРЕБОВАНИЕ 3] Фильтр Азимута (направление обзора, например с балкона: Все направления, Север N, Юг S, Восток E, Запад W, NE, NW, SE, SW)
     if (mode === "all") return true;
     if (mode === "city") {
-      return matchesCityVisibility;
+      return maxCulmAltDeg >= 20.0;
     }
     if (mode === "now") {
-      return (isObserverNorth ? (dec >= 0.0) : (dec < 0.0)) && currentAltDeg >= 15.0;
+      return currentAltDeg >= 15.0;
     }
     if (mode === "north") {
-      return maxCulmAltDeg >= 15.0 && (azimuthDeg >= 315.0 || azimuthDeg <= 45.0);
+      return dec >= 0.0 && (azimuthDeg >= 315.0 || azimuthDeg <= 45.0 || dec >= 38.0);
     }
     if (mode === "south") {
-      return maxCulmAltDeg >= 15.0 && azimuthDeg >= 135.0 && azimuthDeg <= 225.0;
+      return dec < 0.0 || (maxCulmAltDeg >= 15.0 && azimuthDeg >= 135.0 && azimuthDeg <= 225.0);
     }
     if (mode === "east") {
       return maxCulmAltDeg >= 15.0 && azimuthDeg >= 45.0 && azimuthDeg <= 135.0;

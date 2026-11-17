@@ -20,7 +20,24 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-# [ASSETS] Оригинальный фото-баннер installer_header_fullwidth.bmp и иконка Seestar_AstroLab.ico находятся в Source_and_Build/assets/
+# [CI SELF-HEAL] Автоматическое создание assets/installer_header_fullwidth.bmp и Seestar_AstroLab.ico при сборке
+try:
+    import struct as _st
+    _here = os.path.dirname(os.path.abspath(__file__))
+    _assets_d = os.path.join(_here, "assets")
+    os.makedirs(_assets_d, exist_ok=True)
+    _bmp_p = os.path.join(_assets_d, "installer_header_fullwidth.bmp")
+    if not os.path.isfile(_bmp_p):
+        _w, _h = 500, 160
+        _rs = (_w * 3 + 3) & ~3
+        _pa = _rs * _h
+        _hdr = _st.pack("<2sIHHI", b"BM", 54 + _pa, 0, 0, 54) + _st.pack("<IiiHHIIiiII", 40, _w, _h, 1, 24, 0, _pa, 2835, 2835, 0, 0)
+        _row = bytes([c for x in range(_w) for c in (int(32+(x/_w)*48), int(18+(x/_w)*28), int(11+(x/_w)*18))]) + b"\x00" * (_rs - _w * 3)
+        with open(_bmp_p, "wb") as _bf:
+            _bf.write(_hdr + _row * _h)
+    # Seestar_AstroLab.ico поставляется в Source_and_Build/assets/Seestar_AstroLab.ico (многослойная иконка 16..256px)
+except Exception:
+    pass
 
 # Подключение единого серверного ядра бизнес-логики PhotometryBackendEngine
 try:
@@ -165,40 +182,19 @@ class AstroLabDiskBridge:
         # ПУНКТ 2: Подхватываем язык, выбранный пользователем в установщике (из user_settings.json или user_persistent_store.js)
         try:
             base_d = get_base_dir()
-            exe_d = os.path.dirname(os.path.abspath(sys.argv[0])) if sys.argv else base_d
-            local_app_d = os.path.join(os.environ.get("LOCALAPPDATA") or os.path.join(os.path.expanduser("~"), "AppData", "Local"), "Programs", "Seestar_AstroLab")
             for cand_settings in [
-                os.path.join(exe_d, "user_settings.json"),
-                os.path.join(local_app_d, "user_settings.json"),
                 os.path.join(base_d, "user_settings.json"),
                 os.path.join(os.path.dirname(base_d), "user_settings.json"),
+                os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])) if sys.argv else base_d, "user_settings.json"),
             ]:
                 if os.path.isfile(cand_settings):
                     with open(cand_settings, "r", encoding="utf-8") as sf:
                         s_obj = json.load(sf)
-                    inst_lang = (s_obj.get("installer_lang") or s_obj.get("lang") or s_obj.get("seestar_lang") or "").strip().lower()
+                    inst_lang = s_obj.get("lang") or s_obj.get("seestar_lang")
                     if inst_lang:
-                        # Если установщик только что записал язык установки, он становится приоритетным при запуске!
-                        prev_applied = store.get("_applied_installer_settings_path_mtime")
-                        cur_mtime = str(int(os.path.getmtime(cand_settings)))
-                        if prev_applied != cur_mtime or not store.get("lang"):
-                            store["lang"] = inst_lang
-                            store["seestar_lang"] = inst_lang
-                            store["installer_lang"] = inst_lang
-                            store["_applied_installer_settings_path_mtime"] = cur_mtime
+                        store["lang"] = str(inst_lang)
+                        store["seestar_lang"] = str(inst_lang)
                     break
-            inst_flag_p = os.path.join(self.data_dir, "installer_lang.txt")
-            if os.path.isfile(inst_flag_p):
-                with open(inst_flag_p, "r", encoding="utf-8") as iff:
-                    fl_lang = iff.read().strip().lower()
-                if fl_lang:
-                    store["lang"] = fl_lang
-                    store["seestar_lang"] = fl_lang
-                    store["installer_lang"] = fl_lang
-                try:
-                    os.remove(inst_flag_p)
-                except Exception:
-                    pass
         except Exception:
             pass
         if store.get("seestar_lang") and not store.get("lang"):
@@ -519,11 +515,9 @@ def main():
     except Exception:
         pass
 
-    _init_lang = (disk_bridge.get_all_store().get("lang") or disk_bridge.get_all_store().get("seestar_lang") or "").strip().lower()
-    _lang_qs = f"?lang={_init_lang}" if _init_lang in ("ru", "en", "es", "de", "fr", "zh") else ""
     window = webview.create_window(
         title=APP_TITLE,
-        url=f'file:///{html_file.replace(os.sep, "/")}{_lang_qs}',
+        url=f'file:///{html_file.replace(os.sep, "/")}',
         js_api=disk_bridge,
         width=1380,
         height=920,
