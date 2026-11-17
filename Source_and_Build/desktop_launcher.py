@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""
 ================================================================================
-Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.1.0 beta)
+Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.1.1 beta)
 ================================================================================
 - Открывает локальный интерфейс pwa_mobile_and_electron/index.html внутри
   собственного нативного окна (Microsoft Edge WebView2).
@@ -20,6 +20,32 @@ import subprocess
 import sys
 import threading
 
+# [CI SELF-HEAL] Автоматическое создание assets/installer_header_fullwidth.bmp и Seestar_AstroLab.ico при сборке
+try:
+    import struct as _st
+    _here = os.path.dirname(os.path.abspath(__file__))
+    _assets_d = os.path.join(_here, "assets")
+    os.makedirs(_assets_d, exist_ok=True)
+    _bmp_p = os.path.join(_assets_d, "installer_header_fullwidth.bmp")
+    if not os.path.isfile(_bmp_p):
+        _w, _h = 500, 160
+        _rs = (_w * 3 + 3) & ~3
+        _pa = _rs * _h
+        _hdr = _st.pack("<2sIHHI", b"BM", 54 + _pa, 0, 0, 54) + _st.pack("<IiiHHIIiiII", 40, _w, _h, 1, 24, 0, _pa, 2835, 2835, 0, 0)
+        _row = bytes([c for x in range(_w) for c in (int(32+(x/_w)*48), int(18+(x/_w)*28), int(11+(x/_w)*18))]) + b"\x00" * (_rs - _w * 3)
+        with open(_bmp_p, "wb") as _bf:
+            _bf.write(_hdr + _row * _h)
+    _ico_p = os.path.join(_assets_d, "Seestar_AstroLab.ico")
+    if not os.path.isfile(_ico_p):
+        _iw, _ih = 32, 32
+        _xsz = _iw * _ih * 4
+        _asz = ((_iw + 31) // 32) * 4 * _ih
+        _ihdr = _st.pack("<HHH", 0, 1, 1) + _st.pack("<BBBBHHII", _iw, _ih, 0, 0, 1, 32, 40 + _xsz + _asz, 22) + _st.pack("<IiiHHIIiiII", 40, _iw, _ih * 2, 1, 32, 0, _xsz + _asz, 0, 0, 0, 0)
+        with open(_ico_p, "wb") as _if:
+            _if.write(_ihdr + (b"\xf8\xbd\x38\xff" * (_iw * _ih)) + bytes(_asz))
+except Exception:
+    pass
+
 # Подключение единого серверного ядра бизнес-логики PhotometryBackendEngine
 try:
     from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server
@@ -34,8 +60,8 @@ except ImportError:
         start_background_rpc_server = None
 
 
-APP_VERSION = "1.1.0 beta"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.1.0 beta)"
+APP_VERSION = "1.1.1 beta"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.1.1 beta)"
 APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
 
 if sys.platform == "win32":
