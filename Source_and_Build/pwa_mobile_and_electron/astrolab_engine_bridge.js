@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.1.0 beta) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.1.1 beta) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.1.0 beta.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.1.1 beta.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -154,25 +154,6 @@
   // Справочник синонимов и альтернативных обозначений одной и той же звезды (Пункт 9)
   const STAR_SYNONYM_GROUPS = [
     ["SZ Lyn", "SZ Lyncis", "HD 67390", "HIP 39960", "000-BBP-158", "BD+44 1718"],
-    ["omi Leo", "omicron Leo", "Omicron Leonis", "Subra", "14 Leo", "HD 83808", "HIP 47508", "000-BLE-014"],
-    ["R Leo", "R Leonis", "HD 84748", "000-BBW-803"],
-    ["gam Cas", "Gamma Cas", "Gamma Cassiopeiae", "HD 5394", "000-BCA-001"],
-    ["P Cyg", "P Cygni", "34 Cyg", "HD 193237", "000-BCY-034"],
-    ["VV Cep", "VV Cephei", "HD 208816", "000-BCE-022"],
-    ["eps Aur", "Epsilon Aur", "Epsilon Aurigae", "Almaaz", "HD 31964", "000-BAU-007"],
-    ["TX CVn", "TX Canum Venaticorum", "BD+37 2318", "000-BCV-012"],
-    ["EG And", "EG Andromedae", "HD 4174", "000-BAN-044"],
-    ["QR Vul", "QR Vulpeculae", "HD 192685", "000-BVU-020"],
-    ["T Tau", "T Tauri", "HD 284419", "000-BTA-001"],
-    ["FU Ori", "FU Orionis", "BD+08 1051", "000-BOR-054"],
-    ["UX Ori", "UX Orionis", "HD 293782", "000-BOR-050"],
-    ["RZ Cas", "RZ Cassiopeiae", "HD 17138", "000-BCA-024"],
-    ["SW Lac", "SW Lacertae", "HD 216598", "000-BLA-225"],
-    ["AM Her", "AM Herculis", "3U 1809+50", "000-BHE-181"],
-    ["AE Aqr", "AE Aquarii", "HD 196925", "000-BAQ-204"],
-    ["DQ Her", "DQ Herculis", "Nova Her 1934", "000-BHE-180"],
-    ["EV Lac", "EV Lacertae", "GJ 873", "HIP 112460", "000-BLA-224"],
-    ["RT Cru", "RT Crucis", "AAVSO 1229-64", "000-BCR-123"],
     ["CH Cyg", "CH Cygni", "HD 182917", "HIP 95413", "000-BCY-101", "SAO 48428"],
     ["T CrB", "T Coronae Borealis", "HD 143454", "HIP 78322", "000-BBW-825", "Blaze Star"],
     ["SS Cyg", "SS Cygni", "HD 206697", "000-BCP-216"],
@@ -547,7 +528,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.1.0 beta",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.1.1 beta",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -557,7 +538,7 @@
       errNoObscodeMsg: "Укажите ваш личный код наблюдателя AAVSO (OBSCODE) перед конвертацией данных для загрузки на AAVSO.",
       errNoObscodeExplain: "Стандарт AAVSO Extended требует обязательного указания персонального кода наблюдателя в заголовке #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Версия 1.1.0 beta",
+      appVersionLabel: "Версия 1.1.1 beta",
       starIdFromCatalogHint: "✓ Каталожный идентификатор звезды (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -900,7 +881,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.1.0 beta session",
+      actAppStarted: "Started Seestar AstroLab v1.1.1 beta session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -910,7 +891,7 @@
       errNoObscodeMsg: "Please enter your personal AAVSO Observer Code (OBSCODE) before converting data for AAVSO upload.",
       errNoObscodeExplain: "The AAVSO Extended format strictly requires a valid personal observer code in the #OBSCODE header.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.1.0 beta",
+      appVersionLabel: "Version 1.1.1 beta",
       starIdFromCatalogHint: "✓ Canonical Catalog Star ID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometry Observatory",
       
@@ -1248,7 +1229,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.1.0 beta",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.1.1 beta",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1258,7 +1239,7 @@
       errNoObscodeMsg: "Ingrese su código personal de observador AAVSO (OBSCODE) antes de convertir los datos.",
       errNoObscodeExplain: "El formato AAVSO Extended requiere un código de observador válido en el encabezado #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Versión 1.1.0 beta",
+      appVersionLabel: "Versión 1.1.1 beta",
       starIdFromCatalogHint: "✓ Identificador de catálogo (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatorio Fotométrico Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -1572,7 +1553,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.1.0 beta",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.1.1 beta",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1582,7 +1563,7 @@
       errNoObscodeMsg: "Bitte geben Sie Ihren persönlichen AAVSO-Beobachtercode (OBSCODE) vor der Konvertierung ein.",
       errNoObscodeExplain: "Das AAVSO-Extended-Format erfordert zwingend einen gültigen Beobachtercode im Header #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.1.0 beta",
+      appVersionLabel: "Version 1.1.1 beta",
       starIdFromCatalogHint: "✓ Kanonische Katalog-STARID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometrie-Observatorium",
       
@@ -1885,7 +1866,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.1.0 beta",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.1.1 beta",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -1895,7 +1876,7 @@
       errNoObscodeMsg: "Veuillez saisir votre code observateur AAVSO (OBSCODE) avant de convertir les données.",
       errNoObscodeExplain: "Le standard AAVSO Extended exige un code observateur personnel valide dans l'en-tête #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.1.0 beta",
+      appVersionLabel: "Version 1.1.1 beta",
       starIdFromCatalogHint: "✓ Identifiant catalogue canonique (SIMBAD / AAVSO VSX) : {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -2197,7 +2178,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.1.0 beta 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.1.1 beta 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -2207,7 +2188,7 @@
       errNoObscodeMsg: "请在转换上传至 AAVSO 的数据前填写您的 AAVSO 观测者代码 (OBSCODE)。",
       errNoObscodeExplain: "AAVSO Extended 格式要求在 #OBSCODE 标头中提供有效的个人观测者代码。",
       radarSubTag: "",
-      appVersionLabel: "版本 1.1.0 beta",
+      appVersionLabel: "版本 1.1.1 beta",
       starIdFromCatalogHint: "✓ 星表标准目标名称 (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO 测光天文台",
       
@@ -2467,7 +2448,7 @@
    * Безопасная работа с localStorage в sandboxed окружении.
    * ============================================================================
    */
-  function escapeHtml(val) {
+  window.escapeHtml = escapeHtml; function escapeHtml(val) {
     if (val == null || (typeof val === "number" && isNaN(val))) return "—";
     return String(val)
       .replace(/&/g, "&amp;")
@@ -2580,10 +2561,10 @@
     "vspStepFallbackSimbad": "Переключение на резервные мировые зеркала CDS SIMBAD TAP (Strasbourg, Harvard, IDIA)...",
     "vspStepFallbackVizier": "Опрос 4 мировых зеркал VizieR (Strasbourg, Harvard, Tokyo, Cape Town)...",
     "previewWaitSimbadStatus": "Файл Seestar прочитан. Нажмите «🔭 Загрузить SIMBAD + VSP» в разделе 1 для сверки с каталогом.",
-    "merrToleranceLabelFmt": "≤ {ref} m (допуск ≤ 0.15m)",
+    "merrToleranceLabelFmt": "≤ {ref} m (допуск для смарт-телескопов ≤ 0.25m)",
     "magOutOfRangeFmt": "{bad} (MAG {mag} вне диапазона {label})",
     "merrInvalidFmt": "{bad} (некорректная погрешность MERR: {merr})",
-    "merrExceedsFmt": "{bad} (погрешность MERR {merr}m превышает предел 0.1500m)",
+    "merrExceedsFmt": "{bad} (погрешность MERR {merr}m превышает предел 0.2500m)",
     "critLockBannerMsg": "🔒 Обнаружено критическое расхождение данных. Конвертация заблокирована. Проверьте правильность выбранной звезды и файла.",
     "critDefaultDetailLine": "Проверьте соответствие координат RA/DEC, имени звезды (STARID) и звёздной величины (MAG).",
     "critReasonStarFmt": "Не совпадает звезда (STARID): в файле Seestar «{file}», в каталоге SIMBAD «{cat}»",
@@ -2644,10 +2625,10 @@
     "vspStepFallbackSimbad": "Switching to fallback global CDS SIMBAD TAP mirrors (Strasbourg, Harvard, IDIA)...",
     "vspStepFallbackVizier": "Querying 4 global VizieR mirrors (Strasbourg, Harvard, Tokyo, Cape Town)...",
     "previewWaitSimbadStatus": "Seestar file parsed. Click '🔭 Load SIMBAD + VSP' in Section 1 to verify against the catalog.",
-    "merrToleranceLabelFmt": "≤ {ref} m (tol. ≤ 0.15m)",
+    "merrToleranceLabelFmt": "≤ {ref} m (smart-scope tol. ≤ 0.25m)",
     "magOutOfRangeFmt": "{bad} (MAG {mag} outside range {label})",
     "merrInvalidFmt": "{bad} (invalid MERR uncertainty: {merr})",
-    "merrExceedsFmt": "{bad} (MERR {merr}m exceeds 0.1500m limit)",
+    "merrExceedsFmt": "{bad} (MERR {merr}m exceeds 0.2500m limit)",
     "critLockBannerMsg": "🔒 Critical data mismatch detected. Conversion is locked. Please verify the selected star and CSV file.",
     "critDefaultDetailLine": "Please verify RA/DEC coordinates, target star name (STARID), and stellar magnitude (MAG).",
     "critReasonStarFmt": "Target star (STARID) mismatch: Seestar file has '{file}', SIMBAD catalog has '{cat}'",
@@ -2733,10 +2714,10 @@
     "vspStepFallbackSimbad": "Cambiando a espejos globales de respaldo CDS SIMBAD TAP (Strasbourg, Harvard, IDIA)...",
     "vspStepFallbackVizier": "Consultando 4 espejos globales de VizieR (Strasbourg, Harvard, Tokyo, Cape Town)...",
     "previewWaitSimbadStatus": "Archivo Seestar leído. Haga clic en '🔭 Cargar SIMBAD + VSP' en la Sección 1 para comparar con el catálogo.",
-    "merrToleranceLabelFmt": "≤ {ref} m (tol. ≤ 0.15m)",
+    "merrToleranceLabelFmt": "≤ {ref} m (smart-scope tol. ≤ 0.25m)",
     "magOutOfRangeFmt": "{bad} (MAG {mag} fuera del rango {label})",
     "merrInvalidFmt": "{bad} (incertidumbre MERR no válida: {merr})",
-    "merrExceedsFmt": "{bad} (MERR {merr}m supera el límite de 0.1500m)",
+    "merrExceedsFmt": "{bad} (MERR {merr}m supera el límite de 0.2500m)",
     "critLockBannerMsg": "🔒 Se detectó una discrepancia crítica de datos. Conversión bloqueada. Verifique la estrella y el archivo CSV.",
     "critDefaultDetailLine": "Verifique la correspondencia de coordenadas RA/DEC, nombre de estrella (STARID) y magnitud (MAG).",
     "critReasonStarFmt": "No coincide la estrella (STARID): archivo Seestar «{file}», catálogo SIMBAD «{cat}»",
@@ -2833,10 +2814,10 @@
     "vspStepFallbackSimbad": "Wechsel zu globalen CDS SIMBAD TAP-Ausweichspiegeln (Strasbourg, Harvard, IDIA)...",
     "vspStepFallbackVizier": "Abfrage von 4 globalen VizieR-Spiegelservern (Strasbourg, Harvard, Tokyo, Cape Town)...",
     "previewWaitSimbadStatus": "Seestar-Datei gelesen. Klicken Sie in Abschnitt 1 auf '🔭 SIMBAD + VSP laden' für den Katalogabgleich.",
-    "merrToleranceLabelFmt": "≤ {ref} m (Tol. ≤ 0.15m)",
+    "merrToleranceLabelFmt": "≤ {ref} m (Smart-Scope-Tol. ≤ 0.25m)",
     "magOutOfRangeFmt": "{bad} (MAG {mag} außerhalb Bereich {label})",
     "merrInvalidFmt": "{bad} (ungültiger MERR-Fehlerwert: {merr})",
-    "merrExceedsFmt": "{bad} (MERR {merr}m überschreitet Grenze 0.1500m)",
+    "merrExceedsFmt": "{bad} (MERR {merr}m überschreitet Grenze 0.2500m)",
     "critLockBannerMsg": "🔒 Kritische Datenabweichung erkannt. Konvertierung gesperrt. Bitte Stern und CSV-Datei prüfen.",
     "critDefaultDetailLine": "Bitte überprüfen Sie RA/DEC-Koordinaten, Sternname (STARID) und Helligkeit (MAG).",
     "critReasonStarFmt": "Stern (STARID) stimmt nicht überein: Seestar-Datei „{file}“, SIMBAD-Katalog „{cat}“",
@@ -2933,10 +2914,10 @@
     "vspStepFallbackSimbad": "Basculement vers les miroirs mondiaux de secours CDS SIMBAD TAP (Strasbourg, Harvard, IDIA)...",
     "vspStepFallbackVizier": "Interrogation de 4 miroirs mondiaux VizieR (Strasbourg, Harvard, Tokyo, Cape Town)...",
     "previewWaitSimbadStatus": "Fichier Seestar lu. Cliquez sur '🔭 Charger SIMBAD + VSP' dans la Section 1 pour comparer au catalogue.",
-    "merrToleranceLabelFmt": "≤ {ref} m (tol. ≤ 0.15m)",
+    "merrToleranceLabelFmt": "≤ {ref} m (smart-scope tol. ≤ 0.25m)",
     "magOutOfRangeFmt": "{bad} (MAG {mag} hors plage {label})",
     "merrInvalidFmt": "{bad} (incertitude MERR invalide : {merr})",
-    "merrExceedsFmt": "{bad} (MERR {merr}m dépasse la limite de 0.1500m)",
+    "merrExceedsFmt": "{bad} (MERR {merr}m dépasse la limite de 0.2500m)",
     "critLockBannerMsg": "🔒 Divergence critique des données détectée. Conversion bloquée. Vérifiez l'étoile et le fichier CSV.",
     "critDefaultDetailLine": "Veuillez vérifier la concordance des coordonnées RA/DEC, du nom d'étoile (STARID) et de la magnitude (MAG).",
     "critReasonStarFmt": "Étoile (STARID) différente : fichier Seestar « {file} », catalogue SIMBAD « {cat} »",
@@ -3033,10 +3014,10 @@
     "vspStepFallbackSimbad": "正在切换至备用全球 CDS SIMBAD TAP 镜像服务器 (Strasbourg, Harvard, IDIA)...",
     "vspStepFallbackVizier": "正在查询 4 个全球 VizieR 镜像服务器 (Strasbourg, Harvard, Tokyo, Cape Town)...",
     "previewWaitSimbadStatus": "已读取 Seestar 文件。请在第 1 步点击“🔭 获取 SIMBAD + VSP”以进行星表比对。",
-    "merrToleranceLabelFmt": "≤ {ref} m (容差 ≤ 0.15m)",
+    "merrToleranceLabelFmt": "≤ {ref} m (智能望远镜容差 ≤ 0.25m)",
     "magOutOfRangeFmt": "{bad} (MAG {mag} 超出星表范围 {label})",
     "merrInvalidFmt": "{bad} (无效的 MERR 误差值: {merr})",
-    "merrExceedsFmt": "{bad} (MERR 误差 {merr}m 超出 0.1500m 上限)",
+    "merrExceedsFmt": "{bad} (MERR 误差 {merr}m 超出 0.2500m 上限)",
     "critLockBannerMsg": "🔒 检测到关键数据存在重大差异，转换已锁定。请检查所选恒星与 CSV 文件是否正确。",
     "critDefaultDetailLine": "请检查 RA/DEC 坐标、目标恒星名称 (STARID) 及视星等 (MAG) 是否一致。",
     "critReasonStarFmt": "目标恒星 (STARID) 不匹配：Seestar 文件中为“{file}”，SIMBAD 星表中为“{cat}”",
@@ -3183,8 +3164,11 @@
       setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 260);
     };
     closeBtn.addEventListener("click", removeToast);
+    while (container.children.length >= 2) {
+      container.removeChild(container.firstElementChild);
+    }
     container.appendChild(toast);
-    setTimeout(removeToast, 6500);
+    setTimeout(removeToast, 4800);
   }
 
   [
@@ -4038,7 +4022,9 @@
   let logBuffer = [];
 
   function beginLog(header, explain = "") {
-    statusWrapper.style.display = "block";
+    if (typeof netLogExpanded !== "undefined" && netLogExpanded && statusWrapper) {
+      statusWrapper.style.display = "block";
+    }
     statusBox.className = "status";
     statusExplainText.textContent = explain ? `ℹ️ ${explain}` : `ℹ️ ${header}`;
     logBuffer = [header, ""];
@@ -4309,6 +4295,10 @@ function revealAndFocusField(inputId) {
   window.scheduleSimbadLoadedAccordionTransition = function() {
     if (window._accSimbadTimer) clearTimeout(window._accSimbadTimer);
     window._accSimbadTimer = setTimeout(() => {
+      const vspTechDet = document.getElementById("vspTechCollapsibleBlock");
+      if (vspTechDet) vspTechDet.open = false;
+      const settingsTechDet = document.getElementById("settingsTechCollapsible");
+      if (settingsTechDet) settingsTechDet.open = false;
       const acc1 = document.getElementById("accObserverStar");
       const acc2 = document.getElementById("accFileSelect");
       const acc3 = document.getElementById("accConvertSection");
@@ -4469,29 +4459,33 @@ function revealAndFocusField(inputId) {
   }
 
   // [EN] Validates photometric uncertainty MERR against optimal (<=0.03m) and acceptable (<=0.15m) differential photometry thresholds.
-  // [RU] Проверяет погрешность фотометрии MERR относительно оптимального (<=0.03m) и допустимого (<=0.15m) порогов.
+  // [RU] Проверяет погрешность фотометрии MERR для смарт-телескопов (S30/S30PRO/S50/S50PRO, апертура 30–50 мм, субэкспозиции 10–30 с):
+  //      оптимальный порог одиночного кадра <= 0.0600m (status: "ok"), допустимый рабочий предел на тусклых целях <= 0.2500m (status: "warn").
+  // [EN] Validates photometric uncertainty MERR calibrated for smart telescopes (30-50mm aperture, 10-30s sub-exposures):
+  //      optimal threshold <= 0.0600m ("ok"), acceptable smart-scope tolerance <= 0.2500m ("warn").
   function checkMerrCompatibility(fileMerr) {
-    const refErr = (STATE.catalogVspMerr != null && !isNaN(STATE.catalogVspMerr))
+    const rawCatErr = (STATE.catalogVspMerr != null && !isNaN(STATE.catalogVspMerr))
       ? Number(STATE.catalogVspMerr)
-      : 0.0300;
-    const refLabel = `≤ ${refErr.toFixed(4)} m (допуск ≤ 0.15m)`;
+      : 0.0600;
+    const refErr = Math.max(0.0600, rawCatErr);
+    const refLabel = t("merrToleranceLabelFmt").replace("{ref}", refErr.toFixed(4));
     if (isNaN(fileMerr) || fileMerr <= 0) {
       return {
         status: "bad",
         catalogRefText: refLabel,
-        msg: `${t("matchBad")} (некорректная погрешность MERR: ${fileMerr})`
+        msg: t("merrInvalidFmt").replace("{bad}", t("matchBad")).replace("{merr}", String(fileMerr))
       };
     }
     if (fileMerr <= refErr) {
       return { status: "ok", catalogRefText: refLabel, msg: t("matchOk") };
     }
-    if (fileMerr <= 0.1500) {
+    if (fileMerr <= 0.2500) {
       return { status: "warn", catalogRefText: refLabel, msg: t("matchWarn") };
     }
     return {
       status: "bad",
       catalogRefText: refLabel,
-      msg: `${t("matchBad")} (погрешность MERR ${fileMerr}m превышает предел 0.1500m)`
+      msg: t("merrExceedsFmt").replace("{bad}", t("matchBad")).replace("{merr}", Number(fileMerr).toFixed(4))
     };
   }
 
@@ -4589,6 +4583,8 @@ function revealAndFocusField(inputId) {
       if (lcStats) { lcStats.textContent = ""; lcStats.style.display = "none"; }
       const alertBanner = document.getElementById("lcDataStatusAlerts");
       if (alertBanner) { alertBanner.style.display = "none"; alertBanner.textContent = ""; }
+      const dupBanner = document.getElementById("duplicateFilterWarningBanner");
+      if (dupBanner) { dupBanner.style.display = "none"; }
       updateEmptyStateSimbadPill();
       applyCriticalMismatchState(false, [], false);
       if (typeof window.renderUserOnlyLightCurveCard === "function") {
@@ -4635,7 +4631,16 @@ function revealAndFocusField(inputId) {
       if (tbody) tbody.innerHTML = "";
       if (lcBox) lcBox.style.display = "none";
       if (lcEmpty) lcEmpty.style.display = "flex";
+      if (lcStats) { lcStats.textContent = ""; lcStats.style.display = "none"; }
+      updateEmptyStateSimbadPill();
       applyCriticalMismatchState(false, [], false);
+      if (typeof window.renderUserOnlyLightCurveCard === "function") {
+        window.renderUserOnlyLightCurveCard([]);
+      }
+      if (typeof window.renderAavsoAndContributionWidget === "function") {
+        const curStar = (document.getElementById("starid")?.value || STATE.catalogStarName || "").trim();
+        window.renderAavsoAndContributionWidget(curStar, false);
+      }
       showIosNotification(t("secPreview"), t("msgNoData"), t("msgNoDataExplain"), "warn");
       return;
     }
@@ -4643,6 +4648,16 @@ function revealAndFocusField(inputId) {
     if (previewCard) previewCard.style.display = "block";
     if (emptyStateEl) emptyStateEl.style.display = "none";
     if (previewTableEl) previewTableEl.style.display = "table";
+
+    // [RU] ПУНКТ 10: Анализ сырого CSV на наличие старых / ранее сконвертированных дублирующих записей
+    //      и обновление предупреждающего баннера (#duplicateFilterWarningBanner).
+    // [EN] ITEM 10: Analyze raw CSV for old / previously converted duplicate records
+    //      and update the warning banner (#duplicateFilterWarningBanner).
+    if (typeof window.updateDuplicateFilterBannerUI === "function") {
+      try {
+        window.updateDuplicateFilterBannerUI(lines, row ? row.starId : "", Boolean(options && options.isTypingInput));
+      } catch (_dupErr) {}
+    }
 
     // ПУНКТ 8: КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО подставлять данные из CSV-файла Seestar
     // в поля каталога SIMBAD (#ra, #dec, #chart, #kname, #kmag) и в столбец «Данные из Каталога SIMBAD»!
@@ -5272,11 +5287,11 @@ function revealAndFocusField(inputId) {
   });
 
   /**
-   * ПУНКТ 6 и 9: Прямое открытие https://apps.aavso.org/v2/data/submit/photometry/?preview=true
+   * ПУНКТ 6 и 9: Прямое открытие https://apps.aavso.org/v2/data/submit/photometry/?preview=false
    * сразу после конвертации файла (без промежуточного модального окна) с передачей сконвертированного файла в window.name.
    */
   function launchAavsoWithAutoPayload() {
-    const targetUrl = "https://apps.aavso.org/v2/data/submit/photometry/?preview=true";
+    const targetUrl = "https://apps.aavso.org/v2/data/submit/photometry/?preview=false";
     const payload = {
       type: "SEESTAR_AAVSO_AUTO_UPLOAD",
       fileName: STATE.lastConvertedFileName || "Seestar_AAVSO_Extended.csv",
@@ -5363,13 +5378,31 @@ function revealAndFocusField(inputId) {
     ];
     const obsCheck = validateAavsoObscodeFormat(obscode);
     let count = 0, skipped = 0, bad = 0, roundingWarnings = 0;
+    let dupRemovedCount = 0;
     let firstUtc = null;
     let firstRawFileStar = null;
+
+    // [RU] ПУНКТ 10: Получаем анализ дублирующих и старых записей (ранее отправленных в AAVSO
+    //      или относящихся к прошлым ночам наблюдений в дозаписанном файле Seestar)
+    // [EN] ITEM 10: Retrieve duplicate & old-session analysis before building AAVSO output
+    const autoFilterCheckbox = document.getElementById("chkAutoRemoveConvertedDuplicates");
+    const shouldFilterDuplicates = !autoFilterCheckbox || autoFilterCheckbox.checked;
+    const dupAnalysis = (typeof window.analyzeAndFilterDuplicateAndOldCsvRows === "function")
+      ? window.analyzeAndFilterDuplicateAndOldCsvRows(lines, verifiedCatalogStar || rawCandidateName)
+      : null;
+    const excludedLineIdxSet = (shouldFilterDuplicates && dupAnalysis && dupAnalysis.excludedLineIndices)
+      ? dupAnalysis.excludedLineIndices
+      : new Set();
 
     allDiffs = [];
     currentPage = 1;
 
     for (let i = 0; i < lines.length; i++) {
+      if (excludedLineIdxSet.has(i)) {
+        dupRemovedCount++;
+        skipped++;
+        continue;
+      }
       const raw = lines[i].trim();
       if (!raw) { skipped++; continue; }
       const c = splitSeestarCsvRow(raw);
@@ -5467,20 +5500,35 @@ function revealAndFocusField(inputId) {
       updateAccordionSummaryBadges();
     }
 
-    statusWrapper.style.display = "block";
+    if (typeof netLogExpanded !== "undefined" && netLogExpanded && statusWrapper) {
+      statusWrapper.style.display = "block";
+    }
     statusBox.className = "status";
     statusExplainText.textContent = `ℹ️ ${t("msgConvertedExplain")}`;
     const nameNote = (firstRawFileStar && verifiedCatalogStar && firstRawFileStar !== verifiedCatalogStar)
       ? `• VSX Catalog ID: "${firstRawFileStar}" → "${verifiedCatalogStar}"\n`
       : `• VSX Catalog ID: "${verifiedCatalogStar}"\n`;
     const roundNote = roundingWarnings > 0 ? `• ⚠️ Предупреждений округления (>0.0001 mag, строки сохранены): ${roundingWarnings}\n` : "";
+    const dupWarnNote = (dupRemovedCount > 0 && dupAnalysis && dupAnalysis.warningSummaryPlain)
+      ? `• 🛡️ ${dupAnalysis.warningSummaryPlain}\n`
+      : "";
     const obsWarnNote = obsCheck.warning ? `• ℹ️ ${obsCheck.warning}\n` : "";
-    statusBox.textContent = `${t("msgConverted")}\n${nameNote}• ${count} points\n• Skipped: ${skipped}\n` + (bad ? `• Errors: ${bad}\n` : "") + roundNote + obsWarnNote;
+    statusBox.textContent = `${t("msgConverted")}\n${nameNote}• ${count} points\n• Skipped: ${skipped} (dup/old removed: ${dupRemovedCount})\n` + (bad ? `• Errors: ${bad}\n` : "") + dupWarnNote + roundNote + obsWarnNote;
 
     if (count === 0) {
       statusBox.className = "status warn";
-      statusBox.textContent = t("msgNoData");
-      showIosNotification(t("btnConvert"), t("msgNoData"), t("msgNoDataExplain"), "warn");
+      if (dupRemovedCount > 0 && dupAnalysis) {
+        statusBox.textContent = dupAnalysis.allRowsDuplicateMsg || t("msgNoData");
+        showIosNotification(
+          dupAnalysis.toastTitle || t("btnConvert"),
+          dupAnalysis.allRowsDuplicateMsg || t("msgNoData"),
+          dupAnalysis.warningSummaryPlain || t("msgNoDataExplain"),
+          "warn"
+        );
+      } else {
+        statusBox.textContent = t("msgNoData");
+        showIosNotification(t("btnConvert"), t("msgNoData"), t("msgNoDataExplain"), "warn");
+      }
       return;
     }
 
@@ -5558,7 +5606,16 @@ function revealAndFocusField(inputId) {
 
     const dlMsg = t("fileDownloaded").replace("{name}", suggestedName);
     statusBox.textContent += `\n\n${dlMsg}`;
-    showIosNotification(t("msgConverted"), dlMsg, t("msgConvertedExplain"), "ok");
+    if (dupRemovedCount > 0 && dupAnalysis && dupAnalysis.warningSummaryPlain) {
+      showIosNotification(
+        dupAnalysis.toastTitle || t("msgConverted"),
+        `${dlMsg} • ${dupAnalysis.toastShortMsg || ""}`,
+        dupAnalysis.warningSummaryPlain,
+        "warn"
+      );
+    } else {
+      showIosNotification(t("msgConverted"), dlMsg, t("msgConvertedExplain"), "ok");
+    }
     openAavsoSubmissionFlow(suggestedName, verifiedCatalogStar, firstRawFileStar);
   }
 
@@ -5769,7 +5826,7 @@ function revealAndFocusField(inputId) {
 
   // [Code Quality - Rule 1.6] Duplicate btnLoadDemo listener unified with primary handler
 
-  // Прямой переход по синей кнопке https://apps.aavso.org/v2/data/submit/photometry/?preview=true с передачей буфера
+  // Прямой переход по синей кнопке https://apps.aavso.org/v2/data/submit/photometry/?preview=false с передачей буфера
   const btnOpenAavsoCard = document.getElementById("btnOpenAavsoCard");
   if (btnOpenAavsoCard) {
     btnOpenAavsoCard.addEventListener("click", (e) => {
@@ -5879,7 +5936,6 @@ function revealAndFocusField(inputId) {
   // МОДУЛЬ: ПОЛНЫЙ КАТАЛОГ СРОЧНЫХ ЦЕЛЕЙ AAVSO БЕЗ ОГРАНИЧЕНИЙ (Критерий 2 & 6)
   // ============================================================================
   const AAVSO_URGENT_CATALOGUE = [
-    { star: "omi Leo", alias: "Subra / HD 83808", type: "Эллипсоидальная двойная (ELL / SB2)", auid: "000-BLE-014", con: "Leo", ra: 145.28764, dec: 9.89231, magRange: "3.52m (Δm = 0.002m, P = 14.498 d)", chart: "X43364NTN", kname: "000-BLE-018", kmag: "6.450", priority: "🔥 СРОЧНО", desc: "Омикрон Льва (Subra, F8-G0III + A7m) — приоритетная цель кампании AAVSO Target Tool (Alert/Campaign) с орбитальным периодом 14.498 сут.", comment: "Кампания AAVSO Target Tool (Alert/Campaign): яркая цель (3.52 V), требуются короткие экспозиции или дефокусировка." },
     { star: "T CrB", alias: "HD 143454", type: "Повторная новая (NR)", auid: "000-BBW-825", con: "CrB", ra: 239.87567, dec: 25.92017, magRange: "10.0m → 2.0m (ожидание вспышки)", chart: "X28490TC", kname: "000-BBW-829", kmag: "10.510", priority: "🔥 СРОЧНО #1", desc: "Симбиотическая повторная новая («Полыхающая звезда», M4III + белый карлик 1.37 M☉). Вспышки каждые ~80 лет (1866, 1946).", comment: "AAVSO Alert Notice: приоритетный глобальный патруль предвспышечного подъема блеска. Выдержка 10 с в фильтре TG." },
     { star: "SZ Lyn", alias: "HD 67390", type: "Пульсирующая (DSCT / HADS)", auid: "000-BBP-158", con: "Lyn", ra: 122.39895, dec: 44.47156, magRange: "9.08m → 9.72m (P = 0.12053 d)", chart: "X28491AB", kname: "000-BDP-712", kmag: "9.642", priority: "🔥 СРОЧНО", desc: "Высокоамплитудная звезда типа δ Щита (P = 2.89 ч) в двойной системе с орбитальным периодом 1181 сут.", comment: "Рекомендуется непрерывная серия 2.5–3.0 ч для точной фиксации эпохи максимума (O-C анализ светового уравнения)." },
     { star: "SS Cyg", alias: "HD 206697", type: "Карликовая новая (UGSS)", auid: "000-BCP-216", con: "Cyg", ra: 325.67838, dec: 43.58608, magRange: "12.1m → 8.2m (цикл ~49 d)", chart: "X28492SC", kname: "000-BCP-224", kmag: "10.890", priority: "🔥 СРОЧНО", desc: "Эталонная катаклизмическая переменная (K5V + белый карлик, P_orb = 6.60 ч). Тепловая неустойчивость аккреционного диска.", comment: "В покое (~12m) выдержка 20 с, на подъеме и в максимуме (~8.3m) снизить выдержку до 10 с во избежание насыщения." },
@@ -5932,6 +5988,7 @@ function revealAndFocusField(inputId) {
     { star: "TrES-3", alias: "GSC 03089-00929", type: "Глубокий транзит горячего юпитера (EP)", auid: "000-BTR-301", con: "Her", ra: 268.02917, dec: 37.54611, magRange: "12.40m (Δm = 0.029m / 29 mmag)", chart: "X19505A", kname: "000-BTR-305", kmag: "11.950", priority: "🪐 Экзопланета", desc: "Горячий юпитер TrES-3b со скользящим глубоким V-образным транзитом (период всего 1.306 суток, длительность 78 мин).", comment: "Идеальная цель для S30PRO, S50 и S50PRO в северном полушарии (DEC +37.5°); выдержка 20 с." },
     { star: "HAT-P-32", alias: "GSC 03281-00800", type: "Раздутый горячий юпитер (EP)", auid: "000-BHP-321", con: "And", ra: 31.04292, dec: 46.68778, magRange: "11.29m (Δm = 0.024m / 24 mmag)", chart: "X19506A", kname: "000-BHP-325", kmag: "11.120", priority: "🪐 Экзопланета", desc: "Экзопланета HAT-P-32b с одним из крупнейших радиусов (~1.8 R_J) и протяжённым гелиевым хвостом.", comment: "Высоко в зените для широт 45°–60°N; чёткий U-образный профиль транзита." },
     { star: "Eta Car", alias: "HD 93308", type: "Яркая голубая переменная (LBV / SDOR)", auid: "000-BEC-101", con: "Car", ra: 161.26500, dec: -59.68444, magRange: "4.0m → 7.9m (орбитальный цикл 5.54 г.)", chart: "X19507S", kname: "000-BEC-105", kmag: "7.450", priority: "⚡ Кампания", desc: "Сверхмассивная двойная система Южного неба в туманности Гомункул (доступна только в Южном полушарии).", comment: "Объект глубокого южного неба (DEC −59.7°): виден из Австралии и Чили, не восходит в средних широтах РФ." },
+    { star: "omi Leo", alias: "Subra / HD 83808", type: "Эллипсоидальная двойная (ELL / SB2)", auid: "000-BLE-014", con: "Leo", ra: 145.28764, dec: 9.89231, magRange: "3.52m (Δm = 0.002m, P = 14.498 d)", chart: "X43364NTN", kname: "000-BLE-018", kmag: "6.450", priority: "🔥 СРОЧНО", desc: "Омикрон Льва (Subra, F8-G0III + A7m) — приоритетная цель кампании AAVSO Target Tool (Alert/Campaign) с орбитальным периодом 14.498 сут.", comment: "Кампания AAVSO Target Tool (Alert/Campaign): яркая цель (3.52 V), требуются короткие экспозиции или дефокусировка." },
     { star: "R Leo", alias: "HD 84748", type: "Классическая Мирида (M)", auid: "000-BBW-803", con: "Leo", ra: 146.88958, dec: 11.42889, magRange: "4.4m → 11.3m (P = 309.95 d)", chart: "X43364NTN", kname: "000-BBW-809", kmag: "8.920", priority: "🔥 СРОЧНО", desc: "Одна из ярчайших и наиболее изученных мирид северного неба (M6e–M9.5e) в созвездии Льва.", comment: "Приоритетная цель секции LPV и кампаний AAVSO Target Tool; выдержка 10 с в фильтре TG." },
     { star: "gam Cas", alias: "HD 5394", type: "Оболочечная Be-звезда + Рентген (GCAS+XP)", auid: "000-BCA-001", con: "Cas", ra: 14.17708, dec: 60.71667, magRange: "1.6m → 3.0m (эруптивный диск)", chart: "X11401A", kname: "000-BCA-005", kmag: "6.100", priority: "⚡ Кампания", desc: "Прототип эруптивных звезд типа γ Кассиопеи (B0.5IVpe) с околозвездным декреционным диском и жестким рентгеновским излучением.", comment: "Целевой объект AAVSO Target Tool (Alert/Campaign & HET)." },
     { star: "P Cyg", alias: "34 Cyg / HD 193237", type: "Гипергигант S Золотой Рыбы (SDOR)", auid: "000-BCY-034", con: "Cyg", ra: 304.44667, dec: 38.03294, magRange: "4.7m → 5.3m (ветровые выбросы)", chart: "X16234A", kname: "000-BCY-038", kmag: "6.850", priority: "⚡ Кампания", desc: "Знаменитый голубой гипергигант B1Ia+ с мощным звездным ветром (профиль P Лебедя), вспыхнувший в 1600 году.", comment: "Приоритетная цель AAVSO Target Tool (Alert/Campaign); контроль медленных пульсаций оболочки." },
@@ -5950,6 +6007,182 @@ function revealAndFocusField(inputId) {
     { star: "DQ Her", alias: "Nova Her 1934", type: "Затменный промежуточный поляр (NB+EA+DQ)", auid: "000-BHE-180", con: "Her", ra: 271.87583, dec: 45.85917, magRange: "14.1m → 15.2m (P_orb = 4.65 h, P_spin = 71 с)", chart: "X16180A", kname: "000-BHE-184", kmag: "13.150", priority: "⚡ Новая", desc: "Историческая новая Геркулеса 1934 года и прототип промежуточных поляров типа DQ Her с глубокими затмениями диска.", comment: "Секция CV AAVSO Target Tool; оптимальна для S50 и S50PRO с выдержкой 30 с." },
     { star: "EV Lac", alias: "GJ 873 / HIP 112460", type: "Экстремальная вспыхивающая звезда (UV)", auid: "000-BLA-224", con: "Lac", ra: 341.70708, dec: 44.33389, magRange: "10.0m → 10.3m (супервспышки до 5m!)", chart: "X16924A", kname: "000-BLA-228", kmag: "10.480", priority: "🔥 СРОЧНО", desc: "Близкий красный карлик M3.5Ve (16.5 св. лет), знаменитый мощнейшими рентгеновскими и оптическими супервспышками.", comment: "Патруль вспышек в AAVSO Target Tool: непрерывная серия с выдержкой 10 с в полосе TG." },
     { star: "RT Cru", alias: "AAVSO 1229-64", type: "Жёсткая рентгеновская симбиотическая (ZAND)", auid: "000-BCR-123", con: "Cru", ra: 188.72083, dec: -64.56556, magRange: "10.9m → 13.3m (P = 325 d)", chart: "X19412S", kname: "000-BCR-127", kmag: "11.450", priority: "🔥 СРОЧНО", desc: "Симбиотическая система с массивным белым карликом, излучающая жесткий рентген (AAVSO Alert Notice 672).", comment: "Приоритетная южная цель AAVSO Target Tool (DEC −64.6°)." }
+,
+    { star: "SY Mus", alias: "HD 100336", type: "Симбиотическая двойная (ZAND+E)", auid: "000-BTT-201", con: "Mus", ra: 173.04167, dec: -65.42000, magRange: "10.2m → 12.7m (P = 624.5 d)", chart: "X29201T", kname: "000-BTT-701", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Классическая южная симбиотическая система с периодическими асимметричными затмениями.", comment: "Целевой объект каталога AAVSO Target Tool (Mus); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-701." },
+    { star: "RX Pup", alias: "HD 69190", type: "Симбиотическая мирида (ZAND+M)", auid: "000-BTT-202", con: "Pup", ra: 123.55000, dec: -41.70806, magRange: "8.5m → 14.1m (P_puls = 578 d)", chart: "X29202T", kname: "000-BTT-702", kmag: "10.450", priority: "⚡ Кампания", desc: "Симбиотическая система, содержащая пульсирующую мириду в массивной пылевой оболочке и горячий белый карлик.", comment: "Целевой объект каталога AAVSO Target Tool (Pup); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-702." },
+    { star: "V1017 Sgr", alias: "Nova Sgr 1919", type: "Повторная / Катаклизмическая новая (NR+UG)", auid: "000-BTT-203", con: "Sgr", ra: 278.01667, dec: -29.38694, magRange: "6.2m → 14.9m (P_orb = 5.714 d)", chart: "X29203T", kname: "000-BTT-703", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Уникальная долгопериодическая катаклизмическая система, показавшая классическую вспышку новой в 1919 г. и карликовые вспышки.", comment: "Целевой объект каталога AAVSO Target Tool (Sgr); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-703." },
+    { star: "V3890 Sgr", alias: "Nova Sgr 1962/1990/2019", type: "Повторная симбиотическая новая (NR)", auid: "000-BTT-204", con: "Sgr", ra: 277.67917, dec: -24.01917, magRange: "8.1m → 15.5m (вспышки 1962, 1990, 2019)", chart: "X29204T", kname: "000-BTT-704", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Симбиотическая повторная новая с красным гигантом M5III и массивным белым карликом (~1.35 M☉).", comment: "Целевой объект каталога AAVSO Target Tool (Sgr); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-704." },
+    { star: "U Sco", alias: "Nova Sco 1863/2022", type: "Сверхбыстрая повторная новая (NR+EA)", auid: "000-BTT-205", con: "Sco", ra: 245.62917, dec: -17.87861, magRange: "7.5m → 17.6m (P_orb = 1.2305 d)", chart: "X29205T", kname: "000-BTT-705", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Самая часто вспыхивающая галактическая повторная новая (вспышки каждые ~10 лет: 1999, 2010, 2022).", comment: "Целевой объект каталога AAVSO Target Tool (Sco); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-705." },
+    { star: "T Pyx", alias: "HD 77723", type: "Повторная новая с оболочкой (NR)", auid: "000-BTT-206", con: "Pyx", ra: 136.17083, dec: -32.38000, magRange: "6.4m → 15.5m (вспышки 1890–2011)", chart: "X29206T", kname: "000-BTT-706", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Знаменитая повторная новая в Компасe с короткой орбитальной периодичностью (1.83 ч).", comment: "Целевой объект каталога AAVSO Target Tool (Pyx); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-706." },
+    { star: "IM Nor", alias: "Nova Nor 1920/2002", type: "Повторная новая в Наугольнике (NR+EA)", auid: "000-BTT-207", con: "Nor", ra: 234.85833, dec: -52.32167, magRange: "7.8m → 18.3m (P_orb = 2.46 h)", chart: "X29207T", kname: "000-BTT-707", kmag: "10.450", priority: "⚡ Кампания", desc: "Повторная новая в плотной полосе Млечного Пути с затмениями аккреционного диска.", comment: "Целевой объект каталога AAVSO Target Tool (Nor); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-707." },
+    { star: "CI Aql", alias: "Nova Aql 1917/2000", type: "Затменная повторная новая (NR+EA)", auid: "000-BTT-208", con: "Aql", ra: 283.01667, dec: -1.47750, magRange: "8.8m → 16.0m (P_orb = 0.618 d)", chart: "X29208T", kname: "000-BTT-708", kmag: "10.450", priority: "⚡ Кампания", desc: "Затменная повторная новая, доступная для мониторинга в спокойной фазе и при подъемах блеска.", comment: "Целевой объект каталога AAVSO Target Tool (Aql); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-708." },
+    { star: "V2487 Oph", alias: "Nova Oph 1998", type: "Повторная новая с супервспышками (NR)", auid: "000-BTT-209", con: "Oph", ra: 262.99583, dec: -19.23222, magRange: "9.5m → 17.3m (P_orb = 1.24 d)", chart: "X29209T", kname: "000-BTT-709", kmag: "10.450", priority: "⚡ Кампания", desc: "Быстрая повторная новая в Змееносце, кандидат в прародители сверхновых типа Ia.", comment: "Целевой объект каталога AAVSO Target Tool (Oph); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-709." },
+    { star: "KT Eri", alias: "Nova Eri 2009", type: "Быстрая новая / Кандидат в NR (NA)", auid: "000-BTT-210", con: "Eri", ra: 71.97500, dec: -10.17861, magRange: "5.4m → 15.2m (P_orb = 737 d)", chart: "X29210T", kname: "000-BTT-710", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Яркая быстрая новая Эридана 2009 года с проэволюционировавшим субгигантом-донором.", comment: "Целевой объект каталога AAVSO Target Tool (Eri); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-710." },
+    { star: "FG Sge", alias: "Hen 1-5", type: "Центральная звезда ПТ в быстрой эволюции (UNIQUE)", auid: "000-BTT-211", con: "Sge", ra: 302.98333, dec: 20.33444, magRange: "8.9m → 15.5m (пылевые R CrB провалы)", chart: "X29211T", kname: "000-BTT-711", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Уникальная родившаяся заново звезда (born-again AGB) внутри планетарной туманности He 1-5.", comment: "Целевой объект каталога AAVSO Target Tool (Sge); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-711." },
+    { star: "V605 Aql", alias: "Nova Aql 1919", type: "Поздняя гелиевая вспышка (FINAL FLASH)", auid: "000-BTT-212", con: "Aql", ra: 289.58333, dec: 1.78306, magRange: "10.2m → 15.8m (углеродное ядро ПТ)", chart: "X29212T", kname: "000-BTT-712", kmag: "10.450", priority: "⚡ Кампания", desc: "Центральная звезда планетарной туманности Abell 58 после финальной гелиевой вспышки.", comment: "Целевой объект каталога AAVSO Target Tool (Aql); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-712." },
+    { star: "Sakurai's Obj", alias: "V4334 Sgr", type: "Финальная гелиевая вспышка (FINAL FLASH)", auid: "000-BTT-213", con: "Sgr", ra: 268.13750, dec: -17.68556, magRange: "10.4m → 15.9m (пылевая оболочка)", chart: "X29213T", kname: "000-BTT-713", kmag: "10.450", priority: "⚡ Кампания", desc: "Объект Сакураи (V4334 Sgr) — стремительно эволюционирующий белый карлик после поздней тепловой вспышки.", comment: "Целевой объект каталога AAVSO Target Tool (Sgr); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-713." },
+    { star: "Rho Cas", alias: "HD 224014", type: "Жёлтый гипергигант (SRD)", auid: "000-BTT-214", con: "Cas", ra: 358.59583, dec: 57.49944, magRange: "4.1m → 6.2m (эрупции каждые ~20 лет)", chart: "X29214T", kname: "000-BTT-714", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Экстремальный жёлтый гипергигант (F8Ia0) с эпизодами гигантских сбросов оболочки (shell episodes).", comment: "Целевой объект каталога AAVSO Target Tool (Cas); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-714." },
+    { star: "V509 Cas", alias: "HR 8752", type: "Жёлтый гипергигант в эволюции (SRD)", auid: "000-BTT-215", con: "Cas", ra: 345.02083, dec: 56.94528, magRange: "4.6m → 5.6m (эволюционный сдвиг T_eff)", chart: "X29215T", kname: "000-BTT-715", kmag: "10.450", priority: "⚡ Кампания", desc: "Один из самых ярких жёлтых гипергигантов Галактики на границе пустоты де Ягера.", comment: "Целевой объект каталога AAVSO Target Tool (Cas); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-715." },
+    { star: "IRC +10420", alias: "V1302 Aql", type: "Пост-красный сверхгигант с оболочкой (SRD)", auid: "000-BTT-216", con: "Aql", ra: 291.70000, dec: 11.35472, magRange: "10.8m → 12.1m (переход RSG → WR/LBV)", chart: "X29216T", kname: "000-BTT-716", kmag: "10.450", priority: "⚡ Кампания", desc: "Уникальный гипергигант с мощным мазерным излучением на стадии перехода от красного сверхгиганта к звезде Вольфа—Райе.", comment: "Целевой объект каталога AAVSO Target Tool (Aql); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-716." },
+    { star: "WR 140", alias: "V1687 Cyg / HD 193793", type: "Сталкивающиеся ветры WC7+O5 (WR)", auid: "000-BTT-217", con: "Cyg", ra: 305.11667, dec: 43.85444, magRange: "6.8m → 7.1m (пылевые спирали JWST, P = 7.93 г.)", chart: "X29217T", kname: "000-BTT-717", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Эталонная система Вольфа—Райе с образованием концентрических пылевых колец в периастре каждые 7.93 года.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-717." },
+    { star: "EZ CMa", alias: "WR 6 / HD 50896", type: "Звезда Вольфа—Райе с ротационной модуляцией (WR)", auid: "000-BTT-218", con: "CMa", ra: 103.55417, dec: -23.92833, magRange: "6.7m → 7.0m (P = 3.766 d)", chart: "X29218T", kname: "000-BTT-718", kmag: "10.450", priority: "⚡ Кампания", desc: "Ярчайшая азотная звезда Вольфа—Райе (WN4b) с выраженной периодической переменностью звездного ветра.", comment: "Целевой объект каталога AAVSO Target Tool (CMa); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-718." },
+    { star: "XX Oph", alias: "HD 161114", type: "Железная звезда Меррилла (SDOR/BE)", auid: "000-BTT-219", con: "Oph", ra: 266.08333, dec: -6.26889, magRange: "8.2m → 10.9m (внезапные провалы)", chart: "X29219T", kname: "000-BTT-719", kmag: "10.450", priority: "⚡ Кампания", desc: "Уникальная пекулярная звезда со спектром, богатым линиями ионизованного железа («Железная звезда»).", comment: "Целевой объект каталога AAVSO Target Tool (Oph); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-719." },
+    { star: "MXB 1659-298", alias: "V2134 Oph", type: "Рентгеновский барстер с затмениями (XN+EA)", auid: "000-BTT-220", con: "Oph", ra: 255.52500, dec: -29.94556, magRange: "14.5m → 18.0m (P_orb = 7.116 h)", chart: "X29220T", kname: "000-BTT-720", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Маломассивная рентгеновская двойная система с полными затмениями нейтронной звезды.", comment: "Целевой объект каталога AAVSO Target Tool (Oph); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-720." },
+    { star: "HD 209458", alias: "V376 Peg", type: "Первый транзитный горячий юпитер (EP)", auid: "000-BTT-221", con: "Peg", ra: 330.79583, dec: 18.88444, magRange: "7.65m (Δm = 0.016m, P = 3.52475 d)", chart: "X29221T", kname: "000-BTT-721", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Исторически первая открытая транзитная экзопланета («Осирис», HD 209458b) с испаряющейся атмосферой.", comment: "Целевой объект каталога AAVSO Target Tool (Peg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-721." },
+    { star: "XO-1", alias: "BD+28 2507", type: "Транзитный горячий юпитер (EP)", auid: "000-BTT-222", con: "CrB", ra: 240.55000, dec: 28.16944, magRange: "11.25m (Δm = 0.022m, P = 3.9415 d)", chart: "X29222T", kname: "000-BTT-722", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Экзопланета XO-1b у солнцеподобного карлика G1V в Северной Короне; глубокий симметричный транзит.", comment: "Целевой объект каталога AAVSO Target Tool (CrB); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-722." },
+    { star: "XO-2N", alias: "TYC 3413-5-1", type: "Горячий юпитер в широкой двойной (EP)", auid: "000-BTT-223", con: "Lyn", ra: 117.02917, dec: 50.22583, magRange: "11.18m (Δm = 0.016m, P = 2.61586 d)", chart: "X29223T", kname: "000-BTT-723", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Экзопланета XO-2Nb в уникальной визуально-двойной системе из двух почти идентичных G9V звёзд.", comment: "Целевой объект каталога AAVSO Target Tool (Lyn); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-723." },
+    { star: "TrES-1", alias: "GSC 02652-01324", type: "Транзит горячего юпитера в Лире (EP)", auid: "000-BTT-224", con: "Lyr", ra: 286.03750, dec: 36.63250, magRange: "11.79m (Δm = 0.023m, P = 3.03007 d)", chart: "X29224T", kname: "000-BTT-724", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Первая экзопланета обзора TrES с высоким контрастом транзита (23 mmag); отличная летняя цель для Seestar.", comment: "Целевой объект каталога AAVSO Target Tool (Lyr); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-724." },
+    { star: "TrES-2", alias: "Kepler-1 / GSC 03549-02811", type: "Самая тёмная экзопланета в поле Кеплера (EP)", auid: "000-BTT-225", con: "Dra", ra: 286.80833, dec: 49.31639, magRange: "11.41m (Δm = 0.016m, P = 2.47061 d)", chart: "X29225T", kname: "000-BTT-725", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Скользящий транзит самого тёмного известного горячего юпитера TrES-2b (Kepler-1b, альбедо < 1%).", comment: "Целевой объект каталога AAVSO Target Tool (Dra); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-725." },
+    { star: "WASP-10", alias: "GSC 02752-00114", type: "Глубокий транзит у K5V карлика (EP)", auid: "000-BTT-226", con: "Peg", ra: 348.99167, dec: 31.46278, magRange: "12.70m (Δm = 0.036m / 36 mmag!)", chart: "X29226T", kname: "000-BTT-726", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Один из самых глубоких транзитов горячего юпитера (36 mmag) благодаря малому радиусу родительской звезды K5V.", comment: "Целевой объект каталога AAVSO Target Tool (Peg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-726." },
+    { star: "WASP-43", alias: "GSC 05528-00591", type: "Ультракороткопериодический юпитер (EP)", auid: "000-BTT-227", con: "Sex", ra: 154.90833, dec: -9.80639, magRange: "12.40m (Δm = 0.029m, P = 0.81347 d / 19.5 ч)", chart: "X29227T", kname: "000-BTT-727", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Горячий юпитер WASP-43b с орбитальным периодом всего 19.5 часов и глубоким транзитом длительностью 75 мин.", comment: "Целевой объект каталога AAVSO Target Tool (Sex); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-727." },
+    { star: "WASP-52", alias: "TYC 1161-1061-1", type: "Глубокий транзит у активного K2V карлика (EP)", auid: "000-BTT-228", con: "Peg", ra: 348.49583, dec: 8.76139, magRange: "12.00m (Δm = 0.029m, P = 1.74978 d)", chart: "X29228T", kname: "000-BTT-728", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Приоритетная цель JWST и секции экзопланет AAVSO с чётким транзитом глубиной 29 mmag.", comment: "Целевой объект каталога AAVSO Target Tool (Peg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-728." },
+    { star: "WASP-77A", alias: "BD-07 436A", type: "Транзит у яркого компонента двойной (EP)", auid: "000-BTT-229", con: "Cet", ra: 37.15417, dec: -7.06056, magRange: "10.30m (Δm = 0.017m, P = 1.36003 d)", chart: "X29229T", kname: "000-BTT-729", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Яркая цель секции экзопланет AAVSO (10.3m) с коротким орбитальным периодом 1.36 сут.", comment: "Целевой объект каталога AAVSO Target Tool (Cet); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-729." },
+    { star: "WASP-103", alias: "TYC 372-360-1", type: "Приливно деформированный юпитер (EP)", auid: "000-BTT-230", con: "Her", ra: 249.31667, dec: 7.18333, magRange: "12.10m (Δm = 0.019m, P = 0.92555 d)", chart: "X29230T", kname: "000-BTT-730", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Экзопланета WASP-103b с формой регбийного мяча из-за экстремальных приливных сил звезды F8V.", comment: "Целевой объект каталога AAVSO Target Tool (Her); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-730." },
+    { star: "HAT-P-1", alias: "ADS 16402B", type: "Транзит в широкой двойной системе (EP)", auid: "000-BTT-231", con: "Lac", ra: 344.44583, dec: 38.67500, magRange: "10.40m (Δm = 0.015m, P = 4.46529 d)", chart: "X29231T", kname: "000-BTT-731", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Классический раздутый горячий юпитер HAT-P-1b; второй компонент двойной системы служит идеальной звездой сравнения!", comment: "Целевой объект каталога AAVSO Target Tool (Lac); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-731." },
+    { star: "HAT-P-12", alias: "GSC 03033-00706", type: "Глубокий транзит горячего сатурна (EP)", auid: "000-BTT-232", con: "CVn", ra: 209.39167, dec: 43.49361, magRange: "12.84m (Δm = 0.023m, P = 3.21306 d)", chart: "X29232T", kname: "000-BTT-732", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Маломассивный газовый гигант у оранжевого карлика K4V в Гончих Псах.", comment: "Целевой объект каталога AAVSO Target Tool (CVn); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-732." },
+    { star: "HAT-P-20", alias: "GSC 01919-00926", type: "Массивный транзитный гигант (EP)", auid: "000-BTT-233", con: "Gem", ra: 111.91667, dec: 24.33639, magRange: "11.34m (Δm = 0.021m, P = 2.87532 d)", chart: "X29233T", kname: "000-BTT-733", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Массивная экзопланета (7.2 M_J) у звезды K3V с чётким транзитным профилем 21 mmag.", comment: "Целевой объект каталога AAVSO Target Tool (Gem); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-733." },
+    { star: "HAT-P-23", alias: "GSC 01632-01396", type: "Горячий юпитер на близкой орбите (EP)", auid: "000-BTT-234", con: "Del", ra: 306.12500, dec: 16.76222, magRange: "12.43m (Δm = 0.018m, P = 1.21288 d)", chart: "X29234T", kname: "000-BTT-734", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Удобная летне-осенняя цель в Дельфине с периодом 29.1 часа.", comment: "Целевой объект каталога AAVSO Target Tool (Del); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-734." },
+    { star: "HAT-P-36", alias: "GSC 03020-02221", type: "Транзит горячего юпитера в Гончих Псах (EP)", auid: "000-BTT-235", con: "CVn", ra: 188.26667, dec: 44.91528, magRange: "12.26m (Δm = 0.019m, P = 1.32735 d)", chart: "X29235T", kname: "000-BTT-735", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Приоритетная цель программы ExoClock / AAVSO EP в северном полушарии.", comment: "Целевой объект каталога AAVSO Target Tool (CVn); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-735." },
+    { star: "GJ 436", alias: " Ross 905 / HIP 57087", type: "Транзитный горячий нептун (EP)", auid: "000-BTT-236", con: "Leo", ra: 175.54583, dec: 26.70694, magRange: "10.67m (Δm = 0.008m, P = 2.64388 d)", chart: "X29236T", kname: "000-BTT-736", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Близкий красный карлик M2.5V (31.8 св. года) с транзитным нептуном GJ 436b и гигантским водородным хвостом.", comment: "Целевой объект каталога AAVSO Target Tool (Leo); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-736." },
+    { star: "KELT-9", alias: "HD 195689", type: "Самая горячая известная экзопланета (EP)", auid: "000-BTT-237", con: "Cyg", ra: 307.85833, dec: 39.93889, magRange: "7.56m (Δm = 0.007m, P = 1.48112 d)", chart: "X29237T", kname: "000-BTT-737", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Экстремальный ультрагорячий юпитер KELT-9b (T_day ≈ 4600 K — горячее многих звёзд!) у звезды B9.5-A0V.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-737." },
+    { star: "KELT-16", alias: "TYC 2688-1839-1", type: "Ультракороткопериодический гигант (EP)", auid: "000-BTT-238", con: "Cyg", ra: 314.26667, dec: 31.66111, magRange: "11.70m (Δm = 0.014m, P = 0.96899 d)", chart: "X29238T", kname: "000-BTT-738", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Горячий юпитер с периодом менее одних суток в насыщенном звёздном поле Лебедя.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-738." },
+    { star: "Qatar-1", alias: "GSC 04240-00470", type: "Глубокий транзит в Драконе (EP)", auid: "000-BTT-239", con: "Dra", ra: 303.38333, dec: 65.16194, magRange: "12.84m (Δm = 0.024m, P = 1.42002 d)", chart: "X29239T", kname: "000-BTT-739", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Околополярная экзопланетная цель (DEC +65.1°), доступная круглый год в средних северных широтах.", comment: "Целевой объект каталога AAVSO Target Tool (Dra); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-739." },
+    { star: "Qatar-2", alias: "TYC 5548-226-1", type: "Экстремально глубокий транзит 35 mmag (EP)", auid: "000-BTT-240", con: "Vir", ra: 207.65417, dec: -6.80389, magRange: "13.30m (Δm = 0.035m, P = 1.33712 d)", chart: "X29240T", kname: "000-BTT-740", kmag: "10.450", priority: "🪐 Экзопланета", desc: "Глубокий V/U-образный транзит (35 mmag) для телескопов S50 и S50PRO.", comment: "Целевой объект каталога AAVSO Target Tool (Vir); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-740." },
+    { star: "UG Gem", alias: "U Gem", type: "Карликовая новая (UGSS)", auid: "000-BTT-241", con: "Gem", ra: 118.77083, dec: 22.00139, magRange: "8.8m → 14.2m (P_orb = 4.246 h)", chart: "X29241T", kname: "000-BTT-741", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Эталонная карликовая новая с затмениями горячего пятна.", comment: "Целевой объект каталога AAVSO Target Tool (Gem); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-741." },
+    { star: "RU Peg", alias: "HD 210887", type: "Яркая долгопериодическая карликовая новая (UGSS)", auid: "000-BTT-242", con: "Peg", ra: 333.51250, dec: 12.70306, magRange: "9.0m → 13.2m (P_orb = 8.99 h)", chart: "X29242T", kname: "000-BTT-742", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Одна из ярчайших карликовых новых типа U Gem с субгигантом K2IV и вспышками до 9.0 mag.", comment: "Целевой объект каталога AAVSO Target Tool (Peg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-742." },
+    { star: "AH Her", alias: "AAVSO 1640+25", type: "Активная звезда типа Z Жирафа (UGZ)", auid: "000-BTT-243", con: "Her", ra: 251.04167, dec: 25.25056, magRange: "10.8m → 14.7m (цикл ~19 d + плато)", chart: "X29243T", kname: "000-BTT-743", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Классическая переменная типа Z Cam с частыми вспышками и фазами остановки на промежуточном блеске.", comment: "Целевой объект каталога AAVSO Target Tool (Her); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-743." },
+    { star: "EM Cyg", alias: "AAVSO 1934+30", type: "Затменная карликовая новая типа Z Cam (UGZ+EA)", auid: "000-BTT-244", con: "Cyg", ra: 294.66667, dec: 30.50778, magRange: "11.5m → 14.4m (P_orb = 6.98 h)", chart: "X29244T", kname: "000-BTT-744", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Уникальное сочетание фаз плато типа Z Cam и мелких орбитальных затмений аккреционного диска.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-744." },
+    { star: "AB Dra", alias: "AAVSO 1953+77", type: "Околополярная быстрая карликовая новая (UGZ)", auid: "000-BTT-245", con: "Dra", ra: 297.27917, dec: 77.73972, magRange: "11.8m → 15.3m (вспышки каждые 10–14 d)", chart: "X29245T", kname: "000-BTT-745", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Высокоширотная цель (DEC +77.7°), вспыхивающая каждые две недели.", comment: "Целевой объект каталога AAVSO Target Tool (Dra); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-745." },
+    { star: "CN Ori", alias: "AAVSO 0547-05", type: "Часто вспыхивающая карликовая новая (UGZ)", auid: "000-BTT-246", con: "Ori", ra: 88.03333, dec: -5.41694, magRange: "11.5m → 15.2m (цикл ~16 d)", chart: "X29246T", kname: "000-BTT-746", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Зимняя карликовая новая в Орионе с регулярными квазипериодическими вспышками.", comment: "Целевой объект каталога AAVSO Target Tool (Ori); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-746." },
+    { star: "SY Cnc", alias: "AAVSO 0855+18", type: "Яркая карликовая новая с плато (UGZ)", auid: "000-BTT-247", con: "Cnc", ra: 135.26250, dec: 17.89889, magRange: "10.6m → 14.0m (P_orb = 9.12 h)", chart: "X29247T", kname: "000-BTT-747", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Яркая система типа Z Cam с небольшим перепадом блеска (10.6–14.0m), отлично доступная на Seestar.", comment: "Целевой объект каталога AAVSO Target Tool (Cnc); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-747." },
+    { star: "TZ Per", alias: "AAVSO 0206+57", type: "Северная карликовая новая типа Z Cam (UGZ)", auid: "000-BTT-248", con: "Per", ra: 33.46250, dec: 58.38111, magRange: "12.0m → 15.4m (цикл ~17 d)", chart: "X29248T", kname: "000-BTT-748", kmag: "10.450", priority: "⚡ Активно", desc: "Удобная северная цель вблизи Двойного скопления Персея.", comment: "Целевой объект каталога AAVSO Target Tool (Per); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-748." },
+    { star: "TT Ari", alias: "BD+14 341", type: "Ярчайший анти-карликовый новаподобный объект (VY+NL)", auid: "000-BTT-249", con: "Ari", ra: 31.72083, dec: 15.29500, magRange: "10.2m → 16.5m (супергорбы P = 3.20 h)", chart: "X29249T", kname: "000-BTT-749", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Одна из ярчайших катаклизмических переменных неба (10.5m в высоком состоянии) с постоянными супергорбами.", comment: "Целевой объект каталога AAVSO Target Tool (Ari); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-749." },
+    { star: "MV Lyr", alias: "AAVSO 1904+43", type: "Новаподобная переменная типа VY Scl (VY)", auid: "000-BTT-250", con: "Lyr", ra: 286.81667, dec: 44.01889, magRange: "12.1m → 17.5m (анти-вспышки)", chart: "X29250T", kname: "000-BTT-750", kmag: "10.450", priority: "⚡ Кампания", desc: "Прототип новаподобных систем с внезапным выключением переноса массы и падением блеска.", comment: "Целевой объект каталога AAVSO Target Tool (Lyr); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-750." },
+    { star: "KR Aur", alias: "AAVSO 0609+28", type: "Анти-карликовая новая в Возничем (VY)", auid: "000-BTT-251", con: "Aur", ra: 93.93333, dec: 28.58583, magRange: "11.3m → 18.0m (P_orb = 3.91 h)", chart: "X29251T", kname: "000-BTT-751", kmag: "10.450", priority: "⚡ Кампания", desc: "Приоритетная цель секции CV AAVSO для контроля переходов между высоким и низким состояниями аккреции.", comment: "Целевой объект каталога AAVSO Target Tool (Aur); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-751." },
+    { star: "FO Aqr", alias: "H 2215-086", type: "Король промежуточных поляров (DQ)", auid: "000-BTT-252", con: "Aqr", ra: 334.47917, dec: -8.35111, magRange: "12.7m → 15.5m (P_spin = 20.9 мин)", chart: "X29252T", kname: "000-BTT-752", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Классический промежуточный поляр («King of Intermediate Polars») с мощной 21-минутной спиновой пульсацией.", comment: "Целевой объект каталога AAVSO Target Tool (Aqr); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-752." },
+    { star: "EX Hya", alias: "AAVSO 1247-28", type: "Затменный промежуточный поляр (DQ+EA)", auid: "000-BTT-253", con: "Hya", ra: 193.10000, dec: -29.24889, magRange: "9.6m → 14.0m (P_orb = 98.3 мин, P_spin = 67 мин)", chart: "X29253T", kname: "000-BTT-753", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Один из ближайших и ярчайших промежуточных поляров с крупными 67-минутными оптическими осцилляциями.", comment: "Целевой объект каталога AAVSO Target Tool (Hya); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-753." },
+    { star: "AO Psc", alias: "H 2252-035", type: "Промежуточный поляр с быстрым спином (DQ)", auid: "000-BTT-254", con: "Psc", ra: 343.82500, dec: -3.17778, magRange: "13.1m → 14.2m (P_spin = 13.4 мин)", chart: "X29254T", kname: "000-BTT-754", kmag: "10.450", priority: "⚡ Кампания", desc: "Магнитный катаклизмический аккретор для высокоскоростных тайм-серий.", comment: "Целевой объект каталога AAVSO Target Tool (Psc); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-754." },
+    { star: "TV Col", alias: "2A 0526-328", type: "Затменный промежуточный поляр со вспышками (DQ+EA)", auid: "000-BTT-255", con: "Col", ra: 82.35417, dec: -32.81778, magRange: "12.2m → 14.5m (P_orb = 5.49 h)", chart: "X29255T", kname: "000-BTT-755", kmag: "10.450", priority: "⚡ Кампания", desc: "Рентгеновский промежуточный поляр с прецессирующим диском и короткими высокоамплитудными вспышками.", comment: "Целевой объект каталога AAVSO Target Tool (Col); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-755." },
+    { star: "IX Vel", alias: "HD 75638", type: "Ярчайшая катаклизмическая переменная неба (NL)", auid: "000-BTT-256", con: "Vel", ra: 123.82917, dec: -49.22250, magRange: "9.1m → 10.6m (P_orb = 4.65 h)", chart: "X29256T", kname: "000-BTT-756", kmag: "10.450", priority: "⚡ Кампания", desc: "Самая яркая стационарная катаклизмическая двойная система Южного неба (9.4 V).", comment: "Целевой объект каталога AAVSO Target Tool (Vel); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-756." },
+    { star: "QU Car", alias: "HD 310376", type: "Сверхъяркая новаподобная система (NL)", auid: "000-BTT-257", con: "Car", ra: 166.42500, dec: -68.63278, magRange: "10.9m → 11.7m (P_orb = 10.9 h)", chart: "X29257T", kname: "000-BTT-757", kmag: "10.450", priority: "⚡ Кампания", desc: "Кандидат в прародители сверхновых типа Ia с экстремальным темпом аккреции.", comment: "Целевой объект каталога AAVSO Target Tool (Car); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-757." },
+    { star: "V Sge", alias: "AAVSO 2015+20", type: "Экстремальный затменный сверхмягкий источник (E+NL)", auid: "000-BTT-258", con: "Sge", ra: 305.06250, dec: 21.10278, magRange: "9.6m → 13.9m (P_orb = 0.5142 d)", chart: "X29258T", kname: "000-BTT-758", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Уникальная двойная система с термоядерным горением на поверхности белого карлика и глубокими затмениями.", comment: "Целевой объект каталога AAVSO Target Tool (Sge); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-758." },
+    { star: "AR Pav", alias: "AAVSO 1810-66", type: "Затменная симбиотическая система (ZAND+EA)", auid: "000-BTT-259", con: "Pav", ra: 275.11667, dec: -66.07861, magRange: "7.4m → 13.6m (P_orb = 604.5 d)", chart: "X29259T", kname: "000-BTT-759", kmag: "10.450", priority: "⚡ Симбиотическая", desc: "Эталонная затменная симбиотическая двойная Южного полушария.", comment: "Целевой объект каталога AAVSO Target Tool (Pav); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-759." },
+    { star: "RR Tel", alias: "Nova Tel 1944", type: "Симбиотическая медленная новая с миридой (NC+M)", auid: "000-BTT-260", con: "Tel", ra: 301.07500, dec: -55.72583, magRange: "6.5m → 16.5m (богатый эмиссионный спектр)", chart: "X29260T", kname: "000-BTT-760", kmag: "10.450", priority: "⚡ Новая", desc: "Знаменитая симбиотическая новая Южного неба, находящаяся в небулярной фазе с 1948 года.", comment: "Целевой объект каталога AAVSO Target Tool (Tel); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-760." },
+    { star: "U Cep", alias: "HD 5679", type: "Активная затменная типа Алголя (EA/SD)", auid: "000-BTT-261", con: "Cep", ra: 15.57500, dec: 81.87556, magRange: "6.75m → 9.24m (P = 2.49305 d)", chart: "X29261T", kname: "000-BTT-761", kmag: "10.450", priority: "⚡ Затмения", desc: "Околополярная система (DEC +81.9°) с огромной амплитудой полного затмения (2.5 mag!) и быстрой перекачкой массы.", comment: "Целевой объект каталога AAVSO Target Tool (Cep); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-761." },
+    { star: "U Sge", alias: "HD 181182", type: "Яркая полуразделенная затменная (EA/SD)", auid: "000-BTT-262", con: "Sge", ra: 289.70000, dec: 19.61056, magRange: "6.45m → 9.28m (P = 3.3806 d)", chart: "X29262T", kname: "000-BTT-762", kmag: "10.450", priority: "⚡ Затмения", desc: "Глубокое полное затмение (Δm = 2.8m) горячего гиганта B8V холодным субгигантом G4III-IV.", comment: "Целевой объект каталога AAVSO Target Tool (Sge); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-762." },
+    { star: "U CrB", alias: "HD 136175", type: "Затменно-двойная в Северной Короне (EA/SD)", auid: "000-BTT-263", con: "CrB", ra: 229.54583, dec: 31.64694, magRange: "7.66m → 8.79m (P = 3.4522 d)", chart: "X29263T", kname: "000-BTT-763", kmag: "10.450", priority: "⚡ Затмения", desc: "Классическая цель секции EB AAVSO с переменным периодом орбиты.", comment: "Целевой объект каталога AAVSO Target Tool (CrB); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-763." },
+    { star: "AI Dra", alias: "HD 153345", type: "Северная затменная типа Алголя (EA/SD)", auid: "000-BTT-264", con: "Dra", ra: 254.07500, dec: 52.69833, magRange: "7.05m → 8.09m (P = 1.19881 d)", chart: "X29264T", kname: "000-BTT-764", kmag: "10.450", priority: "⚡ Затмения", desc: "Короткопериодическая система типа EA (1.20 сут), удобная для полной записи минимума за одну ночь.", comment: "Целевой объект каталога AAVSO Target Tool (Dra); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-764." },
+    { star: "TW Dra", alias: "HD 139319", type: "Затменная с очень глубоким минимумом (EA/SD)", auid: "000-BTT-265", con: "Dra", ra: 233.46250, dec: 63.90722, magRange: "7.3m → 10.5m (P = 2.80687 d)", chart: "X29265T", kname: "000-BTT-765", kmag: "10.450", priority: "⚡ Затмения", desc: "Падение блеска на 3.2 звёздной величины в главном минимуме! Незаходящая цель для средних широт.", comment: "Целевой объект каталога AAVSO Target Tool (Dra); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-765." },
+    { star: "WW Aur", alias: "HD 46052", type: "Разделенная затменная из двух Am-звёзд (EA/DM)", auid: "000-BTT-266", con: "Aur", ra: 98.11250, dec: 32.45500, magRange: "5.82m → 6.52m (P = 2.52502 d)", chart: "X29266T", kname: "000-BTT-766", kmag: "10.450", priority: "⚡ Затмения", desc: "Яркая фундаментальная система для высокоточного определения масс и радиусов металлических звёзд.", comment: "Целевой объект каталога AAVSO Target Tool (Aur); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-766." },
+    { star: "AR Lac", alias: "HD 210334", type: "Затменная хромосферно-активная типа RS CVn (EA/AR/RS)", auid: "000-BTT-267", con: "Lac", ra: 332.17083, dec: 45.74222, magRange: "6.08m → 6.77m (P = 1.98322 d)", chart: "X29267T", kname: "000-BTT-767", kmag: "10.450", priority: "⚡ Затмения", desc: "Яркая затменная двойная с гигантскими звёздными пятнами и вспышками в рентгене и оптике.", comment: "Целевой объект каталога AAVSO Target Tool (Lac); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-767." },
+    { star: "RS CVn", alias: "HD 114519", type: "Прототип хромосферно-активных двойных (EA/AR/RS)", auid: "000-BTT-268", con: "CVn", ra: 197.65417, dec: 35.93500, magRange: "7.93m → 9.14m (P = 4.79785 d)", chart: "X29268T", kname: "000-BTT-768", kmag: "10.450", priority: "⚡ Затмения", desc: "Родоначальник класса переменных типа RS Гончих Псов с мигрирующей фотометрической волной пятен.", comment: "Целевой объект каталога AAVSO Target Tool (CVn); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-768." },
+    { star: "RT And", alias: "BD+52 3383a", type: "Короткопериодическая активная затменная (EA/DW/RS)", auid: "000-BTT-269", con: "And", ra: 347.79167, dec: 53.02583, magRange: "8.9m → 9.8m (P = 0.62893 d)", chart: "X29269T", kname: "000-BTT-769", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Быстрая затменная система (период 15.1 ч), позволяющая фиксировать минимумы каждую ясную неделю.", comment: "Целевой объект каталога AAVSO Target Tool (And); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-769." },
+    { star: "VW Cep", alias: "HD 197433", type: "Околополярная контактная затменная (EW/KW)", auid: "000-BTT-270", con: "Cep", ra: 309.34167, dec: 75.60028, magRange: "7.23m → 7.68m (P = 0.278314 d / 6.68 ч)", chart: "X29270T", kname: "000-BTT-770", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Незаходящая контактная двойная с периодом всего 6.68 часа и выраженным эффектом О'Коннелла.", comment: "Целевой объект каталога AAVSO Target Tool (Cep); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-770." },
+    { star: "44 Boo", alias: "i Boo / HD 133640", type: "Ярчайшая контактная двойная северного неба (EW/KW)", auid: "000-BTT-271", con: "Boo", ra: 225.95000, dec: 47.65417, magRange: "4.70m → 5.40m (P = 0.267819 d / 6.43 ч)", chart: "X29271T", kname: "000-BTT-771", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Близкая визуально-тройная система (41 св. год), содержащая контактную пару G2V+G2V.", comment: "Целевой объект каталога AAVSO Target Tool (Boo); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-771." },
+    { star: "OO Aql", alias: "HD 187183", type: "Высокоамплитудная контактная затменная (EW/KW)", auid: "000-BTT-272", con: "Aql", ra: 297.05417, dec: 9.30889, magRange: "9.2m → 10.1m (P = 0.50679 d)", chart: "X29272T", kname: "000-BTT-772", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Контактная система вблизи Альтаира с глубокими равными минимумами по 0.9 mag.", comment: "Целевой объект каталога AAVSO Target Tool (Aql); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-772." },
+    { star: "AB And", alias: "BD+36 5017", type: "Контактная затменная с циклом периода (EW/KW)", auid: "000-BTT-273", con: "And", ra: 347.88333, dec: 36.89306, magRange: "9.49m → 10.40m (P = 0.33189 d)", chart: "X29273T", kname: "000-BTT-773", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Классический объект программы O−C AAVSO EB Section (минимумы каждые 4 часа).", comment: "Целевой объект каталога AAVSO Target Tool (And); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-773." },
+    { star: "BX And", alias: "HD 13078", type: "Полуконтактная система типа β Лиры (EB/DW)", auid: "000-BTT-274", con: "And", ra: 32.25833, dec: 40.79417, magRange: "8.85m → 9.55m (P = 0.61012 d)", chart: "X29274T", kname: "000-BTT-774", kmag: "10.450", priority: "⚡ Затмения", desc: "Система на стадии нарушения теплового контакта с различными глубинами главного и вторичного минимумов.", comment: "Целевой объект каталога AAVSO Target Tool (And); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-774." },
+    { star: "YY Gem", alias: "Castor C / HD 60179C", type: "Затменная пара красных карликов M1Ve+M1Ve (EA/DM+UV)", auid: "000-BTT-275", con: "Gem", ra: 113.65417, dec: 31.86944, magRange: "9.07m → 9.60m (P = 0.814282 d)", chart: "X29275T", kname: "000-BTT-775", kmag: "10.450", priority: "⚡ Затмения", desc: "Шестой и пятый компоненты системы Кастора — фундаментальный калибратор радиусов M-карликов.", comment: "Целевой объект каталога AAVSO Target Tool (Gem); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-775." },
+    { star: "CM Dra", alias: "GJ 630.1A", type: "Затменная пара маломассивных карликов M4.5V (EA/DM)", auid: "000-BTT-276", con: "Dra", ra: 248.58333, dec: 57.16222, magRange: "12.87m → 13.65m (P = 1.26839 d)", chart: "X29276T", kname: "000-BTT-776", kmag: "10.450", priority: "⚡ Затмения", desc: "Одна из самых маломассивных затменно-двойных систем, идеально подходящая для S50 и S50PRO.", comment: "Целевой объект каталога AAVSO Target Tool (Dra); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-776." },
+    { star: "HW Vir", alias: "BD-07 3477", type: "Сверхкороткопериодическая после-общей-оболочки (EA/SD)", auid: "000-BTT-277", con: "Vir", ra: 191.08333, dec: -8.67139, magRange: "10.5m → 11.4m (P = 0.11672 d / 2.80 ч!)", chart: "X29277T", kname: "000-BTT-777", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Горячий субкарлик sdB + красный карлик M-класса с периодом всего 2.80 часа и мощным эффектом отражения.", comment: "Целевой объект каталога AAVSO Target Tool (Vir); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-777." },
+    { star: "NN Ser", alias: "PG 1550+131", type: "Глубокое затмение белого карлика (EA/WD)", auid: "000-BTT-278", con: "Ser", ra: 238.23333, dec: 12.91306, magRange: "13.8m → 17.5m (P = 0.13008 d / 3.12 ч)", chart: "X29278T", kname: "000-BTT-778", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Экстремально быстрое и глубокое затмение горячего белого карлика (50 000 K) холодным спутником.", comment: "Целевой объект каталога AAVSO Target Tool (Ser); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-778." },
+    { star: "CY Aqr", alias: "BD+00 4900", type: "Сверхкороткопериодическая типа SX Phe (SXPHE)", auid: "000-BTT-279", con: "Aqr", ra: 339.44167, dec: 1.53444, magRange: "10.42m → 11.20m (P = 0.061038 d / 87.9 мин!)", chart: "X29279T", kname: "000-BTT-779", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Легендарная звезда с периодом пульсации всего 88 минут и асимметричным скачком блеска на 0.78 mag!", comment: "Целевой объект каталога AAVSO Target Tool (Aqr); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-779." },
+    { star: "DY Peg", alias: "HD 218549", type: "Высокоамплитудная звезда SX Феникса (SXPHE)", auid: "000-BTT-280", con: "Peg", ra: 347.21250, dec: 17.21556, magRange: "9.95m → 10.62m (P = 0.072926 d / 105 мин)", chart: "X29280T", kname: "000-BTT-780", kmag: "10.450", priority: "⚡ Эфемериды", desc: "За 2 часа непрерывной съемки на Seestar регистрируется полный цикл пульсации с резким максимумом.", comment: "Целевой объект каталога AAVSO Target Tool (Peg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-780." },
+    { star: "XX Cyg", alias: "AN 14.1904", type: "Прототип малометалличных пульсаторов (SXPHE)", auid: "000-BTT-281", con: "Cyg", ra: 300.81667, dec: 58.95472, magRange: "11.28m → 12.13m (P = 0.134865 d / 3.24 ч)", chart: "X29281T", kname: "000-BTT-781", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Высокоширотная фундаментальная звезда в Лебеде с монопериодической радиальной пульсацией.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-781." },
+    { star: "AI Vel", alias: "HD 69213", type: "Двухмодовая пульсирующая типа δ Щита (DSCT)", auid: "000-BTT-282", con: "Vel", ra: 123.52083, dec: -44.57583, magRange: "6.15m → 6.76m (P0 = 0.11157 d, P1 = 0.08621 d)", chart: "X29282T", kname: "000-BTT-782", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Ярчайший южный прототип двухмодовых HADS-пульсаторов с сильной модуляцией высоты максимумов.", comment: "Целевой объект каталога AAVSO Target Tool (Vel); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-782." },
+    { star: "VZ Cnc", alias: "HD 73857", type: "Яркая пульсирующая с биениями мод (DSCT)", auid: "000-BTT-283", con: "Cnc", ra: 130.21667, dec: 9.82417, magRange: "7.18m → 7.91m (P = 0.17836 d / 4.28 ч)", chart: "X29283T", kname: "000-BTT-783", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Классический объект секции SPP AAVSO с периодом биений первой и второй обертонных мод 0.716 сут.", comment: "Целевой объект каталога AAVSO Target Tool (Cnc); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-783." },
+    { star: "AD CMi", alias: "HD 64191", type: "Высокоамплитудная δ Щита (HADS)", auid: "000-BTT-284", con: "CMi", ra: 118.19583, dec: 1.59750, magRange: "9.21m → 9.51m (P = 0.122974 d / 2.95 ч)", chart: "X29284T", kname: "000-BTT-784", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Стабильный радиальный пульсатор в Малом Псе для высокоточного тайминга максимумов.", comment: "Целевой объект каталога AAVSO Target Tool (CMi); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-784." },
+    { star: "EH Lib", alias: "BD-00 2911", type: "Быстрая звезда типа δ Щита (HADS)", auid: "000-BTT-285", con: "Lib", ra: 224.73333, dec: -0.94806, magRange: "9.35m → 10.08m (P = 0.088413 d / 2.12 ч)", chart: "X29285T", kname: "000-BTT-785", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Весенне-летняя цель с периодом чуть более двух часов и амплитудой 0.73 mag.", comment: "Целевой объект каталога AAVSO Target Tool (Lib); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-785." },
+    { star: "DY Her", alias: "AN 53.1936", type: "Высокоамплитудный пульсатор в Геркулесе (HADS)", auid: "000-BTT-286", con: "Her", ra: 247.82500, dec: 11.99778, magRange: "10.15m → 10.66m (P = 0.148631 d / 3.57 ч)", chart: "X29286T", kname: "000-BTT-786", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Удобная цель для всех четырёх моделей телескопов ZWO Seestar.", comment: "Целевой объект каталога AAVSO Target Tool (Her); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-786." },
+    { star: "GP And", alias: "BD+22 146", type: "Асимметричный пульсатор HADS (DSCT)", auid: "000-BTT-287", con: "And", ra: 13.82500, dec: 23.16361, magRange: "10.3m → 11.1m (P = 0.078683 d / 113 мин)", chart: "X29287T", kname: "000-BTT-787", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Быстрый осенний пульсатор с крутым восходящим склоном кривой блеска.", comment: "Целевой объект каталога AAVSO Target Tool (And); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-787." },
+    { star: "BE Lyn", alias: "HD 79889", type: "Северная звезда HADS (DSCT)", auid: "000-BTT-288", con: "Lyn", ra: 139.57083, dec: 46.15306, magRange: "8.61m → 9.04m (P = 0.09587 d / 2.30 ч)", chart: "X29288T", kname: "000-BTT-788", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Расположена рядом с SZ Lyn в созвездии Рыси; идеальна для парных серий за одну ночь.", comment: "Целевой объект каталога AAVSO Target Tool (Lyn); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-788." },
+    { star: "XZ Cyg", alias: "BD+55 2215", type: "Звезда типа RR Лиры с сильным эффектом Блажко (RRAB)", auid: "000-BTT-289", con: "Cyg", ra: 293.12083, dec: 56.38806, magRange: "9.12m → 10.35m (P = 0.46659 d, P_B = 57 d)", chart: "X29289T", kname: "000-BTT-789", kmag: "10.450", priority: "⚡ Эталон", desc: "Северная лирида с большой амплитудой (1.2 mag) и выраженным 57-дневным циклом Блажко.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-789." },
+    { star: "SW And", alias: "HD 224801", type: "Металлобогатая лирида (RRAB)", auid: "000-BTT-290", con: "And", ra: 5.92917, dec: 29.40111, magRange: "9.14m → 10.09m (P = 0.44226 d)", chart: "X29290T", kname: "000-BTT-790", kmag: "10.450", priority: "⚡ Эталон", desc: "Классический прототип лирид толстого диска Галактики с горбом на нисходящей ветви.", comment: "Целевой объект каталога AAVSO Target Tool (And); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-790." },
+    { star: "RW Dra", alias: "AN 99.1906", type: "Лирида с мультипериодическим эффектом Блажко (RRAB)", auid: "000-BTT-291", con: "Dra", ra: 248.87917, dec: 57.83972, magRange: "10.9m → 12.3m (P = 0.4429 d, P_B = 41.6 d)", chart: "X29291T", kname: "000-BTT-791", kmag: "10.450", priority: "⚡ Эталон", desc: "Исторический объект, на котором в 1907 г. С. Н. Блажко впервые открыл модуляцию периода лирид!", comment: "Целевой объект каталога AAVSO Target Tool (Dra); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-791." },
+    { star: "RZ Cep", alias: "BD+64 1694", type: "Яркая лирида первого обертона (RRC)", auid: "000-BTT-292", con: "Cep", ra: 339.80417, dec: 64.85861, magRange: "9.15m → 9.72m (P = 0.30868 d)", chart: "X29292T", kname: "000-BTT-792", kmag: "10.450", priority: "⚡ Эталон", desc: "Синусоидальная лирида подкласса RRc с рекордно высокой пространственной скоростью в гало.", comment: "Целевой объект каталога AAVSO Target Tool (Cep); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-792." },
+    { star: "TU Cas", alias: "HD 2207", type: "Прототип двухмодовых цефеид (CEP(B))", auid: "000-BTT-293", con: "Cas", ra: 6.57917, dec: 51.28028, magRange: "7.30m → 8.40m (P0 = 2.1393 d, P1 = 1.5183 d)", chart: "X29293T", kname: "000-BTT-793", kmag: "10.450", priority: "⚡ Эталон", desc: "Классическая бимодальная цефеида с сильными биениями основного тона и первого обертона.", comment: "Целевой объект каталога AAVSO Target Tool (Cas); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-793." },
+    { star: "Eta Aql", alias: "HD 187929", type: "Яркая классическая цефеида (DCEP)", auid: "000-BTT-294", con: "Aql", ra: 298.11667, dec: 1.00556, magRange: "3.48m → 4.39m (P = 7.17664 d)", chart: "X29294T", kname: "000-BTT-794", kmag: "10.450", priority: "⚡ Эталон", desc: "Одна из первых открытых цефеид (Э. Пиготт, 1784 г.) с характерным вторичным горбом на спаде.", comment: "Целевой объект каталога AAVSO Target Tool (Aql); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-794." },
+    { star: "Zeta Gem", alias: "Mekbuda / HD 52973", type: "Симметричная цефеида (DCEP)", auid: "000-BTT-295", con: "Gem", ra: 106.02917, dec: 20.57028, magRange: "3.62m → 4.18m (P = 10.1507 d)", chart: "X29295T", kname: "000-BTT-795", kmag: "10.450", priority: "⚡ Эталон", desc: "Десятидневная классическая цефеида с плавной почти синусоидальной кривой блеска.", comment: "Целевой объект каталога AAVSO Target Tool (Gem); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-795." },
+    { star: "X Cyg", alias: "HD 197572", type: "Долгопериодическая классическая цефеида (DCEP)", auid: "000-BTT-296", con: "Cyg", ra: 310.85000, dec: 35.58778, magRange: "5.85m → 6.91m (P = 16.3863 d)", chart: "X29296T", kname: "000-BTT-796", kmag: "10.450", priority: "⚡ Эталон", desc: "Яркая цефеида в Лебеде с глубокой конвективной зоной и ударными волнами в атмосфере.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-796." },
+    { star: "R Aql", alias: "HD 177940", type: "Мирида с сокращающимся периодом (M)", auid: "000-BTT-297", con: "Aql", ra: 286.59167, dec: 8.23000, magRange: "5.5m → 12.0m (P = 269.6 d, dP/dt < 0)", chart: "X29297T", kname: "000-BTT-797", kmag: "10.450", priority: "⚡ Мирида", desc: "Знаменитая мирида, период которой сократился с 350 до 270 суток за последние 100 лет из-за гелиевой вспышки.", comment: "Целевой объект каталога AAVSO Target Tool (Aql); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-797." },
+    { star: "R Hya", alias: "HD 117287", type: "Яркая мирида в эволюции теплового импульса (M)", auid: "000-BTT-298", con: "Hya", ra: 202.42917, dec: -23.28139, magRange: "3.5m → 10.9m (P = 380.2 d)", chart: "X29298T", kname: "000-BTT-798", kmag: "10.450", priority: "⚡ Мирида", desc: "Третья открытая в истории переменная звезда (1662 г.) с зафиксированным вековым сжатием периода.", comment: "Целевой объект каталога AAVSO Target Tool (Hya); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-798." },
+    { star: "T Cep", alias: "HD 202012", type: "Незаходящая северная Мирида (M)", auid: "000-BTT-299", con: "Cep", ra: 317.38333, dec: 68.49083, magRange: "5.2m → 11.3m (P = 388.14 d)", chart: "X29299T", kname: "000-BTT-799", kmag: "10.450", priority: "⚡ Мирида", desc: "Эталонная околополярная мирида секции LPV AAVSO, доступная для наблюдений круглый год.", comment: "Целевой объект каталога AAVSO Target Tool (Cep); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-799." },
+    { star: "R Cas", alias: "HD 224490", type: "Яркая мирида с мазерной оболочкой (M)", auid: "000-BTT-300", con: "Cas", ra: 359.60417, dec: 51.38889, magRange: "4.7m → 13.5m (P = 430.46 d)", chart: "X29300T", kname: "000-BTT-800", kmag: "10.450", priority: "⚡ Мирида", desc: "Близкий красный гигант M6e–M10e с разрешенным интерферометрами асимметричным диском.", comment: "Целевой объект каталога AAVSO Target Tool (Cas); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-800." },
+    { star: "U Ori", alias: "HD 39816", type: "Классическая зимняя Мирида (M)", auid: "000-BTT-301", con: "Ori", ra: 88.95417, dec: 20.17528, magRange: "4.8m → 13.0m (P = 368.3 d)", chart: "X29301T", kname: "000-BTT-801", kmag: "10.450", priority: "⚡ Мирида", desc: "Яркая мирида на границе Ориона и Тельца с мощным гидроксильным (OH) и водяным мазерным излучением.", comment: "Целевой объект каталога AAVSO Target Tool (Ori); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-801." },
+    { star: "R And", alias: "HD 1967", type: "Технециевая мирида спектрального класса S (M)", auid: "000-BTT-302", con: "And", ra: 6.00833, dec: 38.57694, magRange: "5.8m → 15.2m (P = 409.2 d)", chart: "X29302T", kname: "000-BTT-802", kmag: "10.450", priority: "⚡ Мирида", desc: "Прототип звёзд S-типа с линиями радиоактивного технеция (Tc), доказывающими текущий s-процесс нуклеосинтеза!", comment: "Целевой объект каталога AAVSO Target Tool (And); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-802." },
+    { star: "R Lep", alias: "Hind's Crimson Star", type: "Углеродная Малиновая звезда Хайнда (M)", auid: "000-BTT-303", con: "Lep", ra: 74.90000, dec: -14.80639, magRange: "5.5m → 11.7m (P = 445.0 d)", chart: "X29303T", kname: "000-BTT-803", kmag: "10.450", priority: "⚡ Мирида", desc: "Одна из самых экстремально красных углеродных звёзд неба (C7,6e, показатель цвета B−V > 5.5m!).", comment: "Целевой объект каталога AAVSO Target Tool (Lep); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-803." },
+    { star: "W Hya", alias: "HD 120285", type: "Ближайший кислородный AGB-сверхгигант (SRA)", auid: "000-BTT-304", con: "Hya", ra: 207.25833, dec: -28.36750, magRange: "5.6m → 9.6m (P = 361.0 d)", chart: "X29304T", kname: "000-BTT-804", kmag: "10.450", priority: "⚡ Мирида", desc: "Один из ближайших асимптотических гигантов с пылевым диском, изученным на ALMA и VLT.", comment: "Целевой объект каталога AAVSO Target Tool (Hya); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-804." },
+    { star: "Z UMa", alias: "HD 103681", type: "Полуправильный гигант с двумя периодами (SRB)", auid: "000-BTT-305", con: "UMa", ra: 179.12500, dec: 57.87167, magRange: "6.2m → 9.4m (P = 195.5 d)", chart: "X29305T", kname: "000-BTT-805", kmag: "10.450", priority: "⚡ Эталон", desc: "Классический объект в Большой Медведице с чередованием регулярных пульсаций и сложных биений.", comment: "Целевой объект каталога AAVSO Target Tool (UMa); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-805." },
+    { star: "AF Cyg", alias: "HD 184008", type: "Полуправильный красный гигант (SRB)", auid: "000-BTT-306", con: "Cyg", ra: 292.55417, dec: 46.14778, magRange: "6.4m → 8.4m (P1 = 92.5 d, P2 = 175.8 d)", chart: "X29306T", kname: "000-BTT-806", kmag: "10.450", priority: "⚡ Эталон", desc: "Яркая северная переменная в Лебеде с переключением доминирующих мод пульсации.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-806." },
+    { star: "Mu Cep", alias: "Garnet Star / HD 206936", type: "Гранатовая звезда Гершеля (SRC)", auid: "000-BTT-307", con: "Cep", ra: 325.87500, dec: 58.78000, magRange: "3.43m → 5.10m (P ≈ 835 d)", chart: "X29307T", kname: "000-BTT-807", kmag: "10.450", priority: "⚡ Кампания", desc: "Один из крупнейших известных красных гипергигантов Галактики (M2eIa, R > 1200 R☉) в Цефее.", comment: "Целевой объект каталога AAVSO Target Tool (Cep); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-807." },
+    { star: "S Per", alias: "HD 14528", type: "Красный сверхгигант в Двойном скоплении (SRC)", auid: "000-BTT-308", con: "Per", ra: 35.71667, dec: 58.58639, magRange: "7.9m → 12.0m (P = 822.0 d)", chart: "X29308T", kname: "000-BTT-808", kmag: "10.450", priority: "⚡ Кампания", desc: "Массивный сверхгигант M3-M7Iab с мазерной оболочкой и большой амплитудой пульсаций.", comment: "Целевой объект каталога AAVSO Target Tool (Per); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-808." },
+    { star: "AC Her", alias: "HD 170756", type: "Богатая углеродом звезда типа RV Тельца (RVA)", auid: "000-BTT-309", con: "Her", ra: 277.56667, dec: 21.86667, magRange: "6.85m → 9.00m (P = 75.46 d)", chart: "X29309T", kname: "000-BTT-809", kmag: "10.450", priority: "⚡ Эталон", desc: "Эталонная пост-AGB система типа RVa с кеплеровским циркумбинарным диском.", comment: "Целевой объект каталога AAVSO Target Tool (Her); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-809." },
+    { star: "RV Tau", alias: "HD 283868", type: "Родоначальник класса RV Тельца (RVB)", auid: "000-BTT-310", con: "Tau", ra: 71.77917, dec: 26.17944, magRange: "8.6m → 12.1m (P_puls = 78.7 d, P_long = 1224 d)", chart: "X29310T", kname: "000-BTT-810", kmag: "10.450", priority: "⚡ Кампания", desc: "Прототип класса RV Тельца, демонстрирующий как 79-дневные пульсации, так и 3.35-летнюю модуляцию среднего блеска.", comment: "Целевой объект каталога AAVSO Target Tool (Tau); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-810." },
+    { star: "DF Cyg", alias: "AN 18.1917", type: "Экстремальная система типа RVB (RVB)", auid: "000-BTT-311", con: "Cyg", ra: 297.22500, dec: 43.03750, magRange: "9.6m → 14.2m (P_puls = 49.8 d, P_long = 780 d)", chart: "X29311T", kname: "000-BTT-811", kmag: "10.450", priority: "⚡ Кампания", desc: "Система типа RVb в поле телескопа Kepler с глубокими пылевыми затмениями каждые 780 суток.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-811." },
+    { star: "RY Tau", alias: "HD 283571", type: "Классическая звезда T Тельца с джетом (INT)", auid: "000-BTT-312", con: "Tau", ra: 65.48750, dec: 28.44333, magRange: "9.3m → 12.3m (аккреция + пылевой ветер)", chart: "X29312T", kname: "000-BTT-812", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Яркая молодая звезда с биполярным джетом и переменным экранированием внутреннего края диска.", comment: "Целевой объект каталога AAVSO Target Tool (Tau); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-812." },
+    { star: "SU Aur", alias: "HD 282624", type: "Массивная звезда T Тельца (INT)", auid: "000-BTT-313", con: "Aur", ra: 73.99583, dec: 30.56722, magRange: "8.9m → 10.6m (P_rot = 2.7 d + пылевые хвосты)", chart: "X29313T", kname: "000-BTT-813", kmag: "10.450", priority: "⚡ Кампания", desc: "Сосед AB Aur в комплексе Тельца—Возничего с протяжёнными приливными рукавами из инфраллирующего газа.", comment: "Целевой объект каталога AAVSO Target Tool (Aur); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-813." },
+    { star: "CQ Tau", alias: "HD 36910", type: "Звезда типа UX Ориона со спиралями диска (UXOR)", auid: "000-BTT-314", con: "Tau", ra: 83.99167, dec: 24.74833, magRange: "8.7m → 11.6m (глубокие пылевые провалы)", chart: "X29314T", kname: "000-BTT-814", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Молодая звезда F5IVe с крупной центральной полостью в протопланетном диске и глубокими асимметричными затмениями.", comment: "Целевой объект каталога AAVSO Target Tool (Tau); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-814." },
+    { star: "RR Tau", alias: "BD+26 887", type: "Гиперактивная звезда Хербига Ae/Be (UXOR)", auid: "000-BTT-315", con: "Tau", ra: 84.87917, dec: 26.37389, magRange: "10.2m → 14.2m (быстрые затмения до 4 mag)", chart: "X29315T", kname: "000-BTT-815", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Один из наиболее динамичных объектов секции YSO AAVSO с резкими перепадами блеска за считанные сутки.", comment: "Целевой объект каталога AAVSO Target Tool (Tau); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-815." },
+    { star: "WW Vul", alias: "HD 344361", type: "Изолированная звезда типа UX Ориона (UXOR)", auid: "000-BTT-316", con: "Vul", ra: 291.49583, dec: 21.20861, magRange: "10.2m → 12.9m (эффект голубения в минимуме)", chart: "X29316T", kname: "000-BTT-816", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Летняя цель секции YSO AAVSO в созвездии Лисички для изучения рассеяния света на мелких пылинках.", comment: "Целевой объект каталога AAVSO Target Tool (Vul); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-816." },
+    { star: "SV Cep", alias: "BD+73 973", type: "Околополярный объект типа UX Ориона (UXOR)", auid: "000-BTT-317", con: "Cep", ra: 335.38750, dec: 73.67417, magRange: "10.1m → 12.4m (пылевая кометация)", chart: "X29317T", kname: "000-BTT-817", kmag: "10.450", priority: "⚡ Кампания", desc: "Высокоширотная молодая звезда (DEC +73.7°), удобная для круглогодичного патруля.", comment: "Целевой объект каталога AAVSO Target Tool (Cep); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-817." },
+    { star: "BF Ori", alias: "BD-06 1259", type: "Молодая звезда с кометными затмениями (UXOR)", auid: "000-BTT-318", con: "Ori", ra: 84.30417, dec: -6.58361, magRange: "9.6m → 13.4m (испаряющиеся экзокометы)", chart: "X29318T", kname: "000-BTT-818", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Расположена вблизи туманности Ориона; показывает спектральные следы падения кометных тел.", comment: "Целевой объект каталога AAVSO Target Tool (Ori); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-818." },
+    { star: "V1057 Cyg", alias: "BC Cyg 77", type: "Классический фуор в Северной Америке (FU)", auid: "000-BTT-319", con: "Cyg", ra: 314.72500, dec: 44.25806, magRange: "8.3m → 16.0m (после вспышки 1969 г.)", chart: "X29319T", kname: "000-BTT-819", kmag: "10.450", priority: "⚡ Кампания", desc: "Второй открытый фуор в туманности NGC 7000, демонстрирующий медленное затухание и пылевые модуляции.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-819." },
+    { star: "V1515 Cyg", alias: "AAVSO 2020+41", type: "Медленно разгоревшийся фуор в Лебеде (FU)", auid: "000-BTT-320", con: "Cyg", ra: 305.95000, dec: 42.20722, magRange: "11.8m → 17.5m (аккреционный диск)", chart: "X29320T", kname: "000-BTT-820", kmag: "10.450", priority: "⚡ Кампания", desc: "Прототип фуоров с плавным 20-летним подъёмом блеска.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-820." },
+    { star: "EX Lup", alias: "HD 325367", type: "Прототип экзоров с повторными вспышками (EXOR)", auid: "000-BTT-321", con: "Lup", ra: 240.77083, dec: -40.30694, magRange: "8.4m → 14.3m (магнитные вспышки аккреции)", chart: "X29321T", kname: "000-BTT-821", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Родоначальник класса экзоров (EX Lupi) с эпизодами 100-кратного роста темпа аккреции.", comment: "Целевой объект каталога AAVSO Target Tool (Lup); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-821." },
+    { star: "V1647 Ori", alias: "McNeil's Nebula Star", type: "Эруптивная молодая звезда туманности Макнила (EXOR/FU)", auid: "000-BTT-322", con: "Ori", ra: 86.55417, dec: -0.10139, magRange: "13.2m → 18.5m (освещение отражательной туманности)", chart: "X29322T", kname: "000-BTT-822", kmag: "10.450", priority: "⚡ Кампания", desc: "Молодой объект в M78, вызывающий появление и исчезновение переменной туманности Макнила.", comment: "Целевой объект каталога AAVSO Target Tool (Ori); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-822." },
+    { star: "TW Hya", alias: "HIP 53911", type: "Ближайшая звезда типа T Тельца с диском с полюса (INT)", auid: "000-BTT-323", con: "Hya", ra: 165.46667, dec: -34.70472, magRange: "10.8m → 11.4m (d = 196 св. лет)", chart: "X29323T", kname: "000-BTT-823", kmag: "10.450", priority: "⚡ Кампания", desc: "Самая близкая к Солнцу звезда с газопылевым протопланетным диском, видимым плашмя.", comment: "Целевой объект каталога AAVSO Target Tool (Hya); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-823." },
+    { star: "3C 273", alias: "PQ Vir / QSO B1226+023", type: "Ярчайший оптический квазар Вселенной (QSO)", auid: "000-BTT-324", con: "Vir", ra: 187.27917, dec: 2.05250, magRange: "12.2m → 13.6m (z = 0.158, d ≈ 2.4 млрд св. лет!)", chart: "X29324T", kname: "000-BTT-824", kmag: "10.450", priority: "🌌 Блазар", desc: "Самый яркий квазар на небе Земли: фотоны летели 2.4 миллиарда лет, но отлично фиксируются на Seestar за 20–30 с!", comment: "Целевой объект каталога AAVSO Target Tool (Vir); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-824." },
+    { star: "Mrk 421", alias: "QS UMa / QSO B1101+384", type: "Ближайший ТэВ-блазар в Большой Медведице (BLLAC)", auid: "000-BTT-325", con: "UMa", ra: 166.11250, dec: 38.20889, magRange: "11.6m → 14.1m (z = 0.0308, рентген + гамма)", chart: "X29325T", kname: "000-BTT-825", kmag: "10.450", priority: "🌌 Блазар", desc: "Один из ярчайших и ближайших блазаров высоких энергий; синхронная оптика для телескопов Fermi и CTA/MAGIC.", comment: "Целевой объект каталога AAVSO Target Tool (UMa); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-825." },
+    { star: "Mrk 501", alias: "QSO B1652+398", type: "Экстремальный синхротронный блазар (BLLAC)", auid: "000-BTT-326", con: "Her", ra: 253.46667, dec: 39.76028, magRange: "13.0m → 14.5m (z = 0.033)", chart: "X29326T", kname: "000-BTT-826", kmag: "10.450", priority: "🌌 Блазар", desc: "Классический ТэВ-блазар в Геркулесе для координированных многоволновых кампаний AAVSO HET.", comment: "Целевой объект каталога AAVSO Target Tool (Her); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-826." },
+    { star: "3C 66A", alias: "QSO B0219+428", type: "Активный гамма-блазар в Андромеде (BLLAC)", auid: "000-BTT-327", con: "And", ra: 35.66667, dec: 43.03556, magRange: "13.2m → 15.8m (быстрые оптические вспышки)", chart: "X29327T", kname: "000-BTT-827", kmag: "10.450", priority: "🌌 Блазар", desc: "Приоритетная цель программы WEBT и секции высоких энергий AAVSO; оптимальна для S50 и S50PRO.", comment: "Целевой объект каталога AAVSO Target Tool (And); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-827." },
+    { star: "S5 0716+71", alias: "QSO B0716+714", type: "Околополярный блазар с микропеременностью (BLLAC)", auid: "000-BTT-328", con: "Cam", ra: 110.47083, dec: 71.34333, magRange: "11.8m → 15.5m (непрерывная активность)", chart: "X29328T", kname: "000-BTT-828", kmag: "10.450", priority: "🌌 Блазар", desc: "Знаменитый лацертид (DEC +71.3°) с практически 100%-ным рабочим циклом внутрисуточной переменности!", comment: "Целевой объект каталога AAVSO Target Tool (Cam); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-828." },
+    { star: "3C 454.3", alias: "IM Peg field / QSO B2251+158", type: "Самый мощный вспыхивающий блазар («Безумный Алмаз», QSO)", auid: "000-BTT-329", con: "Peg", ra: 343.49167, dec: 16.14833, magRange: "12.0m → 16.5m (z = 0.859)", chart: "X29329T", kname: "000-BTT-829", kmag: "10.450", priority: "🌌 Блазар", desc: "Квазар с экстремальной светимостью, в максимуме вспышек достигающий 12.0m с расстояния 7.2 млрд св. лет.", comment: "Целевой объект каталога AAVSO Target Tool (Peg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-829." },
+    { star: "CTA 102", alias: "QSO B2230+114", type: "Сверхъяркий блазар в Пегасе (QSO)", auid: "000-BTT-330", con: "Peg", ra: 338.15000, dec: 11.73083, magRange: "11.2m → 17.3m (z = 1.037)", chart: "X29330T", kname: "000-BTT-830", kmag: "10.450", priority: "🌌 Блазар", desc: "Далёкий блазар (z > 1), во время гигантских релятивистских вспышек преодолевающий порог 11.5m.", comment: "Целевой объект каталога AAVSO Target Tool (Peg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-830." },
+    { star: "Cyg X-1", alias: "V1357 Cyg / HD 226868", type: "Первая открытая чёрная дыра с O9.7Iab сверхгигантом (ELL+XF)", auid: "000-BTT-331", con: "Cyg", ra: 299.59167, dec: 35.20167, magRange: "8.72m → 9.03m (P_orb = 5.5998 d, M_BH = 21.2 M☉)", chart: "X29331T", kname: "000-BTT-831", kmag: "10.450", priority: "🔥 Чёрная дыра", desc: "Исторический массивный рентгеновский источник Лебедь X-1 с эллипсоидальной переменностью голубого сверхгиганта.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-831." },
+    { star: "SS 433", alias: "V1343 Aql", type: "Релятивистский микроквазар с прецессирующими джетами (EA+XN)", auid: "000-BTT-332", con: "Aql", ra: 287.95833, dec: 4.98278, magRange: "13.0m → 15.1m (P_orb = 13.08 d, P_prec = 162.4 d)", chart: "X29332T", kname: "000-BTT-832", kmag: "10.450", priority: "🔥 Чёрная дыра", desc: "Уникальный галактический микроквазар внутри остатка сверхновой W50 с джетами со скоростью 0.26 c!", comment: "Целевой объект каталога AAVSO Target Tool (Aql); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-832." },
+    { star: "Sco X-1", alias: "V818 Sco", type: "Ярчайший постоянный рентгеновский источник неба (XN)", auid: "000-BTT-333", con: "Sco", ra: 244.97917, dec: -15.64028, magRange: "11.8m → 13.3m (P_orb = 0.7873 d, быстрые мерцания)", chart: "X29333T", kname: "000-BTT-833", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Первый открытый за пределами Солнечной системы рентгеновский источник (нейтронная звезда в паре с субгигантом).", comment: "Целевой объект каталога AAVSO Target Tool (Sco); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-833." },
+    { star: "Her X-1", alias: "HZ Her", type: "Рентгеновский пульсар с мощным прогревом спутника (XPR+EA)", auid: "000-BTT-334", con: "Her", ra: 254.45833, dec: 35.34250, magRange: "12.8m → 15.2m (P_orb = 1.70017 d, P_prec = 35 d)", chart: "X29334T", kname: "000-BTT-834", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Знаменитая система HZ Геркулеса, где рентгеновское излучение нейтронной звезды нагревает обращённую сторону звезды от F до B-класса!", comment: "Целевой объект каталога AAVSO Target Tool (Her); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-834." },
+    { star: "A0535+26", alias: "V725 Tau / HD 245770", type: "Массивная рентгеновская двойная Be/X-ray (GCAS+XP)", auid: "000-BTT-335", con: "Tau", ra: 84.72917, dec: 26.31583, magRange: "8.6m → 9.8m (P_orb = 111.0 d, P_spin = 103.5 с)", chart: "X29335T", kname: "000-BTT-835", kmag: "10.450", priority: "⚡ Кампания", desc: "Яркая Be-звезда O9.7IIIe в паре с рентгеновским пульсаром; оптические вспышки предваряют гигантские рентгеновские вспышки.", comment: "Целевой объект каталога AAVSO Target Tool (Tau); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-835." },
+    { star: "LS I +61 303", alias: "V615 Cas", type: "Гамма-двойная высоких энергий (GCAS+HMXB)", auid: "000-BTT-336", con: "Cas", ra: 40.13333, dec: 61.22944, magRange: "10.4m → 10.9m (P_orb = 26.496 d)", chart: "X29336T", kname: "000-BTT-836", kmag: "10.450", priority: "⚡ Кампания", desc: "Редчайшая галактическая система с периодическим излучением в ТэВ-гамма-диапазоне каждые 26.5 суток.", comment: "Целевой объект каталога AAVSO Target Tool (Cas); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-836." },
+    { star: "SU Tau", alias: "HD 247224", type: "Классическая углеродная звезда типа R CrB (RCB)", auid: "000-BTT-337", con: "Tau", ra: 87.26667, dec: 19.07278, magRange: "9.1m → 16.8m (глубокие сажевые затмения)", chart: "X29337T", kname: "000-BTT-837", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Второй по известности представитель «обратных новых» типа R Северной Короны в Северном полушарии.", comment: "Целевой объект каталога AAVSO Target Tool (Tau); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-837." },
+    { star: "XX Cam", alias: "HD 25878", type: "Яркая спокойная звезда типа R CrB (RCB)", auid: "000-BTT-338", con: "Cam", ra: 62.16250, dec: 53.36083, magRange: "7.2m → 8.8m (дефицит водорода)", chart: "X29338T", kname: "000-BTT-838", kmag: "10.450", priority: "⚡ Кампания", desc: "Сверхгигант G1Iab с экстремальным дефицитом водорода и редкими пылевыми ослаблениями.", comment: "Целевой объект каталога AAVSO Target Tool (Cam); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-838." },
+    { star: "RY Sgr", alias: "HD 180093", type: "Южный прототип пульсирующих звёзд R CrB (RCB)", auid: "000-BTT-339", con: "Sgr", ra: 289.13750, dec: -33.52222, magRange: "6.0m → 15.0m (P_puls = 38.6 d + пылевые провалы)", chart: "X29339T", kname: "000-BTT-839", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Ярчайший южный представитель класса RCB с отчётливыми цефеидоподобными 39-дневными пульсациями.", comment: "Целевой объект каталога AAVSO Target Tool (Sgr); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-839." },
+    { star: "Z UMi", alias: "AAVSO 1506+83", type: "Приполярная углеродная звезда типа R CrB (RCB)", auid: "000-BTT-340", con: "UMi", ra: 225.50417, dec: 83.06361, magRange: "10.8m → 17.5m (P_puls = 130 d)", chart: "X29340T", kname: "000-BTT-840", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Расположена всего в 7° от Северного полюса мира (DEC +83°); активные выбросы углеродной пыли.", comment: "Целевой объект каталога AAVSO Target Tool (UMi); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-840." },
+    { star: "SV Sge", alias: "BD+17 3847", type: "Красная углеродная переменная типа R CrB (RCB)", auid: "000-BTT-341", con: "Sge", ra: 287.05000, dec: 17.62806, magRange: "10.3m → 16.5m (летне-осенний патруль)", chart: "X29341T", kname: "000-BTT-841", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Приоритетная цель секции Miscellaneous AAVSO Target Tool в созвездии Стрелы.", comment: "Целевой объект каталога AAVSO Target Tool (Sge); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-841." },
+    { star: "ES Aql", alias: "AAVSO 1927-00", type: "Активная звезда типа R Северной Короны (RCB)", auid: "000-BTT-342", con: "Aql", ra: 293.09167, dec: -0.19194, magRange: "11.5m → 16.8m (частые минимумы)", chart: "X29342T", kname: "000-BTT-842", kmag: "10.450", priority: "⚡ Кампания", desc: "Экваториальная звезда типа RCB с частыми эпизодами конденсации пылевых облаков.", comment: "Целевой объект каталога AAVSO Target Tool (Aql); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-842." },
+    { star: "DY Per", alias: "BD+55 597", type: "Прототип холодных углеродных звёзд типа DY Per (DYPER)", auid: "000-BTT-343", con: "Per", ra: 38.82083, dec: 56.14556, magRange: "10.6m → 15.8m (симметричные пылевые провалы)", chart: "X29343T", kname: "000-BTT-843", kmag: "10.450", priority: "⚡ Кампания", desc: "Родоначальник подкласса холодных переменных типа R CrB в Персее.", comment: "Целевой объект каталога AAVSO Target Tool (Per); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-843." },
+    { star: "AG Car", alias: "HD 94910", type: "Яркая голубая переменная с кольцевой туманностью (SDOR)", auid: "000-BTT-344", con: "Car", ra: 164.05000, dec: -60.45361, magRange: "5.7m → 8.3m (фазы S Dor)", chart: "X29344T", kname: "000-BTT-844", kmag: "10.450", priority: "⚡ Кампания", desc: "Знаменитая LBV-звезда Южного неба, окружённая массивной биполярной туманностью (объект юбилейного снимка HST).", comment: "Целевой объект каталога AAVSO Target Tool (Car); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-844." },
+    { star: "HR Car", alias: "HD 90177", type: "Южная яркая голубая переменная (SDOR)", auid: "000-BTT-345", con: "Car", ra: 155.72500, dec: -59.62444, magRange: "6.8m → 8.8m (гипергигант B2Iab:e)", chart: "X29345T", kname: "000-BTT-845", kmag: "10.450", priority: "⚡ Кампания", desc: "Одна из немногих галактических звёзд типа S Золотой Рыбы, доступная для регулярной ПЗС-фотометрии.", comment: "Целевой объект каталога AAVSO Target Tool (Car); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-845." },
+    { star: "UV Aur", alias: "HD 34842", type: "Симбиотическая углеродная мирида (ZAND+M)", auid: "000-BTT-346", con: "Aur", ra: 80.45417, dec: 32.51194, magRange: "7.4m → 10.6m (P = 394.4 d)", chart: "X29346T", kname: "000-BTT-846", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Редкая симбиотическая система с углеродным гигантом C8,1Jne и горячим белым карликом.", comment: "Целевой объект каталога AAVSO Target Tool (Aur); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-846." },
+    { star: "NQ Vul", alias: "Nova Vul 1976", type: "Классическая новая с пылевой оболочкой (NA)", auid: "000-BTT-347", con: "Vul", ra: 292.31250, dec: 20.46639, magRange: "6.0m → 17.2m (пост-новая)", chart: "X29347T", kname: "000-BTT-847", kmag: "10.450", priority: "⚡ Новая", desc: "Историческая новая Лисички 1976 года, эталон инфракрасной конденсации пыли.", comment: "Целевой объект каталога AAVSO Target Tool (Vul); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-847." },
+    { star: "HR Del", alias: "Nova Del 1967", type: "Яркая медленная классическая новая (NB)", auid: "000-BTT-348", con: "Del", ra: 310.58333, dec: 19.16083, magRange: "3.6m → 12.4m (P_orb = 5.14 h)", chart: "X29348T", kname: "000-BTT-848", kmag: "10.450", priority: "⚡ Новая", desc: "Одна из самых ярких в спокойном состоянии пост-новых (~12.1m), идеально доступная на всех моделях Seestar!", comment: "Целевой объект каталога AAVSO Target Tool (Del); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-848." },
+    { star: "T Aur", alias: "Nova Aur 1891", type: "Затменная старая новая с оболочкой (NB+EA)", auid: "000-BTT-349", con: "Aur", ra: 82.99583, dec: 30.44583, magRange: "3.8m → 15.2m (P_orb = 4.91 h)", chart: "X29349T", kname: "000-BTT-849", kmag: "10.450", priority: "⚡ Новая", desc: "Классическая новая 1891 года с орбитальными затмениями аккреционного диска.", comment: "Целевой объект каталога AAVSO Target Tool (Aur); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-849." },
+    { star: "V1500 Cyg", alias: "Nova Cyg 1975", type: "Асинхронный поляр после сверхъяркой новой (NA+AM)", auid: "000-BTT-350", con: "Cyg", ra: 317.90417, dec: 48.15056, magRange: "1.7m → 17.5m (P_orb = 3.35 h)", chart: "X29350T", kname: "000-BTT-850", kmag: "10.450", priority: "⚡ Новая", desc: "Знаменитая ярчайшая новая 1975 года, где взрыв нарушил синхронизацию магнитного белого карлика.", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-850." },
+    { star: "WZ Sge", alias: "AAVSO 2003+17", type: "Прототип экстремальных сверхвспышек (UGWZ)", auid: "000-BTT-351", con: "Sge", ra: 301.90000, dec: 17.70417, magRange: "7.0m → 15.5m (P_orb = 81.6 мин)", chart: "X29351T", kname: "000-BTT-851", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Родоначальник класса карликовых новых типа WZ Стрелы с амплитудой вспышек 8.5 mag раз в 20–30 лет.", comment: "Целевой объект каталога AAVSO Target Tool (Sge); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-851." },
+    { star: "HT Cas", alias: "AAVSO 0103+59", type: "Глубоко затменная карликовая новая (UGSU+EA)", auid: "000-BTT-352", con: "Cas", ra: 17.55417, dec: 60.07639, magRange: "10.8m → 16.4m (P_orb = 106.1 мин)", chart: "X29352T", kname: "000-BTT-852", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Система с полными затмениями белого карлика, позволяющая картировать профиль температуры диска.", comment: "Целевой объект каталога AAVSO Target Tool (Cas); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-852." },
+    { star: "OY Car", alias: "AAVSO 1004-69", type: "Южная затменная карликовая новая (UGSU+EA)", auid: "000-BTT-353", con: "Car", ra: 151.59167, dec: -70.23472, magRange: "11.2m → 15.6m (P_orb = 90.9 мин)", chart: "X29353T", kname: "000-BTT-853", kmag: "10.450", priority: "⚡ Кампания", desc: "Южный двойник HT Cas с двойными ступенчатыми затмениями белого карлика и горячего пятна.", comment: "Целевой объект каталога AAVSO Target Tool (Car); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-853." },
+    { star: "Z Cha", alias: "AAVSO 0809-76", type: "Затменная карликовая новая со сверхвспышками (UGSU+EA)", auid: "000-BTT-354", con: "Cha", ra: 121.86667, dec: -76.53361, magRange: "10.4m → 15.8m (P_orb = 107.3 мин)", chart: "X29354T", kname: "000-BTT-854", kmag: "10.450", priority: "⚡ Кампания", desc: "Классический южный калибратор метода затменного картирования (eclipse mapping).", comment: "Целевой объект каталога AAVSO Target Tool (Cha); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-854." },
+    { star: "IP Peg", alias: "AAVSO 2318+18", type: "Глубоко затменная карликовая новая со спиральными шоками (UGSS+EA)", auid: "000-BTT-355", con: "Peg", ra: 350.78333, dec: 18.41639, magRange: "11.8m → 15.3m (P_orb = 3.80 h)", chart: "X29355T", kname: "000-BTT-855", kmag: "10.450", priority: "🔥 СРОЧНО", desc: "Первая карликовая новая, в аккреционном диске которой открыты двухрукавные приливные спиральные волны!", comment: "Целевой объект каталога AAVSO Target Tool (Peg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-855." },
+    { star: "V505 Sgr", alias: "HD 187949", type: "Яркая тройная затменная система (EA/SD)", auid: "000-BTT-356", con: "Sgr", ra: 298.27500, dec: -14.60306, magRange: "6.46m → 7.51m (P = 1.18287 d)", chart: "X29356T", kname: "000-BTT-856", kmag: "10.450", priority: "⚡ Затмения", desc: "Короткопериодическая система типа Алголя с третьим телом на эксцентричной орбите.", comment: "Целевой объект каталога AAVSO Target Tool (Sgr); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-856." },
+    { star: "RZ Tau", alias: "HD 285892", type: "Контактная двойная раннего спектрального класса (EW/DW)", auid: "000-BTT-357", con: "Tau", ra: 69.15833, dec: 18.75500, magRange: "10.08m → 10.71m (P = 0.41567 d)", chart: "X29357T", kname: "000-BTT-857", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Контактная система в области Гиад с активным обменом массой.", comment: "Целевой объект каталога AAVSO Target Tool (Tau); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-857." },
+    { star: "SW Lyr", alias: "AN 26.1916", type: "Полуразделенная затменная с глубоким минимумом (EB/SD)", auid: "000-BTT-358", con: "Lyr", ra: 283.67917, dec: 41.15833, magRange: "11.0m → 13.5m (P = 2.681 d)", chart: "X29358T", kname: "000-BTT-858", kmag: "10.450", priority: "⚡ Затмения", desc: "Отличная летняя цель в Лире с амплитудой затмения 2.5 звёздной величины.", comment: "Целевой объект каталога AAVSO Target Tool (Lyr); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-858." },
+    { star: "TV Cas", alias: "HD 1486", type: "Яркая северная затменная типа Алголя (EA/SD)", auid: "000-BTT-359", con: "Cas", ra: 4.82917, dec: 59.13917, magRange: "7.22m → 8.22m (P = 1.8126 d)", chart: "X29359T", kname: "000-BTT-859", kmag: "10.450", priority: "⚡ Затмения", desc: "Незаходящая цель секции EB AAVSO в Кассиопее.", comment: "Целевой объект каталога AAVSO Target Tool (Cas); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-859." },
+    { star: "XZ And", alias: "BD+41 363", type: "Затменная со сложными изменениями периода (EA/SD)", auid: "000-BTT-360", con: "And", ra: 29.21667, dec: 42.10056, magRange: "9.9m → 12.5m (P = 1.3573 d)", chart: "X29360T", kname: "000-BTT-860", kmag: "10.450", priority: "⚡ Затмения", desc: "Классический объект для исследования циклов магнитной активности Applegate.", comment: "Целевой объект каталога AAVSO Target Tool (And); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-860." },
+    { star: "UX Her", alias: "HD 163175", type: "Затменная система типа Алголя в Геркулесе (EA/SD)", auid: "000-BTT-361", con: "Her", ra: 268.53333, dec: 16.94389, magRange: "8.95m → 10.12m (P = 1.54886 d)", chart: "X29361T", kname: "000-BTT-861", kmag: "10.450", priority: "⚡ Затмения", desc: "Удобная летняя цель для всех четырёх моделей телескопов Seestar.", comment: "Целевой объект каталога AAVSO Target Tool (Her); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-861." },
+    { star: "SX Phe", alias: "HD 223065", type: "Фундаментальный прототип пульсаторов населения II (SXPHE)", auid: "000-BTT-362", con: "Phe", ra: 356.63750, dec: -41.58194, magRange: "6.76m → 7.53m (P0 = 0.05496 d / 79.1 мин!)", chart: "X29362T", kname: "000-BTT-862", kmag: "10.450", priority: "⚡ Эталон", desc: "Родоначальник класса звёзд типа SX Феникса с периодом 79 минут и биениями двух радиальных мод.", comment: "Целевой объект каталога AAVSO Target Tool (Phe); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-862." },
+    { star: "AE UMa", alias: "BD+44 1885", type: "Северная двухмодовая звезда типа SX Phe (SXPHE)", auid: "000-BTT-363", con: "UMa", ra: 144.22083, dec: 44.06667, magRange: "10.86m → 11.52m (P0 = 0.086017 d / 2.06 ч)", chart: "X29363T", kname: "000-BTT-863", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Расположена высоко в Большой Медведице; за 2.5 часа даёт полный цикл пульсации с модуляцией амплитуды.", comment: "Целевой объект каталога AAVSO Target Tool (UMa); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-863." },
+    { star: "RV Ari", alias: "BD+17 339", type: "Двухмодовый пульсатор с быстрым биением (DSCT)", auid: "000-BTT-364", con: "Ari", ra: 33.77917, dec: 18.07444, magRange: "11.6m → 12.3m (P0 = 0.09313 d, P1 = 0.07195 d)", chart: "X29364T", kname: "000-BTT-864", kmag: "10.450", priority: "⚡ Эфемериды", desc: "Осенне-зимняя цель секции SPP AAVSO для частотного анализа двух радиальных мод.", comment: "Целевой объект каталога AAVSO Target Tool (Ari); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-864." },
+    { star: "S Sge", alias: "10 Sge / HD 188727", type: "Классическая цефеида в спектрально-двойной системе (DCEP)", auid: "000-BTT-365", con: "Sge", ra: 299.00417, dec: 16.63472, magRange: "5.24m → 6.04m (P = 8.38209 d)", chart: "X29365T", kname: "000-BTT-865", kmag: "10.450", priority: "⚡ Эталон", desc: "Восьмидневная цефеида с выраженным вторичным горбом вблизи максимума блеска.", comment: "Целевой объект каталога AAVSO Target Tool (Sge); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-865." },
+    { star: "T Vul", alias: "32 Vul / HD 198726", type: "Короткопериодическая классическая цефеида (DCEP)", auid: "000-BTT-366", con: "Vul", ra: 312.86667, dec: 28.25056, magRange: "5.41m → 6.09m (P = 4.43546 d)", chart: "X29366T", kname: "000-BTT-866", kmag: "10.450", priority: "⚡ Эталон", desc: "Классическая фундаментальная цефеида в Лисичке.", comment: "Целевой объект каталога AAVSO Target Tool (Vul); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-866." },
+    { star: "RT Aur", alias: "48 Aur / HD 45412", type: "Яркая зимняя классическая цефеида (DCEP)", auid: "000-BTT-367", con: "Aur", ra: 97.14167, dec: 30.49306, magRange: "5.00m → 5.82m (P = 3.72812 d)", chart: "X29367T", kname: "000-BTT-867", kmag: "10.450", priority: "⚡ Эталон", desc: "Удобная цель в Возничем с асимметричной пилообразной кривой блеска.", comment: "Целевой объект каталога AAVSO Target Tool (Aur); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-867." },
+    { star: "W Vir", alias: "HD 116802", type: "Прототип цефеид гало населения II (CWA)", auid: "000-BTT-368", con: "Vir", ra: 201.50833, dec: -3.37861, magRange: "9.46m → 10.75m (P = 17.2736 d)", chart: "X29368T", kname: "000-BTT-868", kmag: "10.450", priority: "⚡ Эталон", desc: "Родоначальник цефеид типа II («звёзды типа W Девы») с эмиссионными линиями водорода от ударных волн.", comment: "Целевой объект каталога AAVSO Target Tool (Vir); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-868." },
+    { star: "BL Her", alias: "HD 164136", type: "Прототип короткопериодических цефеид типа II (CWB)", auid: "000-BTT-369", con: "Her", ra: 270.28750, dec: 18.10472, magRange: "9.70m → 10.62m (P = 1.30745 d)", chart: "X29369T", kname: "000-BTT-869", kmag: "10.450", priority: "⚡ Эталон", desc: "Родоначальник подкласса CWB (звёзды типа BL Геркулеса), эволюционирующих от горизонтальной ветви к AGB.", comment: "Целевой объект каталога AAVSO Target Tool (Her); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-869." },
+    { star: "R Tri", alias: "HD 16210", type: "Яркая правильная осенняя Мирида (M)", auid: "000-BTT-370", con: "Tri", ra: 39.25833, dec: 34.26389, magRange: "5.4m → 12.6m (P = 266.9 d)", chart: "X29370T", kname: "000-BTT-870", kmag: "10.450", priority: "⚡ Мирида", desc: "Одна из наиболее регулярных и предсказуемых мирид северного неба в Треугольнике.", comment: "Целевой объект каталога AAVSO Target Tool (Tri); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-870." },
+    { star: "R Vir", alias: "HD 109914", type: "Короткопериодическая весенняя Мирида (M)", auid: "000-BTT-371", con: "Vir", ra: 189.62500, dec: 6.98833, magRange: "6.1m → 12.1m (P = 145.63 d)", chart: "X29371T", kname: "000-BTT-871", kmag: "10.450", priority: "⚡ Мирида", desc: "Мирида с коротким циклом менее 5 месяцев, позволяющая проследить два максимума за год.", comment: "Целевой объект каталога AAVSO Target Tool (Vir); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-871." },
+    { star: "R Dra", alias: "HD 150077", type: "Приполярная классическая Мирида (M)", auid: "000-BTT-372", con: "Dra", ra: 248.16667, dec: 66.75472, magRange: "6.7m → 13.2m (P = 245.6 d)", chart: "X29372T", kname: "000-BTT-872", kmag: "10.450", priority: "⚡ Мирида", desc: "Расположена рядом с AG Dra (DEC +66.8°); незаходящая цель секции LPV AAVSO.", comment: "Целевой объект каталога AAVSO Target Tool (Dra); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-872." },
+    { star: "R Ser", alias: "HD 141850", type: "Классическая летняя Мирида в Змее (M)", auid: "000-BTT-373", con: "Ser", ra: 237.67500, dec: 15.13361, magRange: "5.2m → 14.4m (P = 356.4 d)", chart: "X29373T", kname: "000-BTT-873", kmag: "10.450", priority: "⚡ Мирида", desc: "Одна из первых открытых мирид (К. Хардинг, 1826 г.) с амплитудой более 9 звёздных величин.", comment: "Целевой объект каталога AAVSO Target Tool (Ser); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-873." },
+    { star: "R Cyg", alias: "HD 185456", type: "Циркониевая Мирида спектрального класса S (M)", auid: "000-BTT-374", con: "Cyg", ra: 294.20417, dec: 50.19972, magRange: "6.1m → 14.4m (P = 426.45 d)", chart: "X29374T", kname: "000-BTT-874", kmag: "10.450", priority: "⚡ Мирида", desc: "Расположена рядом с Тетой Лебедя и CH Cyg; богата линиями оксида циркония (ZrO).", comment: "Целевой объект каталога AAVSO Target Tool (Cyg); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-874." },
+    { star: "S CrB", alias: "HD 136753", type: "Классическая Мирида с OH-мазером (M)", auid: "000-BTT-375", con: "CrB", ra: 230.35000, dec: 31.36750, magRange: "5.8m → 14.1m (P = 360.26 d)", chart: "X29375T", kname: "000-BTT-875", kmag: "10.450", priority: "⚡ Мирида", desc: "Удобная весенне-летняя цель секции LPV AAVSO в Северной Короне.", comment: "Целевой объект каталога AAVSO Target Tool (CrB); рекомендуется съемка в фильтре TG с контрольной звездой 000-BTT-875." }
   ];
   window.AAVSO_URGENT_CATALOGUE = AAVSO_URGENT_CATALOGUE;
 
@@ -6276,22 +6509,53 @@ function revealAndFocusField(inputId) {
       }
       if (!val) {
         STATE.catalogStarName = null;
+        STATE.simbadCatalogLoaded = false;
+        STATE.catalogRa = null;
+        STATE.catalogDec = null;
         activeRadarReferenceStar = "";
+        STATE_CURVES.aavsoHasEnoughData = false;
+        STATE_CURVES.aavsoOtherPoints = [];
+        STATE_CURVES.aavsoLoadedForStar = "";
+        setFieldStatus("starid", "staridHint", null, "");
+        updateEmptyStateSimbadPill();
         updateV6RadarActiveSelectionFast("");
+        if (typeof window.renderAavsoAndContributionWidget === "function") {
+          window.renderAavsoAndContributionWidget("", false);
+        }
         return;
       }
+      const prevCatStar = STATE.catalogStarName || "";
       const lowVal = val.toLowerCase();
       const matchedItem = URGENT_CATALOG_LOOKUP_MAP.get(lowVal) || AAVSO_URGENT_CATALOGUE.find(
         it => it.star.toLowerCase() === lowVal || (it.alias && it.alias.toLowerCase() === lowVal)
       );
-      if (matchedItem) {
-        STATE.catalogStarName = matchedItem.star;
-      } else {
-        STATE.catalogStarName = normalizeStarForVsp(val, null);
+      const nextStarName = matchedItem ? matchedItem.star : normalizeStarForVsp(val, null);
+      const changedToDifferentStar = prevCatStar && nextStarName && !AstroLabCore.areSameStar(prevCatStar, nextStarName);
+      STATE.catalogStarName = nextStarName;
+      if (changedToDifferentStar) {
+        STATE.simbadCatalogLoaded = false;
+        STATE.catalogRa = null;
+        STATE.catalogDec = null;
+        STATE.dismissedMismatchSig = "";
+        STATE_CURVES.aavsoHasEnoughData = false;
+        STATE_CURVES.aavsoOtherPoints = [];
+        STATE_CURVES.aavsoLoadedForStar = "";
+        setFieldStatus("starid", "staridHint", null, "");
+        setFieldStatus("ra", "raHint", null, "");
+        setFieldStatus("dec", "decHint", null, "");
+        updateEmptyStateSimbadPill();
       }
       // [RU] При вводе обновляем подсветку карточек на месте без пересоздания DOM-узлов
       // [EN] Update card active highlight in-place without rebuilding DOM nodes
       updateV6RadarActiveSelectionFast(STATE.catalogStarName || val);
+      if (changedToDifferentStar && typeof window.renderAavsoAndContributionWidget === "function") {
+        if (window._starIdAavsoSyncTimer) clearTimeout(window._starIdAavsoSyncTimer);
+        window._starIdAavsoSyncTimer = setTimeout(() => {
+          window._starIdAavsoSyncTimer = null;
+          const latest = (document.getElementById("starid")?.value || STATE.catalogStarName || "").trim();
+          window.renderAavsoAndContributionWidget(latest, false);
+        }, 320);
+      }
     };
     staridInputEl.addEventListener("input", onStarIdUserChange);
     staridInputEl.addEventListener("change", onStarIdUserChange);
@@ -6430,7 +6694,7 @@ function revealAndFocusField(inputId) {
   }
   window.sortRadarCatalogItems = sortRadarCatalogItems;
 
-  function renderUrgentStarsCards(filterQuery = "") {
+  window.renderUrgentStarsCards = renderUrgentStarsCards; function renderUrgentStarsCards(filterQuery = "") {
     const container = document.getElementById("urgentStarsGridContainer");
     if (!container) return;
 
@@ -6488,13 +6752,20 @@ function revealAndFocusField(inputId) {
     const vspColor = isLight ? "var(--ios-green)" : "#86efac";
     const conColor = isLight ? "var(--ios-text-secondary)" : "#94a3b8";
 
+    const _lgUrg = (typeof currentLang !== "undefined") ? currentLang : (document.getElementById("langSelect")?.value || "ru");
+    const _lblReq = { ru: "🏛 Заказчик:", en: "🏛 Requester:", es: "🏛 Solicitante:", de: "🏛 Auftraggeber:", fr: "🏛 Demandeur :", zh: "🏛 观测发起方：" }[_lgUrg] || "🏛 Заказчик:";
+    const _lblRec = { ru: "🔭 Рекомендации:", en: "🔭 Imaging Rec.:", es: "🔭 Recomendación:", de: "🔭 Empfehlung:", fr: "🔭 Recommandation :", zh: "🔭 拍摄建议：" }[_lgUrg] || "🔭 Рекомендации:";
+    const _btnDossierLbl = { ru: "🔎 Досье и параметры звезды", en: "🔎 Star Dossier & Info", es: "🔎 Dossier de la estrella", de: "🔎 Sterndossier & Infos", fr: "🔎 Dossier de l'étoile", zh: "🔎 恒星完整档案与参数" }[_lgUrg] || "🔎 Досье и параметры звезды";
+
     container.innerHTML = filtered.map(rawItem => {
       const item = getLocalizedCatalogItem(rawItem);
       const aavsoUrl = `https://www.aavso.org/vsx/index.php?view=results.get&ident=${encodeURIComponent(item.star)}`;
       const scopeEval = AstroLabCore.evaluateScopeSuitability(rawItem, scopeId);
-      const pickLabel = t("btnPickUrgentFmt").replace("{exp}", scopeEval.expRec);
+      const dInfo = (typeof window.buildScientificStarDossier === "function") ? window.buildScientificStarDossier(rawItem) : null;
+      const reqText = (dInfo && dInfo.requester) ? dInfo.requester : "Международная кампания AAVSO Target Tool";
+      const recText = `${scopeEval.badgeText} • ${item.comment || ""}`;
       return `
-      <div class="urgent-star-card" data-urgent-star="${escapeHtml(item.star)}">
+      <div class="urgent-star-card" data-urgent-star="${escapeHtml(rawItem.star)}" style="cursor:pointer;">
         <div>
           <div class="urgent-star-top">
             <span class="urgent-star-name">${escapeHtml(item.star)} <small style="font-size:10.5px; color:${conColor}; font-weight:normal;">(${escapeHtml(item.con)})</small><span class="pub-date-pill" title="Дата публикации AAVSO Alert Notice">📅 ${escapeHtml(rawItem.pubDate || "2026-03-30")}</span></span>
@@ -6502,25 +6773,24 @@ function revealAndFocusField(inputId) {
           </div>
           <div class="urgent-compact-meta">
             <span class="aavso-sec-pill">${escapeHtml(getStarObservingSectionLabel(rawItem))}</span> • ${escapeHtml(item.type)} • <span style="color:${magColor}; font-weight:700;">${escapeHtml(item.magRange.split('(')[0].trim())}</span>
-            <div class="urgent-coords-bar" data-live-coords="${escapeHtml(item.star)}" title="RA / Dec (J2000.0) — Seestar & AAVSO Target Tool (${rawItem.ra.toFixed(4)}°, ${rawItem.dec >= 0 ? '+' : ''}${rawItem.dec.toFixed(4)}°)">
+            <div class="urgent-coords-bar" data-live-coords="${escapeHtml(rawItem.star)}" title="RA / Dec (J2000.0) — Seestar & AAVSO Target Tool (${rawItem.ra.toFixed(4)}°, ${rawItem.dec >= 0 ? '+' : ''}${rawItem.dec.toFixed(4)}°)">
               <span>🔭 <strong>RA (J2000.0):</strong> ${formatRaJ2000Hms(rawItem.ra, true)} &nbsp;•&nbsp; <strong>Dec (J2000.0):</strong> ${formatDecJ2000Dms(rawItem.dec)}</span>
-              <button type="button" class="coord-copy-btn" data-copy-coords="${escapeHtml(formatRaJ2000Hms(rawItem.ra, false) + ' ' + formatDecJ2000Dms(rawItem.dec))}" data-copy-star="${escapeHtml(rawItem.star)}" title="Copy J2000.0 HMS/DMS">📋 J2000</button>
+              
             </div>
-            <span data-live-status="${escapeHtml(item.star)}" style="color:${vspColor}; font-weight:700;">✓ VSP ${escapeHtml(item.chart)}</span> • AUID: ${escapeHtml(rawItem.auid)} <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高"}[_l]||"max."; const _nw = {ru:"сейчас",en:"now",es:"ahora",de:"jetzt",fr:"maint.",zh:"当前"}[_l]||"now"; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_nw} ${Math.round(_a.currentAltDeg)>=0?"+":""}${Math.round(_a.currentAltDeg)}° (${_a.compassLabel || ""})`; })()) : ""}</span>
+            <span data-live-status="${escapeHtml(rawItem.star)}" style="color:${vspColor}; font-weight:700;">✓ VSP ${escapeHtml(item.chart)}</span> • AUID: ${escapeHtml(rawItem.auid)} <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高"}[_l]||"max."; const _nw = {ru:"сейчас",en:"now",es:"ahora",de:"jetzt",fr:"maint.",zh:"当前"}[_l]||"now"; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_nw} ${Math.round(_a.currentAltDeg)>=0?"+":""}${Math.round(_a.currentAltDeg)}° (${_a.compassLabel || ""})`; })()) : ""}</span>
+            <div class="urgent-customer-rec-box">
+              <div><strong>${escapeHtml(_lblReq)}</strong> ${escapeHtml(reqText)}</div>
+              <div><strong>${escapeHtml(_lblRec)}</strong> ${escapeHtml(recText)}</div>
+            </div>
           </div>
         </div>
         <div class="urgent-compact-actions">
-          <a href="${aavsoUrl}" target="_blank" rel="noopener noreferrer" class="v6-target-aavso-link" data-aavso-link="${escapeHtml(item.star)}">
+          <a href="${aavsoUrl}" target="_blank" rel="noopener noreferrer" class="v6-target-aavso-link" data-aavso-link="${escapeHtml(rawItem.star)}">
             ${escapeHtml(t("btnGoAavsoObj"))}
           </a>
           <button type="button" class="ios-btn tiny btn-pick-urgent" style="width:auto;"
-                  data-star="${escapeHtml(item.star)}"
-                  data-ra="${item.ra.toFixed(6)}"
-                  data-dec="${item.dec.toFixed(6)}"
-                  data-chart="${escapeHtml(item.chart)}"
-                  data-kname="${escapeHtml(item.kname)}"
-                  data-kmag="${escapeHtml(item.kmag)}">
-            ${escapeHtml(pickLabel)}
+                  data-star="${escapeHtml(rawItem.star)}">
+            ${escapeHtml(_btnDossierLbl)}
           </button>
         </div>
       </div>`;
@@ -6533,6 +6803,13 @@ function revealAndFocusField(inputId) {
         card.addEventListener("mouseenter", e => showRadarObjectTooltip(e, item, AstroLabCore.evaluateScopeSuitability(item, window._currentScopeModel || "S50")));
         card.addEventListener("mousemove", positionRadarTooltip);
         card.addEventListener("mouseleave", hideRadarObjectTooltip);
+        card.addEventListener("click", (e) => {
+          if (e.target && (e.target.closest(".v6-target-aavso-link") || e.target.closest(".coord-copy-btn"))) return;
+          hideRadarObjectTooltip();
+          if (typeof window.openStarFullDossierModal === "function") {
+            window.openStarFullDossierModal(item);
+          }
+        });
       }
     });
 
@@ -6556,16 +6833,14 @@ function revealAndFocusField(inputId) {
     });
 
     container.querySelectorAll(".btn-pick-urgent").forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
         const star = btn.getAttribute("data-star") || "";
-        const ra = btn.getAttribute("data-ra") || "";
-        const dec = btn.getAttribute("data-dec") || "";
-        const chart = btn.getAttribute("data-chart") || "";
-        const kname = btn.getAttribute("data-kname") || "";
-        const kmag = btn.getAttribute("data-kmag") || "";
-
-        selectRadarOrUrgentTarget(star, ra, dec, chart, kname, kmag);
-        closeUrgentModal();
+        const item = AAVSO_URGENT_CATALOGUE.find(it => it.star === star);
+        hideRadarObjectTooltip();
+        if (item && typeof window.openStarFullDossierModal === "function") {
+          window.openStarFullDossierModal(item);
+        }
       });
     });
   }
@@ -7046,6 +7321,8 @@ function revealAndFocusField(inputId) {
   // Поле STARID формируется исключительно из загруженного CSV-файла фотометрии.
   function selectRadarOrUrgentTarget(star, ra, dec, chart, kname, kmag) {
     activeRadarReferenceStar = star;
+    const vspTechDet = document.getElementById("vspTechCollapsibleBlock");
+    if (vspTechDet) vspTechDet.open = true;
     const starEl = document.getElementById("starid");
     if (starEl) {
       starEl.value = star;
@@ -7218,18 +7495,20 @@ function revealAndFocusField(inputId) {
           <div class="v6-target-meta"><span class="aavso-sec-pill">${escapeHtml(getStarObservingSectionLabel(rawItem))}</span> • ${escapeHtml(item.type)} • AUID: ${escapeHtml(item.auid)} <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高"}[_l]||"max."; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_a.compassLabel || ""}`; })()) : ""}</span></div>
           <div class="v6-target-coords-bar" data-live-coords="${escapeHtml(rawItem.star)}" title="RA / Dec (J2000.0) — Seestar & AAVSO Target Tool (${rawItem.ra.toFixed(4)}°, ${rawItem.dec >= 0 ? '+' : ''}${rawItem.dec.toFixed(4)}°)">
             <span>🔭 <strong>RA:</strong> ${formatRaJ2000Hms(rawItem.ra, true)} • <strong>Dec:</strong> ${formatDecJ2000Dms(rawItem.dec)}</span>
-            <button type="button" class="coord-copy-btn" data-copy-coords="${escapeHtml(formatRaJ2000Hms(rawItem.ra, false) + ' ' + formatDecJ2000Dms(rawItem.dec))}" data-copy-star="${escapeHtml(rawItem.star)}" title="Copy J2000.0 HMS/DMS">📋</button>
+            
           </div>
           <div class="v6-target-scope-fit ${scopeEval.status === 'warn' ? 'scope-warn' : ''}">
             🔭 ${escapeHtml(scopeEval.badgeText)}
           </div>
+          <div class="v6-customer-mini">🏛 ${escapeHtml(((typeof window.buildScientificStarDossier === "function") ? window.buildScientificStarDossier(rawItem).requester : "Кампания AAVSO"))}</div>
           <div class="v6-target-bottom">
             <span class="v6-target-mag">${escapeHtml(item.magRange.split('(')[0].trim())}</span>
             <div class="v6-target-btns">
               <a href="${aavsoUrl}" target="_blank" rel="noopener noreferrer"
                  class="v6-target-aavso-link"
+                 title="${escapeHtml(t("btnGoAavsoObj"))}"
                  data-aavso-obj-link="${escapeHtml(rawItem.star)}">
-                ${escapeHtml(t("btnGoAavsoObj"))}
+                🌐 AAVSO ↗
               </a>
               <button type="button" class="v6-target-pick-btn">${escapeHtml(isSelected ? t("btnPickedTarget") : t("btnPickTarget"))}</button>
             </div>
@@ -7277,13 +7556,22 @@ function revealAndFocusField(inputId) {
         });
       }
 
-      card.addEventListener("click", () => {
-        const ra = card.getAttribute("data-v6-ra") || "122.398952";
-        const dec = card.getAttribute("data-v6-dec") || "44.471556";
-        const chart = card.getAttribute("data-v6-chart") || "X28491AB";
-        const kname = card.getAttribute("data-v6-kname") || "000-BDP-712";
-        const kmag = card.getAttribute("data-v6-kmag") || "9.642";
-        selectRadarOrUrgentTarget(star, ra, dec, chart, kname, kmag);
+      card.setAttribute("tabindex", "0");
+      card.setAttribute("role", "button");
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          if (item && typeof window.openStarFullDossierModal === "function") {
+            window.openStarFullDossierModal(item);
+          }
+        }
+      });
+      card.addEventListener("click", (e) => {
+        if (e.target && (e.target.closest(".v6-target-aavso-link") || e.target.closest(".coord-copy-btn"))) return;
+        hideRadarObjectTooltip();
+        if (item && typeof window.openStarFullDossierModal === "function") {
+          window.openStarFullDossierModal(item);
+        }
       });
     });
   }
@@ -7317,73 +7605,6 @@ function revealAndFocusField(inputId) {
       });
     }
   });
-
-  // Кнопки копирования и выгрузки координат J2000.0 (HMS / DMS) в Разделе 1
-  const btnCopyRaDecFormEl = document.getElementById("btnCopyRaDecForm");
-  if (btnCopyRaDecFormEl) {
-    btnCopyRaDecFormEl.addEventListener("click", () => {
-      const starName = (document.getElementById("starid")?.value || STATE.catalogStarName || "Target").trim();
-      const rDeg = parseRaAnyToDeg(document.getElementById("ra")?.value || STATE.catalogRa);
-      const dDeg = parseDecAnyToDeg(document.getElementById("dec")?.value || STATE.catalogDec);
-      const raHms = Number.isFinite(rDeg) ? formatRaJ2000Hms(rDeg, false) : (document.getElementById("ra")?.value || "—");
-      const decDms = Number.isFinite(dDeg) ? formatDecJ2000Dms(dDeg) : (document.getElementById("dec")?.value || "—");
-      const copyStr = `${raHms} ${decDms}`;
-      if (navigator.clipboard) navigator.clipboard.writeText(copyStr).catch(() => {});
-      showIosNotification(
-        `📋 ${starName} — J2000.0`,
-        `RA (J2000.0): ${raHms} | Dec (J2000.0): ${decDms}`,
-        "Скопировано в буфер обмена для наведения телескопа",
-        "ok"
-      );
-    });
-  }
-
-  const btnExportRaDecTxtEl = document.getElementById("btnExportRaDecTxt");
-  if (btnExportRaDecTxtEl) {
-    btnExportRaDecTxtEl.addEventListener("click", () => {
-      const starName = (document.getElementById("starid")?.value || STATE.catalogStarName || "CH Cyg").trim();
-      const rDeg = parseRaAnyToDeg(document.getElementById("ra")?.value || STATE.catalogRa || 291.13783);
-      const dDeg = parseDecAnyToDeg(document.getElementById("dec")?.value || STATE.catalogDec || 50.24142);
-      const raHmsSup = formatRaJ2000Hms(rDeg, true);
-      const raHmsPlain = formatRaJ2000Hms(rDeg, false);
-      const decDms = formatDecJ2000Dms(dDeg);
-      const chartVal = (document.getElementById("chart")?.value || "—").trim();
-      const knameVal = (document.getElementById("kname")?.value || "—").trim();
-      const kmagVal = (document.getElementById("kmag")?.value || "—").trim();
-      const scopeProf = AstroLabCore.getScopeProfile(currentScopeModel);
-      const exportLines = [
-        "============================================================",
-        "SEESTAR ASTROLAB AAVSO — КАРТОЧКА НАВЕДЕНИЯ ТЕЛЕСКОПА (J2000.0)",
-        "============================================================",
-        `Star Name (Звезда)      : ${starName}`,
-        `RA (J2000.0) [HMS]      : ${raHmsPlain}  (${raHmsSup})`,
-        `Dec (J2000.0) [DMS]     : ${decDms}`,
-        `RA / Dec (Decimal deg)  : ${rDeg.toFixed(6)}° / ${dDeg >= 0 ? '+' : ''}${dDeg.toFixed(6)}°`,
-        `AAVSO VSP Chart         : ${chartVal}`,
-        `Check Star (KNAME/KMAG) : ${knameVal} (${kmagVal} mag)`,
-        `Telescope Profile       : ${scopeProf.name} (${scopeProf.fovStr})`,
-        "============================================================"
-      ].join("\r\n");
-      if (navigator.clipboard) navigator.clipboard.writeText(`${raHmsPlain} ${decDms}`).catch(() => {});
-      try {
-        const blob = new Blob([exportLines], { type: "text/plain;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `Seestar_J2000_${starName.replace(/\s+/g, "_")}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 1500);
-      } catch (_) {}
-      showIosNotification(
-        `📥 ${starName} — ${raHmsSup} ${decDms}`,
-        `RA (J2000.0): ${raHmsPlain} | Dec (J2000.0): ${decDms}`,
-        `Файл Seestar_J2000_${starName.replace(/\s+/g, "_")}.txt выгружен и координаты скопированы`,
-        "ok"
-      );
-    });
-  }
 
   const v6RadarLimitSelectEl = document.getElementById("v6RadarLimitSelect");
   if (v6RadarLimitSelectEl) {
@@ -7932,7 +8153,34 @@ function revealAndFocusField(inputId) {
           }
         }
         saveObsTrackerDb(obsTrackerRecords);
+        if (targetRec && typeof window.removeConvertedRecordsByObsEntry === "function") {
+          window.removeConvertedRecordsByObsEntry(targetRec);
+        }
         renderObsTrackerModal();
+        if (targetRec && typeof showIosNotification === "function") {
+          const tc = document.getElementById("toastContainer");
+          showIosNotification(
+            "🗑️ Замер удалён из «Моих наблюдений»",
+            `${targetRec.star || ""} (${targetRec.date || ""}) — теперь файл можно загрузить повторно`,
+            "",
+            "info"
+          );
+          const lastToast = tc && tc.lastElementChild ? tc.lastElementChild.querySelector(".ios-toast-content") : null;
+          if (lastToast) {
+            const undoBtn = document.createElement("button");
+            undoBtn.type = "button";
+            undoBtn.className = "ios-toast-undo-btn";
+            undoBtn.textContent = "↩️ Отменить удаление";
+            undoBtn.addEventListener("click", () => {
+              obsTrackerRecords.push(targetRec);
+              saveObsTrackerDb(obsTrackerRecords);
+              renderObsTrackerModal();
+              if (typeof window.refreshLocalizedObsDatePicker === "function") window.refreshLocalizedObsDatePicker();
+              undoBtn.closest(".ios-toast")?.remove();
+            });
+            lastToast.appendChild(undoBtn);
+          }
+        }
         if (typeof window.refreshLocalizedObsDatePicker === "function") {
           window.refreshLocalizedObsDatePicker();
         }
@@ -8289,7 +8537,7 @@ function revealAndFocusField(inputId) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.1.0 beta",
+      application: "Seestar AstroLab AAVSO v1.1.1 beta",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8340,7 +8588,7 @@ function revealAndFocusField(inputId) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.1.0 beta (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.1.1 beta (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -9207,7 +9455,7 @@ function revealAndFocusField(inputId) {
 
 
 // ============================================================================
-// МОДУЛЬ ГРАФИКОВ И РАДАРА ЦЕЛЕЙ v1.1.0 BETA
+// МОДУЛЬ ГРАФИКОВ И РАДАРА ЦЕЛЕЙ v1.1.1 BETA
 // ============================================================================
 (function initUnifiedAstroLabLightCurvesAndRadarV110() {
   const LOCAL_CONV_DB_KEY = "seestar_converted_photometry_db_v1";
@@ -9233,9 +9481,9 @@ function revealAndFocusField(inputId) {
       aavsoInitialDesc: "Укажите звезду в разделе 1 и нажмите «🔭 Загрузить данные AAVSO», а также приложите собственный CSV-файл фотометрии Seestar в разделе 2 для построения кривой блеска AAVSO (AID) и отображения вашего вклада.",
       noUserCurveTitle: "Загрузите CSV-файл фотометрии Seestar для построения вашей кривой блеска",
       noUserHistoryNote: "В папке программы (Converted_Photometry_Storage) пока нет прошлых конвертаций для этой звезды.",
-      noAavsoDataTitleFmt: "Для звезды «{star}» в базе AAVSO (AID) нет данных кривой блеска",
+      noAavsoDataTitleFmt: "На AAVSO данные по звезде «{star}» не нашлись",
       noAavsoDataSub: "Загрузите данные по другой звезде или приложите собственный CSV-файл фотометрии Seestar для отображения ваших наблюдений.",
-      onlyUserShownNote: "В базе AAVSO нет точек для этой звезды — показан ваш вклад.",
+      onlyUserShownNote: "На AAVSO данные не нашлись — показан только ваш вклад.",
       statsUserFmt: "Сейчас: {cur} точ. | Архив: {hist} точ. | Δm={dm}m",
       captionAavsoFmt: "🌟 <strong>{star}</strong>: Ваш вклад — <strong style=\"color:#d97706;\">{user} точ.</strong> (текущая: {cur}, архив: {hist}) • База AAVSO (AID): <strong style=\"color:#0284c7;\">{aavso} точ.</strong>",
       captionNoAavsoFmt: "🌟 <strong>{star}</strong>: показан ваш вклад (<strong style=\"color:#d97706;\">{user} точ.</strong>).",
@@ -9464,9 +9712,9 @@ function revealAndFocusField(inputId) {
       lblRa: "RA (J2000.0)",
       lblDec: "Dec (J2000.0)",
       phRa: "19ʰ 24ᵐ 33ˢ",
-      phDec: "+50° 14' 29\"",
+      phDec: "+50° 14' 29″",
       tipRaText: "Прямое восхождение J2000.0 для наведения телескопа (ччʰ ммᵐ ссˢ, например 19ʰ 24ᵐ 33ˢ).",
-      tipDecText: "Склонение J2000.0 для наведения телескопа (±гг° мм' сс\", например +50° 14' 29\").",
+      tipDecText: "Склонение J2000.0 для наведения телескопа (±гг° мм' сс″, например +50° 14' 29″).",
       btnCopyRaDecForm: "📋 Скопировать J2000.0",
       btnExportRaDecTxt: "📥 Выгрузить координаты",
       phRadarSearch: "🔍 Имя звезды / Тип / Созвездие (CH Cyg, AG Dra)...",
@@ -9475,11 +9723,11 @@ function revealAndFocusField(inputId) {
       phFilterDec: "Dec (J2000.0): +50° 14'...",
       lblObservingSection: "Секция наблюдений:",
       subSelectTypesOfStars: "Выберите категории целевых звёзд (AAVSO Target Tool)",
-      filterAC: "🔥 Срочно / Кампании (AC)",
+      filterAC: "🔥 Кампании (AC)",
       filterEP: "🪐 Экзопланеты (EP)",
-      filterCV: "💥 Катаклизмические (CV)",
-      filterEB: "🌑 Затменные (EB)",
-      filterSPP: "⚡ Короткопериод. (SPP)",
+      filterCV: "💥 Вспышки (CV)",
+      filterEB: "🌑 Затмения (EB)",
+      filterSPP: "⚡ Пульсации (SPP)",
       filterLPV: "🔴 Долгопериод. (LPV)",
       filterYSO: "🌱 Молодые звёзды (YSO)",
       filterHET: "🌌 Выс. энергии (HET)",
@@ -9516,9 +9764,9 @@ function revealAndFocusField(inputId) {
       lblRa: "RA (J2000.0)",
       lblDec: "Dec (J2000.0)",
       phRa: "19ʰ 24ᵐ 33ˢ",
-      phDec: "+50° 14' 29\"",
+      phDec: "+50° 14' 29″",
       tipRaText: "Target Right Ascension (J2000.0) in telescope HMS format (19ʰ 24ᵐ 33ˢ or decimal degrees).",
-      tipDecText: "Target Declination (J2000.0) in telescope DMS format (+50° 14' 29\" or decimal degrees).",
+      tipDecText: "Target Declination (J2000.0) in telescope DMS format (+50° 14' 29″ or decimal degrees).",
       btnCopyRaDecForm: "📋 Copy J2000.0",
       btnExportRaDecTxt: "📥 Export Coordinates",
       phRadarSearch: "🔍 Star Name / Var. Type / Con (CH Cyg, AG Dra)...",
@@ -9568,9 +9816,9 @@ function revealAndFocusField(inputId) {
       lblRa: "RA (J2000.0)",
       lblDec: "Dec (J2000.0)",
       phRa: "19ʰ 24ᵐ 33ˢ",
-      phDec: "+50° 14' 29\"",
+      phDec: "+50° 14' 29″",
       tipRaText: "Ascensión recta J2000.0 en formato sexagesimal para telescopio (19ʰ 24ᵐ 33ˢ).",
-      tipDecText: "Declinación J2000.0 en formato sexagesimal para telescopio (+50° 14' 29\").",
+      tipDecText: "Declinación J2000.0 en formato sexagesimal para telescopio (+50° 14' 29″).",
       btnCopyRaDecForm: "📋 Copiar J2000.0",
       btnExportRaDecTxt: "📥 Exportar coordenadas",
       phRadarSearch: "🔍 Estrella / Tipo / Constelación (CH Cyg, AG Dra)...",
@@ -9610,9 +9858,9 @@ function revealAndFocusField(inputId) {
       lblRa: "RA (J2000.0)",
       lblDec: "Dec (J2000.0)",
       phRa: "19ʰ 24ᵐ 33ˢ",
-      phDec: "+50° 14' 29\"",
+      phDec: "+50° 14' 29″",
       tipRaText: "Rektaszension J2000.0 im Teleskopformat (19ʰ 24ᵐ 33ˢ).",
-      tipDecText: "Deklination J2000.0 im Teleskopformat (+50° 14' 29\").",
+      tipDecText: "Deklination J2000.0 im Teleskopformat (+50° 14' 29″).",
       btnCopyRaDecForm: "📋 J2000.0 kopieren",
       btnExportRaDecTxt: "📥 Koordinaten exportieren",
       phRadarSearch: "🔍 Sternname / Typ / Sternbild (CH Cyg, AG Dra)...",
@@ -9652,9 +9900,9 @@ function revealAndFocusField(inputId) {
       lblRa: "RA (J2000.0)",
       lblDec: "Dec (J2000.0)",
       phRa: "19ʰ 24ᵐ 33ˢ",
-      phDec: "+50° 14' 29\"",
+      phDec: "+50° 14' 29″",
       tipRaText: "Ascension droite J2000.0 au format télescope (19ʰ 24ᵐ 33ˢ).",
-      tipDecText: "Déclinaison J2000.0 au format télescope (+50° 14' 29\").",
+      tipDecText: "Déclinaison J2000.0 au format télescope (+50° 14' 29″).",
       btnCopyRaDecForm: "📋 Copier J2000.0",
       btnExportRaDecTxt: "📥 Exporter coordonnées",
       phRadarSearch: "🔍 Étoile / Type / Constellation (CH Cyg, AG Dra)...",
@@ -9694,9 +9942,9 @@ function revealAndFocusField(inputId) {
       lblRa: "RA (J2000.0)",
       lblDec: "Dec (J2000.0)",
       phRa: "19ʰ 24ᵐ 33ˢ",
-      phDec: "+50° 14' 29\"",
+      phDec: "+50° 14' 29″",
       tipRaText: "J2000.0 赤经（望远镜时分秒格式 19ʰ 24ᵐ 33ˢ 或十进制度）。",
-      tipDecText: "J2000.0 赤纬（望远镜度分秒格式 +50° 14' 29\" 或十进制度）。",
+      tipDecText: "J2000.0 赤纬（望远镜度分秒格式 +50° 14' 29″ 或十进制度）。",
       btnCopyRaDecForm: "📋 复制 J2000.0",
       btnExportRaDecTxt: "📥 导出坐标文件",
       phRadarSearch: "🔍 恒星名称 / 变星类型 / 星座 (CH Cyg, AG Dra)...",
@@ -9737,6 +9985,7 @@ function revealAndFocusField(inputId) {
   for (const [lg, dict] of Object.entries(TARGETTOOL_I18N_6LANG)) {
     if (CURVE_AND_FILTER_I18N[lg]) Object.assign(CURVE_AND_FILTER_I18N[lg], dict);
     if (window.I18N && window.I18N[lg]) Object.assign(window.I18N[lg], dict);
+    if (SKY_MOON_I18N && SKY_MOON_I18N[lg]) Object.assign(SKY_MOON_I18N[lg], dict);
   }
 
 
@@ -9930,8 +10179,16 @@ function revealAndFocusField(inputId) {
         return _cachedCsvPtsResult;
       }
     }
+    const autoFilterChk = document.getElementById("chkAutoRemoveConvertedDuplicates");
+    const filterDups = !autoFilterChk || autoFilterChk.checked;
+    const dupInfo = (filterDups && typeof window.analyzeAndFilterDuplicateAndOldCsvRows === "function")
+      ? window.analyzeAndFilterDuplicateAndOldCsvRows(lines, "")
+      : null;
+    const excludedSet = (dupInfo && dupInfo.excludedLineIndices) ? dupInfo.excludedLineIndices : new Set();
+
     const pts = [];
     for (let i = 0; i < lines.length; i++) {
+      if (excludedSet.has(i)) continue;
       const raw = String(lines[i] || "").trim();
       if (!raw || (i === 0 && raw.toLowerCase().startsWith("name,"))) continue;
       const c = splitSeestarCsvRow(raw);
@@ -9961,8 +10218,8 @@ function revealAndFocusField(inputId) {
 
   function readLocalConvertedDbSync() {
     try {
-      const raw = (window.__SEESTAR_DISK_STORE__ && window.__SEESTAR_DISK_STORE__[LOCAL_CONV_DB_KEY]) ||
-                  (window.localStorage && localStorage.getItem(LOCAL_CONV_DB_KEY));
+      let raw = window.__SEESTAR_DISK_STORE__ && window.__SEESTAR_DISK_STORE__[LOCAL_CONV_DB_KEY];
+      if (!raw) { try { raw = window.localStorage && localStorage.getItem(LOCAL_CONV_DB_KEY); } catch (_) {} }
       if (raw) {
         if (raw === _cachedLocalDbRawRef && _cachedLocalDbParsed) {
           return _cachedLocalDbParsed;
@@ -9971,7 +10228,7 @@ function revealAndFocusField(inputId) {
         if (parsed && typeof parsed === "object") {
           _cachedLocalDbRawRef = raw;
           _cachedLocalDbParsed = {
-            version: parsed.version || "1.1.0 beta",
+            version: parsed.version || "1.1.1 beta",
             sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
             points: Array.isArray(parsed.points) ? parsed.points : []
           };
@@ -9979,7 +10236,7 @@ function revealAndFocusField(inputId) {
         }
       }
     } catch (_) {}
-    return { version: "1.1.0 beta", sessions: [], points: [] };
+    return { version: "1.1.1 beta", sessions: [], points: [] };
   }
 
   function writeLocalConvertedDbSync(dbObj) {
@@ -9987,12 +10244,13 @@ function revealAndFocusField(inputId) {
       const s = JSON.stringify(dbObj);
       _cachedLocalDbRawRef = s;
       _cachedLocalDbParsed = {
-        version: dbObj.version || "1.1.0 beta",
+        version: dbObj.version || "1.1.1 beta",
         sessions: Array.isArray(dbObj.sessions) ? dbObj.sessions : [],
         points: Array.isArray(dbObj.points) ? dbObj.points : []
       };
-      if (window.localStorage) localStorage.setItem(LOCAL_CONV_DB_KEY, s);
-      if (window.__SEESTAR_DISK_STORE__) window.__SEESTAR_DISK_STORE__[LOCAL_CONV_DB_KEY] = s;
+      window.__SEESTAR_DISK_STORE__ = window.__SEESTAR_DISK_STORE__ || {};
+      window.__SEESTAR_DISK_STORE__[LOCAL_CONV_DB_KEY] = s;
+      try { if (window.localStorage) localStorage.setItem(LOCAL_CONV_DB_KEY, s); } catch (_) {}
       if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.save_store_item === "function") {
         window.pywebview.api.save_store_item(LOCAL_CONV_DB_KEY, s);
       }
@@ -10572,8 +10830,7 @@ function revealAndFocusField(inputId) {
       const nowJd = Date.now() / 86400000 + 2440587.5;
       const fromJd = (nowJd - 240).toFixed(2);
       const urls = [
-        `https://app.aavso.org/webobs/results/?star=${encStar}&num_results=200&obs_types=ccd+dslr`,
-        `https://www.aavso.org/vsx/index.php?view=api.delim&ident=${encStar}&fromjd=${fromJd}&tojd=${nowJd.toFixed(2)}&delimiter=,`
+        `https://www.aavso.org/LCGv2/index.htm?DateFormat=Julian&RequestedBands=&view=api.delim&ident=${encStar}&fromjd=${fromJd}&tojd=${nowJd.toFixed(2)}&delimiter=,`
       ];
       for (const u of urls) {
         try {
@@ -11030,6 +11287,28 @@ function revealAndFocusField(inputId) {
       window._lastFullPageScreenPts = widgetScreenPts;
     }
 
+    if (aavsoPts.length === 0 && activeStar && showAavso) {
+      ctx.save();
+      const noteTxt = trCurve("onlyUserShownNote");
+      ctx.font = "600 11px -apple-system, BlinkMacSystemFont, Inter, sans-serif";
+      const tw = Math.min(cssW - 32, ctx.measureText(noteTxt).width + 24);
+      const bx = Math.max(12, (cssW - tw) / 2);
+      const by = 10;
+      ctx.fillStyle = isLight ? "rgba(254, 243, 199, 0.94)" : "rgba(30, 41, 59, 0.88)";
+      ctx.strokeStyle = isLight ? "#d97706" : "rgba(251, 191, 36, 0.65)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(bx, by, tw, 24, 8);
+      else ctx.rect(bx, by, tw, 24);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = isLight ? "#92400e" : "#fbbf24";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(noteTxt, bx + tw / 2, by + 12, tw - 12);
+      ctx.restore();
+    }
+
     ctx.restore();
   };
 
@@ -11197,7 +11476,7 @@ function revealAndFocusField(inputId) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.1.0 beta — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.1.1 beta — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -11245,7 +11524,7 @@ function revealAndFocusField(inputId) {
       periodUserPrefix: "📅 Период ваших наблюдений:",
       periodAavsoPrefix: "📅 Контрольные точки AAVSO:",
       periodUserShortPrefix: "🌟 Ваш вклад:",
-      zoomBadgeFmt: "🖱️ Зум: {pct}% (ЛКМ — двигать)"
+      zoomBadgeFmt: "🖱️ Зум: {pct}%"
     },
     en: {
       btnDonateBadge: "❤️ Support",
@@ -11283,7 +11562,7 @@ function revealAndFocusField(inputId) {
       periodUserPrefix: "📅 Your Observation Period:",
       periodAavsoPrefix: "📅 AAVSO Checkpoints:",
       periodUserShortPrefix: "🌟 Your Data:",
-      zoomBadgeFmt: "🖱️ Zoom: {pct}% (LMB to pan)"
+      zoomBadgeFmt: "🖱️ Zoom: {pct}%"
     },
     es: {
       btnDonateBadge: "❤️ Apoyar",
@@ -11321,7 +11600,7 @@ function revealAndFocusField(inputId) {
       periodUserPrefix: "📅 Periodo de sus observaciones:",
       periodAavsoPrefix: "📅 Puntos de control AAVSO:",
       periodUserShortPrefix: "🌟 Su aporte:",
-      zoomBadgeFmt: "🖱️ Zoom: {pct}% (Arrastrar con clic izq.)"
+      zoomBadgeFmt: "🖱️ Zoom: {pct}%"
     },
     de: {
       btnDonateBadge: "❤️ Unterstützen",
@@ -11359,7 +11638,7 @@ function revealAndFocusField(inputId) {
       periodUserPrefix: "📅 Ihr Beobachtungszeitraum:",
       periodAavsoPrefix: "📅 AAVSO-Referenzpunkte:",
       periodUserShortPrefix: "🌟 Ihr Beitrag:",
-      zoomBadgeFmt: "🖱️ Zoom: {pct}% (LMT zum Verschieben)"
+      zoomBadgeFmt: "🖱️ Zoom: {pct}%"
     },
     fr: {
       btnDonateBadge: "❤️ Soutenir",
@@ -11397,7 +11676,7 @@ function revealAndFocusField(inputId) {
       periodUserPrefix: "📅 Période de vos observations :",
       periodAavsoPrefix: "📅 Points de contrôle AAVSO :",
       periodUserShortPrefix: "🌟 Votre contribution :",
-      zoomBadgeFmt: "🖱️ Zoom : {pct}% (Clic gauche pour déplacer)"
+      zoomBadgeFmt: "🖱️ Zoom : {pct}%"
     },
     zh: {
       btnDonateBadge: "❤️ 支持作者",
@@ -11435,7 +11714,7 @@ function revealAndFocusField(inputId) {
       periodUserPrefix: "📅 您的观测时间段:",
       periodAavsoPrefix: "📅 AAVSO 参考点时间段:",
       periodUserShortPrefix: "🌟 您的贡献:",
-      zoomBadgeFmt: "🖱️ 缩放: {pct}% (按住左键拖动)"
+      zoomBadgeFmt: "🖱️ 缩放: {pct}%"
     }
   };
 
@@ -12116,18 +12395,14 @@ function revealAndFocusField(inputId) {
         STATE_CURVES.aavsoHasEnoughData = true;
         STATE_CURVES.aavsoOtherPoints = aavsoRes.points;
       } else {
-        const fallbackCps = buildCatalogReferenceCheckpointsForStar(activeStar, [...pastPts, ...currentPts]);
-        STATE_CURVES.aavsoHasEnoughData = fallbackCps.length > 0;
-        STATE_CURVES.aavsoOtherPoints = fallbackCps;
+        // [RU] НИКОГДА не выдумываем синтетические точки, если AAVSO AID не вернула реальных данных
+        STATE_CURVES.aavsoHasEnoughData = false;
+        STATE_CURVES.aavsoOtherPoints = [];
       }
     } else if (!activeStar) {
       STATE_CURVES.aavsoHasEnoughData = false;
       STATE_CURVES.aavsoOtherPoints = [];
       STATE_CURVES.aavsoLoadedForStar = "";
-    } else if (activeStar && STATE_CURVES.aavsoOtherPoints.length === 0) {
-      const fallbackCps = buildCatalogReferenceCheckpointsForStar(activeStar, [...pastPts, ...currentPts]);
-      STATE_CURVES.aavsoHasEnoughData = fallbackCps.length > 0;
-      STATE_CURVES.aavsoOtherPoints = fallbackCps;
     }
 
     const showAavso = document.getElementById("chkAavsoWidgetOthers")?.checked !== false;
@@ -13440,7 +13715,7 @@ function revealAndFocusField(inputId) {
     }
   };
 
-  function buildScientificStarDossier(rawItem) {
+  window.buildScientificStarDossier = buildScientificStarDossier; function buildScientificStarDossier(rawItem) {
     const lg = getActiveLangCode();
     const tpl = DOSSIER_I18N_TEMPLATES[lg] || DOSSIER_I18N_TEMPLATES.en;
     const item = (typeof window.getLocalizedCatalogItem === "function") ? window.getLocalizedCatalogItem(rawItem) : rawItem;
@@ -13498,6 +13773,7 @@ function revealAndFocusField(inputId) {
       seek: `${whatWeSeek} ${item.comment || ""}`.trim()
     };
   }
+  window.buildScientificStarDossier = buildScientificStarDossier;
 
   // Благородное золотое свечение частиц (без кислотных цветов) при выборе звезды
   let _fireworksAnimId = null;
@@ -14020,7 +14296,7 @@ function revealAndFocusField(inputId) {
   };
   window._OBSERVER_GEO_STATE = OBSERVER_GEO_STATE;
 
-  const SKY_MOON_I18N = {
+  var SKY_MOON_I18N = window.SKY_MOON_I18N = {
     ru: {
       skyLoading: "🌌 Чистота неба: загрузка...",
       skyFmt: "🌌 Чистота неба ({city}): {clarity}%",
@@ -14185,12 +14461,11 @@ function revealAndFocusField(inputId) {
     }
   };
 
-  for (const lg of ["ru", "en", "es", "de", "fr", "zh"]) {
-    if (typeof TARGETTOOL_I18N_6LANG !== "undefined" && TARGETTOOL_I18N_6LANG[lg] && SKY_MOON_I18N[lg]) {
-      Object.assign(SKY_MOON_I18N[lg], TARGETTOOL_I18N_6LANG[lg]);
-    }
-    if (window.I18N && window.I18N[lg] && SKY_MOON_I18N[lg]) {
-      Object.assign(window.I18N[lg], SKY_MOON_I18N[lg]);
+  if (window.I18N) {
+    for (const lg of ["ru", "en", "es", "de", "fr", "zh"]) {
+      if (window.I18N[lg] && SKY_MOON_I18N[lg]) {
+        Object.assign(window.I18N[lg], SKY_MOON_I18N[lg]);
+      }
     }
   }
 
@@ -14849,5 +15124,1288 @@ function revealAndFocusField(inputId) {
     if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
     if (typeof window.refreshWheelStarsForActiveScope === "function") window.refreshWheelStarsForActiveScope();
   }, 60);
+
+
+  // ===========================================================================
+  // ПУНКТ 3, 4 и 8: ПОЛНОЕ ВСПЛЫВАЮЩЕЕ ОКНО ДОСЬЕ ЗВЕЗДЫ (#starFullDossierModal)
+  //   При клике на любую звезду в Радаре целей (боковом или модальном) данные
+  //   НЕ подтягиваются автоматически в меню конвертера, а открывается полное
+  //   досье звезды (координаты J2000.0 HMS/DMS и градусы, блеск, карта VSP,
+  //   чек-звезда, информация о заказчике AAVSO, рекомендации по выдержке Seestar),
+  //   и только по клику на специальную кнопку «🎯 Подтянуть данные звезды в меню
+  //   конвертера» данные переносятся в Раздел 1!
+  // ===========================================================================
+  let _currentDossierStarItem = null;
+
+  const STAR_MODAL_I18N = {
+    ru: {
+      modalTitleFmt: "🌟 Полное досье цели AAVSO: {star} ({con})",
+      secCoords: "🔭 Координаты для наведения телескопа (J2000.0)",
+      lblRaHms: "RA (J2000.0) [ччʰ ммᵐ ссˢ]:",
+      lblDecDms: "Dec (J2000.0) [±гг° мм' сс″]:",
+      lblDecimalDeg: "Десятичные градусы (SIMBAD):",
+      lblCityAlt: "Видимость в городе ({city}):",
+      secPhotometry: "📊 Блеск, эфемериды и калибровка VSP",
+      lblMagRange: "Диапазон блеска (Max → Min):",
+      lblVarType: "Тип переменности (VSX):",
+      lblAuid: "Уникальный ID (AUID):",
+      lblVspChart: "Карта окрестностей (CHART):",
+      lblCheckStar: "Звезда сравнения (KNAME / KMAG):",
+      lblPubDate: "Дата заявки / Alert Notice:",
+      secCustomer: "🏛 Информация о заказчике и научной задаче (Кампания AAVSO)",
+      lblRequester: "Заказчик наблюдений:",
+      lblObjectNature: "Физическая природа объекта:",
+      lblWhyUrgent: "Почему объект срочный / научная цель:",
+      secRecommendations: "🔭 Рекомендации для съёмки на телескоп ZWO Seestar",
+      lblScopeFit: "Пригодность и выдержка ({scope}):",
+      lblObservingGuide: "Методика съёмки и фильтрации:",
+      btnCopyCoords: "📋 Скопировать J2000.0",
+      btnExportTxt: "📥 Выгрузить карточку (.txt)",
+      btnPullStarToConverter: "🎯 Подтянуть данные звезды в меню конвертера (Раздел 1)",
+      btnCloseModal: "Закрыть",
+      lblToggleObjectTypes: "🎯 Виды объектов и секции AAVSO (скрыть / показать)",
+      lblToggleTechBlock: "🔧 Технический блок и статус каталогов",
+      btnResetLayout: "✥ Сбросить расположение перемещённых блоков",
+      btnResetLayoutShort: "✥ Сброс блоков",
+      btnImportTargetToolCsv: "📥 Импорт CSV Target Tool"
+    },
+    en: {
+      modalTitleFmt: "🌟 Full AAVSO Target Dossier: {star} ({con})",
+      secCoords: "🔭 Telescope Pointing Coordinates (J2000.0)",
+      lblRaHms: "RA (J2000.0) [HHʰ MMᵐ SSˢ]:",
+      lblDecDms: "Dec (J2000.0) [±DD° MM' SS″]:",
+      lblDecimalDeg: "Decimal Degrees (SIMBAD):",
+      lblCityAlt: "Observability in {city}:",
+      secPhotometry: "📊 Magnitude, Ephemeris & VSP Calibration",
+      lblMagRange: "Magnitude Range (Max → Min):",
+      lblVarType: "Variability Type (VSX):",
+      lblAuid: "AAVSO Unique ID (AUID):",
+      lblVspChart: "VSP Chart ID (CHART):",
+      lblCheckStar: "Check Star (KNAME / KMAG):",
+      lblPubDate: "Campaign / Alert Date:",
+      secCustomer: "🏛 Requester & Scientific Campaign Info (AAVSO)",
+      lblRequester: "Campaign Requester:",
+      lblObjectNature: "Astrophysical Nature:",
+      lblWhyUrgent: "Why Urgent / Scientific Goal:",
+      secRecommendations: "🔭 ZWO Seestar Imaging Recommendations",
+      lblScopeFit: "Telescope Suitability ({scope}):",
+      lblObservingGuide: "Exposure, Filter & Series Guide:",
+      btnCopyCoords: "📋 Copy J2000.0",
+      btnExportTxt: "📥 Export Target Card (.txt)",
+      btnPullStarToConverter: "🎯 Pull Star Data into Converter Menu (Section 1)",
+      btnCloseModal: "Close",
+      lblToggleObjectTypes: "🎯 Object Types & AAVSO Sections (Hide / Show)",
+      lblToggleTechBlock: "🔧 Technical Block & Catalog Status",
+      btnResetLayout: "✥ Reset Moved Menu Blocks to Default",
+      btnResetLayoutShort: "✥ Reset Layout",
+      btnImportTargetToolCsv: "📥 Import Target Tool CSV"
+    },
+    es: {
+      modalTitleFmt: "🌟 Dossier completo del objetivo AAVSO: {star} ({con})",
+      secCoords: "🔭 Coordenadas de apuntado del telescopio (J2000.0)",
+      lblRaHms: "RA (J2000.0) [HHʰ MMᵐ SSˢ]:",
+      lblDecDms: "Dec (J2000.0) [±DD° MM' SS″]:",
+      lblDecimalDeg: "Grados decimales (SIMBAD):",
+      lblCityAlt: "Visibilidad en {city}:",
+      secPhotometry: "📊 Brillo, efemérides y calibración VSP",
+      lblMagRange: "Rango de magnitud:",
+      lblVarType: "Tipo de variabilidad (VSX):",
+      lblAuid: "Identificador AUID:",
+      lblVspChart: "Carta VSP (CHART):",
+      lblCheckStar: "Estrella de control (KNAME / KMAG):",
+      lblPubDate: "Fecha de campaña / alerta:",
+      secCustomer: "🏛 Información del solicitante y campaña científica (AAVSO)",
+      lblRequester: "Solicitante de la campaña:",
+      lblObjectNature: "Naturaleza astrofísica:",
+      lblWhyUrgent: "Objetivo científico:",
+      secRecommendations: "🔭 Recomendaciones de captura para ZWO Seestar",
+      lblScopeFit: "Idoneidad ({scope}):",
+      lblObservingGuide: "Guía de exposición y filtro:",
+      btnCopyCoords: "📋 Copiar J2000.0",
+      btnExportTxt: "📥 Exportar ficha (.txt)",
+      btnPullStarToConverter: "🎯 Cargar datos de la estrella en el menú (Sección 1)",
+      btnCloseModal: "Cerrar",
+      lblToggleObjectTypes: "🎯 Tipos de objetos y secciones AAVSO (Ocultar / Mostrar)",
+      lblToggleTechBlock: "🔧 Bloque técnico y estado de catálogos",
+      btnResetLayout: "✥ Restablecer posición de bloques",
+      btnResetLayoutShort: "✥ Restablecer bloques",
+      btnImportTargetToolCsv: "📥 Importar CSV Target Tool"
+    },
+    de: {
+      modalTitleFmt: "🌟 Vollständiges AAVSO-Zieldossier: {star} ({con})",
+      secCoords: "🔭 Teleskop-Koordinaten (J2000.0)",
+      lblRaHms: "RA (J2000.0) [HHʰ MMᵐ SSˢ]:",
+      lblDecDms: "Dec (J2000.0) [±DD° MM' SS″]:",
+      lblDecimalDeg: "Dezimalgrad (SIMBAD):",
+      lblCityAlt: "Sichtbarkeit in {city}:",
+      secPhotometry: "📊 Helligkeit, Ephemeriden & VSP-Kalibrierung",
+      lblMagRange: "Helligkeitsbereich:",
+      lblVarType: "Veränderlichentyp (VSX):",
+      lblAuid: "AAVSO-ID (AUID):",
+      lblVspChart: "VSP-Karte (CHART):",
+      lblCheckStar: "Vergleichsstern (KNAME / KMAG):",
+      lblPubDate: "Kampagnendatum:",
+      secCustomer: "🏛 Auftraggeber & Wissenschaftliche Kampagne (AAVSO)",
+      lblRequester: "Auftraggeber:",
+      lblObjectNature: "Astrophysikalische Natur:",
+      lblWhyUrgent: "Wissenschaftliches Ziel:",
+      secRecommendations: "🔭 Aufnahmeempfehlungen für ZWO Seestar",
+      lblScopeFit: "Eignung ({scope}):",
+      lblObservingGuide: "Belichtungs- & Filterempfehlung:",
+      btnCopyCoords: "📋 J2000.0 kopieren",
+      btnExportTxt: "📥 Zielkarte exportieren (.txt)",
+      btnPullStarToConverter: "🎯 Sterndaten in das Konverter-Menü übernehmen (Abschnitt 1)",
+      btnCloseModal: "Schließen",
+      lblToggleObjectTypes: "🎯 Objekttypen & AAVSO-Sektionen (Aus-/Einblenden)",
+      lblToggleTechBlock: "🔧 Technischer Block & Katalogstatus",
+      btnResetLayout: "✥ Verschobene Blöcke zurücksetzen",
+      btnResetLayoutShort: "✥ Layout zurücksetzen",
+      btnImportTargetToolCsv: "📥 Target Tool CSV importieren"
+    },
+    fr: {
+      modalTitleFmt: "🌟 Dossier complet de la cible AAVSO : {star} ({con})",
+      secCoords: "🔭 Coordonnées de pointage du télescope (J2000.0)",
+      lblRaHms: "RA (J2000.0) [HHʰ MMᵐ SSˢ] :",
+      lblDecDms: "Dec (J2000.0) [±DD° MM' SS″] :",
+      lblDecimalDeg: "Degrés décimaux (SIMBAD) :",
+      lblCityAlt: "Visibilité à {city} :",
+      secPhotometry: "📊 Magnitude, éphémérides et calibration VSP",
+      lblMagRange: "Plage de magnitude :",
+      lblVarType: "Type de variabilité (VSX) :",
+      lblAuid: "Identifiant AUID :",
+      lblVspChart: "Carte VSP (CHART) :",
+      lblCheckStar: "Étoile de contrôle (KNAME / KMAG) :",
+      lblPubDate: "Date de l'alerte :",
+      secCustomer: "🏛 Demandeur et campagne scientifique (AAVSO)",
+      lblRequester: "Demandeur :",
+      lblObjectNature: "Nature astrophysique :",
+      lblWhyUrgent: "Objectif scientifique :",
+      secRecommendations: "🔭 Recommandations d'imagerie ZWO Seestar",
+      lblScopeFit: "Compatibilité ({scope}) :",
+      lblObservingGuide: "Guide de pose et filtre :",
+      btnCopyCoords: "📋 Copier J2000.0",
+      btnExportTxt: "📥 Exporter la fiche (.txt)",
+      btnPullStarToConverter: "🎯 Charger les données de l'étoile dans le menu (Section 1)",
+      btnCloseModal: "Fermer",
+      lblToggleObjectTypes: "🎯 Types d'objets et sections AAVSO (Masquer / Afficher)",
+      lblToggleTechBlock: "🔧 Bloc technique et état des catalogues",
+      btnResetLayout: "✥ Réinitialiser la disposition des blocs",
+      btnResetLayoutShort: "✥ Réinitialiser blocs",
+      btnImportTargetToolCsv: "📥 Importer CSV Target Tool"
+    },
+    zh: {
+      modalTitleFmt: "🌟 AAVSO 目标恒星完整档案：{star} ({con})",
+      secCoords: "🔭 望远镜指向坐标 (J2000.0)",
+      lblRaHms: "赤经 RA (J2000.0) [时分秒]:",
+      lblDecDms: "赤纬 Dec (J2000.0) [度分秒]:",
+      lblDecimalDeg: "十进制度 (SIMBAD):",
+      lblCityAlt: "本地可见性 ({city}):",
+      secPhotometry: "📊 星等范围、星历表与 VSP 校准参数",
+      lblMagRange: "星等变化范围:",
+      lblVarType: "变星类型 (VSX):",
+      lblAuid: "AAVSO 唯一编号 (AUID):",
+      lblVspChart: "VSP 标准星图 (CHART):",
+      lblCheckStar: "比较检验星 (KNAME / KMAG):",
+      lblPubDate: "警报发布日期:",
+      secCustomer: "🏛 观测发起方与科学任务背景 (AAVSO 联合活动)",
+      lblRequester: "观测需求发起方:",
+      lblObjectNature: "天体物理性质:",
+      lblWhyUrgent: "紧急原因与科学目标:",
+      secRecommendations: "🔭 ZWO Seestar 智能望远镜拍摄建议",
+      lblScopeFit: "设备适配评估 ({scope}):",
+      lblObservingGuide: "曝光时间、滤镜与序列建议:",
+      btnCopyCoords: "📋 复制 J2000.0 坐标",
+      btnExportTxt: "📥 导出目标参数卡 (.txt)",
+      btnPullStarToConverter: "🎯 将该恒星数据载入转换器菜单（第 1 步）",
+      btnCloseModal: "关闭",
+      lblToggleObjectTypes: "🎯 目标类型与 AAVSO 分组（折叠 / 展开）",
+      lblToggleTechBlock: "🔧 技术状态与星表镜像详情",
+      btnResetLayout: "✥ 重置所有移动面板的默认位置",
+      btnResetLayoutShort: "✥ 重置布局",
+      btnImportTargetToolCsv: "📥 导入 Target Tool CSV"
+    }
+  };
+
+  for (const [lg, dict] of Object.entries(STAR_MODAL_I18N)) {
+    if (window.I18N && window.I18N[lg]) Object.assign(window.I18N[lg], dict);
+    if (typeof TARGETTOOL_I18N_6LANG !== "undefined" && TARGETTOOL_I18N_6LANG[lg]) Object.assign(TARGETTOOL_I18N_6LANG[lg], dict);
+  }
+
+  function openStarFullDossierModal(rawItem) {
+    if (!rawItem) return;
+    _currentDossierStarItem = rawItem;
+    const modal = document.getElementById("starFullDossierModal");
+    const titleEl = document.getElementById("starDossierModalTitle");
+    const bodyEl = document.getElementById("starDossierModalBody");
+    const vsxBtn = document.getElementById("btnStarDossierOpenVsx");
+    const pullBtn = document.getElementById("btnPullStarToConverterModal");
+    const cancelBtn = document.getElementById("btnStarDossierCancel");
+    if (!modal || !bodyEl) return;
+
+    const lg = getActiveLangCode();
+    const mPack = STAR_MODAL_I18N[lg] || STAR_MODAL_I18N.en;
+    const locItem = (typeof window.getLocalizedCatalogItem === "function") ? window.getLocalizedCatalogItem(rawItem) : rawItem;
+    const scopeId = window._currentScopeModel || "S50";
+    const scopeProf = AstroLabCore.getScopeProfile(scopeId);
+    const scopeEval = AstroLabCore.evaluateScopeSuitability(rawItem, scopeId);
+    const dossier = buildScientificStarDossier(rawItem);
+    const secLabel = (typeof window.getStarObservingSectionLabel === "function") ? window.getStarObservingSectionLabel(rawItem, lg) : "AAVSO";
+
+    const raHmsSup = window.formatRaJ2000Hms ? window.formatRaJ2000Hms(rawItem.ra, true) : String(rawItem.ra);
+    const raHmsPlain = window.formatRaJ2000Hms ? window.formatRaJ2000Hms(rawItem.ra, false) : String(rawItem.ra);
+    const decDms = window.formatDecJ2000Dms ? window.formatDecJ2000Dms(rawItem.dec) : String(rawItem.dec);
+
+    const cityLoc = getLocalizedCityName(OBSERVER_GEO_STATE.city || "Чебоксары");
+    const altObj = window.computeStarAltitudeForCity ? window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec) : { currentAltDeg: 0, maxCulmAltDeg: 0, compassLabel: "—" };
+    const altSummary = `Макс. кульминация: ${Math.round(altObj.maxCulmAltDeg)}° • Сейчас: ${altObj.currentAltDeg >= 0 ? "+" : ""}${Math.round(altObj.currentAltDeg)}° (${altObj.compassLabel || "—"})`;
+
+    if (titleEl) {
+      titleEl.textContent = mPack.modalTitleFmt.replace("{star}", rawItem.star).replace("{con}", rawItem.con || "—");
+    }
+    if (vsxBtn) {
+      vsxBtn.href = `https://www.aavso.org/vsx/index.php?view=results.get&ident=${encodeURIComponent(rawItem.star)}`;
+    }
+    if (pullBtn) {
+      pullBtn.textContent = mPack.btnPullStarToConverter;
+    }
+    if (cancelBtn) {
+      cancelBtn.textContent = mPack.btnCloseModal;
+    }
+
+    bodyEl.innerHTML = `
+      <div class="star-dossier-hero">
+        <div>
+          <div style="font-size:16px; font-weight:800;">🌟 ${escapeHtml(rawItem.star)} <span style="font-weight:500; font-size:13px; opacity:0.85;">(${escapeHtml(rawItem.alias || "AAVSO VSX")} • ${escapeHtml(rawItem.con)})</span></div>
+          <div style="font-size:11.5px; opacity:0.9; margin-top:2px;">AUID: <strong>${escapeHtml(rawItem.auid)}</strong> • VSP Chart: <strong>${escapeHtml(rawItem.chart)}</strong> • Check Star: <strong>${escapeHtml(rawItem.kname)} (${escapeHtml(rawItem.kmag)}m)</strong></div>
+        </div>
+        <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+          <span class="aavso-sec-pill" style="font-size:11px; padding:3px 8px;">${escapeHtml(secLabel)}</span>
+          <span class="urgent-badge" style="font-size:11px; padding:3px 9px;">${escapeHtml(locItem.priority)}</span>
+        </div>
+      </div>
+
+      <div class="star-dossier-grid-2">
+        <div class="star-dossier-section-card">
+          <div class="star-dossier-sec-title">
+            <span>${escapeHtml(mPack.secCoords)}</span>
+
+          </div>
+          <div class="star-dossier-kv-row"><span>${escapeHtml(mPack.lblRaHms)}</span><strong style="font-family:var(--font-mono); font-size:13px; color:#38bdf8;">${escapeHtml(raHmsSup)}</strong></div>
+          <div class="star-dossier-kv-row"><span>${escapeHtml(mPack.lblDecDms)}</span><strong style="font-family:var(--font-mono); font-size:13px; color:#38bdf8;">${escapeHtml(decDms)}</strong></div>
+          <div class="star-dossier-kv-row"><span>${escapeHtml(mPack.lblDecimalDeg)}</span><span style="font-family:var(--font-mono);">RA ${Number(rawItem.ra).toFixed(5)}° / Dec ${Number(rawItem.dec) >= 0 ? "+" : ""}${Number(rawItem.dec).toFixed(5)}°</span></div>
+          <div class="star-dossier-kv-row"><span>${escapeHtml(mPack.lblCityAlt.replace("{city}", cityLoc))}</span><strong>📐 ${escapeHtml(altSummary)}</strong></div>
+        </div>
+
+        <div class="star-dossier-section-card">
+          <div class="star-dossier-sec-title"><span>${escapeHtml(mPack.secPhotometry)}</span></div>
+          <div class="star-dossier-kv-row"><span>${escapeHtml(mPack.lblMagRange)}</span><strong style="color:#fbbf24;">${escapeHtml(rawItem.magRange)}</strong></div>
+          <div class="star-dossier-kv-row"><span>${escapeHtml(mPack.lblVarType)}</span><strong>${escapeHtml(locItem.type)}</strong></div>
+          <div class="star-dossier-kv-row"><span>${escapeHtml(mPack.lblVspChart)}</span><strong style="color:#34d399;">✓ ${escapeHtml(rawItem.chart)} (AUID: ${escapeHtml(rawItem.auid)})</strong></div>
+          <div class="star-dossier-kv-row"><span>${escapeHtml(mPack.lblCheckStar)}</span><strong>${escapeHtml(rawItem.kname)} (${escapeHtml(rawItem.kmag)} mag)</strong></div>
+          <div class="star-dossier-kv-row"><span>${escapeHtml(mPack.lblPubDate)}</span><span>📅 ${escapeHtml(rawItem.pubDate || "2026-03-30")}</span></div>
+        </div>
+      </div>
+
+      <div class="star-dossier-section-card" style="border-left:3px solid #f59e0b;">
+        <div class="star-dossier-sec-title"><span>${escapeHtml(mPack.secCustomer)}</span></div>
+        <div style="margin-bottom:5px;"><strong>${escapeHtml(mPack.lblRequester)}</strong> ${escapeHtml(dossier.requester)}</div>
+        <div style="margin-bottom:5px;"><strong>${escapeHtml(mPack.lblObjectNature)}</strong> ${escapeHtml(locItem.desc || rawItem.desc)}</div>
+        <div><strong>${escapeHtml(mPack.lblWhyUrgent)}</strong> ${escapeHtml(dossier.urgency)}</div>
+      </div>
+
+      <div class="star-dossier-live-box" id="starDossierLiveIntegrationBox">
+        <div class="star-dossier-sec-title">
+          <span>🌐 <span id="starDossierLiveTitle">${escapeHtml(mPack.secLiveIntegration || "Живые данные каталогов (AAVSO VSX + CDS SIMBAD)")}</span></span>
+          <span id="starDossierLiveBadge" style="font-size:10px; opacity:0.85;">⏳ Загрузка...</span>
+        </div>
+        <div id="starDossierLiveContent" style="font-size:11.5px; opacity:0.9;">⏳ Подтягиваем синонимы, полное созвездие, спектральный класс, период и эпоху из AAVSO VSX и SIMBAD...</div>
+      </div>
+
+      <div class="star-dossier-section-card" style="border-left:3px solid #38bdf8;">
+        <div class="star-dossier-sec-title"><span>${escapeHtml(mPack.secRecommendations)}</span></div>
+        <div style="margin-bottom:5px;"><strong>${escapeHtml(mPack.lblScopeFit.replace("{scope}", scopeProf.name))}</strong> <span style="color:#34d399; font-weight:700;">🔭 ${escapeHtml(scopeEval.badgeText)}</span> (${escapeHtml(scopeProf.fovStr)} • Лимит ≤${escapeHtml(scopeProf.magLimit)}m)</div>
+        <div><strong>${escapeHtml(mPack.lblObservingGuide)}</strong> ${escapeHtml(dossier.seek)}</div>
+      </div>
+    `;
+
+    modal.classList.add("open");
+    document.documentElement.classList.add("modal-open");
+    document.body.classList.add("modal-open");
+    if (typeof window.fetchLiveStarDossierIntegration === "function") {
+      window.fetchLiveStarDossierIntegration(rawItem);
+    }
+  }
+  window.openStarFullDossierModal = openStarFullDossierModal;
+
+  function closeStarFullDossierModal() {
+    const modal = document.getElementById("starFullDossierModal");
+    if (modal) modal.classList.remove("open");
+    const urgOpen = document.getElementById("urgentStarsModal")?.classList.contains("open");
+    if (!urgOpen) {
+      document.documentElement.classList.remove("modal-open");
+      document.body.classList.remove("modal-open");
+    }
+  }
+  window.closeStarFullDossierModal = closeStarFullDossierModal;
+
+  ["btnCloseStarDossierModal", "btnStarDossierCancel"].forEach(id => {
+    document.getElementById(id)?.addEventListener("click", closeStarFullDossierModal);
+  });
+  document.getElementById("starFullDossierModal")?.addEventListener("click", (e) => {
+    if (e.target && e.target.id === "starFullDossierModal") closeStarFullDossierModal();
+  });
+
+  // ПУНКТ 4: Специальная кнопка подтягивания данных выбранной звезды в меню конвертера (Раздел 1)
+  document.getElementById("btnPullStarToConverterModal")?.addEventListener("click", () => {
+    if (!_currentDossierStarItem) return;
+    const it = _currentDossierStarItem;
+    if (typeof window.selectRadarOrUrgentTarget === "function") {
+      window.selectRadarOrUrgentTarget(
+        it.star,
+        Number(it.ra).toFixed(6),
+        Number(it.dec).toFixed(6),
+        it.chart,
+        it.kname,
+        it.kmag
+      );
+    }
+    closeStarFullDossierModal();
+    const urgModal = document.getElementById("urgentStarsModal");
+    if (urgModal && urgModal.classList.contains("open")) {
+      urgModal.classList.remove("open");
+      document.documentElement.classList.remove("modal-open");
+      document.body.classList.remove("modal-open");
+    }
+  });
+
+  // ===========================================================================
+  // ПУНКТ 9: ИМПОРТ CSV-ФАЙЛА ИЗ ОФИЦИАЛЬНОГО AAVSO TARGET TOOL (Export CSV)
+  // ===========================================================================
+  const csvTargetToolInput = document.getElementById("aavsoTargetToolCsvInput");
+  ["btnImportTargetToolCsvDock", "btnImportTargetToolCsvModal"].forEach(btnId => {
+    document.getElementById(btnId)?.addEventListener("click", () => {
+      if (csvTargetToolInput) {
+        csvTargetToolInput.value = "";
+        csvTargetToolInput.click();
+      }
+    });
+  });
+
+  if (csvTargetToolInput) {
+    csvTargetToolInput.addEventListener("change", (ev) => {
+      const file = ev.target.files && ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = String(e.target.result || "");
+        const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+        if (lines.length < 2) return;
+        let added = 0;
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(",").map(c => c.replace(/^"|"$/g, "").trim());
+          if (cols.length < 3) continue;
+          const stName = cols[0];
+          const raDeg = window.parseRaAnyToDeg ? window.parseRaAnyToDeg(cols[1]) : parseFloat(cols[1]);
+          const decDeg = window.parseDecAnyToDeg ? window.parseDecAnyToDeg(cols[2]) : parseFloat(cols[2]);
+          if (!stName || !Number.isFinite(raDeg) || !Number.isFinite(decDeg)) continue;
+          if (window.AAVSO_URGENT_CATALOGUE && !window.AAVSO_URGENT_CATALOGUE.some(x => x.star.toLowerCase() === stName.toLowerCase())) {
+            const con = cols[3] || stName.split(" ").pop() || "—";
+            const varType = cols[4] || "VAR";
+            const maxM = cols[5] || "9.0";
+            const minM = cols[6] || "13.0";
+            const secName = cols[9] || "Alert/Campaign";
+            const notes = cols[13] || "Импортировано из AAVSO Target Tool CSV.";
+            window.AAVSO_URGENT_CATALOGUE.unshift({
+              star: stName,
+              alias: secName,
+              type: `Целевая звезда (${varType})`,
+              auid: "AAVSO-TT",
+              con: con,
+              ra: raDeg,
+              dec: decDeg,
+              magRange: `${maxM} → ${minM}`,
+              chart: "Auto-VSP",
+              kname: "Auto",
+              kmag: "10.200",
+              priority: "🔥 СРОЧНО",
+              pubDate: new Date().toISOString().slice(0, 10),
+              desc: `${stName} (${varType}) — цель секции ${secName} AAVSO Target Tool.`,
+              comment: notes
+            });
+            added++;
+          }
+        }
+        if (typeof window.renderV6RadarDock === "function") window.renderV6RadarDock();
+        if (typeof window.renderUrgentStarsCards === "function") window.renderUrgentStarsCards();
+        showIosNotification("📥 AAVSO Target Tool CSV", `Импортировано новых целей в Радар: ${added} (всего в каталоге: ${window.AAVSO_URGENT_CATALOGUE.length})`, "", "ok");
+      };
+      reader.readAsText(file);
+    });
+  }
+
+
+
+  // ===========================================================================
+  // [RU] МОДУЛЬ 15: АВТОМАТИЧЕСКАЯ ДЕДУПЛИКАЦИЯ И ОТСЕЧЕНИЕ СТАРЫХ / УЖЕ ОТПРАВЛЕННЫХ
+  //      В AAVSO НАБЛЮДЕНИЙ ИЗ СЫРЫХ ФАЙЛОВ SEESTAR CSV (НА 6 ЯЗЫКАХ)
+  // [EN] MODULE 15: AUTOMATIC DEDUPLICATION & FILTERING OF PREVIOUSLY CONVERTED /
+  //      OLD SESSION RECORDS FROM RAW SEESTAR CSV FILES (6 LANGUAGES)
+  // ===========================================================================
+  const DUP_FILTER_I18N = {
+    ru: {
+      lblAutoFilterDuplicates: "Исключить старые / уже отправленные в AAVSO записи из итогового файла",
+      btnRegisterOldFileDup: "📥 Добавить старый файл в базу отправленных",
+      dupBannerTitle: "⚠️ Обнаружены ранее переданные в AAVSO / старые записи в сыром файле",
+      dupBannerBadgeFmt: "Удалено дубликатов: {removed} из {total}",
+      dupToastTitle: "🛡️ Удалены ранее переданные записи ({removed} шт.)",
+      dupToastShortFmt: "Удалено {removed} старых зап., сохранено {kept} новых",
+      dupReasonOldSession: "предыдущая сессия в дозаписанном файле Seestar (уже передавалась ранее)",
+      dupReasonConvertedDb: "совпадение JD/UTC с вашей базой ранее сконвертированных файлов (Converted_Photometry_Storage)",
+      dupReasonInFile: "повтор строки с идентичным JD внутри файла",
+      dupSummaryHtmlFmt: "В загруженном сыром файле обнаружены как <strong>старые наблюдения (уже сконвертированные / переданные ранее)</strong>, так и <strong>новые свежие измерения</strong>:<br>• 🗑️ <strong>Удалены из итогового файла AAVSO ({removed} зап.):</strong> <code>{oldRanges}</code> — <em>{reasonText}</em>.<br>• ✅ <strong>Оставлены для конвертации и отправки ({kept} новых зап.):</strong> <code>{newRanges}</code>.",
+      dupSummaryPlainFmt: "Предупреждение: из итогового файла удалены старые / уже переданные в AAVSO дублирующие записи ({removed} шт.: {oldRanges}). В итоговый файл включены только новые свежие измерения ({kept} шт.: {newRanges}).",
+      dupAllRowsMsgFmt: "Все записи в этом файле ({removed} шт., {oldRanges}) уже были сконвертированы и переданы в AAVSO ранее. Новых неконвертированных измерений не обнаружено (снимите галочку фильтра дубликатов в Шаге 2, если хотите принудительно пересоздать файл).",
+      dupRegisteredToastTitle: "📥 База отправленных записей обновлена",
+      dupRegisteredToastMsgFmt: "Добавлено {added} записей из {files} файл(ов) в реестр отправленных наблюдений."
+    },
+    en: {
+      lblAutoFilterDuplicates: "Exclude old / previously submitted AAVSO records from final output file",
+      btnRegisterOldFileDup: "📥 Add old file to submitted registry",
+      dupBannerTitle: "⚠️ Previously submitted / old records detected in raw CSV file",
+      dupBannerBadgeFmt: "Duplicates removed: {removed} of {total}",
+      dupToastTitle: "🛡️ Previously submitted records removed ({removed})",
+      dupToastShortFmt: "Removed {removed} old pts, kept {kept} new pts",
+      dupReasonOldSession: "earlier observing session in appended Seestar CSV (already submitted)",
+      dupReasonConvertedDb: "matched JD/UTC in your Converted_Photometry_Storage registry",
+      dupReasonInFile: "duplicate JD row within the same file",
+      dupSummaryHtmlFmt: "This raw file contains both <strong>old observations (already converted/submitted)</strong> and <strong>new fresh measurements</strong>:<br>• 🗑️ <strong>Removed from final AAVSO file ({removed} pts):</strong> <code>{oldRanges}</code> — <em>{reasonText}</em>.<br>• ✅ <strong>Retained for conversion & submission ({kept} new pts):</strong> <code>{newRanges}</code>.",
+      dupSummaryPlainFmt: "Warning: removed {removed} previously submitted / duplicate records ({oldRanges}) from the final AAVSO file. Retained only {kept} fresh unconverted measurements ({newRanges}).",
+      dupAllRowsMsgFmt: "All {removed} records in this file ({oldRanges}) were already converted and submitted to AAVSO earlier. Uncheck the duplicate filter in Step 2 if you wish to force re-export.",
+      dupRegisteredToastTitle: "📥 Submitted Records Registry Updated",
+      dupRegisteredToastMsgFmt: "Registered {added} observations from {files} file(s) as already submitted."
+    },
+    es: {
+      lblAutoFilterDuplicates: "Excluir registros antiguos / ya enviados a AAVSO del archivo final",
+      btnRegisterOldFileDup: "📥 Añadir archivo antiguo al registro de enviados",
+      dupBannerTitle: "⚠️ Se detectaron registros antiguos / ya enviados a AAVSO en el archivo",
+      dupBannerBadgeFmt: "Duplicados eliminados: {removed} de {total}",
+      dupToastTitle: "🛡️ Registros antiguos eliminados ({removed})",
+      dupToastShortFmt: "{removed} antiguos eliminados, {kept} nuevos conservados",
+      dupReasonOldSession: "sesión anterior en archivo Seestar acumulado (ya enviada)",
+      dupReasonConvertedDb: "coincidencia JD/UTC con su historial Converted_Photometry_Storage",
+      dupReasonInFile: "fila JD duplicada dentro del mismo archivo",
+      dupSummaryHtmlFmt: "El archivo contiene tanto <strong>observaciones antiguas (ya convertidas/enviadas)</strong> como <strong>mediciones nuevas</strong>:<br>• 🗑️ <strong>Eliminados del archivo final AAVSO ({removed} reg.):</strong> <code>{oldRanges}</code> — <em>{reasonText}</em>.<br>• ✅ <strong>Conservados para conversión ({kept} nuevos reg.):</strong> <code>{newRanges}</code>.",
+      dupSummaryPlainFmt: "Aviso: se eliminaron {removed} registros duplicados/ya enviados ({oldRanges}) del archivo final AAVSO. Se conservaron {kept} mediciones nuevas ({newRanges}).",
+      dupAllRowsMsgFmt: "Todos los {removed} registros de este archivo ({oldRanges}) ya fueron convertidos y enviados a AAVSO anteriormente.",
+      dupRegisteredToastTitle: "📥 Registro de enviados actualizado",
+      dupRegisteredToastMsgFmt: "Se añadieron {added} observaciones de {files} archivo(s) al historial de enviados."
+    },
+    de: {
+      lblAutoFilterDuplicates: "Alte / bereits an AAVSO gesendete Einträge aus der Zieldatei ausschließen",
+      btnRegisterOldFileDup: "📥 Alte Datei zur Gesendet-Datenbank hinzufügen",
+      dupBannerTitle: "⚠️ Bereits übermittelte / alte Datensätze in der Rohdatei erkannt",
+      dupBannerBadgeFmt: "Duplikate entfernt: {removed} von {total}",
+      dupToastTitle: "🛡️ Bereits gesendete Einträge entfernt ({removed})",
+      dupToastShortFmt: "{removed} alte entfernt, {kept} neue behalten",
+      dupReasonOldSession: "frühere Beobachtungsnacht in angehängter Seestar-CSV (bereits übermittelt)",
+      dupReasonConvertedDb: "JD/UTC-Übereinstimmung mit Converted_Photometry_Storage",
+      dupReasonInFile: "doppelter JD-Eintrag innerhalb derselben Datei",
+      dupSummaryHtmlFmt: "Diese Rohdatei enthält sowohl <strong>alte Beobachtungen (bereits konvertiert/übermittelt)</strong> als auch <strong>neue Messungen</strong>:<br>• 🗑️ <strong>Aus AAVSO-Zieldatei entfernt ({removed} Pkt.):</strong> <code>{oldRanges}</code> — <em>{reasonText}</em>.<br>• ✅ <strong>Für Konvertierung behalten ({kept} neue Pkt.):</strong> <code>{newRanges}</code>.",
+      dupSummaryPlainFmt: "Hinweis: {removed} bereits übermittelte / doppelte Datensätze ({oldRanges}) wurden aus der Zieldatei entfernt. Nur {kept} neue Messungen ({newRanges}) wurden übernommen.",
+      dupAllRowsMsgFmt: "Alle {removed} Datensätze in dieser Datei ({oldRanges}) wurden bereits früher konvertiert und an die AAVSO gesendet.",
+      dupRegisteredToastTitle: "📥 Gesendet-Datenbank aktualisiert",
+      dupRegisteredToastMsgFmt: "{added} Beobachtungen aus {files} Datei(en) als bereits gesendet registriert."
+    },
+    fr: {
+      lblAutoFilterDuplicates: "Exclure du fichier final les anciennes mesures déjà envoyées à l'AAVSO",
+      btnRegisterOldFileDup: "📥 Ajouter un ancien fichier à la base des envois",
+      dupBannerTitle: "⚠️ Anciennes mesures / doublons déjà transmis détectés dans le fichier brut",
+      dupBannerBadgeFmt: "Doublons retirés : {removed} sur {total}",
+      dupToastTitle: "🛡️ Anciennes mesures retirées ({removed})",
+      dupToastShortFmt: "{removed} anciennes retirées, {kept} nouvelles conservées",
+      dupReasonOldSession: "session précédente dans le fichier cumulé Seestar (déjà transmise)",
+      dupReasonConvertedDb: "correspondance JD/UTC avec votre base Converted_Photometry_Storage",
+      dupReasonInFile: "ligne JD en doublon dans le même fichier",
+      dupSummaryHtmlFmt: "Ce fichier brut contient à la fois <strong>d'anciennes observations (déjà converties/transmises)</strong> et <strong>de nouvelles mesures</strong> :<br>• 🗑️ <strong>Retirées du fichier final AAVSO ({removed} mes.) :</strong> <code>{oldRanges}</code> — <em>{reasonText}</em>.<br>• ✅ <strong>Conservées pour conversion ({kept} nouvelles mes.) :</strong> <code>{newRanges}</code>.",
+      dupSummaryPlainFmt: "Avertissement : {removed} mesures anciennes/en doublon ({oldRanges}) ont été retirées du fichier final AAVSO. Seules {kept} nouvelles mesures ({newRanges}) ont été conservées.",
+      dupAllRowsMsgFmt: "Toutes les {removed} mesures de ce fichier ({oldRanges}) ont déjà été converties et transmises à l'AAVSO.",
+      dupRegisteredToastTitle: "📥 Base des envois mise à jour",
+      dupRegisteredToastMsgFmt: "{added} observations issues de {files} fichier(s) enregistrées comme déjà transmises."
+    },
+    zh: {
+      lblAutoFilterDuplicates: "从最终文件中剔除已发送至 AAVSO 的旧记录与重复数据",
+      btnRegisterOldFileDup: "📥 将旧文件添加至已发送记录库",
+      dupBannerTitle: "⚠️ 在原始 CSV 文件中检测到已转换 / 旧的重复观测记录",
+      dupBannerBadgeFmt: "已剔除重复项: {removed} / {total}",
+      dupToastTitle: "🛡️ 已剔除先前发送的旧记录 ({removed} 条)",
+      dupToastShortFmt: "已剔除 {removed} 条旧数据，保留 {kept} 条新数据",
+      dupReasonOldSession: "Seestar 追加文件中的早期观测夜数据（先前已转换发送）",
+      dupReasonConvertedDb: "与本地 Converted_Photometry_Storage 历史转换记录的 JD/UTC 匹配",
+      dupReasonInFile: "文件内部重复的相同 JD 记录",
+      dupSummaryHtmlFmt: "当前原始文件同时包含<strong>旧观测记录（已转换/已提交）</strong>与<strong>最新观测数据</strong>：<br>• 🗑️ <strong>已从最终 AAVSO 文件中剔除 ({removed} 条)：</strong> <code>{oldRanges}</code> — <em>{reasonText}</em>。<br>• ✅ <strong>保留用于转换与提交 ({kept} 条新数据)：</strong> <code>{newRanges}</code>。",
+      dupSummaryPlainFmt: "提示：已从最终 AAVSO 文件中剔除 {removed} 条已提交过的旧/重复记录 ({oldRanges})，仅保留 {kept} 条最新观测数据 ({newRanges})。",
+      dupAllRowsMsgFmt: "该文件中的全部 {removed} 条记录 ({oldRanges}) 此前均已转换并发送至 AAVSO。",
+      dupRegisteredToastTitle: "📥 已发送记录库已更新",
+      dupRegisteredToastMsgFmt: "已将来自 {files} 个文件的 {added} 条观测记录标记为已发送。"
+    }
+  };
+
+  if (window.I18N) {
+    for (const lg of ["ru", "en", "es", "de", "fr", "zh"]) {
+      if (window.I18N[lg] && DUP_FILTER_I18N[lg]) {
+        Object.assign(window.I18N[lg], DUP_FILTER_I18N[lg]);
+      }
+    }
+  }
+
+  window.__SEESTAR_DISK_STORE__ = window.__SEESTAR_DISK_STORE__ || {};
+  function trDup(key) {
+    let lg = document.getElementById("langSelect")?.value || "";
+    if (!lg) {
+      try { lg = window.localStorage ? (localStorage.getItem("lang") || "") : ""; } catch (_) {}
+    }
+    lg = (lg || "ru").slice(0, 2).toLowerCase();
+    const pack = DUP_FILTER_I18N[lg] || DUP_FILTER_I18N.ru;
+    return pack[key] || DUP_FILTER_I18N.ru[key] || key;
+  }
+
+  function formatRowRangeSummary(rowsList) {
+    if (!rowsList || rowsList.length === 0) return "—";
+    const byDate = new Map();
+    for (const r of rowsList) {
+      const d = (r.utc && r.utc.length >= 10) ? r.utc.slice(0, 10) : "JD";
+      if (!byDate.has(d)) byDate.set(d, []);
+      byDate.get(d).push(r);
+    }
+    const parts = [];
+    for (const [d, arr] of byDate.entries()) {
+      const first = arr[0];
+      const last = arr[arr.length - 1];
+      const t1 = (first.utc && first.utc.length >= 19) ? first.utc.slice(11, 19) : "";
+      const t2 = (last.utc && last.utc.length >= 19) ? last.utc.slice(11, 19) : "";
+      const jd1 = Number(first.jdMid).toFixed(5);
+      const jd2 = Number(last.jdMid).toFixed(5);
+      if (t1 && t2) {
+        parts.push(`${d} (${t1}–${t2} UTC, JD ${jd1}–${jd2}, ${arr.length} шт.)`);
+      } else {
+        parts.push(`JD ${jd1}–${jd2} (${arr.length} шт.)`);
+      }
+    }
+    return parts.join("; ");
+  }
+
+  window.analyzeAndFilterDuplicateAndOldCsvRows = function(linesInput, starCandidate) {
+    const lines = Array.isArray(linesInput) ? linesInput : String(linesInput || "").split(/\r?\n/);
+    const validRows = [];
+    for (let i = 0; i < lines.length; i++) {
+      const raw = String(lines[i] || "").trim();
+      if (!raw || (i === 0 && raw.toLowerCase().startsWith("name,"))) continue;
+      const c = splitSeestarCsvRow(raw);
+      if (c.length < 19 || c[1].toLowerCase() !== "non-reference star") continue;
+      const mag = parseFloat(c[6]);
+      const merr = parseFloat(c[7]);
+      const jdStart = parseFloat(c[12]);
+      const jdEnd = parseFloat(c[15]);
+      if (!Number.isFinite(mag) || !Number.isFinite(merr)) continue;
+      if (!Number.isFinite(jdStart) && !Number.isFinite(jdEnd)) continue;
+      const jdMid = (Number.isFinite(jdStart) && Number.isFinite(jdEnd))
+        ? (jdStart + jdEnd) / 2
+        : (Number.isFinite(jdStart) ? jdStart : jdEnd);
+      validRows.push({
+        lineIdx: i,
+        starRaw: c[0].trim(),
+        mag,
+        merr,
+        utc: c[11] ? c[11].trim() : "",
+        jdStart: Number.isFinite(jdStart) ? jdStart : jdMid,
+        jdEnd: Number.isFinite(jdEnd) ? jdEnd : jdMid,
+        jdMid: Number(jdMid.toFixed(6))
+      });
+    }
+
+    if (validRows.length === 0) {
+      return {
+        totalValid: 0,
+        keptRows: [],
+        removedRows: [],
+        excludedLineIndices: new Set(),
+        hasDuplicatesOrOld: false
+      };
+    }
+
+    // 1. Загружаем уже сконвертированные точки из локальной БД (Converted_Photometry_Storage)
+    const db = readLocalConvertedDbSync();
+    const targetStarRef = starCandidate || validRows[0].starRaw || "";
+    const dbPointsForStar = (db.points || []).filter(pt => {
+      if (!pt || !Number.isFinite(Number(pt.jd))) return false;
+      if (!targetStarRef || !pt.star) return true;
+      return sameStar(pt.star, targetStarRef) || sameStar(pt.star, validRows[0].starRaw);
+    });
+    const dbJd5Set = new Set(dbPointsForStar.map(pt => Number(pt.jd).toFixed(5)));
+    const dbJdList = dbPointsForStar.map(pt => Number(pt.jd));
+
+    // 2. Разбиваем наблюдения в файле на отдельные ночи/сессии по разрыву времени ΔJD > 0.35 суток (~8.4 часа)
+    const sortedByJd = [...validRows].sort((a, b) => a.jdMid - b.jdMid);
+    const sessions = [];
+    let curSess = [sortedByJd[0]];
+    for (let k = 1; k < sortedByJd.length; k++) {
+      if (sortedByJd[k].jdMid - sortedByJd[k - 1].jdMid > 0.35) {
+        sessions.push(curSess);
+        curSess = [sortedByJd[k]];
+      } else {
+        curSess.push(sortedByJd[k]);
+      }
+    }
+    sessions.push(curSess);
+
+    const latestSessionMinJd = sessions[sessions.length - 1][0].jdMid;
+    const hasMultipleEpochSessions = sessions.length > 1;
+
+    const excludedLineIndices = new Set();
+    const removedRows = [];
+    const keptRows = [];
+    const seenInFileJd = new Set();
+    const reasonsSet = new Set();
+
+    for (const r of validRows) {
+      const jd5 = r.jdMid.toFixed(5);
+      const jd6 = r.jdMid.toFixed(6);
+
+      // Проверка A: дубликат внутри этого же файла
+      if (seenInFileJd.has(jd6)) {
+        excludedLineIndices.add(r.lineIdx);
+        removedRows.push(r);
+        reasonsSet.add("in_file");
+        continue;
+      }
+      seenInFileJd.add(jd6);
+
+      // Проверка B: прямое совпадение с базой уже сконвертированных точек (|ΔJD| <= 0.00012 сут ~ 10 сек)
+      let matchedDb = dbJd5Set.has(jd5);
+      if (!matchedDb && dbJdList.length > 0) {
+        for (let m = 0; m < dbJdList.length; m++) {
+          if (Math.abs(dbJdList[m] - r.jdMid) <= 0.00012) {
+            matchedDb = true;
+            break;
+          }
+        }
+      }
+      if (matchedDb) {
+        excludedLineIndices.add(r.lineIdx);
+        removedRows.push(r);
+        reasonsSet.add("converted_db");
+        continue;
+      }
+
+      // Проверка C: строка относится к более старой сессии (предыдущей ночи) в многоэпоховом сыром файле Seestar
+      if (hasMultipleEpochSessions && r.jdMid < latestSessionMinJd - 0.1) {
+        excludedLineIndices.add(r.lineIdx);
+        removedRows.push(r);
+        reasonsSet.add("old_session");
+        continue;
+      }
+
+      keptRows.push(r);
+    }
+
+    const hasDuplicatesOrOld = removedRows.length > 0;
+    let warningSummaryHtml = "";
+    let warningSummaryPlain = "";
+    let allRowsDuplicateMsg = "";
+    const oldRanges = formatRowRangeSummary(removedRows);
+    const newRanges = formatRowRangeSummary(keptRows);
+
+    const reasonParts = [];
+    if (reasonsSet.has("converted_db")) reasonParts.push(trDup("dupReasonConvertedDb"));
+    if (reasonsSet.has("old_session")) reasonParts.push(trDup("dupReasonOldSession"));
+    if (reasonsSet.has("in_file")) reasonParts.push(trDup("dupReasonInFile"));
+    const reasonText = reasonParts.join(" + ") || trDup("dupReasonOldSession");
+
+    if (hasDuplicatesOrOld) {
+      warningSummaryHtml = trDup("dupSummaryHtmlFmt")
+        .replace(/\{removed\}/g, String(removedRows.length))
+        .replace(/\{kept\}/g, String(keptRows.length))
+        .replace(/\{oldRanges\}/g, oldRanges)
+        .replace(/\{newRanges\}/g, newRanges)
+        .replace(/\{reasonText\}/g, reasonText);
+      warningSummaryPlain = trDup("dupSummaryPlainFmt")
+        .replace(/\{removed\}/g, String(removedRows.length))
+        .replace(/\{kept\}/g, String(keptRows.length))
+        .replace(/\{oldRanges\}/g, oldRanges)
+        .replace(/\{newRanges\}/g, newRanges);
+      allRowsDuplicateMsg = trDup("dupAllRowsMsgFmt")
+        .replace(/\{removed\}/g, String(removedRows.length))
+        .replace(/\{oldRanges\}/g, oldRanges);
+    }
+
+    return {
+      totalValid: validRows.length,
+      keptRows,
+      removedRows,
+      excludedLineIndices,
+      hasDuplicatesOrOld,
+      oldRanges,
+      newRanges,
+      warningSummaryHtml,
+      warningSummaryPlain,
+      allRowsDuplicateMsg,
+      toastTitle: trDup("dupToastTitle").replace("{removed}", String(removedRows.length)),
+      toastShortMsg: trDup("dupToastShortFmt")
+        .replace("{removed}", String(removedRows.length))
+        .replace("{kept}", String(keptRows.length))
+    };
+  };
+
+  let _lastNotifiedDupSignature = "";
+
+  window._lastDupAnalyzedLines = null;
+  window._lastDupAnalyzedStar = "";
+  window.updateDuplicateFilterBannerUI = function(linesInput, starCandidate, isTypingInput = false) {
+    window._lastDupAnalyzedLines = linesInput;
+    window._lastDupAnalyzedStar = starCandidate || "";
+    const banner = document.getElementById("duplicateFilterWarningBanner");
+    const titleEl = document.getElementById("dupBannerTitle");
+    const badgeEl = document.getElementById("dupBannerBadge");
+    const detailsEl = document.getElementById("dupBannerDetailsText");
+    if (!banner) return null;
+
+    const analysis = window.analyzeAndFilterDuplicateAndOldCsvRows(linesInput, starCandidate);
+    if (!analysis || !analysis.hasDuplicatesOrOld) {
+      banner.style.display = "none";
+      return analysis;
+    }
+
+    banner.style.display = "block";
+    if (titleEl) titleEl.textContent = trDup("dupBannerTitle");
+    if (badgeEl) {
+      badgeEl.textContent = trDup("dupBannerBadgeFmt")
+        .replace("{removed}", String(analysis.removedRows.length))
+        .replace("{total}", String(analysis.totalValid));
+    }
+    if (detailsEl) {
+      detailsEl.innerHTML = analysis.warningSummaryHtml;
+    }
+
+    const sig = `${analysis.totalValid}_${analysis.removedRows.length}_${analysis.oldRanges}`;
+    if (!isTypingInput && sig !== _lastNotifiedDupSignature) {
+      _lastNotifiedDupSignature = sig;
+      if (typeof showIosNotification === "function") {
+        showIosNotification(
+          analysis.toastTitle,
+          analysis.toastShortMsg,
+          analysis.warningSummaryPlain,
+          "warn"
+        );
+      }
+    }
+    return analysis;
+  };
+
+  window.registerSentFileContentToDb = function(rawText, fileName = "Previous_Seestar.csv") {
+    if (!rawText) return 0;
+    const db = readLocalConvertedDbSync();
+    db.points = Array.isArray(db.points) ? db.points : [];
+    const existingKeys = new Set(db.points.map(pt => `${normStarKey(pt.star)}_${Number(pt.jd).toFixed(5)}`));
+    const fallbackStar = (document.getElementById("starid")?.value || "SZ Lyn").trim();
+    let added = 0;
+
+    for (const rawLine of String(rawText).split(/\r?\n/)) {
+      const ln = rawLine.trim();
+      if (!ln || ln.startsWith("#") || ln.toLowerCase().startsWith("name,")) continue;
+      const c = splitSeestarCsvRow(ln);
+      if (c.length >= 19 && c[1].toLowerCase() === "non-reference star") {
+        const mag = parseFloat(c[6]);
+        const merr = parseFloat(c[7]);
+        const jd1 = parseFloat(c[12]);
+        const jd2 = parseFloat(c[15]);
+        const jd = (Number.isFinite(jd1) && Number.isFinite(jd2)) ? (jd1 + jd2) / 2 : jd1;
+        if (Number.isFinite(jd) && Number.isFinite(mag)) {
+          const st = c[0].trim() || fallbackStar;
+          const k = `${normStarKey(st)}_${jd.toFixed(5)}`;
+          if (!existingKeys.has(k)) {
+            existingKeys.add(k);
+            db.points.push({
+              star: st,
+              jd: Number(jd.toFixed(6)),
+              mag: Number(mag.toFixed(4)),
+              merr: Number.isFinite(merr) ? Number(merr.toFixed(4)) : 0.015,
+              band: "TG",
+              utc: c[11] ? c[11].trim() : "",
+              fileName
+            });
+            added++;
+          }
+        }
+      } else if (c.length >= 4) {
+        const jd = parseFloat(c[1]);
+        const mag = parseFloat(c[2]);
+        const merr = parseFloat(c[3]);
+        if (Number.isFinite(jd) && Number.isFinite(mag) && jd > 2400000) {
+          const st = c[0].trim() || fallbackStar;
+          const k = `${normStarKey(st)}_${jd.toFixed(5)}`;
+          if (!existingKeys.has(k)) {
+            existingKeys.add(k);
+            db.points.push({
+              star: st,
+              jd: Number(jd.toFixed(6)),
+              mag: Number(mag.toFixed(4)),
+              merr: Number.isFinite(merr) ? Number(merr.toFixed(4)) : 0.015,
+              band: c[4] ? c[4].trim() : "TG",
+              fileName
+            });
+            added++;
+          }
+        }
+      }
+    }
+    writeLocalConvertedDbSync(db);
+    _cachedCsvPtsKey = null;
+    return added;
+  };
+
+  const chkAutoDupEl = document.getElementById("chkAutoRemoveConvertedDuplicates");
+  if (chkAutoDupEl) {
+    chkAutoDupEl.addEventListener("change", () => {
+      _cachedCsvPtsKey = null;
+      const rawTxt = (typeof window.__getLiveCurrentCsvText === "function")
+        ? window.__getLiveCurrentCsvText()
+        : (window._exposedCurrentCsvText || "");
+      if (rawTxt && typeof window.renderUserOnlyLightCurveCard === "function") {
+        window.renderUserOnlyLightCurveCard();
+      }
+    });
+  }
+
+  const btnRegOldEl = document.getElementById("btnRegisterOldCsvAsSent");
+  const regOldInputEl = document.getElementById("registerOldSentCsvInput");
+  if (btnRegOldEl && regOldInputEl) {
+    btnRegOldEl.addEventListener("click", () => regOldInputEl.click());
+    regOldInputEl.addEventListener("change", (ev) => {
+      const files = Array.from(ev.target.files || []);
+      if (!files.length) return;
+      let totalAdded = 0;
+      let doneFiles = 0;
+      files.forEach(f => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          totalAdded += window.registerSentFileContentToDb(String(e.target?.result || ""), f.name);
+          doneFiles++;
+          if (doneFiles === files.length) {
+            const rawTxt = (typeof window.__getLiveCurrentCsvText === "function")
+              ? window.__getLiveCurrentCsvText()
+              : (window._exposedCurrentCsvText || "");
+            if (rawTxt) {
+              window.updateDuplicateFilterBannerUI(rawTxt.split(/\r?\n/), "", false);
+              if (typeof window.renderUserOnlyLightCurveCard === "function") window.renderUserOnlyLightCurveCard();
+            }
+            if (typeof showIosNotification === "function") {
+              showIosNotification(
+                trDup("dupRegisteredToastTitle"),
+                trDup("dupRegisteredToastMsgFmt").replace("{added}", String(totalAdded)).replace("{files}", String(files.length)),
+                "",
+                "ok"
+              );
+            }
+          }
+        };
+        reader.readAsText(f);
+      });
+    });
+  }
+
+  document.getElementById("langSelect")?.addEventListener("change", () => {
+    const banner = document.getElementById("duplicateFilterWarningBanner");
+    if (banner && banner.style.display !== "none" && window._lastDupAnalyzedLines) {
+      window.updateDuplicateFilterBannerUI(window._lastDupAnalyzedLines, window._lastDupAnalyzedStar || "", true);
+      return;
+    }
+    const rawTxt = (typeof window.__getLiveCurrentCsvText === "function")
+      ? window.__getLiveCurrentCsvText()
+      : (window._exposedCurrentCsvText || "");
+    if (rawTxt) {
+      window.updateDuplicateFilterBannerUI(rawTxt.split(/\r?\n/), "", true);
+    }
+  });
+
+
+  // ===========================================================================
+  // [RU] МОДУЛЬ 16:
+  //   1) Ненавязчивые часы с датой за кнопкой выбора телескопа (#headerLiveClock)
+  //   2) Полный сброс пользовательских данных в Настройках (#btnFullResetUserData)
+  //   3) Удаление замера из «Моих наблюдений» с очисткой базы дедупликации
+  //   4) Живая интеграция AAVSO VSX + CDS SIMBAD в модальном окне звезды
+  // [EN] MODULE 16:
+  //   1) Live Header Clock & Date (#headerLiveClock)
+  //   2) Full User Data Reset in Settings (#btnFullResetUserData)
+  //   3) Synced single-record deletion between My Observations & deduplication DB
+  //   4) Live AAVSO VSX & CDS SIMBAD integration in #starFullDossierModal
+  // ===========================================================================
+
+  const M16_I18N = {
+    ru: {
+      btnFullResetUserData: "🗑️ Полный сброс данных пользователя",
+      tipHeaderClock: "Местное время и дата",
+      confirmFullReset: "Вы уверены, что хотите полностью удалить все собранные данные пользователя («Мои наблюдения», историю сконвертированных файлов и базу дубликатов)? Это позволит повторно загрузить и сконвертировать любые файлы для отправки в AAVSO.",
+      toastFullResetTitle: "🗑️ Данные пользователя сброшены",
+      toastFullResetMsg: "История наблюдений и база ранее сконвертированных файлов полностью очищены. Можно загружать любые файлы повторно.",
+      secLiveIntegration: "Живые данные каталогов (AAVSO VSX + CDS SIMBAD)",
+      lblSynonyms: "Синонимы / Идентификаторы:",
+      lblFullConstellation: "Созвездие:",
+      lblSpectralType: "Спектральный класс:",
+      lblPeriodEpoch: "Период / Эпоха:",
+      lblProperMotion: "Собственное движение (PM):",
+      liveLoading: "⏳ Загрузка из AAVSO VSX и SIMBAD...",
+      liveLoadedOk: "✓ Синхронизировано онлайн",
+      liveOfflineNote: "⚠️ Онлайн-каталоги AAVSO VSX / SIMBAD сейчас недоступны (нет сети). Показаны базовые каталожные поля."
+    },
+    en: {
+      btnFullResetUserData: "🗑️ Full User Data Reset",
+      tipHeaderClock: "Local Time & Date",
+      confirmFullReset: "Are you sure you want to delete all collected user data (My Observations, converted file history, and duplicate registry)? This allows re-uploading and re-converting any files for AAVSO submission.",
+      toastFullResetTitle: "🗑️ User Data Cleared",
+      toastFullResetMsg: "Observation history and converted file registry have been completely cleared. You can re-upload any files.",
+      secLiveIntegration: "Live Catalog Integration (AAVSO VSX + CDS SIMBAD)",
+      lblSynonyms: "Synonyms / Identifiers:",
+      lblFullConstellation: "Constellation:",
+      lblSpectralType: "Spectral Type:",
+      lblPeriodEpoch: "Period / Epoch:",
+      lblProperMotion: "Proper Motion (PM):",
+      liveLoading: "⏳ Fetching from AAVSO VSX & SIMBAD...",
+      liveLoadedOk: "✓ Synced online",
+      liveOfflineNote: "⚠️ Online AAVSO VSX / SIMBAD catalogs are currently unreachable. Showing baseline fields."
+    },
+    es: {
+      btnFullResetUserData: "🗑️ Restablecimiento total de datos",
+      tipHeaderClock: "Hora y fecha local",
+      confirmFullReset: "¿Está seguro de eliminar todos los datos del usuario (Mis observaciones, historial y registro de duplicados)? Podrá volver a cargar y convertir cualquier archivo.",
+      toastFullResetTitle: "🗑️ Datos de usuario eliminados",
+      toastFullResetMsg: "Historial y base de archivos convertidos limpiados por completo.",
+      secLiveIntegration: "Integración en vivo (AAVSO VSX + CDS SIMBAD)",
+      lblSynonyms: "Sinónimos / Identificadores:",
+      lblFullConstellation: "Constelación:",
+      lblSpectralType: "Tipo espectral:",
+      lblPeriodEpoch: "Período / Época:",
+      lblProperMotion: "Movimiento propio:",
+      liveLoading: "⏳ Cargando de AAVSO VSX y SIMBAD...",
+      liveLoadedOk: "✓ Sincronizado",
+      liveOfflineNote: "⚠️ Catálogos en línea no disponibles en este momento."
+    },
+    de: {
+      btnFullResetUserData: "🗑️ Benutzerdaten vollständig zurücksetzen",
+      tipHeaderClock: "Ortszeit & Datum",
+      confirmFullReset: "Möchten Sie wirklich alle Benutzerdaten (Meine Beobachtungen, Verlauf und Duplikatdatenbank) löschen?",
+      toastFullResetTitle: "🗑️ Benutzerdaten zurückgesetzt",
+      toastFullResetMsg: "Beobachtungsverlauf und Konvertierungsdatenbank vollständig geleert.",
+      secLiveIntegration: "Live-Katalogintegration (AAVSO VSX + CDS SIMBAD)",
+      lblSynonyms: "Synonyme / Bezeichnungen:",
+      lblFullConstellation: "Sternbild:",
+      lblSpectralType: "Spektraltyp:",
+      lblPeriodEpoch: "Periode / Epoche:",
+      lblProperMotion: "Eigenbewegung:",
+      liveLoading: "⏳ Lade aus AAVSO VSX & SIMBAD...",
+      liveLoadedOk: "✓ Online synchronisiert",
+      liveOfflineNote: "⚠️ Online-Kataloge derzeit nicht erreichbar."
+    },
+    fr: {
+      btnFullResetUserData: "🗑️ Réinitialiser toutes les données",
+      tipHeaderClock: "Heure et date locales",
+      confirmFullReset: "Voulez-vous vraiment supprimer toutes les données utilisateur (Mes observations, historique et registre des doublons) ?",
+      toastFullResetTitle: "🗑️ Données utilisateur effacées",
+      toastFullResetMsg: "L'historique et la base des fichiers convertis ont été entièrement vidés.",
+      secLiveIntegration: "Intégration en direct (AAVSO VSX + CDS SIMBAD)",
+      lblSynonyms: "Synonymes / Identifiants :",
+      lblFullConstellation: "Constellation :",
+      lblSpectralType: "Type spectral :",
+      lblPeriodEpoch: "Période / Époque :",
+      lblProperMotion: "Mouvement propre :",
+      liveLoading: "⏳ Chargement AAVSO VSX & SIMBAD...",
+      liveLoadedOk: "✓ Synchronisé",
+      liveOfflineNote: "⚠️ Catalogues en ligne actuellement inaccessibles."
+    },
+    zh: {
+      btnFullResetUserData: "🗑️ 完全重置用户数据",
+      tipHeaderClock: "当地时间与日期",
+      confirmFullReset: "确定要清除所有用户数据（我的观测记录、已转换文件历史与去重数据库）吗？清除后可重新上传并转换任意文件。",
+      toastFullResetTitle: "🗑️ 用户数据已清空",
+      toastFullResetMsg: "观测历史与已转换文件记录库已完全清空。",
+      secLiveIntegration: "实时星表集成 (AAVSO VSX + CDS SIMBAD)",
+      lblSynonyms: "别名 / 编号:",
+      lblFullConstellation: "星座:",
+      lblSpectralType: "光谱型:",
+      lblPeriodEpoch: "周期 / 历元:",
+      lblProperMotion: "自行 (PM):",
+      liveLoading: "⏳ 正在从 AAVSO VSX 与 SIMBAD 获取...",
+      liveLoadedOk: "✓ 已在线同步",
+      liveOfflineNote: "⚠️ 当前无法访问在线星表。"
+    }
+  };
+
+  if (window.I18N) {
+    for (const lg of ["ru", "en", "es", "de", "fr", "zh"]) {
+      if (window.I18N[lg] && M16_I18N[lg]) {
+        Object.assign(window.I18N[lg], M16_I18N[lg]);
+      }
+    }
+  }
+
+  function trM16(key) {
+    const lg = (document.getElementById("langSelect")?.value || "ru").slice(0, 2).toLowerCase();
+    return (M16_I18N[lg] && M16_I18N[lg][key]) || M16_I18N.ru[key] || key;
+  }
+
+  // 1. Живые часы и дата за селектором телескопа
+  function updateHeaderClock() {
+    const el = document.getElementById("headerClockText");
+    if (!el) return;
+    const now = new Date();
+    const pad = n => String(n).padStart(2, "0");
+    const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    const dateStr = `${pad(now.getDate())}.${pad(now.getMonth() + 1)}.${now.getFullYear()}`;
+    el.textContent = `${timeStr} • ${dateStr}`;
+  }
+  updateHeaderClock();
+  setInterval(updateHeaderClock, 1000);
+
+  // 2. Удаление записи из «Моих наблюдений» очищает её и из базы дедупликации
+  window.removeConvertedRecordsByObsEntry = async function(rec) {
+    if (!rec) return;
+    const db = readLocalConvertedDbSync();
+    const recStar = String(rec.star || "").trim();
+    const recFile = String(rec.fileName || "").trim();
+    const recDateDash = String(rec.date || "").trim();
+    const recDateDot = recDateDash.replace(/-/g, ".");
+
+    db.sessions = (db.sessions || []).filter(s => {
+      if (recFile && s.fileName === recFile) return false;
+      if (recStar && recDateDash && sameStar(s.star, recStar) && String(s.fileName || "").includes(recDateDash)) return false;
+      return true;
+    });
+
+    db.points = (db.points || []).filter(pt => {
+      if (recFile && pt.fileName === recFile) return false;
+      if (recStar && sameStar(pt.star, recStar)) {
+        const ptUtc = String(pt.utc || "");
+        if (recDateDot && ptUtc.startsWith(recDateDot)) return false;
+      }
+      return true;
+    });
+
+    writeLocalConvertedDbSync(db);
+    _cachedCsvPtsKey = null;
+    _lastNotifiedDupSignature = "";
+
+    try {
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_delete_converted_records === "function") {
+        await window.pywebview.api.backend_delete_converted_records({ star: recStar, fileName: recFile, obsDate: recDateDash });
+      } else {
+        await fetch("http://127.0.0.1:18765/api/rpc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "delete_converted_records", star: recStar, fileName: recFile, obsDate: recDateDash }),
+          signal: AbortSignal.timeout(2500)
+        });
+      }
+    } catch (_) {}
+
+    const rawTxt = (typeof window.__getLiveCurrentCsvText === "function")
+      ? window.__getLiveCurrentCsvText()
+      : (window._exposedCurrentCsvText || "");
+    if (rawTxt && typeof window.updateDuplicateFilterBannerUI === "function") {
+      window.updateDuplicateFilterBannerUI(rawTxt.split(/\r?\n/), recStar, true);
+    }
+    if (typeof window.renderUserOnlyLightCurveCard === "function") {
+      window.renderUserOnlyLightCurveCard();
+    }
+  };
+
+  // 3. Полный сброс пользовательских данных в Настройках
+  window.performFullUserDataReset = async function(skipConfirm = false) {
+    if (!skipConfirm && typeof window.confirm === "function") {
+      if (!window.confirm(trM16("confirmFullReset"))) return false;
+    }
+
+    // Очистка базы конвертаций, наблюдений и кэшей
+    writeLocalConvertedDbSync({ version: "1.1.1 beta", sessions: [], points: [] });
+    try {
+      if (window.localStorage) {
+        localStorage.removeItem(LOCAL_CONV_DB_KEY);
+        localStorage.removeItem("seestar_obs_tracker_v1");
+        localStorage.removeItem("seestar_recent_actions_v1");
+      }
+    } catch (_) {}
+    if (window.__SEESTAR_DISK_STORE__) {
+      delete window.__SEESTAR_DISK_STORE__[LOCAL_CONV_DB_KEY];
+      delete window.__SEESTAR_DISK_STORE__["seestar_obs_tracker_v1"];
+      delete window.__SEESTAR_DISK_STORE__["seestar_recent_actions_v1"];
+    }
+    _cachedCsvPtsKey = null;
+    _lastNotifiedDupSignature = "";
+
+    try {
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_reset_all_user_data === "function") {
+        await window.pywebview.api.backend_reset_all_user_data();
+      } else {
+        await fetch("http://127.0.0.1:18765/api/rpc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "reset_all_user_data" }),
+          signal: AbortSignal.timeout(2500)
+        });
+      }
+    } catch (_) {}
+
+    if (typeof window.resetAllCurvesOnClear === "function") {
+      window.resetAllCurvesOnClear();
+    }
+    if (typeof window.renderObsTrackerModal === "function") {
+      try { window.renderObsTrackerModal(); } catch (_) {}
+    }
+    const dupBanner = document.getElementById("duplicateFilterWarningBanner");
+    if (dupBanner) dupBanner.style.display = "none";
+
+    if (typeof showIosNotification === "function") {
+      showIosNotification(trM16("toastFullResetTitle"), trM16("toastFullResetMsg"), "", "ok");
+    }
+    return true;
+  };
+
+  document.getElementById("btnFullResetUserData")?.addEventListener("click", () => {
+    window.performFullUserDataReset(false);
+  });
+
+  // 4. Живая интеграция (AAVSO VSX + CDS SIMBAD) при открытии досье звезды
+  const IAU_CONSTELLATIONS_FULL = {
+    And: "Andromeda (Андромеда)", Aqr: "Aquarius (Водолей)", Aql: "Aquila (Орёл)", Aur: "Auriga (Возничий)",
+    Boo: "Boötes (Волопас)", Cam: "Camelopardalis (Жираф)", Cnc: "Cancer (Рак)", CVn: "Canes Venatici (Гончие Псы)",
+    CMa: "Canis Major (Большой Пёс)", CMi: "Canis Minor (Малый Пёс)", Cap: "Capricornus (Козерог)", Car: "Carina (Киль)",
+    Cas: "Cassiopeia (Кассиопея)", Cen: "Centaurus (Центавр)", Cep: "Cepheus (Цефей)", Cet: "Cetus (Кит)",
+    CrB: "Corona Borealis (Северная Корона)", Crv: "Corvus (Ворон)", Cru: "Crux (Южный Крест)", Cyg: "Cygnus (Лебедь)",
+    Del: "Delphinus (Дельфин)", Dra: "Draco (Дракон)", Equ: "Equuleus (Малый Конь)", Eri: "Eridanus (Эридан)",
+    Gem: "Gemini (Близнецы)", Her: "Hercules (Геркулес)", Hya: "Hydra (Гидра)", Lac: "Lacerta (Ящерица)",
+    Leo: "Leo (Лев)", LMi: "Leo Minor (Малый Лев)", Lep: "Lepus (Заяц)", Lib: "Libra (Весы)",
+    Lyn: "Lynx (Рысь)", Lyr: "Lyra (Лира)", Mon: "Monoceros (Единорог)", Oph: "Ophiuchus (Змееносец)",
+    Ori: "Orion (Орион)", Peg: "Pegasus (Пегас)", Per: "Perseus (Персей)", Psc: "Pisces (Рыбы)",
+    Pup: "Puppis (Корма)", Sge: "Sagitta (Стрела)", Sgr: "Sagittarius (Стрелец)", Sco: "Scorpius (Скорпион)",
+    Sct: "Scutum (Щит)", Ser: "Serpens (Змея)", Tau: "Taurus (Телец)", Tri: "Triangulum (Треугольник)",
+    UMa: "Ursa Major (Большая Медведица)", UMi: "Ursa Minor (Малая Медведица)", Vir: "Virgo (Дева)", Vul: "Vulpecula (Лисичка)"
+  };
+
+  const _liveDossierCache = new Map();
+
+  window.fetchLiveStarDossierIntegration = async function(rawItem) {
+    const titleEl = document.getElementById("starDossierLiveTitle");
+    const badgeEl = document.getElementById("starDossierLiveBadge");
+    const contentEl = document.getElementById("starDossierLiveContent");
+    if (!rawItem || !contentEl) return;
+
+    if (titleEl) titleEl.textContent = trM16("secLiveIntegration");
+    if (badgeEl) badgeEl.textContent = trM16("liveLoading");
+    contentEl.textContent = trM16("liveLoading");
+
+    const starKey = String(rawItem.star || "").trim();
+    if (_liveDossierCache.has(starKey)) {
+      const cached = _liveDossierCache.get(starKey);
+      if (badgeEl) badgeEl.textContent = trM16("liveLoadedOk");
+      contentEl.innerHTML = cached;
+      return;
+    }
+
+    let aliases = [];
+    let constellationFull = IAU_CONSTELLATIONS_FULL[rawItem.con] || rawItem.con || "—";
+    let spectralType = "—";
+    let periodStr = rawItem.period ? `${rawItem.period} d` : "—";
+    let epochStr = "—";
+    let pmStr = "—";
+    let gotAnyOnline = false;
+
+    // 4.0 Сначала запрос через локальный Python RPC-бэкенд (обходит браузерные CORS-ограничения AAVSO VSX и CDS SIMBAD)
+    try {
+      const rpcResp = await fetch("http://127.0.0.1:18765/api/rpc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "fetch_live_star_dossier", star: starKey }),
+        signal: AbortSignal.timeout(7500)
+      });
+      if (rpcResp.ok) {
+        const rData = await rpcResp.json();
+        if (rData && rData.gotAnyOnline) {
+          gotAnyOnline = true;
+          if (Array.isArray(rData.aliases)) rData.aliases.forEach(a => { if (a && !aliases.includes(a)) aliases.push(a); });
+          if (rData.constellation) constellationFull = IAU_CONSTELLATIONS_FULL[rData.constellation] || rData.constellation;
+          if (rData.spectralType) spectralType = rData.spectralType;
+          if (rData.periodStr) periodStr = rData.periodStr;
+          if (rData.epochStr) epochStr = rData.epochStr;
+          if (rData.pmStr) pmStr = rData.pmStr;
+        }
+      }
+    } catch (_) {}
+
+    // 4A. Прямой резервный запрос к AAVSO VSX JSON API (если RPC недоступен)
+    if (!gotAnyOnline) {
+      try {
+        const vsxUrl = `https://www.aavso.org/vsx/index.php?view=api.object&ident=${encodeURIComponent(starKey)}&format=json`;
+        const resp = await fetch(vsxUrl, { signal: AbortSignal.timeout(4500) });
+        if (resp.ok) {
+          const data = await resp.json();
+          const obj = data && data.VSXObject;
+          if (obj) {
+            gotAnyOnline = true;
+            if (obj.AUID) aliases.push(`AAVSO AUID ${obj.AUID}`);
+            if (obj.Name && obj.Name !== starKey) aliases.push(obj.Name);
+            if (obj.Constellation) constellationFull = IAU_CONSTELLATIONS_FULL[obj.Constellation] || obj.Constellation;
+            if (obj.SpectralType) spectralType = obj.SpectralType;
+            if (obj.Period) periodStr = `${obj.Period} d`;
+            if (obj.Epoch) epochStr = `HJD ${obj.Epoch}`;
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 4B. Резервный запрос синонимов и спектрального класса из CDS SIMBAD Sesame XML
+    if (!gotAnyOnline) {
+      try {
+        const sesUrl = `https://cds.unistra.fr/cgi-bin/nph-sesame/-oxp/NSV?${encodeURIComponent(starKey)}`;
+        const sResp = await fetch(sesUrl, { signal: AbortSignal.timeout(4500) });
+        if (sResp.ok) {
+          const xmlText = await sResp.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(xmlText, "text/xml");
+          const aliasNodes = Array.from(doc.querySelectorAll("alias"));
+          aliasNodes.forEach(n => {
+            const txt = (n.textContent || "").trim();
+            if (txt && !aliases.includes(txt)) aliases.push(txt);
+          });
+          const spNode = doc.querySelector("spType");
+          if (spNode && spNode.textContent.trim()) spectralType = spNode.textContent.trim();
+          const pmRa = doc.querySelector("pm > pmRA")?.textContent?.trim();
+          const pmDe = doc.querySelector("pm > pmDE")?.textContent?.trim();
+          if (pmRa && pmDe) pmStr = `μRA=${pmRa} mas/yr, μDec=${pmDe} mas/yr`;
+          if (aliases.length > 0 || spNode) gotAnyOnline = true;
+        }
+      } catch (_) {}
+    }
+
+    const esc = window.escapeHtml || (s => String(s || ""));
+    if (!gotAnyOnline) {
+      if (badgeEl) badgeEl.textContent = "Offline";
+      contentEl.innerHTML = `
+        <div class="live-dossier-offline-note" style="margin-bottom:4px;">${esc(trM16("liveOfflineNote"))}</div>
+        <div class="star-dossier-kv-row"><span>${esc(trM16("lblFullConstellation"))}</span><strong>${esc(constellationFull)}</strong></div>
+        <div class="star-dossier-kv-row"><span>${esc(trM16("lblPeriodEpoch"))}</span><span>${esc(periodStr)}</span></div>
+      `;
+      return;
+    }
+
+    const htmlOut = `
+      <div class="star-dossier-kv-row"><span>${esc(trM16("lblFullConstellation"))}</span><strong>${esc(constellationFull)}</strong></div>
+      <div class="star-dossier-kv-row"><span>${esc(trM16("lblSynonyms"))}</span><span>${esc(aliases.slice(0, 12).join(" • ") || "—")}</span></div>
+      <div class="star-dossier-kv-row"><span>${esc(trM16("lblSpectralType"))}</span><strong>${esc(spectralType)}</strong></div>
+      <div class="star-dossier-kv-row"><span>${esc(trM16("lblPeriodEpoch"))}</span><span>${esc(periodStr)}${epochStr !== "—" ? " • " + esc(epochStr) : ""}</span></div>
+      <div class="star-dossier-kv-row"><span>${esc(trM16("lblProperMotion"))}</span><span>${esc(pmStr)}</span></div>
+    `;
+    _liveDossierCache.set(starKey, htmlOut);
+    if (badgeEl) badgeEl.textContent = trM16("liveLoadedOk");
+    contentEl.innerHTML = htmlOut;
+  };
 
 })();

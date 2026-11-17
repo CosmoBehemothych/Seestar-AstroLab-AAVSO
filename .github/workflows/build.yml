@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-windows:
@@ -29,7 +29,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyinstaller pywebview
 
-      - name: Build application binary with PyInstaller
+      - name: Build standalone application binary with PyInstaller
         working-directory: Source_and_Build
         shell: pwsh
         run: |
@@ -41,31 +41,43 @@ jobs:
           if (Test-Path "pwa_mobile_and_electron") { $argsList += @("--add-data", "pwa_mobile_and_electron;pwa_mobile_and_electron") }
           if (Test-Path "backend") { $argsList += @("--add-data", "backend;backend") }
           if (Test-Path "desktop_pc") { $argsList += @("--add-data", "desktop_pc;desktop_pc") }
+          if (Test-Path "Converted_Photometry_Storage") { $argsList += @("--add-data", "Converted_Photometry_Storage;Converted_Photometry_Storage") }
           if (Test-Path "../Converted_Photometry_Storage") { $argsList += @("--add-data", "../Converted_Photometry_Storage;Converted_Photometry_Storage") }
           if (Test-Path "assets/Seestar_AstroLab.ico") { $argsList += @("--icon", "assets/Seestar_AstroLab.ico") }
           $argsList += "desktop_launcher.py"
           pyinstaller @argsList
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Build Windows Installer (Inno Setup if assets present)
+      - name: Package Portable Windows Archive (No Python required)
         working-directory: Source_and_Build
         shell: pwsh
         run: |
-          if ((Test-Path "Seestar_AstroLab_Installer.iss") -and (Test-Path "assets/Seestar_AstroLab.ico") -and (Test-Path "assets/installer_header_fullwidth.bmp")) {
-            $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
-            if (-not (Test-Path $iscc)) {
-              choco install innosetup -y
-            }
-            & $iscc Seestar_AstroLab_Installer.iss
-          } else {
-            Write-Host "Inno Setup assets not found; packaging PyInstaller output directly."
-            New-Item -ItemType Directory -Force -Path "dist_installer" | Out-Null
-            Compress-Archive -Path "dist/Seestar AstroLab/*" -DestinationPath "dist_installer/Seestar_AstroLab_Windows_CI.zip" -Force
-          }
+          New-Item -ItemType Directory -Force -Path "dist_installer" | Out-Null
+          Compress-Archive -Path "dist/Seestar AstroLab/*" -DestinationPath "dist_installer/Seestar_AstroLab_Portable_Windows.zip" -Force
 
-      - name: Upload build artifact
+      - name: Build Standalone Windows Installer (Inno Setup 6 — No Python required)
+        working-directory: Source_and_Build
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            choco install innosetup -y
+          }
+          & $iscc Seestar_AstroLab_Installer.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Seestar_AstroLab_Windows_Build
           path: Source_and_Build/dist_installer/*
           if-no-files-found: error
+
+      - name: Publish Release Assets on Tag Push
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            Source_and_Build/dist_installer/Seestar_AstroLab_Setup.exe
+            Source_and_Build/dist_installer/Seestar_AstroLab_Portable_Windows.zip
+          generate_release_notes: true

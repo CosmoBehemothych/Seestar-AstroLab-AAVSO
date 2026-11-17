@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ================================================================================
-Seestar AstroLab AAVSO v1.1.0 beta — Unified Python Backend Core (Single Source of Truth)
+Seestar AstroLab AAVSO v1.1.1 beta — Unified Python Backend Core (Single Source of Truth)
 Author: CosmoBehemothych (https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO)
 ================================================================================
 Централизованное серверное/бэкенд-ядро бизнес-логики приложения:
@@ -42,7 +42,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-APP_VERSION = "1.1.0 beta"
+APP_VERSION = "1.1.1 beta"
 CRITICAL_COORD_DIFF_DEG = 0.05
 EXACT_COORD_MATCH_DEG = 0.00001
 DSS2_SURVEY_FOV_DEG = 2.40
@@ -601,12 +601,56 @@ class PhotometryBackendEngine:
         count = 0
         skipped = 0
         bad = 0
+        dup_removed_count = 0
         rounding_warnings = 0
         first_utc = None
         first_raw_star = None
         diffs = []
+        removed_old_summary = []
 
-        for idx, raw_line in enumerate((csv_text or "").splitlines()):
+        # [RU] Предварительный проход для выявления ранее сконвертированных точек (из Converted_Photometry_Storage)
+        #      и старых ночей наблюдений в дозаписанных файлах Seestar CSV (разрыв между сессиями ΔJD > 0.35 сут)
+        # [EN] Pre-pass to detect previously converted records and older observing nights in appended Seestar CSVs
+        raw_lines_all = (csv_text or "").splitlines()
+        valid_jds_for_sessions = []
+        for _i, _rl in enumerate(raw_lines_all):
+            _s = _rl.strip()
+            if not _s or (_i == 0 and _s.lower().startswith("name,")):
+                continue
+            _c = cls._split_dirty_csv_line(_s)
+            if len(_c) >= 19 and _c[1].lower() == "non-reference star":
+                try:
+                    _j1 = float(_c[12])
+                    _j2 = float(_c[15]) if _c[15] else _j1
+                    valid_jds_for_sessions.append((_j1 + _j2) / 2.0)
+                except Exception:
+                    pass
+
+        latest_session_min_jd = None
+        if len(valid_jds_for_sessions) > 1:
+            sorted_jds = sorted(valid_jds_for_sessions)
+            sess_list = [[sorted_jds[0]]]
+            for _k in range(1, len(sorted_jds)):
+                if sorted_jds[_k] - sorted_jds[_k - 1] > 0.35:
+                    sess_list.append([sorted_jds[_k]])
+                else:
+                    sess_list[-1].append(sorted_jds[_k])
+            if len(sess_list) > 1:
+                latest_session_min_jd = sess_list[-1][0]
+
+        existing_db_jds = []
+        try:
+            _db = AavsoNativeAndStorageService.load_storage_db()
+            for _pt in _db.get("points", []):
+                if _pt.get("jd") is not None:
+                    if not canonical_target or cls.are_same_star(_pt.get("star"), canonical_target):
+                        existing_db_jds.append(float(_pt["jd"]))
+        except Exception:
+            pass
+
+        seen_in_file_jds = set()
+
+        for idx, raw_line in enumerate(raw_lines_all):
             raw = raw_line.strip()
             if not raw:
                 skipped += 1
@@ -639,7 +683,30 @@ class PhotometryBackendEngine:
                 jd_start = float(jd_start_str)
                 jd_end = float(jd_end_str)
                 from decimal import Decimal, ROUND_HALF_UP
-                jd_mid = str(((Decimal(str(jd_start)) + Decimal(str(jd_end))) / Decimal("2")).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP))
+                jd_mid_dec = ((Decimal(str(jd_start)) + Decimal(str(jd_end))) / Decimal("2")).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
+                jd_mid = str(jd_mid_dec)
+                jd_mid_float = float(jd_mid_dec)
+
+                # Проверка на дубликат или старую сессию, которая уже передавалась в AAVSO
+                is_dup_or_old = False
+                if jd_mid in seen_in_file_jds:
+                    is_dup_or_old = True
+                seen_in_file_jds.add(jd_mid)
+
+                if not is_dup_or_old and latest_session_min_jd is not None and jd_mid_float < latest_session_min_jd - 0.1:
+                    is_dup_or_old = True
+
+                if not is_dup_or_old and existing_db_jds:
+                    for _ejd in existing_db_jds:
+                        if abs(_ejd - jd_mid_float) <= 0.00012:
+                            is_dup_or_old = True
+                            break
+
+                if is_dup_or_old:
+                    dup_removed_count += 1
+                    skipped += 1
+                    removed_old_summary.append({"utc": cols[11], "jd": jd_mid})
+                    continue
 
                 if not first_utc:
                     first_utc = cols[11]
@@ -717,6 +784,8 @@ class PhotometryBackendEngine:
             "content": "\n".join(out_lines) + "\n",
             "count": count,
             "skipped": skipped,
+            "duplicateRemovedCount": dup_removed_count,
+            "duplicateRemovedRecords": removed_old_summary,
             "bad": bad,
             "roundingWarnings": rounding_warnings,
             "obscodeFormatWarning": obs_validation.get("warning", ""),
@@ -949,6 +1018,46 @@ class AavsoNativeAndStorageService:
                 pass
 
         return cls.get_converted_history(canonical_star or star_name)
+
+    @classmethod
+    def delete_converted_records(cls, star_name: str = "", file_name: str = "", obs_date: str = "") -> Dict[str, Any]:
+        with cls._lock:
+            db = cls.load_storage_db()
+            date_dot = str(obs_date or "").replace("-", ".")
+            db["sessions"] = [
+                s for s in db.get("sessions", [])
+                if not ((file_name and s.get("fileName") == file_name) or (star_name and obs_date and PhotometryBackendEngine.are_same_star(s.get("star"), star_name) and obs_date in str(s.get("fileName", ""))))
+            ]
+            db["points"] = [
+                p for p in db.get("points", [])
+                if not ((file_name and p.get("fileName") == file_name) or (star_name and date_dot and PhotometryBackendEngine.are_same_star(p.get("star"), star_name) and str(p.get("utc", "")).startswith(date_dot)))
+            ]
+            try:
+                with open(cls.get_storage_db_path(), "w", encoding="utf-8") as f:
+                    json.dump(db, f, ensure_ascii=False, indent=2)
+            except Exception:
+                pass
+        return {"ok": True}
+
+    @classmethod
+    def reset_all_user_data(cls) -> Dict[str, Any]:
+        with cls._lock:
+            st_dir = get_program_converted_storage_dir()
+            sessions_dir = os.path.join(st_dir, "sessions")
+            try:
+                if os.path.isdir(sessions_dir):
+                    for fn in os.listdir(sessions_dir):
+                        fp = os.path.join(sessions_dir, fn)
+                        if os.path.isfile(fp):
+                            os.remove(fp)
+            except Exception:
+                pass
+            try:
+                with open(cls.get_storage_db_path(), "w", encoding="utf-8") as f:
+                    json.dump({"version": APP_VERSION, "sessions": [], "points": []}, f, ensure_ascii=False, indent=2)
+            except Exception:
+                pass
+        return {"ok": True}
 
     @classmethod
     def get_converted_history(cls, star_name: Optional[str] = None) -> Dict[str, Any]:
@@ -1201,6 +1310,90 @@ class AavsoNativeAndStorageService:
         except Exception:
             return ""
 
+
+    @classmethod
+    def fetch_live_star_dossier(cls, star_name: str) -> Dict[str, Any]:
+        """
+        Загружает живые данные о звезде из AAVSO VSX (JSON API) и CDS SIMBAD Sesame (XML)
+        на стороне Python-бэкенда (без браузерных ограничений CORS).
+        """
+        import xml.etree.ElementTree as ET
+
+        clean_star = PhotometryBackendEngine.normalize_star_for_vsp(star_name)
+        if not clean_star:
+            return {"ok": False, "error": "Empty star name", "gotAnyOnline": False}
+
+        aliases: List[str] = []
+        constellation = ""
+        spectral_type = ""
+        period_str = ""
+        epoch_str = ""
+        pm_str = ""
+        got_any = False
+        errors: List[str] = []
+
+        # 1) AAVSO VSX API
+        try:
+            vsx_url = f"https://www.aavso.org/vsx/index.php?view=api.object&ident={urllib.parse.quote(clean_star)}&format=json"
+            req = urllib.request.Request(vsx_url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
+            with urllib.request.urlopen(req, timeout=7.0) as resp:
+                data = json.loads(resp.read().decode("utf-8", errors="replace"))
+            obj = (data or {}).get("VSXObject")
+            if isinstance(obj, dict) and (obj.get("Name") or obj.get("AUID")):
+                got_any = True
+                if obj.get("AUID"):
+                    aliases.append(f"AAVSO AUID {obj['AUID']}")
+                if obj.get("Name") and obj["Name"] != clean_star:
+                    aliases.append(str(obj["Name"]))
+                if obj.get("Constellation"):
+                    constellation = str(obj["Constellation"])
+                if obj.get("SpectralType"):
+                    spectral_type = str(obj["SpectralType"])
+                if obj.get("Period"):
+                    period_str = f"{obj['Period']} d"
+                if obj.get("Epoch"):
+                    epoch_str = f"HJD {obj['Epoch']}"
+        except Exception as e:
+            errors.append(f"VSX: {e}")
+
+        # 2) CDS SIMBAD Sesame XML (cds.unistra.fr primary, cdsweb.u-strasbg.fr mirror)
+        for host in ("https://cds.unistra.fr", "https://cdsweb.u-strasbg.fr"):
+            try:
+                ses_url = f"{host}/cgi-bin/nph-sesame/-oxp/NSV?{urllib.parse.quote(clean_star)}"
+                req = urllib.request.Request(ses_url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
+                with urllib.request.urlopen(req, timeout=7.0) as resp:
+                    xml_text = resp.read().decode("utf-8", errors="replace")
+                root = ET.fromstring(xml_text)
+                for al in root.findall(".//alias"):
+                    txt = (al.text or "").strip()
+                    if txt and txt not in aliases:
+                        aliases.append(txt)
+                sp = root.find(".//spType")
+                if sp is not None and (sp.text or "").strip() and not spectral_type:
+                    spectral_type = sp.text.strip()
+                pm_ra = root.find(".//pm/pmRA")
+                pm_de = root.find(".//pm/pmDE")
+                if pm_ra is not None and pm_de is not None and (pm_ra.text or "").strip() and (pm_de.text or "").strip():
+                    pm_str = f"μRA={pm_ra.text.strip()} mas/yr, μDec={pm_de.text.strip()} mas/yr"
+                if aliases or spectral_type:
+                    got_any = True
+                    break
+            except Exception as e:
+                errors.append(f"SIMBAD({host}): {e}")
+
+        return {
+            "ok": got_any,
+            "gotAnyOnline": got_any,
+            "star": clean_star,
+            "aliases": aliases[:15],
+            "constellation": constellation,
+            "spectralType": spectral_type,
+            "periodStr": period_str,
+            "epochStr": epoch_str,
+            "pmStr": pm_str,
+            "errors": errors,
+        }
+
     @classmethod
     def fetch_aavso_light_curve(
         cls,
@@ -1288,13 +1481,15 @@ class AavsoNativeAndStorageService:
         if not raw_points:
             try:
                 q_params = {
+                    "DateFormat": "Julian",
+                    "RequestedBands": "",
                     "view": "api.delim",
                     "ident": clean_star,
                     "fromjd": f"{from_jd:.4f}",
                     "tojd": f"{now_jd:.4f}",
                     "delimiter": ",",
                 }
-                url = f"https://www.aavso.org/vsx/index.php?{urllib.parse.urlencode(q_params)}"
+                url = f"https://www.aavso.org/LCGv2/index.htm?{urllib.parse.urlencode(q_params)}"
                 req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
                 with urllib.request.urlopen(req, timeout=9.0) as resp:
                     csv_text = resp.read().decode("utf-8", errors="replace")
@@ -1463,8 +1658,21 @@ class _AstroLabBackendRequestHandler(BaseHTTPRequestHandler):
                 points=body.get("points"),
             )
             self._send_json(res)
+        elif action == "delete_converted_records":
+            res = AavsoNativeAndStorageService.delete_converted_records(
+                star_name=body.get("star", ""),
+                file_name=body.get("fileName", ""),
+                obs_date=body.get("obsDate", ""),
+            )
+            self._send_json(res)
+        elif action == "reset_all_user_data":
+            res = AavsoNativeAndStorageService.reset_all_user_data()
+            self._send_json(res)
         elif action == "get_converted_history":
             res = AavsoNativeAndStorageService.get_converted_history(body.get("star"))
+            self._send_json(res)
+        elif action == "fetch_live_star_dossier":
+            res = AavsoNativeAndStorageService.fetch_live_star_dossier(body.get("star", ""))
             self._send_json(res)
         elif action == "query_aavso_star":
             res = AavsoNativeAndStorageService.query_aavso_star(
