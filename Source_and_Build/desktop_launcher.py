@@ -390,31 +390,9 @@ def apply_win32_window_icon(window_title, icon_path):
 
 
 def try_install_pywebview():
-    try:
-        import tkinter as tk
-        from tkinter import messagebox
-        root = tk.Tk()
-        root.withdraw()
-        ans = messagebox.askyesno(
-            "Seestar AstroLab Desktop",
-            "Для запуска в собственном изолированном окне (Microsoft Edge WebView2) "
-            "требуется библиотека pywebview.\n\n"
-            "Установить её автоматически прямо сейчас?"
-        )
-        root.destroy()
-        if not ans:
-            return False
-
-        flags = getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000) if sys.platform == "win32" else 0
-        proc = subprocess.run(
-            [sys.executable, "-m", "pip", "install", "pywebview"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            creationflags=flags
-        )
-        return proc.returncode == 0
-    except Exception:
-        return False
+    # В скомпилированном .exe мы не можем запускать pip, поэтому просто возвращаем False.
+    # Библиотека pywebview должна быть вшита в exe-файл через PyInstaller.
+    return False
 
 
 
@@ -482,13 +460,7 @@ def main():
     try:
         import webview
     except ImportError:
-        if try_install_pywebview():
-            try:
-                import webview
-            except ImportError:
-                webview = None
-        else:
-            webview = None
+        webview = None
 
     if not webview:
         try:
@@ -498,8 +470,7 @@ def main():
             root.withdraw()
             messagebox.showinfo(
                 "Требуется pywebview",
-                "Для запуска десктопного окна выполните в командной строке:\n\n"
-                "pip install pywebview"
+                "В сборке отсутствует библиотека pywebview. Пожалуйста, скачайте официальный установщик."
             )
             root.destroy()
         except Exception:
