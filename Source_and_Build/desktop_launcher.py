@@ -2,15 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""
 ================================================================================
-Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.1.0 beta)
-================================================================================
-- Открывает локальный интерфейс pwa_mobile_and_electron/index.html внутри
-  собственного нативного окна (Microsoft Edge WebView2).
-- Гарантирует 100% сохранение пользовательских данных (OBSCODE, «Мои наблюдения»,
-  тема, модель телескопа) между перезапусками приложения через:
-  1) Постоянное хранилище на диске `%APPDATA%\Seestar_AstroLab\user_persistent_store.json`
-  2) Синхронный скрипт предзагрузки `pwa_mobile_and_electron/user_persistent_store.js`
-  3) Нативный мост `js_api = AstroLabDiskBridge()` и `private_mode=False` в pywebview.
+Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.1.2 beta)
 ================================================================================
 """
 
@@ -19,6 +11,40 @@ import os
 import subprocess
 import sys
 import threading
+import ctypes
+
+# [КРИТИЧЕСКИЙ ФИКС] Скрываем консольное окно, так как PyInstaller собирает в режиме --console
+if sys.platform == "win32":
+    try:
+        ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
+    except Exception:
+        pass
+
+# [CI SELF-HEAL] Автоматическое создание assets/installer_header_fullwidth.bmp и Seestar_AstroLab.ico при сборке
+try:
+    import struct as _st
+    _here = os.path.dirname(os.path.abspath(__file__))
+    _assets_d = os.path.join(_here, "assets")
+    os.makedirs(_assets_d, exist_ok=True)
+    _bmp_p = os.path.join(_assets_d, "installer_header_fullwidth.bmp")
+    if not os.path.isfile(_bmp_p):
+        _w, _h = 500, 160
+        _rs = (_w * 3 + 3) & ~3
+        _pa = _rs * _h
+        _hdr = _st.pack("<2sIHHI", b"BM", 54 + _pa, 0, 0, 54) + _st.pack("<IiiHHIIiiII", 40, _w, _h, 1, 24, 0, _pa, 2835, 2835, 0, 0)
+        _row = bytes([c for x in range(_w) for c in (int(32+(x/_w)*48), int(18+(x/_w)*28), int(11+(x/_w)*18))]) + b"\x00" * (_rs - _w * 3)
+        with open(_bmp_p, "wb") as _bf:
+            _bf.write(_hdr + _row * _h)
+    _ico_p = os.path.join(_assets_d, "Seestar_AstroLab.ico")
+    if not os.path.isfile(_ico_p):
+        _iw, _ih = 32, 32
+        _xsz = _iw * _ih * 4
+        _asz = ((_iw + 31) // 32) * 4 * _ih
+        _ihdr = _st.pack("<HHH", 0, 1, 1) + _st.pack("<BBBBHHII", _iw, _ih, 0, 0, 1, 32, 40 + _xsz + _asz, 22) + _st.pack("<IiiHHIIiiII", 40, _iw, _ih * 2, 1, 32, 0, _xsz + _asz, 0, 0, 0, 0)
+        with open(_ico_p, "wb") as _if:
+            _if.write(_ihdr + (b"\xf8\xbd\x38\xff" * (_iw * _ih)) + bytes(_asz))
+except Exception:
+    pass
 
 # Подключение единого серверного ядра бизнес-логики PhotometryBackendEngine
 try:
@@ -34,13 +60,12 @@ except ImportError:
         start_background_rpc_server = None
 
 
-APP_VERSION = "1.1.0 beta"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.1.0 beta)"
+APP_VERSION = "1.1.2 beta"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.1.2 beta)"
 APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
 
 if sys.platform == "win32":
     try:
-        import ctypes
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_USER_MODEL_ID)
     except Exception:
         pass
@@ -75,8 +100,6 @@ def get_html_path():
         if p and os.path.isfile(p):
             return os.path.abspath(p)
 
-    # [RU] Резервная самораспаковка UI из собственного .exe архива (для автономного Portable-запуска из любой папки)
-    # [EN] Self-extract UI bundle from own .exe zip payload if index.html is not found in adjacent folders
     try:
         import zipfile as _zf
         import io as _io
@@ -127,11 +150,6 @@ def get_persistent_data_dir():
 
 
 class AstroLabDiskBridge:
-    r"""
-    Нативный мост сохранения состояния на жёсткий диск Windows:
-    сохраняет OBSCODE и базу «Мои наблюдения» в `%APPDATA%\\Seestar_AstroLab\\user_persistent_store.json`
-    и обновляет `user_persistent_store.js` рядом с `index.html`.
-    """
     def __init__(self, html_file_path):
         self._lock = threading.Lock()
         self.data_dir = get_persistent_data_dir()
@@ -159,7 +177,6 @@ class AstroLabDiskBridge:
                     store.update(data)
             except Exception:
                 pass
-        # ПУНКТ 2: Подхватываем язык, выбранный пользователем в установщике (из user_settings.json или user_persistent_store.js)
         try:
             base_d = get_base_dir()
             for cand_settings in [
@@ -219,7 +236,6 @@ class AstroLabDiskBridge:
             self._store.pop(str(key), None)
             self._save_to_disk()
         return True
-
 
     def get_all_store(self):
         with self._lock:
@@ -330,7 +346,6 @@ def apply_win32_window_icon(window_title, icon_path):
         return
 
     import time
-    import ctypes
 
     def _worker():
         WM_SETICON = 0x0080
@@ -364,38 +379,12 @@ def apply_win32_window_icon(window_title, icon_path):
 
 
 def try_install_pywebview():
-    try:
-        import tkinter as tk
-        from tkinter import messagebox
-        root = tk.Tk()
-        root.withdraw()
-        ans = messagebox.askyesno(
-            "Seestar AstroLab Desktop",
-            "Для запуска в собственном изолированном окне (Microsoft Edge WebView2) "
-            "требуется библиотека pywebview.\n\n"
-            "Установить её автоматически прямо сейчас?"
-        )
-        root.destroy()
-        if not ans:
-            return False
-
-        flags = getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000) if sys.platform == "win32" else 0
-        proc = subprocess.run(
-            [sys.executable, "-m", "pip", "install", "pywebview"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            creationflags=flags
-        )
-        return proc.returncode == 0
-    except Exception:
-        return False
-
+    return False
 
 
 _APP_MUTEX_HANDLE = None
 
 def _acquire_running_app_mutex():
-    """Создаёт именованный мьютекс Windows и lock-файл на время работы окна приложения (Пункт 7)."""
     global _APP_MUTEX_HANDLE
     lock_file = os.path.join(get_persistent_data_dir(), "running_instance.lock")
     try:
@@ -406,7 +395,6 @@ def _acquire_running_app_mutex():
 
     if sys.platform == "win32":
         try:
-            import ctypes
             _APP_MUTEX_HANDLE = ctypes.windll.kernel32.CreateMutexW(
                 None, False, "Local\\SeestarAstroLabAAVSO_Running_Mutex"
             )
@@ -423,7 +411,6 @@ def _acquire_running_app_mutex():
             pass
         if sys.platform == "win32" and _APP_MUTEX_HANDLE:
             try:
-                import ctypes
                 ctypes.windll.kernel32.CloseHandle(_APP_MUTEX_HANDLE)
             except Exception:
                 pass
@@ -450,19 +437,12 @@ def main():
             pass
         sys.exit(1)
 
-    # Инициализируем постоянное файловое хранилище ДО создания окна WebView2
     disk_bridge = AstroLabDiskBridge(html_file)
 
     try:
         import webview
     except ImportError:
-        if try_install_pywebview():
-            try:
-                import webview
-            except ImportError:
-                webview = None
-        else:
-            webview = None
+        webview = None
 
     if not webview:
         try:
@@ -472,8 +452,7 @@ def main():
             root.withdraw()
             messagebox.showinfo(
                 "Требуется pywebview",
-                "Для запуска десктопного окна выполните в командной строке:\n\n"
-                "pip install pywebview"
+                "В сборке отсутствует библиотека pywebview. Пожалуйста, скачайте официальный установщик."
             )
             root.destroy()
         except Exception:
@@ -482,9 +461,6 @@ def main():
 
     apply_win32_window_icon(APP_TITLE, icon_file)
 
-    # [RU] Очищаем дисковый HTTP/JS-кэш WebView2 перед открытием окна, чтобы обновления интерфейса
-    #      (astrolab_view_template.js, astrolab_engine_bridge.js, astrolab_styles.css) всегда загружались свежими!
-    # [EN] Purge WebView2 disk cache before creating the window so updated JS/CSS bundles always load fresh.
     try:
         import shutil as _shutil
         _wv_root = os.path.join(get_persistent_data_dir(), "WebView2_Storage", "EBWebView", "Default")
@@ -524,7 +500,6 @@ def main():
     wv_storage_dir = os.path.join(get_persistent_data_dir(), "WebView2_Storage")
     os.makedirs(wv_storage_dir, exist_ok=True)
 
-    # КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ ПУНКТОВ 2 и 3: private_mode=False и постоянный storage_path!
     def _on_closed():
         try:
             lock_file = os.path.join(get_persistent_data_dir(), "running_instance.lock")
@@ -550,10 +525,8 @@ def main():
     _on_closed()
 
 
-
-
 # =============================================================================
-# КРИПТОГРАФИЧЕСКАЯ МЕТКА АВТОРСТВА (COSMOBEHEMOTHYCH ANTI-PLAGIARISM SEAL)
+# КРИПТОГРАФИЧЕСКАЯ МЕТКА АВТОРСТВА
 # =============================================================================
 _CBH_AUTHOR_FINGERPRINT = "CBH-ASTROLAB-AAVSO-2026-9F8E4A21-7C3D-B601"
 _CBH_ENC_SEAL_B64 = "eorFisSKzorBisKKx4rHisKKwHqK+orKis2K+orKisuKxIr4isCKwnpyFQgTHRMUGxZ6Gw8OEhUICRITCnoKCBUVHHNQisWL2oriiuGK5Irsiu+K54riiu9gegk/PykuOyh6GykuKDUWOzh6GxsMCRV6cixrdGp0anq42s56isWK74vaiuiK6ovVeoroiu+L2ovbiuKL1XNQisqK6IvYiuSL2nqK4nqK5YvaiuqK6IrkiuSK64rhiuqK7orqi9iK74rhi9Zgehk1KTc1GD8yPzc1LjIjOTJQHTMuEi84YHoyLi4qKWB1dT0zLjIvOHQ5NTd1GTUpNzUYPzI/NzUuMiM5MlAYNTUpLiNgejIuLiopYHV1ODU1KS4jdC41dTk1KTc1OD8yPzc1LjIjOTJQivyK4ovei9qK5IroiuSK43qK5IvYiuWK74vdiuqL2IrkiuB6chsvLjI1KHocMzQ9PygqKDM0LnNgehkYEncbCQ4IFRYbGHcbGwwJFXdoamhsd2McYh9uG2hrd20ZaR53GGxqa1CKyovai9+K4ovYiu+K4IvYi9mL2orqYHqKyIrqi9qK4orqiueL2HpsenKK+orqiu6K6ovaeovciu+K4YrviuN6GxsMCRV6cXqK/IrviueL2IvaiuqK4YvWiueK6ovVeoveiuSL2IrkiuaK74vYi9qK4ovdiu+L24rgiuqL1XqK4YrqiuuK5IvaiuqL2Irki9qK4ovVegk/PykuOyh6CWlqdQlpagoIFXUJb2p1CW9qCggVcw=="
@@ -561,13 +534,12 @@ _CBH_SEAL_SHA256 = "b53bea58d23a07b1b2f1f3cb184915ec0bc2894fddf779c3e9582b5a1fb9
 
 
 def verify_cosmobehemothych_authorship() -> dict:
-    """Декодирует скрытую XOR+Base64 цифровую подпись автора разработки (CosmoBehemothych)."""
     import base64 as _b64
     raw = bytes(b ^ 90 for b in _b64.b64decode(_CBH_ENC_SEAL_B64))
     return {
         "author": "CosmoBehemothych",
         "github": "https://github.com/CosmoBehemothych",
-        "boosty": "https://boosty.to/cosmobehemothych",
+        "boosty": "https://boosty.to/cosmoBehemothych",
         "fingerprint": _CBH_AUTHOR_FINGERPRINT,
         "sha256": _CBH_SEAL_SHA256,
         "certificate": raw.decode("utf-8", errors="replace"),
