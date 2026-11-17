@@ -32,11 +32,7 @@ CloseApplications=force
 RestartApplications=no
 
 WizardStyle=modern
-WizardSmallImageFile=assets\installer_header_fullwidth.bmp
-WizardImageStretch=no
-WizardImageAlphaFormat=defined
-SetupIconFile={#MyAppIconRelPath}
-UninstallDisplayIcon={app}\{#MyAppIconRelPath}
+UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName={cm:AppFullTitle}
 
 Compression=lzma2/fast
@@ -113,36 +109,15 @@ Type: files; Name: "{userprograms}\{#MyAppName}\Seestar AstroLab Documentation.l
 [Files]
 Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\Seestar AstroLab\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "assets\Seestar_AstroLab.ico"; DestDir: "{app}\assets"; Flags: ignoreversion
 Source: "pwa_mobile_and_electron\*"; DestDir: "{app}\pwa_mobile_and_electron"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "desktop_pc\*"; DestDir: "{app}\desktop_pc"; Flags: ignoreversion recursesubdirs createallsubdirs
 
-[INI]
-Filename: "{userprograms}\{#MyAppName}\desktop.ini"; Section: ".ShellClassInfo"; Key: "IconResource"; String: "{app}\{#MyAppIconRelPath},0"
-Filename: "{userprograms}\{#MyAppName}\desktop.ini"; Section: ".ShellClassInfo"; Key: "IconFile"; String: "{app}\{#MyAppIconRelPath}"
-Filename: "{userprograms}\{#MyAppName}\desktop.ini"; Section: ".ShellClassInfo"; Key: "IconIndex"; String: "0"
-Filename: "{userprograms}\{#MyAppName}\desktop.ini"; Section: ".ShellClassInfo"; Key: "InfoTip"; String: "{cm:AppFullTitle}"
-
 [Icons]
-Name: "{userprograms}\{#MyAppName}\Seestar AstroLab AAVSO"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppIconRelPath}"; AppUserModelID: "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"; Comment: "{cm:AppFullTitle}"
-Name: "{userprograms}\{#MyAppName}\Seestar AstroLab AAVSO Web"; Filename: "{app}\pwa_mobile_and_electron\index.html"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppIconRelPath}"; Comment: "{cm:WebUIShortcutComment}"
-Name: "{userprograms}\{#MyAppName}\{cm:UninstallShortcutName}"; Filename: "{uninstallexe}"; Parameters: "--uninstall"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppIconRelPath}"; Comment: "{cm:UninstallShortcutComment}"
-Name: "{userdesktop}\Seestar AstroLab AAVSO"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppIconRelPath}"; AppUserModelID: "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"; Tasks: desktopicon; Comment: "{cm:AppFullTitle}"
-
-[Code]
-procedure InitializeWizard();
-begin
-  WizardForm.MainPanel.Height := 160;
-  WizardForm.WizardSmallBitmapImage.Left := 0;
-  WizardForm.WizardSmallBitmapImage.Top := 0;
-  WizardForm.WizardSmallBitmapImage.Width := WizardForm.MainPanel.Width;
-  WizardForm.WizardSmallBitmapImage.Height := WizardForm.MainPanel.Height;
-  WizardForm.WizardSmallBitmapImage.Stretch := True;
-  WizardForm.PageNameLabel.Visible := False;
-  WizardForm.PageDescriptionLabel.Visible := False;
-end;
+Name: "{userprograms}\{#MyAppName}\Seestar AstroLab AAVSO"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; AppUserModelID: "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"; Comment: "{cm:AppFullTitle}"
+Name: "{userprograms}\{#MyAppName}\Seestar AstroLab AAVSO Web"; Filename: "{app}\pwa_mobile_and_electron\index.html"; WorkingDir: "{app}"; Comment: "{cm:WebUIShortcutComment}"
+Name: "{userprograms}\{#MyAppName}\{cm:UninstallShortcutName}"; Filename: "{uninstallexe}"; Parameters: "--uninstall"; WorkingDir: "{app}"; Comment: "{cm:UninstallShortcutComment}"
+Name: "{userdesktop}\Seestar AstroLab AAVSO"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; AppUserModelID: "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"; Tasks: desktopicon; Comment: "{cm:AppFullTitle}"
 
 [Run]
 Filename: "attrib.exe"; Parameters: "+s ""{userprograms}\{#MyAppName}"""; Flags: runhidden nowait
-Filename: "attrib.exe"; Parameters: "+h +s ""{userprograms}\{#MyAppName}\desktop.ini"""; Flags: runhidden nowait
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
