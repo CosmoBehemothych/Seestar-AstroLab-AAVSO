@@ -12,7 +12,6 @@
 #define MyAppIconRelPath "assets\Seestar_AstroLab.ico"
 #define MyAppHeaderBmpRelPath "assets\installer_header_fullwidth.bmp"
 #define MyAppId "SeestarAstroLab_is1"
-#define MySourceDir RemoveBackslashUnlessRoot(SourcePath)
 
 [Setup]
 AppId={#MyAppId}
@@ -24,9 +23,7 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppRepoURL}
 AppUpdatesURL={#MyAppRepoURL}
 
-; [RU] Привязка рабочей директории компилятора к папке самого .iss скрипта (Source_and_Build)
-; [EN] Anchor compiler base directory to the folder containing this .iss script (Source_and_Build)
-SourceDir={#MySourceDir}
+; Убрана строка SourceDir, так как в GitHub Actions рабочая директория задается явно.
 
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
@@ -174,5 +171,4 @@ begin
   WizardForm.WizardSmallBitmapImage.Height := WizardForm.MainPanel.Height;
   WizardForm.PageNameLabel.Width := WizardForm.MainPanel.Width - ScaleX(180);
   WizardForm.PageDescriptionLabel.Width := WizardForm.MainPanel.Width - ScaleX(180);
-end;
-; Build-Timestamp: 2026-11-17 12:35:58 UTC
+end;
