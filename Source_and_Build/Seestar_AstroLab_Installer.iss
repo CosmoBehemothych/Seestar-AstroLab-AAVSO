@@ -23,7 +23,8 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppRepoURL}
 AppUpdatesURL={#MyAppRepoURL}
 
-; Убрана строка SourceDir, так как в GitHub Actions рабочая директория задается явно.
+; Добавлена строка ниже. Путь ..\LICENSE означает, что файл лежит на уровень выше папки Source_and_Build
+LicenseFile=..\LICENSE
 
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
