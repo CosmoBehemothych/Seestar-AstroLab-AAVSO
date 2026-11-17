@@ -2,57 +2,76 @@
 # -*- coding: utf-8 -*-
 r"""
 ================================================================================
-Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.1.1 beta)
+Seestar AstroLab by CosmoBehemothych — Native Desktop Runner (v1.1.2 beta)
+================================================================================
+- Открывает локальный интерфейс pwa_mobile_and_electron/index.html внутри
+  собственного нативного окна (Microsoft Edge WebView2).
+- Сборка выполняется в единичный .exe (--onefile --windowed --noupx).
+- Для предотвращения ошибки 'Fatal Error in Launcher: Unable to create process
+  using "pythonw.exe"' и падения встроенного сервера bottle при sys.stdout=None
+  сразу после импортов инициализируется безопасный буфер _NullStdStream,
+  не требующий открытия и скрытия консольного окна (0 ложных срабатываний АВ).
+- Гарантирует 100% сохранение пользовательских данных (OBSCODE, «Мои наблюдения»,
+  тема, модель телескопа) между перезапусками приложения через:
+  1) Постоянное хранилище на диске `%APPDATA%\Seestar_AstroLab\user_persistent_store.json`
+  2) Синхронный скрипт предзагрузки `pwa_mobile_and_electron/user_persistent_store.js`
+  3) Нативный мост `js_api = AstroLabDiskBridge()` и `private_mode=False` в pywebview.
 ================================================================================
 """
 
+import io
 import json
 import os
-import subprocess
 import sys
 import threading
-import ctypes
 
-# [КРИТИЧЕСКИЙ ФИКС] Скрываем консольное окно, так как PyInstaller собирает в режиме --console
-if sys.platform == "win32":
-    try:
-        ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
-    except Exception:
+
+# ==============================================================================
+# ЗАЩИТА ПОТОКОВ STDOUT/STDERR (СПОСОБ 1: ЧИСТЫЙ GUI БЕЗ ОШИБКИ pythonw.exe И АВ-ТРИГГЕРОВ)
+# ==============================================================================
+class _NullStdStream(io.StringIO):
+    """
+    Безопасный неблокирующий поток ввода-вывода для режима PyInstaller --windowed.
+    Предотвращает падение библиотеки bottle (зависимость pywebview) при обращении к
+    sys.stdout.write() / sys.stderr.write(), когда стандартные потоки равны None,
+    и не требует вызова Win32 ShowWindow(SW_HIDE), вызывающего подозрения антивирусов.
+    """
+
+    def fileno(self) -> int:
+        return -1
+
+    def write(self, s: str) -> int:
+        return len(s) if isinstance(s, str) else 0
+
+    def flush(self) -> None:
         pass
 
-# [CI SELF-HEAL] Автоматическое создание assets/installer_header_fullwidth.bmp и Seestar_AstroLab.ico при сборке
-try:
-    import struct as _st
-    _here = os.path.dirname(os.path.abspath(__file__))
-    _assets_d = os.path.join(_here, "assets")
-    os.makedirs(_assets_d, exist_ok=True)
-    _bmp_p = os.path.join(_assets_d, "installer_header_fullwidth.bmp")
-    if not os.path.isfile(_bmp_p):
-        _w, _h = 500, 160
-        _rs = (_w * 3 + 3) & ~3
-        _pa = _rs * _h
-        _hdr = _st.pack("<2sIHHI", b"BM", 54 + _pa, 0, 0, 54) + _st.pack("<IiiHHIIiiII", 40, _w, _h, 1, 24, 0, _pa, 2835, 2835, 0, 0)
-        _row = bytes([c for x in range(_w) for c in (int(32+(x/_w)*48), int(18+(x/_w)*28), int(11+(x/_w)*18))]) + b"\x00" * (_rs - _w * 3)
-        with open(_bmp_p, "wb") as _bf:
-            _bf.write(_hdr + _row * _h)
-    _ico_p = os.path.join(_assets_d, "Seestar_AstroLab.ico")
-    if not os.path.isfile(_ico_p):
-        _iw, _ih = 32, 32
-        _xsz = _iw * _ih * 4
-        _asz = ((_iw + 31) // 32) * 4 * _ih
-        _ihdr = _st.pack("<HHH", 0, 1, 1) + _st.pack("<BBBBHHII", _iw, _ih, 0, 0, 1, 32, 40 + _xsz + _asz, 22) + _st.pack("<IiiHHIIiiII", 40, _iw, _ih * 2, 1, 32, 0, _xsz + _asz, 0, 0, 0, 0)
-        with open(_ico_p, "wb") as _if:
-            _if.write(_ihdr + (b"\xf8\xbd\x38\xff" * (_iw * _ih)) + bytes(_asz))
-except Exception:
-    pass
+
+if sys.stdout is None:
+    sys.stdout = _NullStdStream()
+if sys.stderr is None:
+    sys.stderr = _NullStdStream()
+
+os.environ.setdefault("PYWEBVIEW_LOG", "off")
+
 
 # Подключение единого серверного ядра бизнес-логики PhotometryBackendEngine
 try:
-    from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server
+    from backend.astrolab_backend_core import (
+        PhotometryBackendEngine,
+        AavsoNativeAndStorageService,
+        get_program_converted_storage_dir,
+        start_background_rpc_server,
+    )
 except ImportError:
     try:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server
+        from backend.astrolab_backend_core import (
+            PhotometryBackendEngine,
+            AavsoNativeAndStorageService,
+            get_program_converted_storage_dir,
+            start_background_rpc_server,
+        )
     except ImportError:
         PhotometryBackendEngine = None
         AavsoNativeAndStorageService = None
@@ -60,12 +79,13 @@ except ImportError:
         start_background_rpc_server = None
 
 
-APP_VERSION = "1.1.1 beta"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.1.1 beta)"
-APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
+APP_VERSION = "1.1.2 beta"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych — Фотометрия и Радар целей (v1.1.2 beta)"
+APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.1.2"
 
 if sys.platform == "win32":
     try:
+        import ctypes
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_USER_MODEL_ID)
     except Exception:
         pass
@@ -100,6 +120,7 @@ def get_html_path():
         if p and os.path.isfile(p):
             return os.path.abspath(p)
 
+    # Резервная самораспаковка UI из собственного .exe архива (если запущен внешний контейнер)
     try:
         import zipfile as _zf
         import io as _io
@@ -109,7 +130,7 @@ def get_html_path():
                 _raw = _bf.read()
             _pk = _raw.find(b"PK\x03\x04")
             if _pk != -1:
-                _runtime_ui = os.path.join(get_persistent_data_dir(), "ui_runtime_v110_beta")
+                _runtime_ui = os.path.join(get_persistent_data_dir(), "ui_runtime_v112_beta")
                 with _zf.ZipFile(_io.BytesIO(_raw[_pk:]), "r") as _z:
                     for _m in _z.namelist():
                         if _m.startswith("pwa_mobile_and_electron/") and not _m.endswith("/"):
@@ -150,6 +171,11 @@ def get_persistent_data_dir():
 
 
 class AstroLabDiskBridge:
+    r"""
+    Нативный мост сохранения состояния на жёсткий диск Windows:
+    сохраняет OBSCODE и базу «Мои наблюдения» в `%APPDATA%\\Seestar_AstroLab\\user_persistent_store.json`
+    и обновляет `user_persistent_store.js` рядом с `index.html`.
+    """
     def __init__(self, html_file_path):
         self._lock = threading.Lock()
         self.data_dir = get_persistent_data_dir()
@@ -165,7 +191,7 @@ class AstroLabDiskBridge:
         except Exception:
             cnt = 1
         self._store["seestar_donate_launch_count"] = str(cnt)
-        self._store["seestar_host_counted_this_launch"] = "1" 
+        self._store["seestar_host_counted_this_launch"] = "1"
 
     def _load_from_disk(self):
         store = {}
@@ -332,10 +358,6 @@ class AstroLabDiskBridge:
             os.makedirs(folder, exist_ok=True)
             if sys.platform == "win32":
                 os.startfile(folder)
-            elif sys.platform == "darwin":
-                subprocess.Popen(["open", folder])
-            else:
-                subprocess.Popen(["xdg-open", folder])
             return {"ok": True, "path": folder}
         except Exception as e:
             return {"ok": False, "error": str(e)}
@@ -346,6 +368,7 @@ def apply_win32_window_icon(window_title, icon_path):
         return
 
     import time
+    import ctypes
 
     def _worker():
         WM_SETICON = 0x0080
@@ -379,12 +402,20 @@ def apply_win32_window_icon(window_title, icon_path):
 
 
 def try_install_pywebview():
+    """
+    Отключено в v1.1.2 beta:
+    Вызов pip через subprocess в замороженном .exe (PyInstaller) приводил к
+    ошибке 'Fatal Error in Launcher: Unable to create process using pythonw.exe'
+    на чистых ПК без установленного Python. Все зависимости вшиты внутрь .exe.
+    """
     return False
 
 
 _APP_MUTEX_HANDLE = None
 
+
 def _acquire_running_app_mutex():
+    """Создаёт именованный мьютекс Windows и lock-файл на время работы окна приложения."""
     global _APP_MUTEX_HANDLE
     lock_file = os.path.join(get_persistent_data_dir(), "running_instance.lock")
     try:
@@ -395,6 +426,7 @@ def _acquire_running_app_mutex():
 
     if sys.platform == "win32":
         try:
+            import ctypes
             _APP_MUTEX_HANDLE = ctypes.windll.kernel32.CreateMutexW(
                 None, False, "Local\\SeestarAstroLabAAVSO_Running_Mutex"
             )
@@ -402,6 +434,7 @@ def _acquire_running_app_mutex():
             pass
 
     import atexit
+
     def _cleanup_running_lock():
         global _APP_MUTEX_HANDLE
         try:
@@ -411,10 +444,12 @@ def _acquire_running_app_mutex():
             pass
         if sys.platform == "win32" and _APP_MUTEX_HANDLE:
             try:
+                import ctypes
                 ctypes.windll.kernel32.CloseHandle(_APP_MUTEX_HANDLE)
             except Exception:
                 pass
             _APP_MUTEX_HANDLE = None
+
     atexit.register(_cleanup_running_lock)
 
 
@@ -437,12 +472,19 @@ def main():
             pass
         sys.exit(1)
 
+    # Инициализируем постоянное файловое хранилище ДО создания окна WebView2
     disk_bridge = AstroLabDiskBridge(html_file)
 
     try:
         import webview
     except ImportError:
-        webview = None
+        if try_install_pywebview():
+            try:
+                import webview
+            except ImportError:
+                webview = None
+        else:
+            webview = None
 
     if not webview:
         try:
@@ -452,7 +494,8 @@ def main():
             root.withdraw()
             messagebox.showinfo(
                 "Требуется pywebview",
-                "В сборке отсутствует библиотека pywebview. Пожалуйста, скачайте официальный установщик."
+                "Не удалось инициализировать встроенный модуль pywebview.\n"
+                "Пожалуйста, запустите приложение через официальный установщик Seestar_AstroLab_Setup_v1.1.2-beta.exe."
             )
             root.destroy()
         except Exception:
@@ -461,6 +504,7 @@ def main():
 
     apply_win32_window_icon(APP_TITLE, icon_file)
 
+    # Очищаем дисковый HTTP/JS-кэш WebView2 перед открытием окна
     try:
         import shutil as _shutil
         _wv_root = os.path.join(get_persistent_data_dir(), "WebView2_Storage", "EBWebView", "Default")
@@ -526,7 +570,7 @@ def main():
 
 
 # =============================================================================
-# КРИПТОГРАФИЧЕСКАЯ МЕТКА АВТОРСТВА
+# КРИПТОГРАФИЧЕСКАЯ МЕТКА АВТОРСТВА (COSMOBEHEMOTHYCH ANTI-PLAGIARISM SEAL)
 # =============================================================================
 _CBH_AUTHOR_FINGERPRINT = "CBH-ASTROLAB-AAVSO-2026-9F8E4A21-7C3D-B601"
 _CBH_ENC_SEAL_B64 = "eorFisSKzorBisKKx4rHisKKwHqK+orKis2K+orKisuKxIr4isCKwnpyFQgTHRMUGxZ6Gw8OEhUICRITCnoKCBUVHHNQisWL2oriiuGK5Irsiu+K54riiu9gegk/PykuOyh6GykuKDUWOzh6GxsMCRV6cixrdGp0anq42s56isWK74vaiuiK6ovVeoroiu+L2ovbiuKL1XNQisqK6IvYiuSL2nqK4nqK5YvaiuqK6IrkiuSK64rhiuqK7orqi9iK74rhi9Zgehk1KTc1GD8yPzc1LjIjOTJQHTMuEi84YHoyLi4qKWB1dT0zLjIvOHQ5NTd1GTUpNzUYPzI/NzUuMiM5MlAYNTUpLiNgejIuLiopYHV1ODU1KS4jdC41dTk1KTc1OD8yPzc1LjIjOTJQivyK4ovei9qK5IroiuSK43qK5IvYiuWK74vdiuqL2IrkiuB6chsvLjI1KHocMzQ9PygqKDM0LnNgehkYEncbCQ4IFRYbGHcbGwwJFXdoamhsd2McYh9uG2hrd20ZaR53GGxqa1CKyovai9+K4ovYiu+K4IvYi9mL2orqYHqKyIrqi9qK4orqiueL2HpsenKK+orqiu6K6ovaeovciu+K4YrviuN6GxsMCRV6cXqK/IrviueL2IvaiuqK4YvWiueK6ovVeoveiuSL2IrkiuaK74vYi9qK4ovdiu+L24rgiuqL1XqK4YrqiuuK5IvaiuqL2Irki9qK4ovVegk/PykuOyh6CWlqdQlpagoIFXUJb2p1CW9qCggVcw=="
@@ -534,12 +578,13 @@ _CBH_SEAL_SHA256 = "b53bea58d23a07b1b2f1f3cb184915ec0bc2894fddf779c3e9582b5a1fb9
 
 
 def verify_cosmobehemothych_authorship() -> dict:
+    """Декодирует скрытую XOR+Base64 цифровую подпись автора разработки (CosmoBehemothych)."""
     import base64 as _b64
     raw = bytes(b ^ 90 for b in _b64.b64decode(_CBH_ENC_SEAL_B64))
     return {
         "author": "CosmoBehemothych",
         "github": "https://github.com/CosmoBehemothych",
-        "boosty": "https://boosty.to/cosmoBehemothych",
+        "boosty": "https://boosty.to/cosmobehemothych",
         "fingerprint": _CBH_AUTHOR_FINGERPRINT,
         "sha256": _CBH_SEAL_SHA256,
         "certificate": raw.decode("utf-8", errors="replace"),
