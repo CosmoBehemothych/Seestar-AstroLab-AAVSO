@@ -24,10 +24,12 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install build dependencies
+      - name: Install build dependencies & verify installer assets
+        working-directory: Source_and_Build
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller pywebview
+          pip install pyinstaller pywebview pillow
+          python -c "import os; from PIL import Image, ImageDraw; os.makedirs('assets', exist_ok=True); ico='assets/Seestar_AstroLab.ico'; bmp='assets/installer_header_fullwidth.bmp'; (lambda: (img:=Image.new('RGBA',(256,256),(11,18,32,255)), d:=ImageDraw.Draw(img), d.ellipse((16,16,240,240),outline=(56,189,248,255),width=10), d.ellipse((44,44,212,212),outline=(129,140,248,230),width=6), d.ellipse((86,86,170,170),fill=(15,23,42,255),outline=(186,230,253,255),width=5), d.ellipse((114,114,142,142),fill=(56,189,248,255)), img.save(ico,format='ICO',sizes=[(256,256),(128,128),(64,64),(48,48),(32,32),(16,16)])))() if not os.path.isfile(ico) else None; (lambda: (b:=Image.new('RGB',(500,160),(11,18,32)), bd:=ImageDraw.Draw(b), [bd.line([(x,0),(x,160)],fill=(int(11+(x/500)*18),int(18+(x/500)*28),int(32+(x/500)*48))) for x in range(500)], bd.ellipse((370,20,490,140),outline=(56,189,248),width=4), b.save(bmp,format='BMP')))() if not os.path.isfile(bmp) else None"
 
       - name: Build standalone application binary with PyInstaller
         working-directory: Source_and_Build
