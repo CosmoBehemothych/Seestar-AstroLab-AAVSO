@@ -1,4 +1,4 @@
-# 🔭 Seestar AstroLab AAVSO (`v1.1.0 beta` & `v1.0.1 Stable`)
+# 🔭 Seestar AstroLab AAVSO (`v1.1.2` / `v1.1.2 beta` & `v1.0.1 Stable`)
 
 🌟 **Seestar AstroLab AAVSO** is a specialized desktop application for owners of **ZWO Seestar smart telescopes (`S30`, `S30PRO`, `S50`, `S50PRO`)** and variable star observers affiliated with the [AAVSO (American Association of Variable Star Observers)](https://www.aavso.org).
 
@@ -10,16 +10,16 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 | 🏷️ Version | 📌 Status | ⬇️ Installer / Portable Package | 🔍 Summary | 
 | ----- | ----- | ----- | ----- | 
-| **`v1.1.0 beta`** | 🧪 **New Feature Release (Beta)** | [Seestar_AstroLab_Setup_v1.1.0-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.0-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Direct AAVSO (`VSX` + `VSP` + `AID`) integration, 246+ AAVSO Target Tool priority targets with Hemisphere & City Latitude visibility filtering, live Sky Clarity (Open-Meteo, 10-min auto-refresh) & Regional Moon Phase/Altitude (USNO API) in the header, Celestial Black-Hole & Rocket Random Star Selector (scope- & latitude-aware), 2 independent light-curve engines with static-Y mouse drag, full-screen viewer, `Converted_Photometry_Storage` archive, and English-default 6-language installer | 
+| **`v1.1.2 beta`** | 🧪 **New Feature Release (Beta)** | [Seestar_AstroLab_Setup_v1.1.2-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.2-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Direct AAVSO (`VSX` + `VSP` + `AID`) integration, 246+ AAVSO Target Tool priority targets with Hemisphere & City Latitude visibility filtering, live Sky Clarity (Open-Meteo, 10-min auto-refresh) & Regional Moon Phase/Altitude (USNO API) in the header, Celestial Black-Hole & Rocket Random Star Selector (scope- & latitude-aware), 2 independent light-curve engines with static-Y mouse drag, full-screen viewer, `Converted_Photometry_Storage` archive, and English-default 6-language installer | 
 | **`v1.0.0` / `v1.0.1`** | ✅ **Classic Initial Release** | [Available in GitHub Releases (v1.0.0)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.0.0) | Original initial release with SIMBAD + VSP synchronization, basic Seestar CSV → AAVSO Extended conversion, and basic target radar | 
 
 ## 📑 Table of Contents
 
 * [📦 Version Selection](#-version-selection-both-versions-available-on-github)
 
-* [🚀 What's New in v1.1.0 beta (Compared to GitHub v1.0.0)](#-whats-new-in-v110-beta-compared-to-github-v100)
+* [🚀 What's New in v1.1.2 beta (Compared to GitHub v1.0.0)](#-whats-new-in-v110-beta-compared-to-github-v100)
 
-* [📸 Screenshots (`v1.1.0 beta`)](#-screenshots-v110-beta)
+* [📸 Screenshots (`v1.1.2 beta`)](#-screenshots-v110-beta)
 
 * [✨ Key Features](#-key-features)
 
@@ -31,7 +31,22 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 * [🇷🇺 Русская версия (Russian Version)](#-русская-версия-russian-version)
 
-## 🚀 What's New in `v1.1.0 beta` (Compared to GitHub `v1.0.0`)
+## 🚀 What's New in `v1.1.2 beta` (Compared to GitHub `v1.0.0`)
+
+### 🔧 Fixes in `v1.1.2 beta` (Latest Update)
+- **Single-File AV-Clean Windows Build (`--onefile --console --noupx`):** Eliminated `Unable to create process using "pythonw.exe"` on clean PCs by compiling into a self-contained single executable with automatic console-window hiding (`ShowWindow`) and bundled WebView2/Python.NET runtime.
+- **Clean 6-Language Inno Setup Installer:** Fixed language ID collision (`[LangOptions]`) where selecting English displayed Chinese text on the Desktop shortcut task step, removed duplicate header banner text overlays across all wizard steps (`PageNameLabel`/`PageDescriptionLabel`), and removed the Boosty checkbox from the installer finish page.
+- **Independent Hemisphere & Horizon Filters:** Split target visibility controls in the AAVSO Target Radar into a dedicated **Hemisphere filter (`Northern / Southern / All`)**, a separate **`📍 Visible in My City`** checkbox, and a separate **`🕯️ Above Horizon Right Now`** checkbox, alongside the compass azimuth selector.
+- **Windowed Layout & Light Theme Refinement:** Fixed the empty gap between the Target Radar and middle column in non-fullscreen (`1380×920`) mode, softened the Light Theme background (`#dbe3ee` / `#f1f5fa`) to prevent eye strain, unified top header corner geometry, styled the Sky Clarity & Moon Visibility cards in Light Theme, and unified the official `aavso.org` button in the AAVSO support modal.
+- **Standalone Windows Installer (`Seestar_AstroLab_Setup.exe`):** GitHub Actions now builds a self-contained **PyInstaller + Inno Setup 6** installer so the app no longer requires Python (`pythonw.exe`) to be pre-installed on the user's PC.
+- **Fixed "No Network / Offline" Error (CORS):** Live star dossier lookups to **AAVSO VSX** and **CDS SIMBAD** now route through the local Python RPC backend (`fetch_live_star_dossier`), eliminating browser CORS blocks.
+- **AAVSO Light Curve (AID) & Your Contribution:** Switched to the official **AAVSO LCGv2 (`api.delim`)** and API v2 endpoints tied to the active `STARID`, removed synthetic curve points, and added an explicit chart notice when no AAVSO data exists for the selected star.
+- **Star & CSV Synchronization:** Changing `STARID` or loading a CSV without `Non-reference star` rows now cleanly resets and redraws both tables and charts.
+- **Clean Logo, Palette Contrast & WebObs Upload:** Removed the star/curve overlay from the app icon, improved Light theme WCAG AA/AAA contrast, and updated WebObs upload links to `?preview=false` to avoid AAVSO v2 paginated-preview HTTP 500 errors.
+
+#### ⚠️ Why Some Users Saw `Fatal Error in Launcher` During Installation
+- Previously, `Seestar_AstroLab_Setup.exe` used a Python launcher wrapper looking for a system `pythonw.exe` in `PATH`. On Windows PCs without Python installed, this caused `Unable to create process using "pythonw.exe"`. **In `v1.1.2 beta`, this is resolved** by the standalone PyInstaller + Inno Setup build.
+- Until **SignPath** code signing is active, antivirus tools (such as Avast) may occasionally quarantine unsigned `.exe` files; if blocked, restore the file from Quarantine and add an exception.
 
 1. **🛰️ Direct AAVSO (`VSX` + `VSP` + `AID`) Integration & Full 52-Target Priority Sync**:
 
@@ -39,7 +54,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 2. **🌌 Live Sky Clarity (Every 10 Min) & Regional Moon Phase / Altitude in the Header**:
 
-   * **Sky Clarity Widget ([Open-Meteo Forecast & Geocoding API](https://open-meteo.com/en/docs))**: displays live sky clarity (`100% − cloud_cover%`, plus low/mid/high cloud layers, humidity, and temperature) for your selected city (with built-in presets such as Cheboksary, Moscow, St. Petersburg, Kazan, Cambridge, London, Sydney, plus instant search for any city worldwide), automatically refreshing every 10 minutes.
+   * **Sky Clarity Widget ([Open-Meteo Forecast & Geocoding API](https://open-meteo.com/en/docs))**: displays live sky clarity (`100% − cloud_cover%`, plus low/mid/high cloud layers, humidity, and temperature) for your selected city (with built-in presets such as Moscow, St. Petersburg, Kazan, Cambridge, London, Sydney, plus instant search for any city worldwide), automatically refreshing every 10 minutes.
 
    * **Regional Moon Phase & Topocentric Altitude Widget ([USNO Astronomical Applications API v4.0.1](https://aa.usno.navy.mil/data/api))**: calculates the current lunar phase, illuminated fraction (`%`), hemisphere-correct crescent orientation (Northern vs. Southern Hemisphere), and real-time topocentric altitude of the Moon above or below the horizon in your city.
 
@@ -47,7 +62,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
    * Filters priority targets in both the **AAVSO Target Radar**, the **Urgent Stars Modal**, and the **Random Star Selector** according to your city's latitude (`φ`) and Local Sidereal Time (`LST`):
 
-     * `📍 Observable from My City (DEC ≥ φ − 70°)` — automatically excludes deep-southern targets (e.g., Australian targets from Cheboksary) that never reach working photometric altitude (`≥ 20°`);
+     * `📍 Observable from My City (DEC ≥ φ − 70°)` — automatically excludes deep-southern targets (e.g., Australian targets from mid-northern latitudes) that never reach working photometric altitude (`≥ 20°`);
 
      * `🕯️ Above Horizon Right Now (Alt ≥ 15°)` — filters targets currently above `15°` altitude at the exact minute of observation;
 
@@ -85,7 +100,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
    * **Custom Desktop Backgrounds & Free Block Dragging**: choose from 7 cosmic/studio background themes or upload your own astrophoto from disk, and freely drag menu blocks across the screen (`✥`).
 
-## 📸 Screenshots (`v1.1.0 beta`)
+## 📸 Screenshots (`v1.1.2 beta`)
 
 ### 1. Main dashboard, live Sky Clarity & Moon Phase header bar, Hemisphere visibility filter, and dual light curves (Dark theme)
 
@@ -108,8 +123,6 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 ![Light theme and multilingual interface](screenshots/04_light_theme_and_multilang.png)
 
 ### 6. Installer menu localized into 6 languages (`EN English` selected by default)
-
-![Installer 6 languages UI](screenshots/05_installer_6_languages_ui.png)
 
 ### 7. Full-screen scrollable light curve analysis (`SZ Lyn` — full-window mode)
 
@@ -146,9 +159,9 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 ## 🧭 Step-by-Step Guide (From Seestar Imaging to AAVSO WebObs Submission)
 
-1. ⬇️ **Install or Run Portable**: Run **`Seestar_AstroLab_Setup_v1.1.0-beta.exe`** (English is active by default; switch to `RU | EN | ES | DE | FR | ZH` in one click) or launch **`Portable/Seestar_AstroLab_Portable_v1.1.0-beta.exe`**.
+1. ⬇️ **Install or Run Portable**: Run **`Seestar_AstroLab_Setup_v1.1.2-beta.exe`** (English is active by default; switch to `RU | EN | ES | DE | FR | ZH` in one click) or launch **`Portable/Seestar_AstroLab_Portable_v1.1.2-beta.exe`**.
 
-2. 📍 **Select Your City & Telescope**: In the top bar, choose your city (e.g., `Чебоксары (56.1°N)` or search any city) to see live **Sky Clarity (`%`)**, **Moon Phase & Altitude**, and select your telescope (`S30`, `S30PRO`, `S50`, `S50PRO`).
+2. 📍 **Select Your City & Telescope**: In the top bar, choose your city (e.g., `Moscow (55.8°N)`, `Greenwich`, or search any city worldwide) to see live **Sky Clarity (`%`)**, **Moon Phase & Altitude**, and select your telescope (`S30`, `S30PRO`, `S50`, `S50PRO`).
 
 3. ⭐ **Pick a Target Star**: Use the **AAVSO Target Radar** (filtered automatically to stars observable from your city's latitude) or click **«🧭 Random Star Selection for Your Observations»** to spin the 10-second Celestial Wheel.
 
@@ -166,7 +179,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 ## 🇷🇺 Русская версия (Russian Version)
 
-> 📸 Все обновлённые скриншоты интерфейса `v1.1.0 beta` приведены выше в разделе [📸 Screenshots (`v1.1.0 beta`)](#-screenshots-v110-beta).
+> 📸 Все обновлённые скриншоты интерфейса `v1.1.2 beta` приведены выше в разделе [📸 Screenshots (`v1.1.2 beta`)](#-screenshots-v110-beta).
 
 🌟 **Seestar AstroLab AAVSO** — специализированное десктопное приложение для владельцев умных телескопов **ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`)** и наблюдателей переменных звёзд [AAVSO (American Association of Variable Star Observers)](https://www.aavso.org).
 
@@ -176,10 +189,20 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 | 🏷️ Версия | 📌 Статус | ⬇️ Установщик / Portable-сборка | 🔍 Описание версии | 
 | ----- | ----- | ----- | ----- | 
-| **`v1.1.0 beta`** | 🧪 **Новая расширенная сборка (Beta)** | [Seestar_AstroLab_Setup_v1.1.0-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.0-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Прямая интеграция с AAVSO (`VSX` + `VSP` + `AID`), 52 приоритетные цели с фильтрацией по полушарию и широте города, живая Чистота неба (Open-Meteo, каждые 10 мин) и Фаза/Высота Луны по региону (USNO API) в шапке, барабан случайного выбора звезды в центре чёрной дыры с ракетой и логотипом AAVSO, 2 графика кривой блеска со статичной осью Y при сдвиге ЛКМ, хранилище `Converted_Photometry_Storage` и английский по умолчанию в установщике | 
+| **`v1.1.2 beta`** | 🧪 **Новая расширенная сборка (Beta)** | [Seestar_AstroLab_Setup_v1.1.2-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.2-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Прямая интеграция с AAVSO (`VSX` + `VSP` + `AID`), 52 приоритетные цели с фильтрацией по полушарию и широте города, живая Чистота неба (Open-Meteo, каждые 10 мин) и Фаза/Высота Луны по региону (USNO API) в шапке, барабан случайного выбора звезды в центре чёрной дыры с ракетой и логотипом AAVSO, 2 графика кривой блеска со статичной осью Y при сдвиге ЛКМ, хранилище `Converted_Photometry_Storage` и английский по умолчанию в установщике | 
 | **`v1.0.0` / `v1.0.1`** | ✅ **Классическая первая версия** | [Доступна в разделе Releases (v1.0.0)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.0.0) | Базовая первоначальная версия с синхронизацией SIMBAD + VSP и классическим конвертером CSV → AAVSO Extended | 
 
-### 🚀 Что нового в версии `v1.1.0 beta`
+### 🚀 Что нового в версии `v1.1.2 beta`
+
+#### 🔧 Что исправлено в `v1.1.2 beta`
+- **Автономный установщик Windows (`Seestar_AstroLab_Setup.exe`):** сборка в GitHub Actions переведена на **PyInstaller + Inno Setup 6** — программа больше не требует заранее установленного Python (`pythonw.exe`).
+- **Исправлена ошибка «нет сети» (CORS):** запросы живого досье звезды к **AAVSO VSX** и **CDS SIMBAD** переведены на локальный Python RPC-бэкенд (`fetch_live_star_dossier`).
+- **Кривая блеска AAVSO (AID) и Ваш вклад:** переход на официальный эндпоинт **AAVSO LCGv2 (`api.delim`)** и API v2 с привязкой к текущему `STARID`, удалены выдуманные точки, добавлена явная надпись `«На AAVSO данные по звезде «...» не нашлись»`.
+- **Синхронизация звезды и CSV:** смена `STARID` или загрузка CSV без строк `Non-reference star` корректно очищает и перерисовывает таблицы и графики.
+- **Логотип, палитра и отправка в AAVSO:** убран оверлей со звёздочкой с логотипа, улучшен контраст светлой темы, а ссылки отправки в AAVSO переведены на `?preview=false` для обхода серверной ошибки HTTP 500 при многостраничном предпросмотре.
+
+#### ⚠️ Почему у некоторых пользователей возникала ошибка при установке (`Fatal Error in Launcher`)
+- Прежний установщик использовал обёртку Python-лаунчера и требовал системный `pythonw.exe` в `PATH`. В **`v1.1.2 beta`** это устранено автономной сборкой PyInstaller + Inno Setup. До активации подписи **SignPath** антивирусы (например, Avast) могут ложно помещать неподписанный `.exe` в карантин — восстановите файл и добавьте его в исключения.
 
 1. **🛰️ Полная синхронизация 52 приоритетных объектов AAVSO (`VSX` + `VSP` + `AID`)**:
 
@@ -187,13 +210,13 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 2. **🌌 Расширенная двухколоночная панель «Чистота неба» и «Луна» во всю ширину шапки + Автоопределение города в «⚙️ Настройках»**:
 
-   * **Автоматическое определение города обсерватории**: при запуске программа автоматически определяет ваш город и координаты (с сохранением выбора в `localStorage` и резервным профилем `Чебоксары 56.13°N, 47.25°E`), а ручной селектор и поиск города перенесены внутрь меню **«⚙️ Настройки»** (расположенного сразу за кнопкой **«📖 Как читать графики»** вместе с блоком **«📡 Статус каталогов»**).
+   * **Автоматическое определение города обсерватории**: при запуске программа автоматически определяет ваш город и координаты (с сохранением выбора в `localStorage` и резервным профилем `Москва 55.76°N, 37.62°E`), а ручной селектор и поиск города перенесены внутрь меню **«⚙️ Настройки»** (расположенного сразу за кнопкой **«📖 Как читать графики»** вместе с блоком **«📡 Статус каталогов»**).
 
    * **Эргономичный верхний ряд управления**: сразу за переключателем **«Цветовая панель»** расположены быстрый ввод **`🏛️ OBSCODE`** и селектор профиля **`🔭 Телескоп`** (`S30`, `S30PRO`, `S50`, `S50PRO`).
 
    * **Два широких информативных блока на всю вторую строку (без необходимости наведения курсора)**: левый блок в реальном времени отображает процент чистого неба, оценку условий для фотометрии, облачность по ярусам (`нижн. / средн. / верхн.`), влажность, температуру и таймер 10-минутной синхронизации ([Open-Meteo IFS 9 км](https://open-meteo.com/en/docs)); правый блок отображает фазу Луны, процент освещённости диска, топоцентрическую высоту Луны над/под горизонтом в градусах и вердикт влияния лунной засветки на фотометрию ([USNO API v4.0.1](https://aa.usno.navy.mil/data/api)).
 
-   * **Виджет чистоты неба ([Open-Meteo Forecast & Geocoding API](https://open-meteo.com/en/docs))**: показывает процент чистого неба (`100% − облачность%`), облачность по ярусам (нижний/средний/верхний), влажность и температуру в выбранном городе (Чебоксары по умолчанию для RU, Москва, Санкт-Петербург, Казань и др., плюс поиск любого населённого пункта мира) с автообновлением каждые **10 минут**.
+   * **Виджет чистоты неба ([Open-Meteo Forecast & Geocoding API](https://open-meteo.com/en/docs))**: показывает процент чистого неба (`100% − облачность%`), облачность по ярусам (нижний/средний/верхний), влажность и температуру в выбранном городе (Москва, Санкт-Петербург, Казань и др., плюс поиск любого населённого пункта мира) с автообновлением каждые **10 минут**.
 
    * **Виджет фазы и топоцентрической высоты Луны ([USNO Astronomical Applications API v4.0.1](https://aa.usno.navy.mil/data/api))**: рассчитывает текущую фазу Луны, процент освещённости диска, правильную ориентацию серпа для Северного и Южного полушарий и текущую высоту Луны над или под горизонтом в выбранном городе.
 
@@ -201,7 +224,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
    * В Радаре целей, модальном окне «Срочно» и барабане случайного выбора добавлен фильтр видимости:
 
-     * `📍 Видимые в моём городе (DEC ≥ φ − 70°)` — автоматически отсекает южные звёзды (например, объекты неба Австралии при наблюдениях из Чебоксар), которые никогда не поднимаются на рабочую фотометрическую высоту (`≥ 20°`);
+     * `📍 Видимые в моём городе (DEC ≥ φ − 70°)` — автоматически отсекает южные звёзды (например, объекты неба Австралии при наблюдениях из средних широт Северного полушария), которые никогда не поднимаются на рабочую фотометрическую высоту (`≥ 20°`);
 
      * `🕯️ Над горизонтом сейчас (Alt ≥ 15°)` — оставляет только те звёзды, которые находятся выше `15°` над горизонтом в вашем городе прямо в текущую минуту;
 

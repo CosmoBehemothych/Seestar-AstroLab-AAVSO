@@ -1,14 +1,13 @@
-; =============================================================================
+; ============================================================================
 ; [RU] Скрипт сборки автономного установщика Seestar AstroLab AAVSO (Inno Setup 6)
 ; [EN] Standalone installer build script for Seestar AstroLab AAVSO (Inno Setup 6)
-; =============================================================================
+; ============================================================================
 #define MyAppName "Seestar AstroLab AAVSO"
 #define MyAppFullTitle "Seestar AstroLab AAVSO — Радар целей и фотометрия"
 #define MyAppVersion "1.1.2 beta"
 #define MyAppNumericVersion "1.1.2.0"
 #define MyAppPublisher "CosmoBehemothych AstroLab"
-#define MyAppCopyright "Copyright (C) 2026 Andrey Pisarev (CosmoBehemothych). MIT License."
-#define MyAppURL "https://boosty.to/cosmobehemothych"
+#define MyAppCopyright "Copyright (C) 2026 CosmoBehemothych. MIT License."
 #define MyAppRepoURL "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO"
 #define MyAppExeName "Seestar AstroLab.exe"
 #define MyAppIconRelPath "assets\Seestar_AstroLab.ico"
@@ -21,7 +20,7 @@ AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={cm:AppFullTitle}
 AppPublisher={#MyAppPublisher}
-AppPublisherURL={#MyAppURL}
+AppPublisherURL={#MyAppRepoURL}
 AppSupportURL={#MyAppRepoURL}
 AppUpdatesURL={#MyAppRepoURL}
 AppCopyright={#MyAppCopyright}
@@ -34,7 +33,7 @@ VersionInfoCopyright={#MyAppCopyright}
 VersionInfoProductName={#MyAppName}
 VersionInfoProductVersion={#MyAppNumericVersion}
 VersionInfoProductTextVersion={#MyAppVersion}
-VersionInfoOriginalFileName=Seestar_AstroLab_Setup.exe
+VersionInfoOriginalFilename=Seestar_AstroLab_Setup.exe
 
 LicenseFile=..\LICENSE
 
@@ -71,52 +70,89 @@ OutputDir=dist_installer
 OutputBaseFilename=Seestar_AstroLab_Setup_v{#MyAppVersion}
 
 [Languages]
-Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "german";  MessagesFile: "compiler:Languages\German.isl"
 Name: "french";  MessagesFile: "compiler:Languages\French.isl"
 Name: "chinese"; MessagesFile: "compiler:Default.isl"
 
-[CustomMessages]
-russian.AppFullTitle=Seestar AstroLab AAVSO — Радар целей и фотометрия
-russian.LaunchProgram=Запустить Seestar AstroLab AAVSO после завершения установки
-russian.OpenBoosty=Поддержать проект на Boosty (CosmoBehemothych)
-russian.CreateDesktopIcon=Создать ярлык на Рабочем столе
-russian.CleanOldInstall=Обнаружена предыдущая версия программы. Выполняется чистая установка с сохранением пользовательских данных...
+[LangOptions]
+; [FIX ПУНКТ 1] Уникальные LanguageName и LanguageID для каждого из 6 языков,
+; чтобы chinese (использующий базовый Default.isl) НЕ перезаписывал English ($0409)!
+english.LanguageName=English
+english.LanguageID=$0409
+russian.LanguageName=Русский
+russian.LanguageID=$0419
+spanish.LanguageName=Español
+spanish.LanguageID=$0C0A
+german.LanguageName=Deutsch
+german.LanguageID=$0407
+french.LanguageName=Français
+french.LanguageID=$040C
+chinese.LanguageName=<7B80><4F53><4E2D><6587> (Chinese Simplified)
+chinese.LanguageID=$0804
 
+[Messages]
+; Явная локализация системных заголовков задач и кнопок для всех 6 языков
+english.AdditionalIcons=Additional shortcuts:
+english.CreateDesktopIcon=Create a &desktop shortcut
+russian.AdditionalIcons=Дополнительные ярлыки:
+russian.CreateDesktopIcon=Создать ярлык на &Рабочем столе
+spanish.AdditionalIcons=Iconos adicionales:
+spanish.CreateDesktopIcon=Crear un icono en el &Escritorio
+german.AdditionalIcons=Zusätzliche Symbole:
+german.CreateDesktopIcon=&Desktop-Symbol erstellen
+french.AdditionalIcons=Icônes supplémentaires :
+french.CreateDesktopIcon=Créer une icône sur le &Bureau
+chinese.AdditionalIcons=附加快捷方式：
+chinese.CreateDesktopIcon=创建桌面快捷方式(&D)
+chinese.SelectTasksDesc=您想要执行哪些附加任务？
+chinese.SelectTasksLabel2=选择安装 [%1] 时想要执行的附加任务，然后点击“下一步”。
+chinese.FinishedHeadingLabel=[name] 安装完成
+chinese.FinishedLabelNoIcons=已在您的电脑上完成安装 [name]。
+chinese.FinishedLabel=已在您的电脑上完成安装 [name]。可以通过选择安装的图标来运行应用程序。
+chinese.ClickFinish=点击“完成”退出安装程序。
+
+[CustomMessages]
 english.AppFullTitle=Seestar AstroLab AAVSO — Target Radar & Photometry
 english.LaunchProgram=Launch Seestar AstroLab AAVSO after installation finishes
-english.OpenBoosty=Support the project on Boosty (CosmoBehemothych)
 english.CreateDesktopIcon=Create a Desktop shortcut
+english.AdditionalIconsGroup=Additional shortcuts:
 english.CleanOldInstall=Previous version detected. Performing clean upgrade while preserving user data...
+
+russian.AppFullTitle=Seestar AstroLab AAVSO — Радар целей и фотометрия
+russian.LaunchProgram=Запустить Seestar AstroLab AAVSO после завершения установки
+russian.CreateDesktopIcon=Создать ярлык на Рабочем столе
+russian.AdditionalIconsGroup=Дополнительные ярлыки:
+russian.CleanOldInstall=Обнаружена предыдущая версия программы. Выполняется чистая установка с сохранением пользовательских данных...
 
 spanish.AppFullTitle=Seestar AstroLab AAVSO — Radar de Objetivos y Fotometría
 spanish.LaunchProgram=Iniciar Seestar AstroLab AAVSO al finalizar la instalación
-spanish.OpenBoosty=Apoyar el proyecto en Boosty (CosmoBehemothych)
 spanish.CreateDesktopIcon=Crear un acceso directo en el Escritorio
+spanish.AdditionalIconsGroup=Iconos adicionales:
 spanish.CleanOldInstall=Versión anterior detectada. Actualizando limpiamente conservando sus datos...
 
 german.AppFullTitle=Seestar AstroLab AAVSO — Ziel-Radar & Photometrie
 german.LaunchProgram=Seestar AstroLab AAVSO nach der Installation starten
-german.OpenBoosty=Projekt auf Boosty unterstützen (CosmoBehemothych)
 german.CreateDesktopIcon=Desktop-Verknüpfung erstellen
+german.AdditionalIconsGroup=Zusätzliche Symbole:
 german.CleanOldInstall=Vorherige Version erkannt. Sauberes Update unter Beibehaltung der Benutzerdaten...
 
 french.AppFullTitle=Seestar AstroLab AAVSO — Radar de Cibles & Photométrie
 french.LaunchProgram=Lancer Seestar AstroLab AAVSO après l'installation
-french.OpenBoosty=Soutenir le projet sur Boosty (CosmoBehemothych)
 french.CreateDesktopIcon=Créer un raccourci sur le Bureau
+french.AdditionalIconsGroup=Icônes supplémentaires :
 french.CleanOldInstall=Version précédente détectée. Mise à jour propre avec conservation des données...
 
 chinese.AppFullTitle=Seestar AstroLab AAVSO — 变星目标雷达与测光工作站
 chinese.LaunchProgram=安装完成后立即启动 Seestar AstroLab AAVSO
-chinese.OpenBoosty=在 Boosty 上支持开发者 (CosmoBehemothych)
 chinese.CreateDesktopIcon=创建桌面快捷方式
+chinese.AdditionalIconsGroup=附加快捷方式：
 chinese.CleanOldInstall=检测到旧版本，正在保留用户数据并执行全新升级...
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIconsGroup}"
 
 [InstallDelete]
 Type: filesandordirs; Name: "{app}\_internal"
@@ -162,7 +198,6 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram}"; WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent
-Filename: "{#MyAppURL}"; Description: "{cm:OpenBoosty}"; Flags: shellexec runasoriginaluser postinstall skipifsilent unchecked
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\_internal"
@@ -171,17 +206,32 @@ Type: filesandordirs; Name: "{app}\backend"
 Type: filesandordirs; Name: "{app}\desktop_pc"
 
 [Code]
+procedure HideBannerOverlayLabels();
+begin
+  { [FIX ПУНКТ 2] Полностью скрываем системные текстовые плашки поверх верхнего баннера
+    на всех шагах мастера установки и на всех 6 языках локализации }
+  WizardForm.PageNameLabel.Visible := False;
+  WizardForm.PageDescriptionLabel.Visible := False;
+  WizardForm.PageNameLabel.Caption := '';
+  WizardForm.PageDescriptionLabel.Caption := '';
+  WizardForm.PageNameLabel.Width := 0;
+  WizardForm.PageDescriptionLabel.Width := 0;
+  WizardForm.PageNameLabel.Top := -5000;
+  WizardForm.PageDescriptionLabel.Top := -5000;
+end;
+
 procedure InitializeWizard();
 begin
   WizardForm.Color := $0020120B;
   WizardForm.MainPanel.Color := $0020120B;
-  WizardForm.PageNameLabel.Font.Color := $00F8FAFC;
-  WizardForm.PageNameLabel.Font.Style := [fsBold];
-  WizardForm.PageDescriptionLabel.Font.Color := $00CBD5E1;
   WizardForm.WizardSmallBitmapImage.Left := 0;
   WizardForm.WizardSmallBitmapImage.Top := 0;
   WizardForm.WizardSmallBitmapImage.Width := WizardForm.MainPanel.Width;
   WizardForm.WizardSmallBitmapImage.Height := WizardForm.MainPanel.Height;
-  WizardForm.PageNameLabel.Width := WizardForm.MainPanel.Width - ScaleX(180);
-  WizardForm.PageDescriptionLabel.Width := WizardForm.MainPanel.Width - ScaleX(180);
+  HideBannerOverlayLabels();
+end;
+
+procedure CurPageChanged(CurPageID: Integer);
+begin
+  HideBannerOverlayLabels();
 end;

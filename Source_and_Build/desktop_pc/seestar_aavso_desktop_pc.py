@@ -1,4 +1,4 @@
-APP_VERSION = "1.1.1 beta"
+APP_VERSION = "1.1.2 beta"
 import sys as _sys, os as _os
 try:
     _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
@@ -1896,9 +1896,9 @@ if __name__ == "__main__":
         print(f"Self-test conversion OK: {res['count']} points processed.")
 
     # ==========================================================================
-    # [RU] ДОПОЛНИТЕЛЬНЫЕ МЕТОДЫ v1.1.1 beta (ЗУМ ГРАФИКА КОЛЕСОМ МЫШИ, ДАТЫ UTC,
+    # [RU] ДОПОЛНИТЕЛЬНЫЕ МЕТОДЫ v1.1.2 beta (ЗУМ ГРАФИКА КОЛЕСОМ МЫШИ, ДАТЫ UTC,
     #      ОКНО ДОНАТА AAVSO И ГАЧА-РУЛЕТКА «ИСПЫТАТЬ УДАЧУ ВСЕЛЕННОЙ»):
-    # [EN] ADDITIONAL v1.1.1 beta METHODS (MOUSE-WHEEL CHART ZOOM, UTC DATES,
+    # [EN] ADDITIONAL v1.1.2 beta METHODS (MOUSE-WHEEL CHART ZOOM, UTC DATES,
     #      AAVSO DONATE DIALOG & "TRY THE LUCK OF THE UNIVERSE" GACHA SLOT MACHINE):
     # ==========================================================================
     @staticmethod

@@ -6728,3 +6728,255 @@ body[data-theme="light"] .lc-layer-history {
 body[data-theme="light"] .lc-layer-aavso {
   color: #0369a1 !important;
 }
+
+
+/* ============================================================================
+   [RU] ИСПРАВЛЕНИЯ ПУНКТОВ 4–11 (v1.1.2 beta):
+     - Пункт 4: Устранение пустого пространства между Радаром (#v6RadarDock)
+                и средним блоком (.left-col) в неполнооконном режиме (1380px)
+     - Пункт 5: Единый стиль кнопки «Официальный сайт aavso.org» в #aavsoDonateModal
+     - Пункт 6: Дружелюбный дизайн карточек Чистоты неба и Луны в светлой теме
+     - Пункт 7: Смягчение яркости фона светлой темы (чуть темнее, без бликов)
+     - Пункт 8: Единая геометрия верхних блоков шапки в светлой теме без кривых углов
+     - Пункты 9–11: Стили отдельного фильтра Полушария и чекбоксов видимости
+   ============================================================================ */
+
+/* --- ПУНКТ 4: Адаптивная 3-колоночная сетка без пустого зазора в неполнооконном режиме --- */
+body:not(.radar-dock-collapsed) .layout,
+body[data-ui-variant="v6"]:not(.radar-dock-collapsed) .layout,
+body[data-ui-variant="v6"]:not(.radar-dock-collapsed) .v6-workspace-shell {
+  display: grid !important;
+  grid-template-columns: 520px minmax(360px, 1fr) minmax(420px, 1.12fr) !important;
+  width: 100% !important;
+  max-width: 1760px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  justify-content: stretch !important;
+  align-items: flex-start !important;
+  gap: 14px !important;
+  box-sizing: border-box !important;
+}
+
+body:not(.radar-dock-collapsed) .v6-radar-dock,
+body[data-ui-variant="v6"]:not(.radar-dock-collapsed) .v6-radar-dock {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  flex: 1 1 auto !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 1520px) {
+  body:not(.radar-dock-collapsed) .layout,
+  body[data-ui-variant="v6"]:not(.radar-dock-collapsed) .layout,
+  body[data-ui-variant="v6"]:not(.radar-dock-collapsed) .v6-workspace-shell {
+    grid-template-columns: 470px minmax(330px, 0.96fr) minmax(370px, 1.08fr) !important;
+    gap: 12px !important;
+  }
+  body:not(.radar-dock-collapsed) .v6-radar-dock,
+  body[data-ui-variant="v6"]:not(.radar-dock-collapsed) .v6-radar-dock {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    flex: 1 1 auto !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  body:not(.radar-dock-collapsed) .layout,
+  body[data-ui-variant="v6"]:not(.radar-dock-collapsed) .layout,
+  body.radar-dock-collapsed .layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* --- ПУНКТ 5: Единый стиль кнопки официального сайта AAVSO в окне поддержки #aavsoDonateModal --- */
+#aavsoDonateModal #btnVisitAavsoPortalLink,
+#aavsoDonateModal a.ios-btn.secondary,
+#aavsoDonateModal #btnAckAavsoDonateModal {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  min-height: 32px !important;
+  padding: 6px 16px !important;
+  border-radius: 8px !important;
+  font-family: var(--font-sans) !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: all 0.16s ease !important;
+  box-sizing: border-box !important;
+}
+#aavsoDonateModal #btnVisitAavsoPortalLink {
+  background: rgba(56, 189, 248, 0.14) !important;
+  border: 1px solid rgba(56, 189, 248, 0.45) !important;
+  color: #bae6fd !important;
+}
+#aavsoDonateModal #btnVisitAavsoPortalLink:hover {
+  background: rgba(56, 189, 248, 0.28) !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+body[data-theme="light"] #aavsoDonateModal #btnVisitAavsoPortalLink {
+  background: #e0f2fe !important;
+  border: 1px solid #0284c7 !important;
+  color: #0369a1 !important;
+}
+body[data-theme="light"] #aavsoDonateModal #btnVisitAavsoPortalLink:hover {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+/* --- ПУНКТЫ 6, 7, 8: Гармоничная светлая тема (чуть более спокойный фон, дружелюбные плашки неба/Луны и ровная шапка) --- */
+[data-theme="light"],
+body[data-theme="light"] {
+  --ios-bg: #dbe3ee !important;
+  --ios-bg-elevated: #eaeff7 !important;
+  --ios-card: #f1f5fa !important;
+  --ios-card-solid: #f1f5fa !important;
+  --ios-card-secondary: #e5ecf5 !important;
+  --ios-input: #f8fafd !important;
+  --ios-border: #bfcde0 !important;
+  --ios-border-highlight: #7e92ad !important;
+  --ios-text: #0f172a !important;
+  --ios-text-secondary: #1e293b !important;
+  --ios-text-tertiary: #334155 !important;
+  background-color: #dbe3ee !important;
+  background-image: linear-gradient(180deg, #d1dceb 0%, #dbe3ee 100%) !important;
+  color: #0f172a !important;
+}
+
+/* Пункт 8: Устранение кривых закруглённых углов у вложенных блоков шапки на светлой теме */
+.sticky-header-container,
+#stickyHeaderContainer {
+  border-radius: 14px !important;
+  margin-bottom: 14px !important;
+  padding-bottom: 10px !important;
+}
+.sticky-header-container .desktop-titlebar.branded-titlebar {
+  border-radius: 13px 13px 0 0 !important;
+  margin: 0 !important;
+}
+.sticky-header-container header.ios-navbar,
+.sticky-header-container #appNavbar {
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+.sticky-header-container .ui-theme-toolbar,
+.sticky-header-container #uiThemeToggleBar {
+  border-radius: 0 !important;
+  margin: 0 0 10px 0 !important;
+}
+.sticky-header-container #headerSkyMoonExpandedRow {
+  padding: 0 14px !important;
+  box-sizing: border-box !important;
+}
+
+body[data-theme="light"] .sticky-header-container,
+body[data-theme="light"] #stickyHeaderContainer {
+  background: #e7eef7 !important;
+  border: 1px solid #bfcde0 !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.07) !important;
+}
+body[data-theme="light"] .desktop-titlebar.branded-titlebar {
+  background: linear-gradient(90deg, #d7e2f0 0%, #e1eaf6 100%) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.09) !important;
+}
+body[data-theme="light"] header.ios-navbar,
+body[data-theme="light"] #appNavbar {
+  background: #edf2f9 !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.09) !important;
+}
+body[data-theme="light"] .ui-theme-toolbar,
+body[data-theme="light"] #uiThemeToggleBar {
+  background: #e5edf7 !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Пункт 6: Дружелюбные светлые карточки Чистоты неба и Видимости Луны (вместо серого фона) */
+body[data-theme="light"] .sky-clarity-expanded-card {
+  background: linear-gradient(135deg, #f0f7ff 0%, #e2effc 100%) !important;
+  border: 1px solid rgba(2, 132, 199, 0.35) !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.07) !important;
+}
+body[data-theme="light"] .sky-clarity-expanded-card:hover {
+  background: linear-gradient(135deg, #e6f2ff 0%, #d8ebfc 100%) !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.14) !important;
+}
+body[data-theme="light"] .moon-phase-expanded-card {
+  background: linear-gradient(135deg, #f3f7fc 0%, #e6eef8 100%) !important;
+  border: 1px solid rgba(3, 105, 161, 0.30) !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05) !important;
+}
+body[data-theme="light"] .sky-clarity-expanded-card .sky-moon-primary-title,
+body[data-theme="light"] .moon-phase-expanded-card .sky-moon-primary-title {
+  color: #0f172a !important;
+}
+body[data-theme="light"] .sky-clarity-expanded-card .sky-moon-card-details,
+body[data-theme="light"] .moon-phase-expanded-card .sky-moon-card-details {
+  color: #334155 !important;
+}
+body[data-theme="light"] .sky-clarity-expanded-card .sky-moon-pill-badge,
+body[data-theme="light"] .moon-phase-expanded-card .sky-moon-pill-badge {
+  background: rgba(2, 132, 199, 0.14) !important;
+  color: #0369a1 !important;
+  border: 1px solid rgba(2, 132, 199, 0.35) !important;
+}
+
+/* --- ПУНКТЫ 9, 10, 11: Стили чекбоксов «Видимые в моём городе» и «Над горизонтом сейчас» --- */
+.v6-vis-check-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 5px 8px !important;
+  border-radius: 7px !important;
+  background: rgba(15, 23, 42, 0.68) !important;
+  border: 1px solid rgba(56, 189, 248, 0.28) !important;
+  color: #e2e8f0 !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+  width: 100%;
+  margin: 0 !important;
+}
+.v6-vis-check-pill:hover {
+  border-color: rgba(56, 189, 248, 0.65) !important;
+  background: rgba(15, 23, 42, 0.88) !important;
+}
+.v6-vis-check-pill input[type="checkbox"] {
+  width: 13px !important;
+  height: 13px !important;
+  margin: 0 !important;
+  accent-color: #0284c7 !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+}
+.v6-vis-check-pill span {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+body[data-theme="light"] .v6-vis-check-pill {
+  background: #edf3fa !important;
+  border: 1px solid #94a3b8 !important;
+  color: #0f172a !important;
+}
+body[data-theme="light"] .v6-vis-check-pill:hover {
+  background: #e0f2fe !important;
+  border-color: #0284c7 !important;
+}

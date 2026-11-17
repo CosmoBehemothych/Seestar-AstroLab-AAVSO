@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.1.1 beta) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.1.2 beta) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.1.1 beta.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.1.2 beta.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -528,7 +528,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.1.1 beta",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.1.2 beta",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -881,7 +881,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.1.1 beta session",
+      actAppStarted: "Started Seestar AstroLab v1.1.2 beta session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -1229,7 +1229,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.1.1 beta",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.1.2 beta",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1553,7 +1553,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.1.1 beta",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.1.2 beta",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1866,7 +1866,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.1.1 beta",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.1.2 beta",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -2178,7 +2178,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.1.1 beta 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.1.2 beta 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -5680,7 +5680,7 @@ function revealAndFocusField(inputId) {
   };
   document.getElementById("btnCloseSplash").addEventListener("click", closeSplash);
 
-  // Очищаем личный код APPA, если он когда-либо сохранялся, и подгружаем пользовательский код (если не APPA)
+  // Подгружаем сохранённый пользовательский код обсерватории AAVSO
   try {
     const obsMainEl = document.getElementById("obscode");
     const obsQuickEl = document.getElementById("headerObscodeQuick");
@@ -5981,7 +5981,7 @@ function revealAndFocusField(inputId) {
     { star: "RR Lyr", alias: "HD 182989", type: "Прототип лирид + эффект Блажко (RRAB)", auid: "000-BRR-101", con: "Lyr", ra: 291.36625, dec: 42.78444, magRange: "7.06m → 8.12m (P = 0.566868 d)", chart: "X18413A", kname: "000-BRR-104", kmag: "8.450", priority: "⚡ Эталон", desc: "Фундаментальная стандартная свеча Вселенной с выраженной модуляцией амплитуды и фазы (эффект Блажко, P_B = 39 сут).", comment: "Крутой подъем блеска на 1.0 mag за 1.5 часа — выдержка 10 с дает эталонную кривую блеска." },
     { star: "Delta Cep", alias: "HD 213306", type: "Прототип классических цефеид (DCEP)", auid: "000-BDC-101", con: "Cep", ra: 337.29292, dec: 58.41528, magRange: "3.48m → 4.37m (P = 5.36627 d)", chart: "X18414A", kname: "000-BDC-105", kmag: "7.850", priority: "⚡ Эталон", desc: "Классический прототип цефеид (F5Ib–G1Ib), лежащий в основе шкалы межгалактических расстояний.", comment: "Короткие экспозиции раз в сутки для построения полной 5.37-дневной фазовой кривой." },
     { star: "WASP-33", alias: "HD 15082", type: "Транзит у пульсирующей δ Sct (EP+DSCT)", auid: "000-BW3-101", con: "And", ra: 36.71250, dec: 37.55028, magRange: "8.14m (Δm = 0.015m, P = 1.21987 d)", chart: "X18415A", kname: "000-BW3-105", kmag: "9.240", priority: "🪐 Экзопланета", desc: "Уникальная система: экстремально горячий юпитер WASP-33b (T ≈ 3200 K) обращается вокруг нерадиально пульсирующей звезды δ Sct.", comment: "Сверхвысокое угловое разрешение S50PRO (1.08″/px) и S30PRO (1.97″/px) минимизирует блендирование соседних звезд." },
-    { star: "AB Aur", alias: "HD 31293", type: "Звезда Хербига Ae/Be с диском (INA)", auid: "000-BAB-101", con: "Aur", ra: 73.94083, dec: 30.55111, magRange: "6.9m → 8.4m (протопланетные спирали)", chart: "X19501A", kname: "000-BAB-104", kmag: "8.120", priority: "🔥 СРОЧНО", desc: "Молодая звезда Хербига Ae с формирующейся протопланетой в пылевом диске. Приоритетная цель секции YSO AAVSO.", comment: "Выдержка 10 с в полосе TG; отлично видна в средних северных широтах (Чебоксары, Москва)." },
+    { star: "AB Aur", alias: "HD 31293", type: "Звезда Хербига Ae/Be с диском (INA)", auid: "000-BAB-101", con: "Aur", ra: 73.94083, dec: 30.55111, magRange: "6.9m → 8.4m (протопланетные спирали)", chart: "X19501A", kname: "000-BAB-104", kmag: "8.120", priority: "🔥 СРОЧНО", desc: "Молодая звезда Хербига Ae с формирующейся протопланетой в пылевом диске. Приоритетная цель секции YSO AAVSO.", comment: "Выдержка 10 с в полосе TG; отлично видна в средних северных широтах (средние северные широты)." },
     { star: "SS Aur", alias: "AAVSO 0605+47", type: "Карликовая новая типа U Gem (UGSS)", auid: "000-BSA-101", con: "Aur", ra: 93.34458, dec: 47.74028, magRange: "10.5m → 14.8m (цикл ~55 d)", chart: "X19502A", kname: "000-BSA-105", kmag: "11.200", priority: "🔥 СРОЧНО", desc: "Классическая северная карликовая новая с крутыми подъёмами блеска на 4.3 звёздной величины.", comment: "Высокое склонение (+47.7°) делает её незаходящей в средней полосе России. Выдержка 15–20 с." },
     { star: "R Sct", alias: "HD 173880", type: "Пульсирующий сверхгигант типа RV Tau (RVA)", auid: "000-BRS-101", con: "Sct", ra: 281.87083, dec: -5.70667, magRange: "4.2m → 8.6m (P = 146.5 d)", chart: "X19503A", kname: "000-BRS-104", kmag: "7.850", priority: "⚡ Эталон", desc: "Ярчайший представитель звёзд типа RV Тельца с чередованием глубоких и мелких минимумов блеска.", comment: "Удобная летне-осенняя цель; рекомендуется выдержка 10 с в полосе TG." },
     { star: "U Mon", alias: "HD 59693", type: "Бинарная система типа RV Tau (RVB)", auid: "000-BUM-101", con: "Mon", ra: 112.69750, dec: -9.77694, magRange: "5.4m → 7.8m (P_puls = 91.3 d)", chart: "X19504A", kname: "000-BUM-105", kmag: "7.920", priority: "⚡ Кампания", desc: "Прототип подкласса RVB с долгопериодическим затмением пылевым тором каждые ~2450 суток.", comment: "Мониторинг вековой модуляции среднего блеска. Выдержка 10 с." },
@@ -6419,6 +6419,10 @@ function revealAndFocusField(inputId) {
         const s2 = document.getElementById("urgentHemisphereSelect");
         if (s1) s1.value = "all";
         if (s2) s2.value = "all";
+        const h1 = document.getElementById("v6HemiOnlySelect");
+        const h2 = document.getElementById("urgentHemiOnlySelect");
+        if (h1) h1.value = "all";
+        if (h2) h2.value = "all";
         activeObservingSections.clear();
         activeObservingSections.add("all");
         syncObservingSectionsUI();
@@ -8537,7 +8541,7 @@ function revealAndFocusField(inputId) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.1.1 beta",
+      application: "Seestar AstroLab AAVSO v1.1.2 beta",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8588,7 +8592,7 @@ function revealAndFocusField(inputId) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.1.1 beta (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.1.2 beta (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -11476,7 +11480,7 @@ function revealAndFocusField(inputId) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.1.1 beta — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.1.2 beta — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -14243,7 +14247,6 @@ function revealAndFocusField(inputId) {
     const lang = (typeof currentLang !== "undefined") ? currentLang : (document.getElementById("langSelect")?.value || "ru");
     if (lang === "ru") return rawCity;
     const map = {
-      "Чебоксары": "Cheboksary",
       "Москва": "Moscow",
       "Санкт-Петербург": "St. Petersburg",
       "Казань": "Kazan",
@@ -14278,9 +14281,9 @@ function revealAndFocusField(inputId) {
   window.localizeCitySelectDropdown = localizeCitySelectDropdown;
 
   const OBSERVER_GEO_STATE = {
-    lat: 56.1439,
-    lon: 47.2489,
-    city: "Чебоксары",
+    lat: 55.7558,
+    lon: 37.6173,
+    city: "Москва",
     skyClarityPct: null,
     cloudCoverPct: null,
     cloudLow: null,
@@ -14310,7 +14313,13 @@ function revealAndFocusField(inputId) {
       moonSafe: "Луна не мешает фотометрии",
       moonBrightWarn: "Яркая Луна над горизонтом — выбирайте цели подальше от Луны",
       phases: ["Новолуние", "Растущий серп", "Первая четверть", "Растущая Луна", "Полнолуние", "Убывающая Луна", "Последняя четверть", "Убывающий серп"],
-      lblHemisphereFilter: "🌍 Видимость:",
+      lblHemiOnlyFilter: "🌍 Полушарие:",
+      optHemiAll: "🌐 Северное и Южное",
+      optHemiNorth: "⬆️ Северное полушарие (DEC ≥ 0°)",
+      optHemiSouth: "⬇️ Южное полушарие (DEC < 0°)",
+      chkVisCity: "📍 Видимые в моём городе",
+      chkVisNow: "🕯️ Над горизонтом сейчас",
+      lblHemisphereFilter: "🧭 Азимут:",
       optVisCity: "📍 Видимые в моём городе (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Над горизонтом сейчас (Alt ≥ 15°)",
       optVisNorth: "⬆️ Северное полушарие / Север (N)",
@@ -14337,7 +14346,13 @@ function revealAndFocusField(inputId) {
       moonSafe: "Moon does not interfere with photometry",
       moonBrightWarn: "Bright Moon above horizon — pick targets away from the Moon",
       phases: ["New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous", "Full Moon", "Waning Gibbous", "Third Quarter", "Waning Crescent"],
-      lblHemisphereFilter: "🌍 Visibility:",
+      lblHemiOnlyFilter: "🌍 Hemisphere:",
+      optHemiAll: "🌐 Northern & Southern",
+      optHemiNorth: "⬆️ Northern Hemisphere (DEC ≥ 0°)",
+      optHemiSouth: "⬇️ Southern Hemisphere (DEC < 0°)",
+      chkVisCity: "📍 Visible in My City",
+      chkVisNow: "🕯️ Above Horizon Right Now",
+      lblHemisphereFilter: "🧭 Azimuth:",
       optVisCity: "📍 Observable from My City (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Above Horizon Right Now (Alt ≥ 15°)",
       optVisNorth: "⬆️ Northern Hemisphere / North (N)",
@@ -14364,7 +14379,13 @@ function revealAndFocusField(inputId) {
       moonSafe: "La Luna no interfiere con la fotometría",
       moonBrightWarn: "Luna brillante sobre el horizonte",
       phases: ["Luna Nueva", "Creciente", "Cuarto Creciente", "Gibosa Creciente", "Luna Llena", "Gibosa Menguante", "Cuarto Menguante", "Menguante"],
-      lblHemisphereFilter: "🌍 Visibilidad:",
+      lblHemiOnlyFilter: "🌍 Hemisferio:",
+      optHemiAll: "🌐 Norte y Sur",
+      optHemiNorth: "⬆️ Hemisferio Norte (DEC ≥ 0°)",
+      optHemiSouth: "⬇️ Hemisferio Sur (DEC < 0°)",
+      chkVisCity: "📍 Visibles en mi ciudad",
+      chkVisNow: "🕯️ Sobre el horizonte ahora",
+      lblHemisphereFilter: "🧭 Acimut:",
       optVisCity: "📍 Visibles en mi ciudad (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Sobre el horizonte ahora (Alt ≥ 15°)",
       optVisNorth: "⬆️ Hemisferio Norte / Norte (N)",
@@ -14391,7 +14412,13 @@ function revealAndFocusField(inputId) {
       moonSafe: "Mond stört die Photometrie nicht",
       moonBrightWarn: "Heller Mond über dem Horizont",
       phases: ["Neumond", "Zunehmende Sichel", "Erstes Viertel", "Zunehmender Mond", "Vollmond", "Abnehmender Mond", "Letztes Viertel", "Abnehmende Sichel"],
-      lblHemisphereFilter: "🌍 Sichtbarkeit:",
+      lblHemiOnlyFilter: "🌍 Halbkugel:",
+      optHemiAll: "🌐 Nord- & Südhalbkugel",
+      optHemiNorth: "⬆️ Nordhalbkugel (DEC ≥ 0°)",
+      optHemiSouth: "⬇️ Südhalbkugel (DEC < 0°)",
+      chkVisCity: "📍 In meiner Stadt sichtbar",
+      chkVisNow: "🕯️ Jetzt über dem Horizont",
+      lblHemisphereFilter: "🧭 Azimut:",
       optVisCity: "📍 In meiner Stadt sichtbar (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Jetzt über dem Horizont (Alt ≥ 15°)",
       optVisNorth: "⬆️ Nordhalbkugel / Norden (N)",
@@ -14418,7 +14445,13 @@ function revealAndFocusField(inputId) {
       moonSafe: "La Lune ne gêne pas la photométrie",
       moonBrightWarn: "Lune brillante au-dessus de l'horizon",
       phases: ["Nouvelle Lune", "Premier Croissant", "Premier Quartier", "Gibbeuse Croissante", "Pleine Lune", "Gibbeuse Décroissante", "Dernier Quartier", "Dernier Croissant"],
-      lblHemisphereFilter: "🌍 Visibilité :",
+      lblHemiOnlyFilter: "🌍 Hémisphère :",
+      optHemiAll: "🌐 Nord et Sud",
+      optHemiNorth: "⬆️ Hémisphère Nord (DEC ≥ 0°)",
+      optHemiSouth: "⬇️ Hémisphère Sud (DEC < 0°)",
+      chkVisCity: "📍 Visibles dans ma ville",
+      chkVisNow: "🕯️ Au-dessus de l'horizon",
+      lblHemisphereFilter: "🧭 Azimut :",
       optVisCity: "📍 Visibles depuis ma ville (DEC ≥ φ−70°)",
       optVisNow: "🕯️ Au-dessus de l'horizon (Alt ≥ 15°)",
       optVisNorth: "⬆️ Hémisphère Nord / Nord (N)",
@@ -14445,7 +14478,13 @@ function revealAndFocusField(inputId) {
       moonSafe: "月光不影响当前测光观测",
       moonBrightWarn: "明亮月亮位于地平线上方",
       phases: ["新月 (朔)", "蛾眉月", "上弦月", "盈凸月", "满月 (望)", "亏凸月", "下弦月", "残月"],
-      lblHemisphereFilter: "🌍 可见性过滤：",
+      lblHemiOnlyFilter: "🌍 半球过滤：",
+      optHemiAll: "🌐 北半球与南半球",
+      optHemiNorth: "⬆️ 北半球 (DEC ≥ 0°)",
+      optHemiSouth: "⬇️ 南半球 (DEC < 0°)",
+      chkVisCity: "📍 本市可见目标",
+      chkVisNow: "🕯️ 当前位于地平线上",
+      lblHemisphereFilter: "🧭 方位角：",
       optVisCity: "📍 本市可见目标 (DEC ≥ φ−70°)",
       optVisNow: "🕯️ 当前位于地平线上 (Alt ≥ 15°)",
       optVisNorth: "⬆️ 北半球 / 正北 (N)",
@@ -14509,9 +14548,9 @@ function revealAndFocusField(inputId) {
 
   // Фильтр видимости приоритетной звезды для полушария, широты выбранного города и стороны горизонта (N, S, E, W, NE, NW, SE, SW)
   function computeLocalNighttimeWindow(latDeg = OBSERVER_GEO_STATE.lat, lonDeg = OBSERVER_GEO_STATE.lon) {
-    // Вычисление начала и окончания тёмного времени суток для широты наблюдателя (по аналогии с AAVSO Target Tool: 56.14, 47.25 -> 16:57 .. 06:14)
-    const absLat = Math.min(65, Math.abs(Number(latDeg) || 56.14));
-    const latOffsetMin = Math.round((absLat - 56.14) * 2.2);
+    // Вычисление начала и окончания тёмного времени суток для широты наблюдателя (по аналогии с AAVSO Target Tool: 55.76, 37.62 -> 16:57 .. 06:14)
+    const absLat = Math.min(65, Math.abs(Number(latDeg) || 55.76));
+    const latOffsetMin = Math.round((absLat - 55.76) * 2.2);
     const startTotal = Math.max(15 * 60, Math.min(21 * 60, (16 * 60 + 57) - latOffsetMin));
     const endTotal = Math.max(4 * 60, Math.min(9 * 60, (6 * 60 + 14) + latOffsetMin));
     const fmt = (tot) => `${String(Math.floor(tot / 60)).padStart(2, "0")}:${String(tot % 60).padStart(2, "0")}`;
@@ -14522,9 +14561,9 @@ function revealAndFocusField(inputId) {
   function renderObservabilityNighttimeUI() {
     const lg = getActiveLangCode();
     const pack = TARGETTOOL_I18N_6LANG[lg] || TARGETTOOL_I18N_6LANG.en;
-    const latStr = Number(OBSERVER_GEO_STATE.lat || 56.14).toFixed(2);
-    const lonStr = Number(OBSERVER_GEO_STATE.lon || 47.25).toFixed(2);
-    const cityLoc = getLocalizedCityName(OBSERVER_GEO_STATE.city || "Чебоксары");
+    const latStr = Number(OBSERVER_GEO_STATE.lat || 55.76).toFixed(2);
+    const lonStr = Number(OBSERVER_GEO_STATE.lon || 37.62).toFixed(2);
+    const cityLoc = getLocalizedCityName(OBSERVER_GEO_STATE.city || "Москва");
     const { startStr, endStr } = computeLocalNighttimeWindow(OBSERVER_GEO_STATE.lat, OBSERVER_GEO_STATE.lon);
 
     const dockTxt = document.getElementById("v6NighttimeWindowText");
@@ -14546,8 +14585,9 @@ function revealAndFocusField(inputId) {
         .replace("{end}", endStr);
     }
 
-    const curVis = document.getElementById("v6HemisphereSelect")?.value || "city";
-    const isVisibleTonightActive = (curVis !== "all");
+    const chkCityEl = document.getElementById("v6ChkVisCity");
+    const chkNowEl = document.getElementById("v6ChkVisNow");
+    const isVisibleTonightActive = Boolean((chkCityEl && chkCityEl.checked) || (chkNowEl && chkNowEl.checked));
     ["btnV6VisibleTonight", "btnUrgentVisibleTonight"].forEach(btnId => {
       const b = document.getElementById(btnId);
       if (b) b.classList.toggle("active", isVisibleTonightActive);
@@ -14555,8 +14595,8 @@ function revealAndFocusField(inputId) {
   }
   window.renderObservabilityNighttimeUI = renderObservabilityNighttimeUI;
 
-  function matchesObserverHemisphereFilter(item, mode = "city") {
-    if (!item || mode === "all") return true;
+  function matchesObserverHemisphereFilter(item, mode = "all", ignoreDomCheckboxes = false) {
+    if (!item) return true;
     const dec = Number(item.dec);
     const ra = Number(item.ra);
     if (!Number.isFinite(dec)) return true;
@@ -14565,6 +14605,22 @@ function revealAndFocusField(inputId) {
     const lon = OBSERVER_GEO_STATE.lon;
     const { currentAltDeg, maxCulmAltDeg, azimuthDeg } = computeStarAltitudeForCity(ra, dec, lat, lon);
 
+    if (!ignoreDomCheckboxes) {
+      // [ПУНКТ 9] Отдельный фильтр Полушария (Северное / Южное)
+      const hemiOnlyVal = document.getElementById("v6HemiOnlySelect")?.value || "all";
+      if (hemiOnlyVal === "north" && dec < 0.0) return false;
+      if (hemiOnlyVal === "south" && dec >= 0.0) return false;
+
+      // [ПУНКТ 10] Отдельный чекбокс «Видимые в моём городе»
+      const chkCityEl = document.getElementById("v6ChkVisCity");
+      if (chkCityEl && chkCityEl.checked && maxCulmAltDeg < 20.0) return false;
+
+      // [ПУНКТ 11] Отдельный чекбокс «Над горизонтом сейчас»
+      const chkNowEl = document.getElementById("v6ChkVisNow");
+      if (chkNowEl && chkNowEl.checked && currentAltDeg < 15.0) return false;
+    }
+
+    if (mode === "all") return true;
     if (mode === "city") {
       return maxCulmAltDeg >= 20.0;
     }
@@ -14774,8 +14830,8 @@ function revealAndFocusField(inputId) {
       }
     }
 
-    // Переводим опции селекторов видимости
-    ["v6HemisphereSelect", "urgentHemisphereSelect"].forEach(selId => {
+    // Переводим опции селекторов полушария, азимута и чекбоксов видимости (Пункты 9, 10, 11)
+    ["v6HemiOnlySelect", "urgentHemiOnlySelect", "v6HemisphereSelect", "urgentHemisphereSelect"].forEach(selId => {
       const sel = document.getElementById(selId);
       if (!sel) return;
       Array.from(sel.options).forEach(opt => {
@@ -14783,8 +14839,10 @@ function revealAndFocusField(inputId) {
         if (k) opt.textContent = trSky(k);
       });
     });
-    document.querySelectorAll('[data-i18n="lblHemisphereFilter"]').forEach(el => {
-      el.textContent = trSky("lblHemisphereFilter");
+    ["lblHemiOnlyFilter", "lblHemisphereFilter", "chkVisCity", "chkVisNow"].forEach(k => {
+      document.querySelectorAll(`[data-i18n="${k}"]`).forEach(el => {
+        el.textContent = trSky(k);
+      });
     });
     if (typeof localizeCitySelectDropdown === "function") {
       localizeCitySelectDropdown();
@@ -14922,9 +14980,9 @@ function revealAndFocusField(inputId) {
     if (customWrap) customWrap.style.display = "none";
     const parts = val.split(",");
     if (parts.length >= 3) {
-      OBSERVER_GEO_STATE.lat = parseFloat(parts[0]) || 56.1322;
-      OBSERVER_GEO_STATE.lon = parseFloat(parts[1]) || 47.2519;
-      OBSERVER_GEO_STATE.city = parts.slice(2).join(",").trim() || "Чебоксары";
+      OBSERVER_GEO_STATE.lat = parseFloat(parts[0]) || 55.7558;
+      OBSERVER_GEO_STATE.lon = parseFloat(parts[1]) || 37.6173;
+      OBSERVER_GEO_STATE.city = parts.slice(2).join(",").trim() || "Москва";
       try {
         localStorage.setItem("astrolab_observer_city_v110", JSON.stringify({
           lat: OBSERVER_GEO_STATE.lat,
@@ -14961,27 +15019,42 @@ function revealAndFocusField(inputId) {
     fetchCitySkyClarityAndMoonNow(true);
   });
 
-  // Синхронизация двух селекторов видимости (#v6HemisphereSelect и #urgentHemisphereSelect) и кнопок Наблюдаемости AAVSO Target Tool
-  ["v6HemisphereSelect", "urgentHemisphereSelect"].forEach(selId => {
-    document.getElementById(selId)?.addEventListener("change", (e) => {
-      const v = e.target.value;
-      const otherId = selId === "v6HemisphereSelect" ? "urgentHemisphereSelect" : "v6HemisphereSelect";
-      const otherEl = document.getElementById(otherId);
-      if (otherEl && otherEl.value !== v) otherEl.value = v;
-      renderObservabilityNighttimeUI();
-      if (typeof window.renderV6RadarDock === "function") window.renderV6RadarDock();
-      if (typeof window.renderUrgentStarsCards === "function") window.renderUrgentStarsCards();
+  // Синхронизация фильтров Полушария (#v6HemiOnlySelect / #urgentHemiOnlySelect), Азимута и чекбоксов (Пункты 9, 10, 11)
+  [["v6HemiOnlySelect", "urgentHemiOnlySelect"], ["v6HemisphereSelect", "urgentHemisphereSelect"]].forEach(([idA, idB]) => {
+    [idA, idB].forEach(selId => {
+      document.getElementById(selId)?.addEventListener("change", (e) => {
+        const v = e.target.value;
+        const otherId = selId === idA ? idB : idA;
+        const otherEl = document.getElementById(otherId);
+        if (otherEl && otherEl.value !== v) otherEl.value = v;
+        renderObservabilityNighttimeUI();
+        if (typeof window.renderV6RadarDock === "function") window.renderV6RadarDock();
+        if (typeof window.renderUrgentStarsCards === "function") window.renderUrgentStarsCards();
+      });
+    });
+  });
+
+  [["v6ChkVisCity", "urgentChkVisCity"], ["v6ChkVisNow", "urgentChkVisNow"]].forEach(([chkA, chkB]) => {
+    [chkA, chkB].forEach(chkId => {
+      document.getElementById(chkId)?.addEventListener("change", (e) => {
+        const isChecked = Boolean(e.target.checked);
+        const otherId = chkId === chkA ? chkB : chkA;
+        const otherEl = document.getElementById(otherId);
+        if (otherEl && otherEl.checked !== isChecked) otherEl.checked = isChecked;
+        renderObservabilityNighttimeUI();
+        if (typeof window.renderV6RadarDock === "function") window.renderV6RadarDock();
+        if (typeof window.renderUrgentStarsCards === "function") window.renderUrgentStarsCards();
+      });
     });
   });
 
   ["btnV6VisibleTonight", "btnUrgentVisibleTonight"].forEach(btnId => {
     document.getElementById(btnId)?.addEventListener("click", () => {
-      const s1 = document.getElementById("v6HemisphereSelect");
-      const s2 = document.getElementById("urgentHemisphereSelect");
-      const cur = (s1 && s1.value) || "city";
-      const nextMode = (cur === "all") ? "city" : "all";
-      if (s1) s1.value = nextMode;
-      if (s2) s2.value = nextMode;
+      const c1 = document.getElementById("v6ChkVisCity");
+      const c2 = document.getElementById("urgentChkVisCity");
+      const nextState = !(c1 && c1.checked);
+      if (c1) c1.checked = nextState;
+      if (c2) c2.checked = nextState;
       renderObservabilityNighttimeUI();
       if (typeof window.renderV6RadarDock === "function") window.renderV6RadarDock();
       if (typeof window.renderUrgentStarsCards === "function") window.renderUrgentStarsCards();
@@ -15022,7 +15095,7 @@ function revealAndFocusField(inputId) {
       const oLat = parseFloat(p[0]);
       const oLon = parseFloat(p[1]);
       const oCityNorm = p.slice(2).join(",").trim().toLowerCase();
-      // [RU] Строгое совпадение по имени или в радиусе 0.04° (~3 км), чтобы Новочебоксарск не подменял Чебоксары
+      // [RU] Строгое совпадение по имени или в радиусе 0.04° (~3 км), чтобы соседний город не подменял выбранный город
       if (curCityNorm && oCityNorm && curCityNorm === oCityNorm) return true;
       return Math.abs(oLat - OBSERVER_GEO_STATE.lat) < 0.04 && Math.abs(oLon - OBSERVER_GEO_STATE.lon) < 0.04;
     });
@@ -15062,7 +15135,7 @@ function revealAndFocusField(inputId) {
       } catch (_) {}
     }
 
-    // Попытка автоопределения через быстрый гео-IP сервис (с безопасным таймаутом 2.8 с и резервом Чебоксары)
+    // Попытка автоопределения через быстрый гео-IP сервис (с безопасным таймаутом 2.8 с и резервом Москва)
     let detected = false;
     try {
       const ctrl = new AbortController();
@@ -15355,7 +15428,7 @@ function revealAndFocusField(inputId) {
     const raHmsPlain = window.formatRaJ2000Hms ? window.formatRaJ2000Hms(rawItem.ra, false) : String(rawItem.ra);
     const decDms = window.formatDecJ2000Dms ? window.formatDecJ2000Dms(rawItem.dec) : String(rawItem.dec);
 
-    const cityLoc = getLocalizedCityName(OBSERVER_GEO_STATE.city || "Чебоксары");
+    const cityLoc = getLocalizedCityName(OBSERVER_GEO_STATE.city || "Москва");
     const altObj = window.computeStarAltitudeForCity ? window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec) : { currentAltDeg: 0, maxCulmAltDeg: 0, compassLabel: "—" };
     const altSummary = `Макс. кульминация: ${Math.round(altObj.maxCulmAltDeg)}° • Сейчас: ${altObj.currentAltDeg >= 0 ? "+" : ""}${Math.round(altObj.currentAltDeg)}° (${altObj.compassLabel || "—"})`;
 
