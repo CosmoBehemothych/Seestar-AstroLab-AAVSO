@@ -1,42 +1,9 @@
-name: Build Seestar AstroLab AAVSO (Windows)
-
-on:
-  push:
-    branches: [ main ]
-    tags: [ 'v*' ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  build-windows:
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install build dependencies & verify installer assets
-        working-directory: Source_and_Build
-        run: |
-          python -m pip install --upgrade pip
-          pip install pyinstaller pywebview pillow
-          python -c "import os; from PIL import Image, ImageDraw; os.makedirs('assets', exist_ok=True); ico='assets/Seestar_AstroLab.ico'; bmp='assets/installer_header_fullwidth.bmp'; (lambda: (img:=Image.new('RGBA',(256,256),(11,18,32,255)), d:=ImageDraw.Draw(img), d.ellipse((16,16,240,240),outline=(56,189,248,255),width=10), d.ellipse((44,44,212,212),outline=(129,140,248,230),width=6), d.ellipse((86,86,170,170),fill=(15,23,42,255),outline=(186,230,253,255),width=5), d.ellipse((114,114,142,142),fill=(56,189,248,255)), img.save(ico,format='ICO',sizes=[(256,256),(128,128),(64,64),(48,48),(32,32),(16,16)])))() if not os.path.isfile(ico) else None; (lambda: (b:=Image.new('RGB',(500,160),(11,18,32)), bd:=ImageDraw.Draw(b), [bd.line([(x,0),(x,160)],fill=(int(11+(x/500)*18),int(18+(x/500)*28),int(32+(x/500)*48))) for x in range(500)], bd.ellipse((370,20,490,140),outline=(56,189,248),width=4), b.save(bmp,format='BMP')))() if not os.path.isfile(bmp) else None"
-
-      - name: Build standalone application binary with PyInstaller (--noupx prevents AV false positives)
+      - name: Build standalone application binary with PyInstaller (--onefile)
         working-directory: Source_and_Build
         shell: pwsh
         run: |
           $argsList = @(
-            "--noconfirm", "--onedir", "--windowed", "--noupx",
+            "--noconfirm", "--onefile", "--windowed", "--noupx",
             "--name", "Seestar AstroLab",
             "--version-file", "version_info.txt"
           )
@@ -49,83 +16,3 @@ jobs:
           $argsList += "desktop_launcher.py"
           pyinstaller @argsList
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-      - name: Prepare Authenticode Code Signing Certificate (optional)
-        working-directory: Source_and_Build
-        shell: pwsh
-        env:
-          CODESIGN_PFX_BASE64: ${{ secrets.CODESIGN_PFX_BASE64 }}
-          CODESIGN_PFX_PASSWORD: ${{ secrets.CODESIGN_PFX_PASSWORD }}
-        run: |
-          New-Item -ItemType Directory -Force -Path "dist_installer" | Out-Null
-          if ($env:CODESIGN_PFX_BASE64) {
-            $pfxPath = "$PWD\dist_installer\CosmoBehemothych_CodeSign.pfx"
-            $pwdPlain = if ($env:CODESIGN_PFX_PASSWORD) { $env:CODESIGN_PFX_PASSWORD } else { "" }
-            $secPwd = ConvertTo-SecureString -String $pwdPlain -Force -AsPlainText
-            [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String($env:CODESIGN_PFX_BASE64))
-            $cert = Import-PfxCertificate -FilePath $pfxPath -CertStoreLocation "Cert:\CurrentUser\My" -Password $secPwd -Exportable
-            "CERT_THUMBPRINT=$($cert.Thumbprint)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-          } else {
-            Write-Host "No code signing certificate provided. Skipping signing."
-          }
-
-      - name: Sign Application Binary (if certificate available)
-        working-directory: Source_and_Build
-        shell: pwsh
-        run: |
-          if (-not $env:CERT_THUMBPRINT) { Write-Host "Skipping: no certificate."; exit 0 }
-          $signtool = Get-ChildItem -Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Filter "signtool.exe" -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1 -ExpandProperty FullName
-          $appExe = "$PWD\dist\Seestar AstroLab\Seestar AstroLab.exe"
-          if ($signtool -and (Test-Path $appExe)) {
-            & $signtool sign /fd SHA256 /sha1 $env:CERT_THUMBPRINT /tr "http://timestamp.digicert.com" /td SHA256 /d "Seestar AstroLab AAVSO" $appExe
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          }
-
-      - name: Package Portable Windows Archive (No Python required)
-        working-directory: Source_and_Build
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path "dist_installer" | Out-Null
-          Compress-Archive -Path "dist/Seestar AstroLab/*" -DestinationPath "dist_installer/Seestar_AstroLab_Portable_Windows.zip" -Force
-
-      - name: Build Standalone Windows Installer (Inno Setup 6 — No Python required)
-        working-directory: Source_and_Build
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path "assets" | Out-Null
-          if (-not (Test-Path "assets\installer_header_fullwidth.bmp")) {
-            python -c "from PIL import Image, ImageDraw; b = Image.new('RGB', (500,160), (11,18,32)); bd = ImageDraw.Draw(b); [bd.line([(x,0),(x,160)], fill=(int(11+(x/500)*18), int(18+(x/500)*28), int(32+(x/500)*48))) for x in range(500)]; bd.ellipse((370,20,490,140), outline=(56,189,248), width=4); b.save('assets/installer_header_fullwidth.bmp', format='BMP')"
-          }
-          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
-          if (-not (Test-Path $iscc)) { choco install innosetup -y }
-          & $iscc ".\Seestar_AstroLab_Installer.iss"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-      - name: Sign Standalone Installer (if certificate available)
-        working-directory: Source_and_Build
-        shell: pwsh
-        run: |
-          if (-not $env:CERT_THUMBPRINT) { Write-Host "Skipping: no certificate."; exit 0 }
-          $signtool = Get-ChildItem -Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Filter "signtool.exe" -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1 -ExpandProperty FullName
-          $setupExe = "$PWD\dist_installer\Seestar_AstroLab_Setup.exe"
-          if ($signtool -and (Test-Path $setupExe)) {
-            & $signtool sign /fd SHA256 /sha1 $env:CERT_THUMBPRINT /tr "http://timestamp.digicert.com" /td SHA256 /d "Seestar AstroLab AAVSO Setup" $setupExe
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          }
-          Remove-Item -Path "$PWD\dist_installer\CosmoBehemothych_CodeSign.pfx" -Force -ErrorAction SilentlyContinue
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: Seestar_AstroLab_Windows_Build
-          path: Source_and_Build/dist_installer/*
-          if-no-files-found: error
-
-      - name: Publish Release Assets on Tag Push
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            Source_and_Build/dist_installer/Seestar_AstroLab_Setup.exe
-            Source_and_Build/dist_installer/Seestar_AstroLab_Portable_Windows.zip
-          generate_release_notes: true
