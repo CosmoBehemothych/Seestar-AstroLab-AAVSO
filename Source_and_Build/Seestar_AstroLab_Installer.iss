@@ -131,7 +131,8 @@ Type: files; Name: "{app}\desktop_launcher.py"
 Name: "{app}\Converted_Photometry_Storage"
 
 [Files]
-Source: "dist\Seestar AstroLab\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; При использовании --onefile исполняемый файл лежит прямо в dist
+Source: "dist\Seestar AstroLab.exe"; DestDir: "{app}"; Flags: ignoreversion
 #if FileExists(AddBackslash(SourcePath) + MyAppIconRelPath)
 Source: "{#MyAppIconRelPath}"; DestDir: "{app}\assets"; Flags: ignoreversion
 #endif
