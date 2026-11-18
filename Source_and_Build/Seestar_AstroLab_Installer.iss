@@ -53,7 +53,7 @@ RestartApplications=no
 WizardStyle=modern
 #if FileExists(AddBackslash(SourcePath) + MyAppHeaderBmpRelPath)
 WizardSmallImageFile={#MyAppHeaderBmpRelPath}
-WizardImageStretch=no
+WizardImageStretch=yes
 WizardImageAlphaFormat=defined
 #endif
 #if FileExists(AddBackslash(SourcePath) + MyAppIconRelPath)
@@ -234,4 +234,40 @@ end;
 procedure CurPageChanged(CurPageID: Integer);
 begin
   HideBannerOverlayLabels();
+end;
+
+function GetAppLangCodeFromSetup(): String;
+var
+  L: String;
+begin
+  L := Lowercase(ActiveLanguage);
+  if L = 'russian' then Result := 'ru'
+  else if L = 'spanish' then Result := 'es'
+  else if L = 'german' then Result := 'de'
+  else if L = 'french' then Result := 'fr'
+  else if L = 'chinese' then Result := 'zh'
+  else Result := 'en';
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  LangCode, JsonContent, JsContent, AppDataDir: String;
+begin
+  if CurStep = ssPostInstall then
+  begin
+    LangCode := GetAppLangCodeFromSetup();
+    JsonContent := '{"lang": "' + LangCode + '", "seestar_lang": "' + LangCode + '", "installer_lang": "' + LangCode + '"}';
+    SaveStringToFile(ExpandConstant('{app}\user_settings.json'), JsonContent, False);
+
+    AppDataDir := ExpandConstant('{userappdata}\Seestar_AstroLab');
+    ForceDirectories(AppDataDir);
+    SaveStringToFile(AppDataDir + '\installer_lang.txt', LangCode, False);
+    SaveStringToFile(AppDataDir + '\user_settings.json', JsonContent, False);
+
+    if DirExists(ExpandConstant('{app}\pwa_mobile_and_electron')) then
+    begin
+      JsContent := 'window.__SEESTAR_DISK_STORE__ = {"lang": "' + LangCode + '", "seestar_lang": "' + LangCode + '", "installer_lang": "' + LangCode + '"};' + #13#10;
+      SaveStringToFile(ExpandConstant('{app}\pwa_mobile_and_electron\user_persistent_store.js'), JsContent, False);
+    end;
+  end;
 end;
