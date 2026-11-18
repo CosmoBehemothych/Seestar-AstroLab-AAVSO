@@ -4,8 +4,8 @@
 ; ============================================================================
 #define MyAppName "Seestar AstroLab AAVSO"
 #define MyAppFullTitle "Seestar AstroLab AAVSO — Радар целей и фотометрия"
-#define MyAppVersion "1.1.2 beta"
-#define MyAppNumericVersion "1.1.2.0"
+#define MyAppVersion "1.1.3 beta"
+#define MyAppNumericVersion "1.1.3.0"
 #define MyAppPublisher "CosmoBehemothych AstroLab"
 #define MyAppCopyright "Copyright (C) 2026 CosmoBehemothych. MIT License."
 #define MyAppRepoURL "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO"
@@ -44,6 +44,8 @@ DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=no
 
 ShowLanguageDialog=yes
+
+LanguageDetectionMethod=none
 UsePreviousLanguage=no
 UsePreviousAppDir=yes
 UsePreviousGroup=yes
@@ -251,23 +253,27 @@ end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
 var
-  LangCode, JsonContent, JsContent, AppDataDir: String;
+  LangCode, JsonContent, JsContent, AppDataDir, StorePath: String;
 begin
   if CurStep = ssPostInstall then
   begin
-    LangCode := GetAppLangCodeFromSetup();
-    JsonContent := '{"lang": "' + LangCode + '", "seestar_lang": "' + LangCode + '", "installer_lang": "' + LangCode + '"}';
-    SaveStringToFile(ExpandConstant('{app}\user_settings.json'), JsonContent, False);
-
+    { [REQ 1] Английский язык устанавливается по умолчанию ТОЛЬКО для первого запуска (если пользователь ещё не сохранял свой выбор в настройках) }
+    LangCode := 'en';
     AppDataDir := ExpandConstant('{userappdata}\Seestar_AstroLab');
     ForceDirectories(AppDataDir);
-    SaveStringToFile(AppDataDir + '\installer_lang.txt', LangCode, False);
-    SaveStringToFile(AppDataDir + '\user_settings.json', JsonContent, False);
+    StorePath := AppDataDir + '\user_persistent_store.json';
 
-    if DirExists(ExpandConstant('{app}\pwa_mobile_and_electron')) then
+    if not FileExists(StorePath) then
     begin
-      JsContent := 'window.__SEESTAR_DISK_STORE__ = {"lang": "' + LangCode + '", "seestar_lang": "' + LangCode + '", "installer_lang": "' + LangCode + '"};' + #13#10;
-      SaveStringToFile(ExpandConstant('{app}\pwa_mobile_and_electron\user_persistent_store.js'), JsContent, False);
+      JsonContent := '{"lang": "' + LangCode + '", "seestar_lang": "' + LangCode + '"}';
+      SaveStringToFile(ExpandConstant('{app}\user_settings.json'), JsonContent, False);
+      SaveStringToFile(AppDataDir + '\user_settings.json', JsonContent, False);
+
+      if DirExists(ExpandConstant('{app}\pwa_mobile_and_electron')) then
+      begin
+        JsContent := 'window.__SEESTAR_DISK_STORE__ = {"lang": "' + LangCode + '", "seestar_lang": "' + LangCode + '"};' + #13#10;
+        SaveStringToFile(ExpandConstant('{app}\pwa_mobile_and_electron\user_persistent_store.js'), JsContent, False);
+      end;
     end;
   end;
 end;

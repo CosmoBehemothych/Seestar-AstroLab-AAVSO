@@ -1,4 +1,4 @@
-# 🔭 Seestar AstroLab AAVSO (`v1.1.2` / `v1.1.2 beta` & `v1.0.1 Stable`)
+# 🔭 Seestar AstroLab AAVSO (`v1.1.3` / `v1.1.3 beta` & `v1.0.1 Stable`)
 
 🌟 **Seestar AstroLab AAVSO** is a specialized desktop application for owners of **ZWO Seestar smart telescopes (`S30`, `S30PRO`, `S50`, `S50PRO`)** and variable star observers affiliated with the [AAVSO (American Association of Variable Star Observers)](https://www.aavso.org).
 
@@ -10,16 +10,16 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 | 🏷️ Version | 📌 Status | ⬇️ Installer / Portable Package | 🔍 Summary | 
 | ----- | ----- | ----- | ----- | 
-| **`v1.1.2 beta`** | 🧪 **New Feature Release (Beta)** | [Seestar_AstroLab_Setup_v1.1.2-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.2-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Direct AAVSO (`VSX` + `VSP` + `AID`) integration, 246+ AAVSO Target Tool priority targets with Hemisphere & City Latitude visibility filtering, live Sky Clarity (Open-Meteo, 10-min auto-refresh) & Regional Moon Phase/Altitude (USNO API) in the header, Celestial Black-Hole & Rocket Random Star Selector (scope- & latitude-aware), 2 independent light-curve engines with static-Y mouse drag, full-screen viewer, `Converted_Photometry_Storage` archive, and English-default 6-language installer | 
+| **`v1.1.3 beta`** | 🧪 **New Feature Release (Beta)** | [Seestar_AstroLab_Setup_v1.1.3-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.3-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Direct AAVSO (`VSX` + `VSP` + `AID`) integration, 246+ AAVSO Target Tool priority targets with Hemisphere & City Latitude visibility filtering, live Sky Clarity (Open-Meteo, 10-min auto-refresh) & Regional Moon Phase/Altitude (USNO API) in the header, Celestial Black-Hole & Rocket Random Star Selector (scope- & latitude-aware), 2 independent light-curve engines with static-Y mouse drag, full-screen viewer, `Converted_Photometry_Storage` archive, and English-default 6-language installer | 
 | **`v1.0.0` / `v1.0.1`** | ✅ **Classic Initial Release** | [Available in GitHub Releases (v1.0.0)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.0.0) | Original initial release with SIMBAD + VSP synchronization, basic Seestar CSV → AAVSO Extended conversion, and basic target radar | 
 
 ## 📑 Table of Contents
 
 * [📦 Version Selection](#-version-selection-both-versions-available-on-github)
 
-* [🚀 What's New in v1.1.2 beta (Compared to GitHub v1.0.0)](#-whats-new-in-v110-beta-compared-to-github-v100)
+* [🚀 What's New in v1.1.3 beta (Compared to GitHub v1.0.0)](#-whats-new-in-v110-beta-compared-to-github-v100)
 
-* [📸 Screenshots (`v1.1.2 beta`)](#-screenshots-v110-beta)
+* [📸 Screenshots (`v1.1.3 beta`)](#-screenshots-v110-beta)
 
 * [✨ Key Features](#-key-features)
 
@@ -31,9 +31,19 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 * [🇷🇺 Русская версия (Russian Version)](#-русская-версия-russian-version)
 
-## 🚀 What's New in `v1.1.2 beta` (Compared to GitHub `v1.0.0`)
+## 🚀 What's New in `v1.1.3 beta` (Compared to GitHub `v1.0.0`)
 
-### 🔧 Fixes in `v1.1.2 beta` (Latest Update)
+### ✨ What's New in `v1.1.3 beta` (Latest Update)
+
+- **English Default on First Launch + Persistent User Language**: Fresh installations start in **English (`en-US`)** by default, while every subsequent launch automatically preserves whichever language you choose in **Settings** (`English`, `Русский`, `Español`, `Deutsch`, `Français`, `中文`, or `Tamaziɣt / Берберский (para Ramón)`).
+- **Complete 7-Language Settings, Sky Clarity & Moon Phase Localization**: Fixed untranslated Russian strings inside the Settings menu, Active City status bar, Sky Clarity widget, and Moon Phase card when switching to Spanish, English, German, French, Chinese, or Berber.
+- **Two-Level `Country → City` Observatory Selector (20 Countries, 85+ Cities)**: Fixed city selection for European, American, and global observers (`USA — Washington, D.C.`, `USA — Cambridge (AAVSO HQ)`, `España — Madrid`, `Россия — Москва`, `UK — London`, `Deutschland — Berlin`, `France — Paris`, `Tamazgha — Rabat`, etc.) with instant offline/online search and smart IP/timezone Auto-detection.
+- **Berber Localization (`Tamaziɣt / Берберский (para Ramón)`)**: Added a dedicated Berber interface option highlighted in pink in both language menus and as a quick-select pill button.
+- **Interactive 6-Slide Visual Quick Start Guide (`🎓 Quick Start Guide`)**: Added a dedicated step-by-step illustrated presentation tab right next to `📖 How to Read Charts` in all 7 languages covering: (1) why amateur Seestar observations matter to AAVSO, (2) shooting photometry on Seestar & extracting `Magnitude_*.csv`, (3) free AAVSO registration & finding your `OBSCODE`, (4) picking a target star, (5) converting CSV to AAVSO Extended, and (6) uploading to [AAVSO WebObs](https://www.aavso.org/webobs).
+- **Zero-Freeze 60–144 FPS Celestial Wheel**: Pre-baked both the rotating drum sprite and the static golden rocket / AAVSO medallion overlay into GPU offscreen canvases, eliminating mid-spin stutters and DOM reflows.
+- **Fixed Standalone Portable Windows Build**: Added automatic UI runtime sync (`%APPDATA%\Seestar_AstroLab\ui_runtime_v113`) for PyInstaller `--onefile` / SFX portable executables and updated GitHub Actions to publish both `Seestar_AstroLab_Setup_v1.1.3_beta.exe` and `Seestar_AstroLab_Portable_Windows.zip` on every `main` push.
+
+### 🔧 Previous Fixes Carried Over
 - **Single-File AV-Clean Windows Build (`--onefile --console --noupx`):** Eliminated `Unable to create process using "pythonw.exe"` on clean PCs by compiling into a self-contained single executable with automatic console-window hiding (`ShowWindow`) and bundled WebView2/Python.NET runtime.
 - **Clean 6-Language Inno Setup Installer:** Fixed language ID collision (`[LangOptions]`) where selecting English displayed Chinese text on the Desktop shortcut task step, removed duplicate header banner text overlays across all wizard steps (`PageNameLabel`/`PageDescriptionLabel`), and removed the Boosty checkbox from the installer finish page.
 - **Independent Hemisphere & Horizon Filters:** Split target visibility controls in the AAVSO Target Radar into a dedicated **Hemisphere filter (`Northern / Southern / All`)**, a separate **`📍 Visible in My City`** checkbox, and a separate **`🕯️ Above Horizon Right Now`** checkbox, alongside the compass azimuth selector.
@@ -45,7 +55,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 - **Clean Logo, Palette Contrast & WebObs Upload:** Removed the star/curve overlay from the app icon, improved Light theme WCAG AA/AAA contrast, and updated WebObs upload links to `?preview=false` to avoid AAVSO v2 paginated-preview HTTP 500 errors.
 
 #### ⚠️ Why Some Users Saw `Fatal Error in Launcher` During Installation
-- Previously, `Seestar_AstroLab_Setup.exe` used a Python launcher wrapper looking for a system `pythonw.exe` in `PATH`. On Windows PCs without Python installed, this caused `Unable to create process using "pythonw.exe"`. **In `v1.1.2 beta`, this is resolved** by the standalone PyInstaller + Inno Setup build.
+- Previously, `Seestar_AstroLab_Setup.exe` used a Python launcher wrapper looking for a system `pythonw.exe` in `PATH`. On Windows PCs without Python installed, this caused `Unable to create process using "pythonw.exe"`. **In `v1.1.3 beta`, this is resolved** by the standalone PyInstaller + Inno Setup build.
 - Until **SignPath** code signing is active, antivirus tools (such as Avast) may occasionally quarantine unsigned `.exe` files; if blocked, restore the file from Quarantine and add an exception.
 
 1. **🛰️ Direct AAVSO (`VSX` + `VSP` + `AID`) Integration & Full 52-Target Priority Sync**:
@@ -100,7 +110,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
    * **Custom Desktop Backgrounds & Free Block Dragging**: choose from 7 cosmic/studio background themes or upload your own astrophoto from disk, and freely drag menu blocks across the screen (`✥`).
 
-## 📸 Screenshots (`v1.1.2 beta`)
+## 📸 Screenshots (`v1.1.3 beta`)
 
 ### 1. Main dashboard, live Sky Clarity & Moon Phase header bar, Hemisphere visibility filter, and dual light curves (Dark theme)
 
@@ -159,7 +169,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 ## 🧭 Step-by-Step Guide (From Seestar Imaging to AAVSO WebObs Submission)
 
-1. ⬇️ **Install or Run Portable**: Run **`Seestar_AstroLab_Setup_v1.1.2-beta.exe`** (English is active by default; switch to `RU | EN | ES | DE | FR | ZH` in one click) or launch **`Portable/Seestar_AstroLab_Portable_v1.1.2-beta.exe`**.
+1. ⬇️ **Install or Run Portable**: Run **`Seestar_AstroLab_Setup_v1.1.3-beta.exe`** (English is active by default; switch to `RU | EN | ES | DE | FR | ZH` in one click) or launch **`Portable/Seestar_AstroLab_Portable_v1.1.3-beta.exe`**.
 
 2. 📍 **Select Your City & Telescope**: In the top bar, choose your city (e.g., `Moscow (55.8°N)`, `Greenwich`, or search any city worldwide) to see live **Sky Clarity (`%`)**, **Moon Phase & Altitude**, and select your telescope (`S30`, `S30PRO`, `S50`, `S50PRO`).
 
@@ -179,7 +189,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 ## 🇷🇺 Русская версия (Russian Version)
 
-> 📸 Все обновлённые скриншоты интерфейса `v1.1.2 beta` приведены выше в разделе [📸 Screenshots (`v1.1.2 beta`)](#-screenshots-v110-beta).
+> 📸 Все обновлённые скриншоты интерфейса `v1.1.3 beta` приведены выше в разделе [📸 Screenshots (`v1.1.3 beta`)](#-screenshots-v110-beta).
 
 🌟 **Seestar AstroLab AAVSO** — специализированное десктопное приложение для владельцев умных телескопов **ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`)** и наблюдателей переменных звёзд [AAVSO (American Association of Variable Star Observers)](https://www.aavso.org).
 
@@ -189,12 +199,22 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 
 | 🏷️ Версия | 📌 Статус | ⬇️ Установщик / Portable-сборка | 🔍 Описание версии | 
 | ----- | ----- | ----- | ----- | 
-| **`v1.1.2 beta`** | 🧪 **Новая расширенная сборка (Beta)** | [Seestar_AstroLab_Setup_v1.1.2-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.2-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Прямая интеграция с AAVSO (`VSX` + `VSP` + `AID`), 52 приоритетные цели с фильтрацией по полушарию и широте города, живая Чистота неба (Open-Meteo, каждые 10 мин) и Фаза/Высота Луны по региону (USNO API) в шапке, барабан случайного выбора звезды в центре чёрной дыры с ракетой и логотипом AAVSO, 2 графика кривой блеска со статичной осью Y при сдвиге ЛКМ, хранилище `Converted_Photometry_Storage` и английский по умолчанию в установщике | 
+| **`v1.1.3 beta`** | 🧪 **Новая расширенная сборка (Beta)** | [Seestar_AstroLab_Setup_v1.1.3-beta.exe](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.3-beta) / [Portable (GitHub Releases)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) | Прямая интеграция с AAVSO (`VSX` + `VSP` + `AID`), 52 приоритетные цели с фильтрацией по полушарию и широте города, живая Чистота неба (Open-Meteo, каждые 10 мин) и Фаза/Высота Луны по региону (USNO API) в шапке, барабан случайного выбора звезды в центре чёрной дыры с ракетой и логотипом AAVSO, 2 графика кривой блеска со статичной осью Y при сдвиге ЛКМ, хранилище `Converted_Photometry_Storage` и английский по умолчанию в установщике | 
 | **`v1.0.0` / `v1.0.1`** | ✅ **Классическая первая версия** | [Доступна в разделе Releases (v1.0.0)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.0.0) | Базовая первоначальная версия с синхронизацией SIMBAD + VSP и классическим конвертером CSV → AAVSO Extended | 
 
-### 🚀 Что нового в версии `v1.1.2 beta`
+### 🚀 Что нового в версии `v1.1.3 beta`
 
-#### 🔧 Что исправлено в `v1.1.2 beta`
+#### ✨ Что нового в `v1.1.3 beta` (Новое обновление)
+
+- **Английский язык по умолчанию только при первом запуске**: при первой установке приложение запускается на **английском (`en-US`)**, а при всех последующих запусках автоматически открывается на том языке, который пользователь выбрал в **Настройках**.
+- **Полная 7-язычная локализация меню «Настройки», «Чистота неба» и «Луна»**: исправлена ошибка `ReferenceError`, из-за которой при выборе испанского и других языков часть строк в Настройках и выбор городов оставались непереведёнными.
+- **Двухуровневый выбор города `Страна → Город` (20 стран, 85+ городов мира)**: исправлен выбор европейских, американских и мировых городов (`Россия — Москва`, `USA — Washington, D.C.`, `España — Madrid`, `UK — London` и др.) с мгновенным поиском и умным автоопределением (`🎯 Авто`).
+- **Берберская локализация (`♓ Tamaziɣt / Берберский (para Ramón)`)**: добавлен выбор берберского языка с подписью `(para Ramón)` и выделением розовым цветом.
+- **Отдельная вкладка-презентация «🎓 Инструкция» на всех 7 языках**: расположена рядом с «📖 Как читать графики» и в формате 6 наглядных слайдов с макетами экранов объясняет весь путь новичка — от съёмки фотометрии на Seestar и выгрузки `Magnitude_*.csv` до бесплатной регистрации в [AAVSO](https://www.aavso.org/user/register), поиска своего `OBSCODE`, конвертации файла и загрузки в [AAVSO WebObs](https://www.aavso.org/webobs).
+- **Плавное вращение колеса случайного выбора звезды (60–144 FPS без фризов)**: вращающийся барабан и статичная ракета с медальоном AAVSO предварительно кэшируются в отдельные офскрин-спрайты, что полностью устраняет притормаживания при вращении.
+- **Исправлена Portable-сборка Windows**: добавлена надёжная распаковка UI в `%APPDATA%\Seestar_AstroLab\ui_runtime_v113` и автоматическая публикация `Seestar_AstroLab_Portable_Windows.zip` и `Seestar_AstroLab_Setup_v1.1.3_beta.exe` в GitHub Releases при каждом обновлении ветки `main`.
+
+#### 🔧 Ранее внесённые исправления
 - **Автономный установщик Windows (`Seestar_AstroLab_Setup.exe`):** сборка в GitHub Actions переведена на **PyInstaller + Inno Setup 6** — программа больше не требует заранее установленного Python (`pythonw.exe`).
 - **Исправлена ошибка «нет сети» (CORS):** запросы живого досье звезды к **AAVSO VSX** и **CDS SIMBAD** переведены на локальный Python RPC-бэкенд (`fetch_live_star_dossier`).
 - **Кривая блеска AAVSO (AID) и Ваш вклад:** переход на официальный эндпоинт **AAVSO LCGv2 (`api.delim`)** и API v2 с привязкой к текущему `STARID`, удалены выдуманные точки, добавлена явная надпись `«На AAVSO данные по звезде «...» не нашлись»`.
@@ -202,7 +222,7 @@ We preserve all previous releases in the [GitHub Releases](https://github.com/Co
 - **Логотип, палитра и отправка в AAVSO:** убран оверлей со звёздочкой с логотипа, улучшен контраст светлой темы, а ссылки отправки в AAVSO переведены на `?preview=false` для обхода серверной ошибки HTTP 500 при многостраничном предпросмотре.
 
 #### ⚠️ Почему у некоторых пользователей возникала ошибка при установке (`Fatal Error in Launcher`)
-- Прежний установщик использовал обёртку Python-лаунчера и требовал системный `pythonw.exe` в `PATH`. В **`v1.1.2 beta`** это устранено автономной сборкой PyInstaller + Inno Setup. До активации подписи **SignPath** антивирусы (например, Avast) могут ложно помещать неподписанный `.exe` в карантин — восстановите файл и добавьте его в исключения.
+- Прежний установщик использовал обёртку Python-лаунчера и требовал системный `pythonw.exe` в `PATH`. В **`v1.1.3 beta`** это устранено автономной сборкой PyInstaller + Inno Setup. До активации подписи **SignPath** антивирусы (например, Avast) могут ложно помещать неподписанный `.exe` в карантин — восстановите файл и добавьте его в исключения.
 
 1. **🛰️ Полная синхронизация 52 приоритетных объектов AAVSO (`VSX` + `VSP` + `AID`)**:
 

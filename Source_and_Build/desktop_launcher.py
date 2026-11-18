@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 r"""
 ==============================================================================
-Seestar AstroLab by CosmoBehemothych – Native Desktop Runner (v1.1.2 beta)
+Seestar AstroLab by CosmoBehemothych – Native Desktop Runner (v1.1.3 beta)
 ==============================================================================
 """
 
 import json
 import os
+import pathlib
+import shutil
 import subprocess
 import sys
 import threading
@@ -36,8 +38,8 @@ except ImportError:
         start_background_rpc_server = None
 
 
-APP_VERSION = "1.1.2 beta"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych – Фотометрия и Радар целей (v1.1.2 beta)"
+APP_VERSION = "1.1.3 beta"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych – Фотометрия и Радар целей (v1.1.3 beta)"
 APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
 
 
@@ -64,11 +66,39 @@ def get_html_path():
     local_appdata = os.environ.get("LOCALAPPDATA") or os.path.join(os.path.expanduser("~"), "AppData", "Local")
     installed_default = os.path.join(local_appdata, "Programs", "Seestar_AstroLab")
 
+    # 1. Если рядом с .exe есть папка pwa_mobile_and_electron (установленная или распакованная Portable-версия), используем её напрямую
+    for direct_p in [
+        os.path.join(exe_dir, "pwa_mobile_and_electron", "index.html"),
+        os.path.join(os.path.dirname(exe_dir), "pwa_mobile_and_electron", "index.html"),
+        os.path.join(exe_dir, "Source_and_Build", "pwa_mobile_and_electron", "index.html"),
+    ]:
+        if direct_p and os.path.isfile(direct_p):
+            return os.path.abspath(direct_p)
+
+    # 2. [FIX PORTABLE --onefile] Если запущен одиночный Portable .exe из произвольной папки (файлы внутри sys._MEIPASS),
+    # синхронизируем pwa_mobile_and_electron в постоянную рабочую папку %APPDATA%\Seestar_AstroLab\ui_runtime_v113,
+    # чтобы WebView2 корректно открывал локальный интерфейс без блокировок %TEMP%\_MEI* и сохранял настройки!
+    meipass_pwa = os.path.join(base_dir, "pwa_mobile_and_electron")
+    if getattr(sys, "frozen", False) and os.path.isdir(meipass_pwa):
+        try:
+            runtime_pwa = os.path.join(get_persistent_data_dir(), "ui_runtime_v113", "pwa_mobile_and_electron")
+            os.makedirs(runtime_pwa, exist_ok=True)
+            for fn in os.listdir(meipass_pwa):
+                s_item = os.path.join(meipass_pwa, fn)
+                d_item = os.path.join(runtime_pwa, fn)
+                if os.path.isfile(s_item):
+                    if fn == "user_persistent_store.js" and os.path.isfile(d_item):
+                        continue
+                    shutil.copy2(s_item, d_item)
+            rt_index = os.path.join(runtime_pwa, "index.html")
+            if os.path.isfile(rt_index):
+                return os.path.abspath(rt_index)
+        except Exception:
+            pass
+
     candidates = [
         os.path.join(base_dir, "pwa_mobile_and_electron", "index.html"),
-        os.path.join(exe_dir, "pwa_mobile_and_electron", "index.html"),
         os.path.join(os.path.dirname(base_dir), "pwa_mobile_and_electron", "index.html"),
-        os.path.join(os.path.dirname(exe_dir), "pwa_mobile_and_electron", "index.html"),
         os.path.join(base_dir, "Source_and_Build", "pwa_mobile_and_electron", "index.html"),
         os.path.join(os.path.dirname(base_dir), "Source_and_Build", "pwa_mobile_and_electron", "index.html"),
         os.path.join(installed_default, "pwa_mobile_and_electron", "index.html"),
@@ -89,7 +119,7 @@ def get_html_path():
                 _raw = _bf.read()
             _pk = _raw.find(b"PK\x03\x04")
             if _pk != -1:
-                _runtime_ui = os.path.join(get_persistent_data_dir(), "ui_runtime_v110_beta")
+                _runtime_ui = os.path.join(get_persistent_data_dir(), "ui_runtime_v113")
                 with _zf.ZipFile(_io.BytesIO(_raw[_pk:]), "r") as _z:
                     for _m in _z.namelist():
                         if _m.startswith("pwa_mobile_and_electron/") and not _m.endswith("/"):
@@ -162,49 +192,34 @@ class AstroLabDiskBridge:
                     store.update(data)
             except Exception:
                 pass
-        # ПУНКТ 2: Подхватываем язык, выбранный пользователем в установщике (из user_settings.json или user_persistent_store.js)
+                # [REQ 1] Дефолтный язык английский ('en') применяется ТОЛЬКО при первом запуске приложения.
+        # При всех последующих запусках используется язык, который выбрал пользователь в настройках приложения.
         try:
-            base_d = get_base_dir()
-            exe_d = os.path.dirname(os.path.abspath(sys.argv[0])) if sys.argv else base_d
-            local_app_d = os.path.join(os.environ.get("LOCALAPPDATA") or os.path.join(os.path.expanduser("~"), "AppData", "Local"), "Programs", "Seestar_AstroLab")
-            for cand_settings in [
-                os.path.join(exe_d, "user_settings.json"),
-                os.path.join(local_app_d, "user_settings.json"),
-                os.path.join(base_d, "user_settings.json"),
-                os.path.join(os.path.dirname(base_d), "user_settings.json"),
-            ]:
-                if os.path.isfile(cand_settings):
-                    with open(cand_settings, "r", encoding="utf-8") as sf:
-                        s_obj = json.load(sf)
-                    inst_lang = (s_obj.get("installer_lang") or s_obj.get("lang") or s_obj.get("seestar_lang") or "").strip().lower()
-                    if inst_lang:
-                        # Если установщик только что записал язык установки, он становится приоритетным при запуске!
-                        prev_applied = store.get("_applied_installer_settings_path_mtime")
-                        cur_mtime = str(int(os.path.getmtime(cand_settings)))
-                        if prev_applied != cur_mtime or not store.get("lang"):
-                            store["lang"] = inst_lang
-                            store["seestar_lang"] = inst_lang
-                            store["installer_lang"] = inst_lang
-                            store["_applied_installer_settings_path_mtime"] = cur_mtime
-                    break
             inst_flag_p = os.path.join(self.data_dir, "installer_lang.txt")
             if os.path.isfile(inst_flag_p):
-                with open(inst_flag_p, "r", encoding="utf-8") as iff:
-                    fl_lang = iff.read().strip().lower()
-                if fl_lang:
-                    store["lang"] = fl_lang
-                    store["seestar_lang"] = fl_lang
-                    store["installer_lang"] = fl_lang
                 try:
                     os.remove(inst_flag_p)
                 except Exception:
                     pass
         except Exception:
             pass
-        if store.get("seestar_lang") and not store.get("lang"):
-            store["lang"] = store["seestar_lang"]
-        elif store.get("lang") and not store.get("seestar_lang"):
-            store["seestar_lang"] = store["lang"]
+
+        user_chosen_lang = (
+            store.get("seestar_user_lang")
+            or store.get("seestar_lang")
+            or store.get("lang")
+            or ""
+        ).strip().lower()
+
+        if user_chosen_lang:
+            store["lang"] = user_chosen_lang
+            store["seestar_lang"] = user_chosen_lang
+            store["seestar_user_lang"] = user_chosen_lang
+            store.pop("installer_lang", None)
+        else:
+            store["lang"] = "en"
+            store["seestar_lang"] = "en"
+            store.pop("installer_lang", None)
         try:
             if AavsoNativeAndStorageService:
                 conv_db = AavsoNativeAndStorageService.load_storage_db()
@@ -234,7 +249,14 @@ class AstroLabDiskBridge:
 
     def save_store_item(self, key, val):
         with self._lock:
-            self._store[str(key)] = str(val)
+            k_str = str(key)
+            v_str = str(val)
+            self._store[k_str] = v_str
+            if k_str in ("lang", "seestar_lang", "seestar_user_lang"):
+                self._store["lang"] = v_str
+                self._store["seestar_lang"] = v_str
+                self._store["seestar_user_lang"] = v_str
+                self._store.pop("installer_lang", None)
             self._save_to_disk()
         return True
 
@@ -521,7 +543,7 @@ def main():
 
     window = webview.create_window(
         title=APP_TITLE,
-        url=f'file:///{html_file.replace(os.sep, "/")}',
+        url=pathlib.Path(html_file).as_uri(),
         js_api=disk_bridge,
         width=1380,
         height=920,

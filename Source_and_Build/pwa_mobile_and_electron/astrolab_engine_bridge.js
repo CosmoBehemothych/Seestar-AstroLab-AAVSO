@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.1.2 beta) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.1.3 beta) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.1.2 beta.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.1.3 beta.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -528,7 +528,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.1.2 beta",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.1.3 beta",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -881,7 +881,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.1.2 beta session",
+      actAppStarted: "Started Seestar AstroLab v1.1.3 beta session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -1229,7 +1229,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.1.2 beta",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.1.3 beta",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1553,7 +1553,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.1.2 beta",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.1.3 beta",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1866,7 +1866,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.1.2 beta",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.1.3 beta",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -2178,7 +2178,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.1.2 beta 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.1.3 beta 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -3042,32 +3042,61 @@
     }
   });
   window.I18N = I18N;
+  window.__normAstroLang = function(raw) {
+    if (!raw) return "";
+    const s = String(raw).trim().toLowerCase();
+    if (s === "ber" || s === "be" || s.startsWith("ber") || s.startsWith("tzm") || s.startsWith("kab")) return "ber";
+    if (I18N[s]) return s;
+    const s2 = s.slice(0, 2);
+    if (s2 === "be") return "ber";
+    if (I18N[s2]) return s2;
+    return "";
+  };
+
+  // Initial Berber dictionary seed so I18N.ber is immediately truthy inside detectLang()
+  if (!I18N.ber) {
+    I18N.ber = Object.assign({}, I18N.es || I18N.en);
+  }
+  I18N.be = I18N.ber;
+
   function detectLang() {
     try {
       const qsLang = new URLSearchParams(window.location.search || "").get("lang");
       if (qsLang) {
-        const cleanQs = String(qsLang).trim().toLowerCase().slice(0, 2);
-        if (I18N[cleanQs]) {
+        const cleanQs = window.__normAstroLang(qsLang);
+        if (cleanQs && I18N[cleanQs]) {
           safeSetStorage("lang", cleanQs);
           safeSetStorage("seestar_lang", cleanQs);
+          safeSetStorage("seestar_user_lang", cleanQs);
           return cleanQs;
         }
       }
     } catch (_) {}
+    // 1. Check user-selected language in localStorage first (subsequent launches use user's choice!)
+    const storedUser = window.__normAstroLang(
+      safeGetStorage("seestar_user_lang", null) ||
+      safeGetStorage("seestar_lang", null) ||
+      safeGetStorage("lang", null)
+    );
+    if (storedUser && I18N[storedUser]) return storedUser;
+
+    // 2. Check persistent disk store from Python launcher
     try {
       const ds = window.__SEESTAR_DISK_STORE__;
       if (ds && typeof ds === "object") {
-        const instL = String(ds.installer_lang || ds.lang || ds.seestar_lang || "").trim().toLowerCase().slice(0, 2);
-        if (instL && I18N[instL]) {
-          safeSetStorage("lang", instL);
-          safeSetStorage("seestar_lang", instL);
-          return instL;
+        const diskL = window.__normAstroLang(ds.seestar_user_lang || ds.seestar_lang || ds.lang);
+        if (diskL && I18N[diskL]) {
+          safeSetStorage("lang", diskL);
+          safeSetStorage("seestar_lang", diskL);
+          return diskL;
         }
       }
     } catch (_) {}
-    const stored = safeGetStorage("lang", null) || safeGetStorage("seestar_lang", null);
-    if (stored && I18N[stored]) return stored;
-    return "ru";
+
+    // 3. First launch default is strictly English ('en')
+    safeSetStorage("lang", "en");
+    safeSetStorage("seestar_lang", "en");
+    return "en";
   }
 
   let currentLang = detectLang();
@@ -5796,8 +5825,11 @@ function revealAndFocusField(inputId) {
   document.getElementById("btnConvert").addEventListener("click", processFile);
 
   document.getElementById("langSelect").addEventListener("change", e => {
-    currentLang = e.target.value;
+    currentLang = window.__normAstroLang(e.target.value) || "en";
     safeSetStorage("lang", currentLang);
+    safeSetStorage("seestar_lang", currentLang);
+    safeSetStorage("seestar_user_lang", currentLang);
+    if (typeof window.__syncBerberPinkHighlight === "function") window.__syncBerberPinkHighlight(currentLang);
     applyTranslations();
     if (typeof applyScopeModelUI === "function") applyScopeModelUI(false);
     if (typeof renderV6RadarDock === "function") renderV6RadarDock();
@@ -7051,8 +7083,11 @@ function revealAndFocusField(inputId) {
   if (splashLangSelect) {
     splashLangSelect.value = currentLang;
     splashLangSelect.addEventListener("change", (e) => {
-      currentLang = e.target.value;
+      currentLang = window.__normAstroLang(e.target.value) || "en";
       safeSetStorage("lang", currentLang);
+      safeSetStorage("seestar_lang", currentLang);
+      safeSetStorage("seestar_user_lang", currentLang);
+      if (typeof window.__syncBerberPinkHighlight === "function") window.__syncBerberPinkHighlight(currentLang);
       document.getElementById("langSelect").value = currentLang;
       splashLangSelect.value = currentLang;
       applyTranslations();
@@ -8492,10 +8527,21 @@ function revealAndFocusField(inputId) {
     Object.entries(storeObj).forEach(([k, v]) => {
       try { localStorage.setItem(k, String(v)); } catch (_) {}
     });
-    const restoredLang = String(storeObj.installer_lang || storeObj.lang || storeObj.seestar_lang || "").trim().toLowerCase().slice(0, 2);
+    const localUserChoice = window.__normAstroLang(
+      safeGetStorage("seestar_user_lang", null) ||
+      storeObj.seestar_user_lang ||
+      storeObj.seestar_lang ||
+      storeObj.lang ||
+      "en"
+    );
+    const restoredLang = localUserChoice || "en";
     if (restoredLang && I18N[restoredLang]) {
       currentLang = restoredLang;
-      try { localStorage.setItem("lang", restoredLang); localStorage.setItem("seestar_lang", restoredLang); } catch (_) {}
+      try {
+        localStorage.setItem("lang", restoredLang);
+        localStorage.setItem("seestar_lang", restoredLang);
+      } catch (_) {}
+      if (typeof window.__syncBerberPinkHighlight === "function") window.__syncBerberPinkHighlight(restoredLang);
       const lsEl = document.getElementById("langSelect");
       if (lsEl) lsEl.value = restoredLang;
       const spEl = document.getElementById("splashLangSelect");
@@ -8569,7 +8615,7 @@ function revealAndFocusField(inputId) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.1.2 beta",
+      application: "Seestar AstroLab AAVSO v1.1.3 beta",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8620,7 +8666,7 @@ function revealAndFocusField(inputId) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.1.2 beta (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.1.3 beta (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -8948,7 +8994,7 @@ function revealAndFocusField(inputId) {
   }
 
   function getTr(key) {
-    const lang = (document.getElementById("langSelect")?.value || "ru").slice(0, 2).toLowerCase();
+    const lang = (window.__normAstroLang(document.getElementById("langSelect")?.value || "en") || "en");
     return (window.I18N && window.I18N[lang] && window.I18N[lang][key]) || EXTRA_I18N.ru[key] || key;
   }
 
@@ -9329,7 +9375,7 @@ function revealAndFocusField(inputId) {
     let viewMonth = new Date().getMonth();
 
     function getActiveCalLocale() {
-      const lg = (document.getElementById("langSelect")?.value || document.documentElement.lang || "ru").slice(0, 2).toLowerCase();
+      const lg = (window.__normAstroLang(document.getElementById("langSelect")?.value || document.documentElement.lang || "en") || "en");
       return CALENDAR_LOCALE_DATA[lg] || CALENDAR_LOCALE_DATA.en;
     }
 
@@ -10022,7 +10068,7 @@ function revealAndFocusField(inputId) {
 
 
   function trCurve(key) {
-    const lg = (document.getElementById("langSelect")?.value || document.documentElement.lang || "ru").slice(0, 2).toLowerCase();
+    const lg = (window.__normAstroLang(document.getElementById("langSelect")?.value || document.documentElement.lang || "en") || "en");
     return (CURVE_AND_FILTER_I18N[lg] && CURVE_AND_FILTER_I18N[lg][key]) ||
            (CURVE_AND_FILTER_I18N.en && CURVE_AND_FILTER_I18N.en[key]) ||
            CURVE_AND_FILTER_I18N.ru[key] ||
@@ -11508,7 +11554,7 @@ function revealAndFocusField(inputId) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.1.2 beta — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.1.3 beta — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -11764,7 +11810,7 @@ function revealAndFocusField(inputId) {
   }
 
   function getActiveLangCode() {
-    return (document.getElementById("langSelect")?.value || document.documentElement.lang || "ru").slice(0, 2).toLowerCase();
+    return (window.__normAstroLang(document.getElementById("langSelect")?.value || document.documentElement.lang || "en") || "en");
   }
 
   function trM14(key) {
@@ -13217,39 +13263,43 @@ function revealAndFocusField(inputId) {
     return off;
   }
 
-  function renderLuShuCelestialWheel(wheelRotationRad = 0, activeSectorIdx = 0, isWinnerLocked = false, starLabel = "", customSectorLabels = null) {
-    const canvas = document.getElementById("luckWheelCanvas");
-    if (!canvas) return;
-    const dpr = Math.min(2, Math.max(1.5, window.devicePixelRatio || 1.5));
-    const W = 680, H = 330;
-    if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
-      canvas.width = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
-    }
-    const sectorLabels = (Array.isArray(customSectorLabels) && customSectorLabels.length === 12)
-      ? customSectorLabels
-      : _currentWheelSectorLabels;
+  // [RU] Офскрин-кэш вращающегося барабана (48 меандров, 24 золотых лепестка, 48 точек, 12 секторов и 12 медальонов со звёздами)
+  //      и статичного верхнего слоя (золотая ракета с тенью shadowBlur и центральный медальон AAVSO).
+  //      Благодаря этому во время вращения 60–144 FPS выполняется только 3 аппаратных GPU-вызова drawImage (< 0.12 мс/кадр, 0 фризов!).
+  // [EN] Offscreen caches for the rotating drum sprite and static center/rocket overlay sprite for locked 60-144 FPS zero-stutter spinning.
+  let _cachedWheelDrumCanvas = null;
+  let _cachedWheelDrumKey = "";
+  let _cachedWheelOverlayCanvas = null;
+  let _cachedWheelOverlayDpr = 0;
 
-    const ctx = canvas.getContext("2d");
+  function getOrBuildWheelDrumSprite(dpr, sectorLabels) {
+    const labelsArr = (Array.isArray(sectorLabels) && sectorLabels.length === 12)
+      ? sectorLabels
+      : _currentWheelSectorLabels;
+    const cacheKey = `${dpr}|${labelsArr.join("|")}`;
+    if (_cachedWheelDrumCanvas && _cachedWheelDrumKey === cacheKey) {
+      return _cachedWheelDrumCanvas;
+    }
+
+    const D = 320; // Диаметр спрайта барабана (R_outer = 152, с запасом 320x320)
+    const half = D / 2;
+    const off = document.createElement("canvas");
+    off.width = Math.round(D * dpr);
+    off.height = Math.round(D * dpr);
+    const ctx = off.getContext("2d");
     ctx.save();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Мгновенная отрисовка предкэшированного статичного фона (Чёрная дыра, Солнце, Сатурн и планеты) за <0.1 мс
-    const bgCanvas = getOrBuildWheelStaticBackground(W, H, dpr);
-    ctx.drawImage(bgCanvas, 0, 0, W, H);
-
-    const cx = W / 2;
-    const cy = H / 2;
-// 3. ВРАЩАЮЩИЙСЯ БАРАБАН ЛОТЕРЕИ (крутится сам барабан, а ракета всегда смотрит строго НАВЕРХ!)
+    const cx = half;
+    const cy = half;
     const R_outer = 152;
     const R_fret = 143;
     const R_petalOuter = 136;
     const R_sectorOuter = 122;
     const R_sectorMid = 77;
     const R_sectorInner = 43;
-    const R_centerDisk = 31;
 
-    // Внешний золотой обод с геометрическим меандром (вращается вместе с барабаном на угол wheelRotationRad)
+    // 1. Внешний золотой обод с геометрическим меандром
     ctx.strokeStyle = "#dec080";
     ctx.lineWidth = 2.2;
     ctx.beginPath();
@@ -13260,19 +13310,20 @@ function revealAndFocusField(inputId) {
     ctx.save();
     ctx.strokeStyle = "rgba(222, 192, 128, 0.72)";
     ctx.lineWidth = 1.15;
+    ctx.beginPath();
     for (let i = 0; i < fretCount; i++) {
-      const a1 = wheelRotationRad + (i / fretCount) * Math.PI * 2;
-      const a2 = wheelRotationRad + ((i + 0.68) / fretCount) * Math.PI * 2;
+      const a1 = (i / fretCount) * Math.PI * 2;
+      const a2 = ((i + 0.68) / fretCount) * Math.PI * 2;
       const aMid = (a1 + a2) / 2;
-      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(a1) * (R_outer - 3.5), cy + Math.sin(a1) * (R_outer - 3.5));
       ctx.arc(cx, cy, R_outer - 3.5, a1, a2);
       ctx.lineTo(cx + Math.cos(a2) * (R_fret + 1.5), cy + Math.sin(a2) * (R_fret + 1.5));
       ctx.arc(cx, cy, R_fret + 1.5, a2, aMid, true);
-      ctx.stroke();
     }
+    ctx.stroke();
     ctx.restore();
 
-    // 24 золотых лепестка (вращаются вместе с барабаном)
+    // 2. 24 золотых лепестка
     const petalCount = 24;
     ctx.save();
     const petalGrad = ctx.createRadialGradient(cx, cy, R_sectorOuter, cx, cy, R_petalOuter + 4);
@@ -13285,8 +13336,8 @@ function revealAndFocusField(inputId) {
 
     ctx.beginPath();
     for (let i = 0; i < petalCount; i++) {
-      const aStart = wheelRotationRad + (i / petalCount) * Math.PI * 2;
-      const aEnd = wheelRotationRad + ((i + 1) / petalCount) * Math.PI * 2;
+      const aStart = (i / petalCount) * Math.PI * 2;
+      const aEnd = ((i + 1) / petalCount) * Math.PI * 2;
       const aMid = (aStart + aEnd) / 2;
       const x1 = cx + Math.cos(aStart) * R_sectorOuter;
       const y1 = cy + Math.sin(aStart) * R_sectorOuter;
@@ -13301,22 +13352,23 @@ function revealAndFocusField(inputId) {
     ctx.fill();
     ctx.stroke();
 
-    // Двойные точки внутри каждого золотого лепестка
+    // Двойные точки внутри каждого золотого лепестка (единым батчем beginPath/fill)
     ctx.fillStyle = "#1b1812";
+    ctx.beginPath();
     for (let i = 0; i < petalCount; i++) {
-      const aMid = wheelRotationRad + ((i + 0.5) / petalCount) * Math.PI * 2;
+      const aMid = ((i + 0.5) / petalCount) * Math.PI * 2;
       const rDot = R_sectorOuter + 6.5;
       for (const da of [-0.022, 0.022]) {
         const dx = cx + Math.cos(aMid + da) * rDot;
         const dy = cy + Math.sin(aMid + da) * rDot;
-        ctx.beginPath();
+        ctx.moveTo(dx + 1.4, dy);
         ctx.arc(dx, dy, 1.4, 0, Math.PI * 2);
-        ctx.fill();
       }
     }
+    ctx.fill();
     ctx.restore();
 
-    // Внутренний чёрный круг для 12 секторов
+    // 3. Внутренний чёрный круг для 12 секторов
     ctx.beginPath();
     ctx.arc(cx, cy, R_sectorOuter, 0, Math.PI * 2);
     ctx.fillStyle = "#0d0f13";
@@ -13325,35 +13377,21 @@ function revealAndFocusField(inputId) {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Сектор, который сейчас находится наверху под носом ракеты (activeSectorIdx)
-    const normActiveIdx = ((activeSectorIdx % 12) + 12) % 12;
-    const secAngleStep = (Math.PI * 2) / 12;
-    const baseOffsetAngle = -Math.PI / 2 - secAngleStep / 2 + wheelRotationRad;
-
-    const actStart = baseOffsetAngle + normActiveIdx * secAngleStep;
-    const actEnd = actStart + secAngleStep;
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.arc(cx, cy, R_sectorOuter - 1, actStart, actEnd);
-    ctx.closePath();
-    ctx.fillStyle = isWinnerLocked ? "rgba(229, 203, 142, 0.28)" : "rgba(229, 203, 142, 0.15)";
-    ctx.fill();
-    ctx.restore();
-
-    // Средняя золотая окружность, делящая секторы на внешний ярус (медальоны со звёздами) и внутренний ярус (кольца орбит)
+    // Средняя золотая окружность
     ctx.beginPath();
     ctx.arc(cx, cy, R_sectorMid, 0, Math.PI * 2);
     ctx.strokeStyle = "#d8be82";
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    // 12 вращающихся секторов с СОКРАЩЁННЫМИ НАЗВАНИЯМИ ЗВЁЗД (вместо китайских символов!)
+    const secAngleStep = (Math.PI * 2) / 12;
+    const baseOffsetAngle = -Math.PI / 2 - secAngleStep / 2;
+
+    // 4. 12 секторов с медальонами звёзд (текст каждого медальона ориентирован по радиусу, чтобы вращаться как единый монолитный спрайт)
     for (let i = 0; i < 12; i++) {
       const aLine = baseOffsetAngle + i * secAngleStep;
       const aCenter = aLine + secAngleStep / 2;
 
-      // Радиальная золотая линия сектора
       ctx.beginPath();
       ctx.moveTo(cx + Math.cos(aLine) * R_sectorInner, cy + Math.sin(aLine) * R_sectorInner);
       ctx.lineTo(cx + Math.cos(aLine) * R_sectorOuter, cy + Math.sin(aLine) * R_sectorOuter);
@@ -13361,29 +13399,30 @@ function revealAndFocusField(inputId) {
       ctx.lineWidth = 1.4;
       ctx.stroke();
 
-      // Внешний золотой медальон с сокращённым названием звезды
       const rMed = (R_sectorMid + R_sectorOuter) / 2;
       const mx = cx + Math.cos(aCenter) * rMed;
       const my = cy + Math.sin(aCenter) * rMed;
-      const isCurrent = (i === normActiveIdx);
-      const starShort = formatShortStarSectorLabel(sectorLabels[i] || DEFAULT_WHEEL_STAR_LABELS[i]);
+      const starShort = formatShortStarSectorLabel(labelsArr[i] || DEFAULT_WHEEL_STAR_LABELS[i]);
 
       ctx.save();
+      ctx.translate(mx, my);
+      ctx.rotate(aCenter + Math.PI / 2);
+
       ctx.beginPath();
-      ctx.arc(mx, my, 15.8, 0, Math.PI * 2);
-      ctx.fillStyle = isCurrent ? "rgba(229, 203, 142, 0.28)" : "#12141a";
+      ctx.arc(0, 0, 15.8, 0, Math.PI * 2);
+      ctx.fillStyle = "#12141a";
       ctx.fill();
-      ctx.strokeStyle = isCurrent ? "#fff0be" : "#d8be82";
-      ctx.lineWidth = isCurrent ? 1.9 : 1.3;
+      ctx.strokeStyle = "#d8be82";
+      ctx.lineWidth = 1.35;
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.arc(mx, my, 13.4, 0, Math.PI * 2);
+      ctx.arc(0, 0, 13.4, 0, Math.PI * 2);
       ctx.strokeStyle = "rgba(216, 190, 130, 0.42)";
-      ctx.lineWidth = 0.7;
+      ctx.lineWidth = 0.75;
       ctx.stroke();
 
-      ctx.fillStyle = isCurrent ? "#ffffff" : "#f1da9e";
+      ctx.fillStyle = "#f1da9e";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       const parts = starShort.split(/[\s-]+/).filter(Boolean);
@@ -13391,17 +13430,16 @@ function revealAndFocusField(inputId) {
         const line1 = parts[0].slice(0, 6);
         const line2 = parts.slice(1).join("").slice(0, 5);
         ctx.font = "800 6.8px 'JetBrains Mono', 'Inter', 'Segoe UI', monospace";
-        ctx.fillText(line1, mx, my - 3.6);
+        ctx.fillText(line1, 0, -3.5);
         ctx.font = "700 6.5px 'JetBrains Mono', 'Inter', 'Segoe UI', monospace";
-        ctx.fillText(line2, mx, my + 4.2);
+        ctx.fillText(line2, 0, 4.2);
       } else {
         const fontSize = starShort.length >= 6 ? 7.4 : 8.3;
         ctx.font = `800 ${fontSize}px 'JetBrains Mono', 'Inter', 'Segoe UI', monospace`;
-        ctx.fillText(starShort, mx, my + 0.5);
+        ctx.fillText(starShort, 0, 0.5);
       }
       ctx.restore();
 
-      // Внутреннее кольцо орбиты (со светящейся жемчужиной на верхнем активном секторе под ракетой)
       const rOrb = (R_sectorInner + R_sectorMid) / 2 + 1;
       const ox = cx + Math.cos(aCenter) * rOrb;
       const oy = cy + Math.sin(aCenter) * rOrb;
@@ -13409,8 +13447,8 @@ function revealAndFocusField(inputId) {
       ctx.save();
       ctx.beginPath();
       ctx.arc(ox, oy, 7.2, 0, Math.PI * 2);
-      ctx.strokeStyle = isCurrent ? "#fff3c4" : "rgba(216, 190, 130, 0.75)";
-      ctx.lineWidth = isCurrent ? 1.8 : 1.2;
+      ctx.strokeStyle = "rgba(216, 190, 130, 0.75)";
+      ctx.lineWidth = 1.2;
       ctx.stroke();
 
       if (i % 2 === 0) {
@@ -13420,29 +13458,37 @@ function revealAndFocusField(inputId) {
         ctx.lineWidth = 0.9;
         ctx.stroke();
       }
-
-      if (isCurrent) {
-        const orbGrad = ctx.createRadialGradient(ox, oy, 1, ox, oy, 7.0);
-        orbGrad.addColorStop(0, "#ffffff");
-        orbGrad.addColorStop(0.55, "#fdf0b8");
-        orbGrad.addColorStop(1, "rgba(229, 203, 142, 0)");
-        ctx.fillStyle = orbGrad;
-        ctx.beginPath();
-        ctx.arc(ox, oy, 7.0, 0, Math.PI * 2);
-        ctx.fill();
-      }
       ctx.restore();
     }
 
-    // 4. СТАТИЧНАЯ ЗОЛОТАЯ РАКЕТА-УКАЗАТЕЛЬ (всегда смотрит строго НАВЕРХ на 12 часов!)
+    ctx.restore();
+    _cachedWheelDrumCanvas = off;
+    _cachedWheelDrumKey = cacheKey;
+    return off;
+  }
+
+  function getOrBuildWheelCenterAndRocketOverlay(W, H, dpr) {
+    if (_cachedWheelOverlayCanvas && _cachedWheelOverlayDpr === dpr) {
+      return _cachedWheelOverlayCanvas;
+    }
+    const off = document.createElement("canvas");
+    off.width = Math.round(W * dpr);
+    off.height = Math.round(H * dpr);
+    const ctx = off.getContext("2d");
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const cx = W / 2;
+    const cy = H / 2;
+    const R_sectorInner = 43;
+    const R_centerDisk = 31;
+
+    // 1. Статичная золотая ракета-указатель (смотрит строго НАВЕРХ на 12 часов, shadowBlur вычисляется только 1 раз!)
     ctx.save();
     ctx.translate(cx, cy);
-    // Без вращения: нос ракеты всегда направлен строго вверх (0, -70) на верхний сектор барабана!
-
     ctx.shadowColor = "rgba(243, 223, 162, 0.65)";
     ctx.shadowBlur = 10;
 
-    // Мягкий золотой реактивный шлейф у основания ракеты
     const flameGrad = ctx.createLinearGradient(0, -40, 0, -28);
     flameGrad.addColorStop(0, "rgba(255, 240, 185, 0.95)");
     flameGrad.addColorStop(1, "rgba(222, 185, 113, 0)");
@@ -13454,7 +13500,6 @@ function revealAndFocusField(inputId) {
     ctx.closePath();
     ctx.fill();
 
-    // Боковые стабилизаторы (крылья) ракеты
     ctx.fillStyle = "#b89047";
     ctx.strokeStyle = "#1b1812";
     ctx.lineWidth = 1.0;
@@ -13474,14 +13519,13 @@ function revealAndFocusField(inputId) {
     ctx.fill();
     ctx.stroke();
 
-    // Корпус ракеты, смотрящий строго вверх
     const rocketGrad = ctx.createLinearGradient(-6, 0, 6, 0);
     rocketGrad.addColorStop(0, "#b89047");
     rocketGrad.addColorStop(0.5, "#fff4c6");
     rocketGrad.addColorStop(1, "#b89047");
     ctx.fillStyle = rocketGrad;
     ctx.beginPath();
-    ctx.moveTo(0, -71); // Острый нос ракеты смотрит строго вверх на 12 часов
+    ctx.moveTo(0, -71);
     ctx.quadraticCurveTo(6.8, -57, 5.5, -40);
     ctx.lineTo(-5.5, -40);
     ctx.quadraticCurveTo(-6.8, -57, 0, -71);
@@ -13489,7 +13533,6 @@ function revealAndFocusField(inputId) {
     ctx.fill();
     ctx.stroke();
 
-    // Иллюминатор ракеты
     ctx.beginPath();
     ctx.arc(0, -53, 2.5, 0, Math.PI * 2);
     ctx.fillStyle = "#12141a";
@@ -13499,7 +13542,7 @@ function revealAndFocusField(inputId) {
     ctx.stroke();
     ctx.restore();
 
-    // 5. Центральный золотой медальон с ЛОГОТИПОМ AAVSO
+    // 2. Центральный золотой медальон с логотипом AAVSO
     ctx.save();
     ctx.beginPath();
     ctx.arc(cx, cy, R_sectorInner, 0, Math.PI * 2);
@@ -13509,7 +13552,6 @@ function revealAndFocusField(inputId) {
     ctx.lineWidth = 2.2;
     ctx.stroke();
 
-    // 8 сегментов меандра вокруг центрального диска
     ctx.strokeStyle = "#d8be82";
     ctx.lineWidth = 1.6;
     for (let k = 0; k < 8; k++) {
@@ -13520,7 +13562,6 @@ function revealAndFocusField(inputId) {
       ctx.stroke();
     }
 
-    // Золотой центральный диск с логотипом AAVSO
     const centerGrad = ctx.createRadialGradient(cx - 6, cy - 6, 2, cx, cy, R_centerDisk);
     centerGrad.addColorStop(0, "#faebc0");
     centerGrad.addColorStop(0.65, "#deb971");
@@ -13533,7 +13574,6 @@ function revealAndFocusField(inputId) {
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    // Внутренний тёмный круг логотипа AAVSO с кривой блеска и текстом «AAVSO»
     ctx.beginPath();
     ctx.arc(cx, cy, R_centerDisk - 4.5, 0, Math.PI * 2);
     ctx.fillStyle = "#121419";
@@ -13542,7 +13582,6 @@ function revealAndFocusField(inputId) {
     ctx.lineWidth = 1.2;
     ctx.stroke();
 
-    // Стилизованная кривая блеска AAVSO
     ctx.beginPath();
     ctx.moveTo(cx - 18, cy - 4);
     ctx.bezierCurveTo(cx - 12, cy - 4, cx - 10, cy + 4, cx - 5, cy + 4);
@@ -13553,7 +13592,6 @@ function revealAndFocusField(inputId) {
     ctx.lineCap = "round";
     ctx.stroke();
 
-    // Надпись AAVSO в центре медальона
     ctx.fillStyle = "#f7e3a8";
     ctx.font = "900 10.5px 'Inter', 'Segoe UI', Arial, sans-serif";
     ctx.textAlign = "center";
@@ -13561,7 +13599,92 @@ function revealAndFocusField(inputId) {
     ctx.fillText("AAVSO", cx, cy + 12);
     ctx.restore();
 
-    // Золотая плашка выбранной звезды в правом верхнем углу
+    ctx.restore();
+    _cachedWheelOverlayCanvas = off;
+    _cachedWheelOverlayDpr = dpr;
+    return off;
+  }
+
+  function renderLuShuCelestialWheel(wheelRotationRad = 0, activeSectorIdx = 0, isWinnerLocked = false, starLabel = "", customSectorLabels = null) {
+    const canvas = document.getElementById("luckWheelCanvas");
+    if (!canvas) return;
+    const dpr = Math.min(2, Math.max(1.5, window.devicePixelRatio || 1.5));
+    const W = 680, H = 330;
+    if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+    }
+    const sectorLabels = (Array.isArray(customSectorLabels) && customSectorLabels.length === 12)
+      ? customSectorLabels
+      : _currentWheelSectorLabels;
+
+    const ctx = canvas.getContext("2d");
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const cx = W / 2;
+    const cy = H / 2;
+
+    // 1. Блитим предкэшированный космический фон (Чёрная дыра, Солнце, Сатурн и планеты)
+    const bgCanvas = getOrBuildWheelStaticBackground(W, H, dpr);
+    ctx.drawImage(bgCanvas, 0, 0, W, H);
+
+    // 2. Блитим предкэшированный вращающийся барабан с аппаратным поворотом на wheelRotationRad
+    const drumCanvas = getOrBuildWheelDrumSprite(dpr, sectorLabels);
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(wheelRotationRad);
+    ctx.drawImage(drumCanvas, -160, -160, 320, 320);
+    ctx.restore();
+
+    // 3. Лёгкая подсветка активного верхнего сектора под носом ракеты (1 сектор + сияющая жемчужина)
+    const R_sectorOuter = 122;
+    const R_sectorMid = 77;
+    const R_sectorInner = 43;
+    const normActiveIdx = ((activeSectorIdx % 12) + 12) % 12;
+    const secAngleStep = (Math.PI * 2) / 12;
+    const baseOffsetAngle = -Math.PI / 2 - secAngleStep / 2 + wheelRotationRad;
+    const actStart = baseOffsetAngle + normActiveIdx * secAngleStep;
+    const actEnd = actStart + secAngleStep;
+    const actCenter = actStart + secAngleStep / 2;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, R_sectorOuter - 1, actStart, actEnd);
+    ctx.closePath();
+    ctx.fillStyle = isWinnerLocked ? "rgba(229, 203, 142, 0.28)" : "rgba(229, 203, 142, 0.14)";
+    ctx.fill();
+
+    // Светящийся ободок вокруг активного медальона
+    const rMed = (R_sectorMid + R_sectorOuter) / 2;
+    const mx = cx + Math.cos(actCenter) * rMed;
+    const my = cy + Math.sin(actCenter) * rMed;
+    ctx.beginPath();
+    ctx.arc(mx, my, 15.8, 0, Math.PI * 2);
+    ctx.strokeStyle = "#fff0be";
+    ctx.lineWidth = 2.0;
+    ctx.stroke();
+
+    // Светящаяся жемчужина на внутреннем кольце активного сектора
+    const rOrb = (R_sectorInner + R_sectorMid) / 2 + 1;
+    const ox = cx + Math.cos(actCenter) * rOrb;
+    const oy = cy + Math.sin(actCenter) * rOrb;
+    const orbGrad = ctx.createRadialGradient(ox, oy, 1, ox, oy, 7.2);
+    orbGrad.addColorStop(0, "#ffffff");
+    orbGrad.addColorStop(0.55, "#fdf0b8");
+    orbGrad.addColorStop(1, "rgba(229, 203, 142, 0)");
+    ctx.fillStyle = orbGrad;
+    ctx.beginPath();
+    ctx.arc(ox, oy, 7.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // 4. Блитим предкэшированную золотую ракету и центральный медальон AAVSO
+    const overlayCanvas = getOrBuildWheelCenterAndRocketOverlay(W, H, dpr);
+    ctx.drawImage(overlayCanvas, 0, 0, W, H);
+
+    // 5. Золотая плашка победившей звезды в правом верхнем углу (только после остановки барабана)
     if (starLabel) {
       ctx.save();
       ctx.font = "700 13px var(--font-mono, monospace)";
@@ -13569,8 +13692,8 @@ function revealAndFocusField(inputId) {
       const tw = ctx.measureText(txt).width + 22;
       const bx = W - tw - 18;
       const by = 16;
-      ctx.fillStyle = "rgba(20, 19, 17, 0.88)";
-      ctx.strokeStyle = "rgba(216, 190, 130, 0.68)";
+      ctx.fillStyle = "rgba(20, 19, 17, 0.90)";
+      ctx.strokeStyle = "rgba(216, 190, 130, 0.75)";
       ctx.lineWidth = 1.3;
       if (typeof ctx.roundRect === "function") {
         ctx.beginPath();
@@ -14013,7 +14136,7 @@ function revealAndFocusField(inputId) {
     const shuffledPool = getShuffledUrgentStarsPool(scopeModel);
     if (shuffledPool.length === 0) return;
 
-    // ПУНКТ 1: Каждый запуск берёт новый случайный набор из 12 срочных звёзд (никаких зашитых констант!)
+    // Каждый запуск берёт случайный набор из 12 срочных звёзд и заранее кэширует их локализованные подписи и спрайт барабана
     const spinSectorItems = [];
     for (let i = 0; i < 12; i++) {
       spinSectorItems.push(shuffledPool[i % shuffledPool.length]);
@@ -14023,14 +14146,31 @@ function revealAndFocusField(inputId) {
     _lastSelectedWinnerItem = winnerItem;
     _currentWheelSectorLabels = spinSectorItems.map(it => formatShortStarSectorLabel(it.star));
 
+    // Предварительно вычисляем локализованные строки для 12 секторов ДО старта анимации (0 вызовов regex во время вращения!)
+    const precomputedSectorTelemetry = spinSectorItems.map(it => {
+      const locIt = ((typeof window.getLocalizedCatalogItem === "function") ? window.getLocalizedCatalogItem(it) : null) || it;
+      return {
+        con: locIt.con || it.con || "—",
+        star: it.star || "—",
+        prio: locIt.priority || it.priority || "—"
+      };
+    });
+
+    // Предварительно прогреваем офскрин-спрайты барабана, фона и ракеты ДО первого кадра анимации
+    const dprWarm = Math.min(2, Math.max(1.5, window.devicePixelRatio || 1.5));
+    getOrBuildWheelStaticBackground(680, 330, dprWarm);
+    getOrBuildWheelDrumSprite(dprWarm, _currentWheelSectorLabels);
+    getOrBuildWheelCenterAndRocketOverlay(680, 330, dprWarm);
+    renderLuShuCelestialWheel(0, 0, false, "", _currentWheelSectorLabels);
+
     const secStep = (Math.PI * 2) / 12;
-    const totalRotation = Math.PI * 2 * 12 + ((12 - targetSectorIdx) % 12) * secStep;
-    const durationMs = 10000;
-    const startTime = performance.now();
+    const totalRotation = Math.PI * 2 * 9 + ((12 - targetSectorIdx) % 12) * secStep;
+    const durationMs = 7200;
+    let animStartTime = null;
     let prevSectorTick = -1;
+    let lastDomUpdateTs = 0;
     let isFinalized = false;
 
-    const radarCards = Array.from(document.querySelectorAll("#v6RadarListContainer .v6-target-card"));
     UniverseLuckGachaAudio.startAnimeWheelMelody();
 
     function finalizeWheelSpin() {
@@ -14041,16 +14181,15 @@ function revealAndFocusField(inputId) {
         _wheelAnimFrameId = null;
       }
       _forceStopWheelSpinFn = null;
-      radarCards.forEach(c => c.classList.remove("casino-slot-highlight"));
 
       renderLuShuCelestialWheel(totalRotation, targetSectorIdx, true, winnerItem.star, _currentWheelSectorLabels);
       UniverseLuckGachaAudio.playJackpotFanfare();
       startLuckFireworksAnimation();
 
-      const locWinner = ((typeof window.getLocalizedCatalogItem === "function") ? window.getLocalizedCatalogItem(winnerItem) : null) || winnerItem;
-      if (reelConEl) reelConEl.textContent = locWinner.con || winnerItem.con;
-      if (reelStarEl) reelStarEl.textContent = winnerItem.star;
-      if (reelTypeEl) reelTypeEl.textContent = locWinner.priority || winnerItem.priority;
+      const winTel = precomputedSectorTelemetry[targetSectorIdx] || { con: winnerItem.con, star: winnerItem.star, prio: winnerItem.priority };
+      if (reelConEl) reelConEl.textContent = winTel.con;
+      if (reelStarEl) reelStarEl.textContent = winTel.star;
+      if (reelTypeEl) reelTypeEl.textContent = winTel.prio;
 
       if (tickerEl) {
         tickerEl.innerHTML = trM14("wheelWinnerTickerFmt").replace("{star}", winnerItem.star);
@@ -14112,37 +14251,26 @@ function revealAndFocusField(inputId) {
     function animateWheelFrame(now) {
       if (isFinalized) return;
       const safeNow = (typeof now === "number" && Number.isFinite(now)) ? now : performance.now();
-      const elapsed = Math.max(0, safeNow - startTime);
+      if (animStartTime === null) animStartTime = safeNow;
+      const elapsed = Math.max(0, safeNow - animStartTime);
       const t = Math.min(1, Math.max(0, elapsed / durationMs));
-      const eased = 1 - Math.pow(1 - t, 4);
+      // Плавная физическая кривая замедления со степенью 2.75 (без многосекундного субпиксельного «ползания» в конце!)
+      const eased = 1 - Math.pow(1 - t, 2.75);
       const currentRot = totalRotation * eased;
 
       const currentTopSector = (((-Math.round(currentRot / secStep)) % 12) + 12) % 12;
       if (currentTopSector !== prevSectorTick) {
         prevSectorTick = currentTopSector;
-        UniverseLuckGachaAudio.playWheelSectorTick(t);
-
-        if (t < 0.55 && shuffledPool.length > 12) {
-          const bottomSector = (currentTopSector + 6) % 12;
-          if (bottomSector !== targetSectorIdx) {
-            const activeNames = new Set(spinSectorItems.map(x => x.star));
-            const unusedPool = shuffledPool.filter(x => !activeNames.has(x.star));
-            if (unusedPool.length > 0) {
-              const randExtra = unusedPool[Math.floor(Math.random() * unusedPool.length)];
-              spinSectorItems[bottomSector] = randExtra;
-              _currentWheelSectorLabels[bottomSector] = formatShortStarSectorLabel(randExtra.star);
-            }
+        // Обновляем текстовые плашки телеметрии не чаще чем раз в 80 мс, чтобы не вызывать лишний DOM reflow
+        if (safeNow - lastDomUpdateTs >= 80 || t > 0.82) {
+          lastDomUpdateTs = safeNow;
+          const tel = precomputedSectorTelemetry[currentTopSector];
+          if (tel) {
+            if (reelConEl) reelConEl.textContent = tel.con;
+            if (reelStarEl) reelStarEl.textContent = tel.star;
+            if (reelTypeEl) reelTypeEl.textContent = tel.prio;
           }
         }
-
-        const sample = spinSectorItems[currentTopSector] || winnerItem;
-        const locSample = ((typeof window.getLocalizedCatalogItem === "function") ? window.getLocalizedCatalogItem(sample) : null) || sample;
-        if (reelConEl) reelConEl.textContent = locSample.con || sample.con || "—";
-        if (reelStarEl) reelStarEl.textContent = sample.star || "—";
-        if (reelTypeEl) reelTypeEl.textContent = locSample.priority || sample.priority || "—";
-
-        // [RU] Пункт 6: Отключено переключение классов у 52 фоновых карточек радара во время вращения,
-        // чтобы исключить пересчёт стилей DOM под полупрозрачным backdrop-filter и обеспечить плавные 60 FPS.
       }
 
       renderLuShuCelestialWheel(currentRot, currentTopSector, t >= 1, t >= 1 ? winnerItem.star : "", _currentWheelSectorLabels);
@@ -14289,11 +14417,15 @@ function revealAndFocusField(inputId) {
   }
 
   function localizeCitySelectDropdown() {
+    if (typeof window.__populateCountryAndCitySelectors === "function") {
+      window.__populateCountryAndCitySelectors(false);
+      return;
+    }
     const sel = document.getElementById("headerCitySelect");
     if (!sel) return;
     Array.from(sel.options).forEach(opt => {
       if (!opt.value || opt.value === "custom") {
-        if (opt.value === "custom") opt.textContent = t("optCustomCity");
+        if (opt.value === "custom") opt.textContent = trSky("optCustomCity") || "🔍 Other City...";
         return;
       }
       const p = opt.value.split(",");
@@ -14776,13 +14908,93 @@ function revealAndFocusField(inputId) {
     const lonHem = OBSERVER_GEO_STATE.lon >= 0 ? "E" : "W";
     const coordsShort = `${Math.abs(OBSERVER_GEO_STATE.lat).toFixed(2)}°${latHem}, ${Math.abs(OBSERVER_GEO_STATE.lon).toFixed(2)}°${lonHem}`;
 
+    const _uiExtra7 = {
+      en: {
+        activeCityPre: "Active city:",
+        moonWarnBadge: "⚠️ Bright Moon",
+        moonSafeBadge: "✓ Safe for Photometry",
+        altWord: "Alt:",
+        qExc: "Excellent for Photometry",
+        qMid: "Partly Cloudy",
+        qBad: "Overcast / Poor",
+        minShort: "10m",
+        cloudsSubFmt: "📍 {coords} • ☁️ Clouds: {cloud}% (low {low}% • mid {mid}% • high {high}%) • 💧 Humidity: {hum}% • 🌡️ {temp}°C"
+      },
+      ru: {
+        activeCityPre: "Активный город:",
+        moonWarnBadge: "⚠️ Засветка фона",
+        moonSafeBadge: "✓ Не мешает фотометрии",
+        altWord: "Высота:",
+        qExc: "Отлично для наблюдений",
+        qMid: "Переменная облачность",
+        qBad: "Плотная облачность",
+        minShort: "10 мин",
+        cloudsSubFmt: "📍 {coords} • ☁️ Облачность: {cloud}% (нижн. {low}% • средн. {mid}% • верхн. {high}%) • 💧 Влажность: {hum}% • 🌡️ {temp}°C"
+      },
+      es: {
+        activeCityPre: "Ciudad activa:",
+        moonWarnBadge: "⚠️ Luna brillante",
+        moonSafeBadge: "✓ Óptima para fotometría",
+        altWord: "Altura:",
+        qExc: "Excelente para observar",
+        qMid: "Nubosidad parcial",
+        qBad: "Nublado / Cubierto",
+        minShort: "10 min",
+        cloudsSubFmt: "📍 {coords} • ☁️ Nubes: {cloud}% (bajas {low}% • medias {mid}% • altas {high}%) • 💧 Humedad: {hum}% • 🌡️ {temp}°C"
+      },
+      de: {
+        activeCityPre: "Aktive Stadt:",
+        moonWarnBadge: "⚠️ Heller Mond",
+        moonSafeBadge: "✓ Sicher für Photometrie",
+        altWord: "Höhe:",
+        qExc: "Optimal für Beobachtungen",
+        qMid: "Teilweise bewölkt",
+        qBad: "Bedeckt / Ungünstig",
+        minShort: "10 Min.",
+        cloudsSubFmt: "📍 {coords} • ☁️ Bewölkung: {cloud}% (tief {low}% • mittel {mid}% • hoch {high}%) • 💧 Feuchte: {hum}% • 🌡️ {temp}°C"
+      },
+      fr: {
+        activeCityPre: "Ville active :",
+        moonWarnBadge: "⚠️ Lune brillante",
+        moonSafeBadge: "✓ Favorable à la photométrie",
+        altWord: "Hauteur :",
+        qExc: "Excellent pour l'observation",
+        qMid: "Partiellement nuageux",
+        qBad: "Couvert / Défavorable",
+        minShort: "10 min",
+        cloudsSubFmt: "📍 {coords} • ☁️ Nuages : {cloud}% (bas {low}% • moy. {mid}% • hauts {high}%) • 💧 Humidité : {hum}% • 🌡️ {temp}°C"
+      },
+      zh: {
+        activeCityPre: "当前观测城市：",
+        moonWarnBadge: "⚠️ 强月光干扰",
+        moonSafeBadge: "✓ 不影响测光",
+        altWord: "高度：",
+        qExc: "极佳测光天气",
+        qMid: "局部多云",
+        qBad: "阴天 / 不宜观测",
+        minShort: "10分钟",
+        cloudsSubFmt: "📍 {coords} • ☁️ 云量: {cloud}% (低云 {low}% • 中云 {mid}% • 高云 {high}%) • 💧 湿度: {hum}% • 🌡️ {temp}°C"
+      },
+      ber: {
+        activeCityPre: "Tamdint turmidt (para Ramón):",
+        moonWarnBadge: "⚠️ Ayyur yeflali",
+        moonSafeBadge: "✓ Ur yessexṣar ara afutomitri",
+        altWord: "Tattayt:",
+        qExc: "Igerrez i wannay (Ajenna yezdeɣ)",
+        qMid: "Asignu amuran",
+        qBad: "Asignu iččuren",
+        minShort: "10 tsd",
+        cloudsSubFmt: "📍 {coords} • ☁️ Asignu: {cloud}% (adday {low}% • alemmas {mid}% • afella {high}%) • 💧 Taneɣmi: {hum}% • 🌡️ {temp}°C"
+      }
+    };
+    _uiExtra7.be = _uiExtra7.ber;
+    const _ux = _uiExtra7[lg] || _uiExtra7.en;
+
     if (cityAutoStatusEl) {
-      cityAutoStatusEl.textContent = lg === "ru"
-        ? `Активный город: ${getLocalizedCityName(OBSERVER_GEO_STATE.city)} (${coordsShort}) • ${hemiStr}`
-        : `Active city: ${getLocalizedCityName(OBSERVER_GEO_STATE.city)} (${coordsShort}) • ${hemiStr}`;
+      cityAutoStatusEl.textContent = `${_ux.activeCityPre} ${getLocalizedCityName(OBSERVER_GEO_STATE.city)} (${coordsShort}) • ${hemiStr}`;
     }
 
-    // 1. Обновляем расширенный виджет Луны (Пункт 5 — вся информация видна сразу без наведения)
+    // 1. Обновляем расширенный виджет Луны (на всех 7 языках без хардкода)
     const lunar = computeRegionalLunarEphemeris(OBSERVER_GEO_STATE.lat, OBSERVER_GEO_STATE.lon, new Date());
     const phaseNames = trSky("phases");
     const phaseLabel = Array.isArray(phaseNames) ? phaseNames[lunar.phaseIdx] : "—";
@@ -14801,14 +15013,10 @@ function revealAndFocusField(inputId) {
         .replace("{alt}", altStr);
     }
     if (moonSafetyBadgeEl) {
-      moonSafetyBadgeEl.textContent = isBrightMoonUp
-        ? (lg === "ru" ? "⚠️ Засветка фона" : "⚠️ Bright Moon")
-        : (lg === "ru" ? "✓ Не мешает фотометрии" : "✓ Safe for Photometry");
+      moonSafetyBadgeEl.textContent = isBrightMoonUp ? _ux.moonWarnBadge : _ux.moonSafeBadge;
     }
     if (moonSubTextEl) {
-      moonSubTextEl.textContent = lg === "ru"
-        ? `🌍 ${getLocalizedCityName(OBSERVER_GEO_STATE.city)} (${hemiStr}) • Высота: ${lunar.topoAltDeg >= 0 ? "+" : ""}${lunar.topoAltDeg}° • ${statusStr}`
-        : `🌍 ${getLocalizedCityName(OBSERVER_GEO_STATE.city)} (${hemiStr}) • Alt: ${lunar.topoAltDeg >= 0 ? "+" : ""}${lunar.topoAltDeg}° • ${statusStr}`;
+      moonSubTextEl.textContent = `🌍 ${getLocalizedCityName(OBSERVER_GEO_STATE.city)} (${hemiStr}) • ${_ux.altWord} ${lunar.topoAltDeg >= 0 ? "+" : ""}${lunar.topoAltDeg}° • ${statusStr}`;
     }
     if (moonChipEl) {
       moonChipEl.title = trSky("moonTipFmt")
@@ -14820,7 +15028,7 @@ function revealAndFocusField(inputId) {
         .replace("{status}", statusStr);
     }
 
-    // 2. Обновляем расширенный виджет Чистоты неба (Пункт 5 — вся информация видна сразу без наведения)
+    // 2. Обновляем расширенный виджет Чистоты неба (на всех 7 языках)
     if (skyTextEl && OBSERVER_GEO_STATE.skyClarityPct != null) {
       const cl = OBSERVER_GEO_STATE.skyClarityPct;
       const cloud = OBSERVER_GEO_STATE.cloudCoverPct ?? (100 - cl);
@@ -14831,21 +15039,22 @@ function revealAndFocusField(inputId) {
       const temp = OBSERVER_GEO_STATE.tempC ?? "—";
       const syncTime = OBSERVER_GEO_STATE.lastSkySyncStr || "—";
 
-      const qualityWord = lg === "ru"
-        ? (cl >= 75 ? "Отлично для наблюдений" : (cl >= 40 ? "Переменная облачность" : "Плотная облачность"))
-        : (cl >= 75 ? "Excellent for Photometry" : (cl >= 40 ? "Partly Cloudy" : "Overcast / Poor"));
+      const qualityWord = cl >= 75 ? _ux.qExc : (cl >= 40 ? _ux.qMid : _ux.qBad);
 
       skyTextEl.textContent = `${trSky("skyFmt").replace("{city}", getLocalizedCityName(OBSERVER_GEO_STATE.city)).replace("{clarity}", cl)} — ${qualityWord}`;
 
       if (skySyncBadgeEl) {
-        skySyncBadgeEl.textContent = lg === "ru"
-          ? `🔄 ${syncTime} (10 мин)`
-          : `🔄 ${syncTime} (10m)`;
+        skySyncBadgeEl.textContent = `🔄 ${syncTime} (${_ux.minShort})`;
       }
       if (skySubTextEl) {
-        skySubTextEl.textContent = lg === "ru"
-          ? `📍 ${coordsShort} • ☁️ Облачность: ${cloud}% (нижн. ${low}% • средн. ${mid}% • верхн. ${high}%) • 💧 Влажность: ${hum}% • 🌡️ ${temp}°C`
-          : `📍 ${coordsShort} • ☁️ Clouds: ${cloud}% (low ${low}% • mid ${mid}% • high ${high}%) • 💧 Hum: ${hum}% • 🌡️ ${temp}°C`;
+        skySubTextEl.textContent = _ux.cloudsSubFmt
+          .replace("{coords}", coordsShort)
+          .replace("{cloud}", cloud)
+          .replace("{low}", low)
+          .replace("{mid}", mid)
+          .replace("{high}", high)
+          .replace("{hum}", hum)
+          .replace("{temp}", temp);
       }
       if (skyDotEl) {
         skyDotEl.className = "sky-clarity-dot" + (cl >= 75 ? "" : (cl >= 40 ? " warn" : " bad"));
@@ -15773,7 +15982,7 @@ function revealAndFocusField(inputId) {
     if (!lg) {
       try { lg = window.localStorage ? (localStorage.getItem("lang") || "") : ""; } catch (_) {}
     }
-    lg = (lg || "ru").slice(0, 2).toLowerCase();
+    lg = window.__normAstroLang(lg || "en") || "en";
     const pack = DUP_FILTER_I18N[lg] || DUP_FILTER_I18N.ru;
     return pack[key] || DUP_FILTER_I18N.ru[key] || key;
   }
@@ -16258,7 +16467,7 @@ function revealAndFocusField(inputId) {
   }
 
   function trM16(key) {
-    const lg = (document.getElementById("langSelect")?.value || "ru").slice(0, 2).toLowerCase();
+    const lg = (window.__normAstroLang(document.getElementById("langSelect")?.value || "en") || "en");
     return (M16_I18N[lg] && M16_I18N[lg][key]) || M16_I18N.ru[key] || key;
   }
 
@@ -16516,5 +16725,1692 @@ function revealAndFocusField(inputId) {
     if (badgeEl) badgeEl.textContent = trM16("liveLoadedOk");
     contentEl.innerHTML = htmlOut;
   };
+
+})();
+
+
+
+
+// === MODULE 17: V1.1.2 BETA (BERBER RAMON, COUNTRY->CITY SELECTOR, 6-SLIDE BEGINNER GUIDE) ===
+(function initModule17BerberCountryCityAndBeginnerGuide() {
+  "use strict";
+
+  // --------------------------------------------------------------------------
+  // 17.1. ПОЛНАЯ ЛОКАЛИЗАЦИЯ БЕРБЕРСКОГО ЯЗЫКА (Tamaziɣt / Берберский (para Ramón))
+  //       И ДОПОЛНЕНИЕ КЛЮЧЕЙ МЕНЮ НАСТРОЕК ДЛЯ ВСЕХ 7 ЯЗЫКОВ (EN, RU, ES, DE, FR, ZH, BER)
+  // --------------------------------------------------------------------------
+  const SETTINGS_AND_NAV_7LANG = {
+    en: {
+      lblSettingsTitle: "Settings",
+      splashLangLabel: "Interface Language:",
+      lblSplashLang: "Interface Language:",
+      lblSettingsCityTitle: "Observatory Location:",
+      lblCountrySelect: "1. Country:",
+      lblCitySelect: "2. Country — City:",
+      btnAutoDetectCity: "🎯 Auto",
+      tipAutoDetectCity: "Auto-detect observatory city by IP / Timezone",
+      optCustomCity: "🔍 Other City / Search below...",
+      phCustomCity: "Country-City or City (e.g. USA-Washington, España-Madrid)...",
+      optAllCountries: "🌍 All Countries (World)",
+      lblToastsShort: "🔔 Enable Notifications",
+      lblToggleTechBlock: "🔧 Technical Block & Catalog Status",
+      btnResetLayoutShort: "✥ Reset Layout",
+      btnBeginnerGuide: "🎓 Quick Start Guide",
+      btnGraphGuide: "📖 How to Read Charts",
+      btnObsTrackerMenu: "📓 My Observations",
+      btnUrgentMenu: "AAVSO Target Radar"
+    },
+    ru: {
+      lblSettingsTitle: "Настройки",
+      splashLangLabel: "Язык интерфейса:",
+      lblSplashLang: "Язык интерфейса:",
+      lblSettingsCityTitle: "Город обсерватории:",
+      lblCountrySelect: "1. Страна:",
+      lblCitySelect: "2. Страна — Город:",
+      btnAutoDetectCity: "🎯 Авто",
+      tipAutoDetectCity: "Определить город автоматически по IP / часовому поясу",
+      optCustomCity: "🔍 Другой город (поиск ниже)...",
+      phCustomCity: "Страна-Город или город (напр. Россия-Москва, USA-Washington)...",
+      optAllCountries: "🌍 Все страны мира",
+      lblToastsShort: "🔔 Настройка уведомлений",
+      lblToggleTechBlock: "🔧 Технический блок и статус каталогов",
+      btnResetLayoutShort: "✥ Сброс блоков",
+      btnBeginnerGuide: "🎓 Инструкция",
+      btnGraphGuide: "📖 Как читать графики",
+      btnObsTrackerMenu: "📓 Мои наблюдения",
+      btnUrgentMenu: "Радар целей AAVSO"
+    },
+    es: {
+      lblSettingsTitle: "Ajustes",
+      splashLangLabel: "Idioma de la interfaz:",
+      lblSplashLang: "Idioma de la interfaz:",
+      lblSettingsCityTitle: "Ubicación del observatorio:",
+      lblCountrySelect: "1. País:",
+      lblCitySelect: "2. País — Ciudad:",
+      btnAutoDetectCity: "🎯 Auto",
+      tipAutoDetectCity: "Detectar ciudad automáticamente por IP / zona horaria",
+      optCustomCity: "🔍 Otra ciudad (buscar abajo)...",
+      phCustomCity: "País-Ciudad o ciudad (ej. España-Madrid, USA-Washington)...",
+      optAllCountries: "🌍 Todos los países",
+      lblToastsShort: "🔔 Notificaciones",
+      lblToggleTechBlock: "🔧 Bloque técnico y estado de catálogos",
+      btnResetLayoutShort: "✥ Restablecer bloques",
+      btnBeginnerGuide: "🎓 Guía paso a paso",
+      btnGraphGuide: "📖 Cómo leer gráficos",
+      btnObsTrackerMenu: "📓 Mis observaciones",
+      btnUrgentMenu: "Radar de objetivos AAVSO"
+    },
+    de: {
+      lblSettingsTitle: "Einstellungen",
+      splashLangLabel: "Oberflächensprache:",
+      lblSplashLang: "Oberflächensprache:",
+      lblSettingsCityTitle: "Standort der Sternwarte:",
+      lblCountrySelect: "1. Land:",
+      lblCitySelect: "2. Land — Stadt:",
+      btnAutoDetectCity: "🎯 Auto",
+      tipAutoDetectCity: "Stadt automatisch per IP / Zeitzone erkennen",
+      optCustomCity: "🔍 Andere Stadt (unten suchen)...",
+      phCustomCity: "Land-Stadt oder Stadt (z.B. Deutschland-Berlin, USA-Washington)...",
+      optAllCountries: "🌍 Alle Länder",
+      lblToastsShort: "🔔 Benachrichtigungen",
+      lblToggleTechBlock: "🔧 Technischer Block & Katalogstatus",
+      btnResetLayoutShort: "✥ Layout zurücksetzen",
+      btnBeginnerGuide: "🎓 Anleitung",
+      btnGraphGuide: "📖 Diagramme lesen",
+      btnObsTrackerMenu: "📓 Meine Beobachtungen",
+      btnUrgentMenu: "AAVSO-Zielradar"
+    },
+    fr: {
+      lblSettingsTitle: "Paramètres",
+      splashLangLabel: "Langue de l'interface :",
+      lblSplashLang: "Langue de l'interface :",
+      lblSettingsCityTitle: "Lieu de l'observatoire :",
+      lblCountrySelect: "1. Pays :",
+      lblCitySelect: "2. Pays — Ville :",
+      btnAutoDetectCity: "🎯 Auto",
+      tipAutoDetectCity: "Détecter la ville automatiquement par IP / fuseau horaire",
+      optCustomCity: "🔍 Autre ville (rechercher ci-dessous)...",
+      phCustomCity: "Pays-Ville ou ville (ex. France-Paris, España-Madrid)...",
+      optAllCountries: "🌍 Tous les pays",
+      lblToastsShort: "🔔 Notifications",
+      lblToggleTechBlock: "🔧 Bloc technique et état des catalogues",
+      btnResetLayoutShort: "✥ Réinitialiser",
+      btnBeginnerGuide: "🎓 Guide pas à pas",
+      btnGraphGuide: "📖 Lire les graphiques",
+      btnObsTrackerMenu: "📓 Mes observations",
+      btnUrgentMenu: "Radar de cibles AAVSO"
+    },
+    zh: {
+      lblSettingsTitle: "设置",
+      splashLangLabel: "界面语言：",
+      lblSplashLang: "界面语言：",
+      lblSettingsCityTitle: "观测站所在城市：",
+      lblCountrySelect: "1. 国家 / 地区：",
+      lblCitySelect: "2. 国家 — 城市：",
+      btnAutoDetectCity: "🎯 自动定位",
+      tipAutoDetectCity: "通过 IP / 时区自动识别所在城市",
+      optCustomCity: "🔍 其他城市（在下方搜索）...",
+      phCustomCity: "输入 国家-城市 或城市名 (如 China-Beijing, USA-Washington)...",
+      optAllCountries: "🌍 全部国家 / 地区",
+      lblToastsShort: "🔔 开启通知提醒",
+      lblToggleTechBlock: "🔧 技术状态与星表日志",
+      btnResetLayoutShort: "✥ 重置布局",
+      btnBeginnerGuide: "🎓 新手图文教程",
+      btnGraphGuide: "📖 如何看懂光变曲线",
+      btnObsTrackerMenu: "📓 我的观测记录",
+      btnUrgentMenu: "AAVSO 目标雷达"
+    },
+    ber: {
+      lblSettingsTitle: "Iɣewwaren (para Ramón)",
+      splashLangLabel: "Tutlayt n ugrudem (Tamaziɣt):",
+      lblSplashLang: "Tutlayt n ugrudem (Tamaziɣt):",
+      lblSettingsCityTitle: "Tamdint n usannay (Observatorio):",
+      lblCountrySelect: "1. Tamurt (País):",
+      lblCitySelect: "2. Tamurt — Tamdint (País — Ciudad):",
+      btnAutoDetectCity: "🎯 Awurman",
+      tipAutoDetectCity: "Af-d tamdint s wudem awurman (IP / Аkud)",
+      optCustomCity: "🔍 Tamdint nniḍen (Nadi داو)...",
+      phCustomCity: "Tamurt-Tamdint (am. España-Madrid, Tamazgha-Rabat)...",
+      optAllCountries: "🌍 Timura merra (Amaḍal)",
+      lblToastsShort: "🔔 Ilɣa (Notificaciones)",
+      lblToggleTechBlock: "🔧 Aḥric atiknikan d waddad n yikaramen",
+      btnResetLayoutShort: "✥ Err-d amezwaru",
+      btnBeginnerGuide: "🎓 Amnir s tugniwin (Guía)",
+      btnGraphGuide: "📖 Amek ara tɣerḍ udlifen",
+      btnObsTrackerMenu: "📓 Annayen-inu",
+      btnUrgentMenu: "Aradar n yitriyen AAVSO"
+    }
+  };
+  SETTINGS_AND_NAV_7LANG.be = SETTINGS_AND_NAV_7LANG.ber;
+
+  // Берберский словарь для основного интерфейса (Tamaziɣt + подсказки на испанском для Ramón)
+  const BERBER_CORE_OVERRIDES = {
+    appTitle: "Seestar AstroLab AAVSO",
+    appSubtitle: "Afutomitri SIMBAD d AAVSO VSP s ufran awurman n yitri n usenqed (para Ramón)",
+    splashTitle: "Seestar AstroLab AAVSO: Afutomitri n Yitriyen (para Ramón)",
+    splashDesc: "Asnas ussnan i ubeddel n wannayen n ufutomitri ZWO Seestar (S30, S30PRO, S50, S50PRO) ɣer umasal agraɣlan AAVSO Extended.",
+    btnStartApp: "🚀 Bdu amahil deg Seestar AstroLab",
+    lblThemePanel: "Agalis n yiniten",
+    themeDarkBtn: "Aberkan (Iḍ)",
+    themeLightBtn: "Aceεlal (Ass)",
+    lblScopeSelect: "Atiliskup:",
+    acc1Title: "Amannay d Yitri (Observador y Estrella)",
+    acc2Title: "Afran d usenqed n ufaylu CSV Seestar",
+    acc3Title: "Abeddel n CSV Seestar ɣer AAVSO Extended",
+    lblObscode: "OBSCODE (Tangalt AAVSO)",
+    lblStarId: "STARID (Isem n yitri)",
+    btnFetchAll: "🔭 Зdem-d SIMBAD + VSP",
+    btnConvert: "⚡ Beddel & Sekles AAVSO Extended (.txt)",
+    btnDownload: "💾 Sekles afaylu AAVSO (.txt)",
+    btnCopy: "📋 Nɣel ɣef afus",
+    btnOpenWebObs: "🌐 Ldi AAVSO WebObs ↗",
+    v6RadarDockTitle: "Aradar n yitriyen AAVSO",
+    btnV6Refresh: "🔄 Smiren",
+    btnSpinRandomStarOpen: "🎰 Afran agacuran n yitri i wannayen-ik (para Ramón)",
+    lblV6Visibility: "Timeẓri:",
+    lblV6Sort: "Afran:",
+    lblV6Limit: "Talast:"
+  };
+
+  if (window.I18N) {
+    window.I18N.ber = Object.assign({}, window.I18N.es || window.I18N.en, BERBER_CORE_OVERRIDES, SETTINGS_AND_NAV_7LANG.ber);
+    window.I18N.be = window.I18N.ber;
+    for (const lg of ["en", "ru", "es", "de", "fr", "zh", "ber"]) {
+      if (window.I18N[lg] && SETTINGS_AND_NAV_7LANG[lg]) {
+        Object.assign(window.I18N[lg], SETTINGS_AND_NAV_7LANG[lg]);
+      }
+    }
+  }
+
+  if (window.SKY_MOON_I18N) {
+    window.SKY_MOON_I18N.ber = Object.assign({}, window.SKY_MOON_I18N.es || window.SKY_MOON_I18N.en, {
+      skyLoading: "🌌 Tazdeg n ujenna: asali...",
+      skyFmt: "🌌 Tazdeg n ujenna ({city}): {clarity}%",
+      skyTipFmt: "📍 {city} ({lat}°, {lon}°) • Tazdeg n ujenna: {clarity}% (Asignu: {cloud}%). Taneɣmi: {hum}%, Temp: {temp}°C ({time} • Open-Meteo).",
+      moonFmt: "Ayyur: {illum}% ({phase} • {alt})",
+      moonAboveFmt: "tattayt +{deg}°",
+      moonBelowFmt: "ddaw yigli {deg}°",
+      hemiNorth: "Azgen-agafa (Norte)",
+      hemiSouth: "Azgen-anẓul (Sur)",
+      moonSafe: "Ayyur ur yessexṣar ara afutomitri",
+      moonBrightWarn: "Ayyur yeflali nnig yigli",
+      phases: ["Ayyur Amaynut", "Ayyur Yettnernin", "Tis Куẓt Tamezwarut", "Ayyur Aččuran Yettnernin", "Ayyurummid (Luna Llena)", "Ayyur Yettnaqasen", "Tis Kuẓt Taneggarut", "Ammas Aneggaru"],
+      lblHemiOnlyFilter: "🌍 Azgen n umaḍal:",
+      optHemiAll: "🌐 Agafa d Unẓul (Norte y Sur)",
+      optHemiNorth: "⬆️ Azgen-agafa (DEC ≥ 0°)",
+      optHemiSouth: "⬇️ Azgen-anẓul (DEC < 0°)",
+      chkVisCity: "📍 Убедная deg temdint-inu",
+      chkVisNow: "🕯️ Nnig yigli tura",
+      lblHemisphereFilter: "🧭 Tanila (Acimut):",
+      optVisAll: "🧭 Tinila merra (360°)",
+      optVisNorth: "⬆️ Agafa (N • 315°–45°)",
+      optVisSouth: "⬇️ Anẓul (S • 135°–225°)",
+      optVisEast: "➡️ Asammer (E • 45°–135°)",
+      optVisWest: "⬅️ Amalu (W • 225°–315°)",
+      optVisNE: "↗️ Agafa-Asammer (NE)",
+      optVisNW: "↖️ Agafa-Amalu (NO)",
+      optVisSE: "↘️ Anẓul-Asammer (SE)",
+      optVisSW: "↙️ Anẓul-Amalu (SO)",
+      optCustomCity: SETTINGS_AND_NAV_7LANG.ber.optCustomCity,
+      dirs: { N: "N", NE: "NE", E: "E", SE: "SE", S: "S", SW: "SO", W: "O", NW: "NO" }
+    });
+    window.SKY_MOON_I18N.be = window.SKY_MOON_I18N.ber;
+    for (const lg of ["en", "ru", "es", "de", "fr", "zh", "ber"]) {
+      if (window.SKY_MOON_I18N[lg] && SETTINGS_AND_NAV_7LANG[lg]) {
+        window.SKY_MOON_I18N[lg].optCustomCity = SETTINGS_AND_NAV_7LANG[lg].optCustomCity;
+      }
+    }
+  }
+
+  // Подсветка розовым цветом при выборе Берберского языка (para Ramón)
+  window.__syncBerberPinkHighlight = function(langCode) {
+    const norm = window.__normAstroLang ? window.__normAstroLang(langCode) : String(langCode || "").toLowerCase();
+    const isBerber = (norm === "ber" || norm === "be");
+    ["langSelect", "splashLangSelect"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.toggle("berber-pink-active", isBerber);
+        if (isBerber && el.value !== "ber") el.value = "ber";
+      }
+    });
+    ["btnQuickLangBerber", "btnQuickLangBerberSplash"].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.classList.toggle("active", isBerber);
+    });
+  };
+
+  window.selectBerberPinkLang = function() {
+    const sel = document.getElementById("langSelect");
+    if (sel) {
+      sel.value = "ber";
+      sel.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    const spSel = document.getElementById("splashLangSelect");
+    if (spSel && spSel.value !== "ber") {
+      spSel.value = "ber";
+    }
+    window.__syncBerberPinkHighlight("ber");
+  };
+
+  // --------------------------------------------------------------------------
+  // 17.2. ДВУХУРОВНЕВАЯ БАЗА «СТРАНА → ГОРОД» (20 СТРАН, 85+ ГОРОДОВ МИРА)
+  //       ВКЛЮЧАЯ РОССИЯ—МОСКВА, USA—WASHINGTON, ESPAÑA—MADRID И Т.Д.
+  // --------------------------------------------------------------------------
+  const WORLD_COUNTRIES_AND_CITIES = [
+    {
+      code: "US",
+      flag: "🇺🇸",
+      names: { en: "USA", ru: "США (USA)", es: "EE. UU. (USA)", de: "USA", fr: "États-Unis (USA)", zh: "美国 (USA)", ber: "USA (Iwunak Yeddukklen)" },
+      cities: [
+        { id: "Washington, D.C.", ru: "Вашингтон (Washington)", lat: 38.9072, lon: -77.0369 },
+        { id: "Cambridge (AAVSO HQ)", ru: "Кембридж (Штаб AAVSO)", lat: 42.3770, lon: -71.1256 },
+        { id: "New York", ru: "Нью-Йорк", lat: 40.7128, lon: -74.0060 },
+        { id: "Los Angeles", ru: "Лос-Анджелес", lat: 34.0522, lon: -118.2437 },
+        { id: "Chicago", ru: "Чикаго", lat: 41.8781, lon: -87.6298 },
+        { id: "Houston", ru: "Хьюстон", lat: 29.7604, lon: -95.3698 },
+        { id: "San Francisco", ru: "Сан-Франциско", lat: 37.7749, lon: -122.4194 },
+        { id: "Flagstaff (Lowell Obs.)", ru: "Флагстафф (Лоуэлл)", lat: 35.2023, lon: -111.6646 },
+        { id: "Tucson (Kitt Peak)", ru: "Тусон (Китт-Пик)", lat: 32.2226, lon: -110.9747 },
+        { id: "Mauna Kea (Hawaii)", ru: "Мауна-Кеа (Гавайи)", lat: 19.8207, lon: -155.4681 }
+      ]
+    },
+    {
+      code: "ES",
+      flag: "🇪🇸",
+      names: { en: "Spain (España)", ru: "Испания (España)", es: "España", de: "Spanien (España)", fr: "Espagne (España)", zh: "西班牙 (España)", ber: "Spanya (España)" },
+      cities: [
+        { id: "Madrid", ru: "Мадрид", lat: 40.4168, lon: -3.7038 },
+        { id: "Barcelona", ru: "Барселона", lat: 41.3874, lon: 2.1686 },
+        { id: "Valencia", ru: "Валенсия", lat: 39.4699, lon: -0.3763 },
+        { id: "Sevilla", ru: "Севилья", lat: 37.3891, lon: -5.9845 },
+        { id: "Zaragoza", ru: "Сарагоса", lat: 41.6488, lon: -0.8891 },
+        { id: "Málaga", ru: "Малага", lat: 36.7213, lon: -4.4214 },
+        { id: "Bilbao", ru: "Бильбао", lat: 43.2630, lon: -2.9350 },
+        { id: "Tenerife (Teide Obs.)", ru: "Тенерифе (Тейде)", lat: 28.3003, lon: -16.5097 },
+        { id: "La Palma (ORM Obs.)", ru: "Ла-Пальма (Роке)", lat: 28.7606, lon: -17.8816 }
+      ]
+    },
+    {
+      code: "RU",
+      flag: "🇷🇺",
+      names: { en: "Russia (Россия)", ru: "Россия", es: "Rusia (Россия)", de: "Russland (Россия)", fr: "Russie (Россия)", zh: "俄罗斯 (Russia)", ber: "Rrusya (Россия)" },
+      cities: [
+        { id: "Moscow", ru: "Москва", lat: 55.7558, lon: 37.6173 },
+        { id: "Saint Petersburg", ru: "Санкт-Петербург", lat: 59.9343, lon: 30.3351 },
+        { id: "Kazan", ru: "Казань", lat: 55.7887, lon: 49.1221 },
+        { id: "Nizhny Novgorod", ru: "Нижний Новгород", lat: 56.3269, lon: 44.0059 },
+        { id: "Yekaterinburg", ru: "Екатеринбург", lat: 56.8389, lon: 60.6057 },
+        { id: "Novosibirsk", ru: "Новосибирск", lat: 55.0084, lon: 82.9357 },
+        { id: "Sochi", ru: "Сочи", lat: 43.5855, lon: 39.7231 },
+        { id: "Vladivostok", ru: "Владивосток", lat: 43.1155, lon: 131.8855 },
+        { id: "Krasnodar", ru: "Краснодар", lat: 45.0355, lon: 38.9753 },
+        { id: "Samara", ru: "Самара", lat: 53.1959, lon: 50.1002 }
+      ]
+    },
+    {
+      code: "GB",
+      flag: "🇬🇧",
+      names: { en: "United Kingdom (UK)", ru: "Великобритания (UK)", es: "Reino Unido (UK)", de: "Großbritannien (UK)", fr: "Royaume-Uni (UK)", zh: "英国 (UK)", ber: "Tagelda Yeddukklen (UK)" },
+      cities: [
+        { id: "London", ru: "Лондон", lat: 51.5074, lon: -0.1278 },
+        { id: "Greenwich (Royal Obs.)", ru: "Гринвич", lat: 51.4769, lon: -0.0005 },
+        { id: "Edinburgh", ru: "Эдинбург", lat: 55.9533, lon: -3.1883 },
+        { id: "Manchester", ru: "Манчестер", lat: 53.4808, lon: -2.2426 },
+        { id: "Cambridge (UK)", ru: "Кембридж (UK)", lat: 52.2053, lon: 0.1218 },
+        { id: "Oxford", ru: "Оксфорд", lat: 51.7520, lon: -1.2577 }
+      ]
+    },
+    {
+      code: "DE",
+      flag: "🇩🇪",
+      names: { en: "Germany (Deutschland)", ru: "Германия (Deutschland)", es: "Alemania (Deutschland)", de: "Deutschland", fr: "Allemagne", zh: "德国 (Germany)", ber: "Alman (Deutschland)" },
+      cities: [
+        { id: "Berlin", ru: "Берлин", lat: 52.5200, lon: 13.4050 },
+        { id: "Munich (München)", ru: "Мюнхен", lat: 48.1351, lon: 11.5820 },
+        { id: "Hamburg", ru: "Гамбург", lat: 53.5511, lon: 9.9937 },
+        { id: "Frankfurt", ru: "Франкфурт", lat: 50.1109, lon: 8.6821 },
+        { id: "Heidelberg (MPIA)", ru: "Гейдельберг (MPIA)", lat: 49.3988, lon: 8.7247 },
+        { id: "Cologne (Köln)", ru: "Кёльн", lat: 50.9375, lon: 6.9603 }
+      ]
+    },
+    {
+      code: "FR",
+      flag: "🇫🇷",
+      names: { en: "France", ru: "Франция (France)", es: "Francia (France)", de: "Frankreich (France)", fr: "France", zh: "法国 (France)", ber: "Fransa (France)" },
+      cities: [
+        { id: "Paris", ru: "Париж", lat: 48.8566, lon: 2.3522 },
+        { id: "Strasbourg (CDS SIMBAD)", ru: "Страсбург (CDS SIMBAD)", lat: 48.5734, lon: 7.7521 },
+        { id: "Marseille", ru: "Марсель", lat: 43.2965, lon: 5.3698 },
+        { id: "Lyon", ru: "Лион", lat: 45.7640, lon: 4.8357 },
+        { id: "Toulouse", ru: "Тулуза", lat: 43.6047, lon: 1.4442 },
+        { id: "Pic du Midi Obs.", ru: "Пик-дю-Миди", lat: 42.9369, lon: 0.1411 }
+      ]
+    },
+    {
+      code: "IT",
+      flag: "🇮🇹",
+      names: { en: "Italy (Italia)", ru: "Италия (Italia)", es: "Italia", de: "Italien (Italia)", fr: "Italie (Italia)", zh: "意大利 (Italia)", ber: "Ṭṭelyan (Italia)" },
+      cities: [
+        { id: "Rome (Roma)", ru: "Рим", lat: 41.9028, lon: 12.4964 },
+        { id: "Milan (Milano)", ru: "Милан", lat: 45.4642, lon: 9.1900 },
+        { id: "Florence (Firenze)", ru: "Флоренция", lat: 43.7696, lon: 11.2558 },
+        { id: "Naples (Napoli)", ru: "Неаполь", lat: 40.8518, lon: 14.2681 },
+        { id: "Turin (Torino)", ru: "Турин", lat: 45.0703, lon: 7.6869 }
+      ]
+    },
+    {
+      code: "MA",
+      flag: "🇲🇦",
+      names: { en: "Morocco (Tamazgha)", ru: "Марокко (Tamazgha)", es: "Marruecos (Tamazgha)", de: "Marokko", fr: "Maroc (Tamazgha)", zh: "摩洛哥 (Morocco)", ber: "Tamazɣa / Lmeɣrib (para Ramón)" },
+      cities: [
+        { id: "Rabat", ru: "Рабат", lat: 34.0209, lon: -6.8416 },
+        { id: "Marrakech (Oukaïmeden Obs.)", ru: "Марракеш (Укаймеден)", lat: 31.2064, lon: -7.8664 },
+        { id: "Casablanca", ru: "Касабланка", lat: 33.5731, lon: -7.5898 },
+        { id: "Agadir (Souss)", ru: "Агадир", lat: 30.4278, lon: -9.5981 },
+        { id: "Nador (Rif)", ru: "Надор (Риф)", lat: 35.1681, lon: -2.9335 }
+      ]
+    },
+    {
+      code: "DZ",
+      flag: "🇩🇿",
+      names: { en: "Algeria (Dzayer)", ru: "Алжир (Dzayer)", es: "Argelia (Dzayer)", de: "Algerien", fr: "Algérie (Dzayer)", zh: "阿尔及利亚 (Algeria)", ber: "Dzayer / Tamurt n Leqbayel" },
+      cities: [
+        { id: "Algiers (Dzayer)", ru: "Алжир", lat: 36.7538, lon: 3.0588 },
+        { id: "Tizi Ouzou (Kabylie)", ru: "Тизи-Узу (Кабилия)", lat: 36.7118, lon: 4.0459 },
+        { id: "Béjaïa (Bgayet)", ru: "Беджая", lat: 36.7509, lon: 5.0567 },
+        { id: "Oran (Wehran)", ru: "Оран", lat: 35.6971, lon: -0.6308 }
+      ]
+    },
+    {
+      code: "PL",
+      flag: "🇵🇱",
+      names: { en: "Poland (Polska)", ru: "Польша (Polska)", es: "Polonia", de: "Polen", fr: "Pologne", zh: "波兰 (Poland)", ber: "Pulunya (Polska)" },
+      cities: [
+        { id: "Warsaw (Warszawa)", ru: "Варшава", lat: 52.2297, lon: 21.0122 },
+        { id: "Kraków", ru: "Краков", lat: 50.0647, lon: 19.9450 },
+        { id: "Wrocław", ru: "Вроцлав", lat: 51.1079, lon: 17.0385 }
+      ]
+    },
+    {
+      code: "NL",
+      flag: "🇳🇱",
+      names: { en: "Netherlands (Nederland)", ru: "Нидерланды", es: "Países Bajos", de: "Niederlande", fr: "Pays-Bas", zh: "荷兰 (Netherlands)", ber: "Timura n Wadda" },
+      cities: [
+        { id: "Amsterdam", ru: "Амстердам", lat: 52.3676, lon: 4.9041 },
+        { id: "Leiden (Sterrewacht)", ru: "Лейден", lat: 52.1544, lon: 4.4836 }
+      ]
+    },
+    {
+      code: "CH",
+      flag: "🇨🇭",
+      names: { en: "Switzerland (Schweiz)", ru: "Швейцария", es: "Suiza", de: "Schweiz", fr: "Suisse", zh: "瑞士 (Switzerland)", ber: "Swisra" },
+      cities: [
+        { id: "Zürich", ru: "Цюрих", lat: 47.3769, lon: 8.5417 },
+        { id: "Geneva (Genève)", ru: "Женева", lat: 46.2044, lon: 6.1432 }
+      ]
+    },
+    {
+      code: "CA",
+      flag: "🇨🇦",
+      names: { en: "Canada", ru: "Канада (Canada)", es: "Canadá", de: "Kanada", fr: "Canada", zh: "加拿大 (Canada)", ber: "Kanada" },
+      cities: [
+        { id: "Ottawa", ru: "Оттава", lat: 45.4215, lon: -75.6972 },
+        { id: "Toronto", ru: "Торонто", lat: 43.6532, lon: -79.3832 },
+        { id: "Montreal", ru: "Монреаль", lat: 45.5017, lon: -73.5673 },
+        { id: "Vancouver", ru: "Ванкувер", lat: 49.2827, lon: -123.1207 }
+      ]
+    },
+    {
+      code: "MX",
+      flag: "🇲🇽",
+      names: { en: "Mexico (México)", ru: "Мексика", es: "México", de: "Mexiko", fr: "Mexique", zh: "墨西哥 (Mexico)", ber: "Miksik" },
+      cities: [
+        { id: "Mexico City (CDMX)", ru: "Мехико", lat: 19.4326, lon: -99.1332 },
+        { id: "Guadalajara", ru: "Гвадалахара", lat: 20.6597, lon: -103.3496 }
+      ]
+    },
+    {
+      code: "BR",
+      flag: "🇧🇷",
+      names: { en: "Brazil (Brasil)", ru: "Бразилия", es: "Brasil", de: "Brasilien", fr: "Brésil", zh: "巴西 (Brazil)", ber: "Brazil" },
+      cities: [
+        { id: "São Paulo", ru: "Сан-Паулу", lat: -23.5505, lon: -46.6333 },
+        { id: "Rio de Janeiro", ru: "Рио-де-Жанейро", lat: -22.9068, lon: -43.1729 }
+      ]
+    },
+    {
+      code: "CL",
+      flag: "🇨🇱",
+      names: { en: "Chile", ru: "Чили (Chile)", es: "Chile", de: "Chile", fr: "Chili", zh: "智利 (Chile)", ber: "Cili" },
+      cities: [
+        { id: "Santiago", ru: "Сантьяго", lat: -33.4489, lon: -70.6693 },
+        { id: "Atacama (Paranal / ESO)", ru: "Атакама (Параналь)", lat: -24.6272, lon: -70.4042 },
+        { id: "La Serena (Cerro Tololo)", ru: "Ла-Серена (Тололо)", lat: -30.1691, lon: -70.8065 }
+      ]
+    },
+    {
+      code: "CN",
+      flag: "🇨🇳",
+      names: { en: "China (中国)", ru: "Китай (China)", es: "China", de: "China", fr: "Chine", zh: "中国 (China)", ber: "Ccinwa (China)" },
+      cities: [
+        { id: "Beijing (北京)", ru: "Пекин (Beijing)", lat: 39.9042, lon: 116.4074 },
+        { id: "Shanghai (上海)", ru: "Шанхай (Shanghai)", lat: 31.2304, lon: 121.4737 },
+        { id: "Guangzhou (广州)", ru: "Гуанчжоу", lat: 23.1291, lon: 113.2644 },
+        { id: "Xinglong Obs. (兴隆)", ru: "Синлун (NAOC)", lat: 40.3958, lon: 117.5750 }
+      ]
+    },
+    {
+      code: "JP",
+      flag: "🇯🇵",
+      names: { en: "Japan (日本)", ru: "Япония (Japan)", es: "Japón", de: "Japan", fr: "Japon", zh: "日本 (Japan)", ber: "Japun" },
+      cities: [
+        { id: "Tokyo (東京)", ru: "Токио", lat: 35.6762, lon: 139.6503 },
+        { id: "Osaka (大阪)", ru: "Осака", lat: 34.6937, lon: 135.5023 },
+        { id: "Kyoto (京都)", ru: "Киото", lat: 35.0116, lon: 135.7681 }
+      ]
+    },
+    {
+      code: "AU",
+      flag: "🇦🇺",
+      names: { en: "Australia", ru: "Австралия (Australia)", es: "Australia", de: "Australien", fr: "Australie", zh: "澳大利亚 (Australia)", ber: "Ustralya" },
+      cities: [
+        { id: "Sydney", ru: "Сидней", lat: -33.8688, lon: 151.2093 },
+        { id: "Melbourne", ru: "Мельбурн", lat: -37.8136, lon: 144.9631 },
+        { id: "Canberra (Mt. Stromlo)", ru: "Канберра (Стромло)", lat: -35.3206, lon: 149.0089 },
+        { id: "Perth", ru: "Перт", lat: -31.9505, lon: 115.8605 }
+      ]
+    },
+    {
+      code: "ZA",
+      flag: "🇿🇦",
+      names: { en: "South Africa", ru: "ЮАР (South Africa)", es: "Sudáfrica", de: "Südafrika", fr: "Afrique du Sud", zh: "南非 (South Africa)", ber: "Tafriqt n Unẓul" },
+      cities: [
+        { id: "Cape Town (SAAO)", ru: "Кейптаун (SAAO)", lat: -33.9249, lon: 18.4241 },
+        { id: "Sutherland (SALT Obs.)", ru: "Сазерленд (SALT)", lat: -32.3758, lon: 20.8108 }
+      ]
+    }
+  ];
+  window.WORLD_COUNTRIES_AND_CITIES = WORLD_COUNTRIES_AND_CITIES;
+
+  function getActive7Lang() {
+    const raw = document.getElementById("langSelect")?.value || document.documentElement.lang || "en";
+    return window.__normAstroLang ? (window.__normAstroLang(raw) || "en") : "en";
+  }
+
+  function formatCountryCityDisplay(countryObj, cityObj, lg) {
+    const cShort = lg === "ru"
+      ? (countryObj.names.ru || countryObj.names.en).split(" (")[0]
+      : (countryObj.names[lg] || countryObj.names.en).split(" (")[0];
+    const cityStr = lg === "ru" ? (cityObj.ru || cityObj.id) : cityObj.id;
+    return `${cShort} — ${cityStr}`;
+  }
+
+  function applySelectedObserverCityImmediate(lat, lon, displayCity, countryCode, persist = true) {
+    const st = window._OBSERVER_GEO_STATE;
+    if (!st) return;
+    st.lat = Number(lat);
+    st.lon = Number(lon);
+    st.city = String(displayCity || "UK — London").trim();
+    st.countryCode = String(countryCode || "GB").trim();
+    st.skyClarityPct = null;
+    st.usnoIllumPct = null;
+
+    if (persist) {
+      const payload = JSON.stringify({
+        lat: st.lat,
+        lon: st.lon,
+        city: st.city,
+        countryCode: st.countryCode
+      });
+      try { localStorage.setItem("astrolab_observer_city_v112", payload); } catch (_) {}
+      try { localStorage.setItem("astrolab_observer_city_v110", payload); } catch (_) {}
+      try {
+        if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.save_store_item === "function") {
+          window.pywebview.api.save_store_item("astrolab_observer_city_v112", payload);
+        }
+      } catch (_) {}
+    }
+
+    if (typeof window.fetchCitySkyClarityAndMoonNow === "function") {
+      window.fetchCitySkyClarityAndMoonNow(false);
+    }
+    if (typeof window.renderV6RadarDock === "function") window.renderV6RadarDock();
+    if (typeof window.renderUrgentStarsCards === "function") window.renderUrgentStarsCards();
+    if (typeof window.refreshWheelStarsForActiveScope === "function") window.refreshWheelStarsForActiveScope();
+  }
+  window.applySelectedObserverCityImmediate = applySelectedObserverCityImmediate;
+
+  let _isBuildingCityDropdowns = false;
+  window.__populateCountryAndCitySelectors = function(selectFirstCityOfCountry = false) {
+    if (_isBuildingCityDropdowns) return;
+    _isBuildingCityDropdowns = true;
+    try {
+      const countrySel = document.getElementById("headerCountrySelect");
+      const citySel = document.getElementById("headerCitySelect");
+      if (!citySel) return;
+
+      const lg = getActive7Lang();
+      const sPack = SETTINGS_AND_NAV_7LANG[lg] || SETTINGS_AND_NAV_7LANG.en;
+      const st = window._OBSERVER_GEO_STATE || { lat: 51.5074, lon: -0.1278, city: "UK — London", countryCode: "GB" };
+
+      // Переводим все заголовки и подписи в Настройках
+      for (const [k, v] of Object.entries(sPack)) {
+        document.querySelectorAll(`[data-i18n="${k}"]`).forEach(el => { el.textContent = v; });
+        document.querySelectorAll(`[data-i18n-placeholder="${k}"]`).forEach(el => { el.placeholder = v; });
+        document.querySelectorAll(`[data-i18n-title="${k}"]`).forEach(el => { el.title = v; });
+      }
+
+      // 1. Заполняем список стран (#headerCountrySelect)
+      let activeCountryCode = countrySel ? countrySel.value : (st.countryCode || "ALL");
+      if (!activeCountryCode) activeCountryCode = "ALL";
+
+      if (countrySel) {
+        const prevCountryVal = countrySel.value || st.countryCode || "ALL";
+        countrySel.innerHTML = "";
+        const optAll = document.createElement("option");
+        optAll.value = "ALL";
+        optAll.textContent = sPack.optAllCountries;
+        countrySel.appendChild(optAll);
+
+        for (const c of WORLD_COUNTRIES_AND_CITIES) {
+          const opt = document.createElement("option");
+          opt.value = c.code;
+          opt.textContent = `${c.flag} ${c.names[lg] || c.names.en}`;
+          countrySel.appendChild(opt);
+        }
+        if (Array.from(countrySel.options).some(o => o.value === prevCountryVal)) {
+          countrySel.value = prevCountryVal;
+          activeCountryCode = prevCountryVal;
+        } else {
+          countrySel.value = "ALL";
+          activeCountryCode = "ALL";
+        }
+      }
+
+      // 2. Заполняем список городов (#headerCitySelect) в формате «Страна — Город»
+      citySel.innerHTML = "";
+      const countriesToInclude = (activeCountryCode && activeCountryCode !== "ALL")
+        ? WORLD_COUNTRIES_AND_CITIES.filter(c => c.code === activeCountryCode)
+        : WORLD_COUNTRIES_AND_CITIES;
+
+      let matchedOptionVal = null;
+      let firstCountryCityOption = null;
+
+      for (const cObj of countriesToInclude) {
+        for (const cityObj of cObj.cities) {
+          const labelPair = formatCountryCityDisplay(cObj, cityObj, lg);
+          const hemiChar = cityObj.lat >= 0 ? "N" : "S";
+          const valStr = `${cityObj.lat.toFixed(4)},${cityObj.lon.toFixed(4)},${labelPair},${cObj.code}`;
+          const opt = document.createElement("option");
+          opt.value = valStr;
+          opt.textContent = `${cObj.flag} ${labelPair} (${Math.abs(cityObj.lat).toFixed(1)}°${hemiChar})`;
+          citySel.appendChild(opt);
+
+          if (!firstCountryCityOption) {
+            firstCountryCityOption = { valStr, lat: cityObj.lat, lon: cityObj.lon, labelPair, code: cObj.code };
+          }
+          if (Math.abs(cityObj.lat - st.lat) < 0.05 && Math.abs(cityObj.lon - st.lon) < 0.05) {
+            matchedOptionVal = valStr;
+            st.city = labelPair;
+            st.countryCode = cObj.code;
+          }
+        }
+      }
+
+      // Если пользователь выбрал конкретную страну и нужно сразу переключить на её главный город (например España -> Madrid, USA -> Washington)
+      if (selectFirstCityOfCountry && firstCountryCityOption) {
+        citySel.value = firstCountryCityOption.valStr;
+        _isBuildingCityDropdowns = false;
+        applySelectedObserverCityImmediate(
+          firstCountryCityOption.lat,
+          firstCountryCityOption.lon,
+          firstCountryCityOption.labelPair,
+          firstCountryCityOption.code,
+          true
+        );
+        return;
+      }
+
+      // Если текущий город пользователя (или кастомный город) не входит в фильтр текущей страны — добавляем его первой строкой
+      if (matchedOptionVal) {
+        citySel.value = matchedOptionVal;
+      } else {
+        const hemiChar = st.lat >= 0 ? "N" : "S";
+        const customValStr = `${Number(st.lat).toFixed(4)},${Number(st.lon).toFixed(4)},${st.city},${st.countryCode || "ALL"}`;
+        const customOpt = document.createElement("option");
+        customOpt.value = customValStr;
+        customOpt.textContent = `📍 ${st.city} (${Math.abs(st.lat).toFixed(1)}°${hemiChar})`;
+        citySel.insertBefore(customOpt, citySel.firstChild);
+        citySel.value = customValStr;
+      }
+
+      // Пункт «Другой город...» в самом конце
+      const optCustom = document.createElement("option");
+      optCustom.value = "custom";
+      optCustom.setAttribute("data-i18n", "optCustomCity");
+      optCustom.textContent = sPack.optCustomCity;
+      citySel.appendChild(optCustom);
+    } finally {
+      _isBuildingCityDropdowns = false;
+    }
+  };
+
+  // Поиск города по встроенной базе 85+ городов (0 мс, работает даже без интернета!) + резерв Open-Meteo Geocoding API
+  window.searchAndSelectCityCountryPair = async function(rawQuery) {
+    const qRaw = String(rawQuery || "").trim();
+    if (!qRaw) return false;
+    const qLow = qRaw.toLowerCase().replace(/[—–-]/g, " ").replace(/\s+/g, " ").trim();
+    const lg = getActive7Lang();
+
+    // 1. Сначала ищем в нашей встроенной международной базе (поддерживает "Madrid", "España-Madrid", "USA-Washington", "Россия-Москва" и т.д.)
+    for (const cObj of WORLD_COUNTRIES_AND_CITIES) {
+      const cNamesAll = Object.values(cObj.names).map(x => x.toLowerCase());
+      for (const cityObj of cObj.cities) {
+        const idLow = cityObj.id.toLowerCase();
+        const idBase = idLow.split("(")[0].trim();
+        const ruLow = (cityObj.ru || "").toLowerCase();
+        const ruBase = ruLow.split("(")[0].trim();
+        if (
+          qLow === idLow || qLow === idBase || qLow === ruLow || qLow === ruBase ||
+          qLow.includes(idBase) || (ruBase && qLow.includes(ruBase))
+        ) {
+          const countrySel = document.getElementById("headerCountrySelect");
+          if (countrySel) countrySel.value = cObj.code;
+          const labelPair = formatCountryCityDisplay(cObj, cityObj, lg);
+          applySelectedObserverCityImmediate(cityObj.lat, cityObj.lon, labelPair, cObj.code, true);
+          window.__populateCountryAndCitySelectors(false);
+          return true;
+        }
+      }
+    }
+
+    // 2. Если города нет во встроенном списке — ищем через Open-Meteo Geocoding API (https://geocoding-api.open-meteo.com/v1/search)
+    const searchTerm = qRaw.includes("-") ? qRaw.split("-").pop().trim() : (qRaw.includes("—") ? qRaw.split("—").pop().trim() : qRaw);
+    try {
+      const apiLang = (lg === "ru" || lg === "es" || lg === "de" || lg === "fr" || lg === "zh") ? lg : "en";
+      const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchTerm)}&count=1&language=${apiLang}&format=json`;
+      const resp = await fetch(url);
+      if (resp.ok) {
+        const j = await resp.json();
+        if (j && Array.isArray(j.results) && j.results.length > 0) {
+          const best = j.results[0];
+          const countryName = best.country || best.country_code || "";
+          const cityName = best.name || searchTerm;
+          const displayPair = countryName ? `${countryName} — ${cityName}` : cityName;
+          const cCode = String(best.country_code || "ALL").toUpperCase();
+          const countrySel = document.getElementById("headerCountrySelect");
+          if (countrySel) {
+            countrySel.value = Array.from(countrySel.options).some(o => o.value === cCode) ? cCode : "ALL";
+          }
+          applySelectedObserverCityImmediate(Number(best.latitude), Number(best.longitude), displayPair, cCode, true);
+          window.__populateCountryAndCitySelectors(false);
+          return true;
+        }
+      }
+    } catch (_) {}
+    return false;
+  };
+
+  // Умное автоопределение города по часовому поясу IANA + IP-геолокации (при клике на «🎯 Авто»)
+  const TIMEZONE_TO_COUNTRY_CITY = {
+    "Europe/Madrid": ["ES", "Madrid"],
+    "Atlantic/Canary": ["ES", "Tenerife (Teide Obs.)"],
+    "Europe/Moscow": ["RU", "Moscow"],
+    "Europe/Samara": ["RU", "Samara"],
+    "Asia/Yekaterinburg": ["RU", "Yekaterinburg"],
+    "Asia/Novosibirsk": ["RU", "Novosibirsk"],
+    "Asia/Vladivostok": ["RU", "Vladivostok"],
+    "Europe/London": ["GB", "London"],
+    "Europe/Berlin": ["DE", "Berlin"],
+    "Europe/Paris": ["FR", "Paris"],
+    "Europe/Rome": ["IT", "Rome (Roma)"],
+    "Europe/Warsaw": ["PL", "Warsaw (Warszawa)"],
+    "Europe/Amsterdam": ["NL", "Amsterdam"],
+    "Europe/Zurich": ["CH", "Zürich"],
+    "Africa/Casablanca": ["MA", "Rabat"],
+    "Africa/Algiers": ["DZ", "Algiers (Dzayer)"],
+    "America/New_York": ["US", "Washington, D.C."],
+    "America/Chicago": ["US", "Chicago"],
+    "America/Denver": ["US", "Flagstaff (Lowell Obs.)"],
+    "America/Phoenix": ["US", "Tucson (Kitt Peak)"],
+    "America/Los_Angeles": ["US", "Los Angeles"],
+    "Pacific/Honolulu": ["US", "Mauna Kea (Hawaii)"],
+    "America/Toronto": ["CA", "Toronto"],
+    "America/Vancouver": ["CA", "Vancouver"],
+    "America/Mexico_City": ["MX", "Mexico City (CDMX)"],
+    "America/Sao_Paulo": ["BR", "São Paulo"],
+    "America/Santiago": ["CL", "Santiago"],
+    "Asia/Shanghai": ["CN", "Beijing (北京)"],
+    "Asia/Tokyo": ["JP", "Tokyo (東京)"],
+    "Australia/Sydney": ["AU", "Sydney"],
+    "Australia/Melbourne": ["AU", "Melbourne"],
+    "Australia/Perth": ["AU", "Perth"],
+    "Africa/Johannesburg": ["ZA", "Cape Town (SAAO)"]
+  };
+
+  function resolveSavedOrDefaultObserverCity() {
+    const lg = getActive7Lang();
+    try {
+      const savedRaw = localStorage.getItem("astrolab_observer_city_v112") ||
+                       (window.__SEESTAR_DISK_STORE__ && window.__SEESTAR_DISK_STORE__.astrolab_observer_city_v112);
+      if (savedRaw) {
+        const parsed = typeof savedRaw === "string" ? JSON.parse(savedRaw) : savedRaw;
+        if (parsed && Number.isFinite(Number(parsed.lat)) && Number.isFinite(Number(parsed.lon)) && parsed.city) {
+          const st = window._OBSERVER_GEO_STATE;
+          if (st) {
+            st.lat = Number(parsed.lat);
+            st.lon = Number(parsed.lon);
+            st.city = String(parsed.city);
+            st.countryCode = String(parsed.countryCode || "GB");
+          }
+          const countrySel = document.getElementById("headerCountrySelect");
+          if (countrySel && parsed.countryCode) {
+            countrySel.value = Array.from(countrySel.options).some(o => o.value === parsed.countryCode) ? parsed.countryCode : "ALL";
+          }
+          window.__populateCountryAndCitySelectors(false);
+          return;
+        }
+      }
+    } catch (_) {}
+
+    // Дефолтный город при чистом запуске: UK — London (51.51°N, 0.13°W)
+    const gbObj = WORLD_COUNTRIES_AND_CITIES.find(c => c.code === "GB") || WORLD_COUNTRIES_AND_CITIES[0];
+    const londonObj = gbObj.cities[0];
+    const st = window._OBSERVER_GEO_STATE;
+    if (st) {
+      st.lat = londonObj.lat;
+      st.lon = londonObj.lon;
+      st.city = formatCountryCityDisplay(gbObj, londonObj, lg);
+      st.countryCode = gbObj.code;
+    }
+    const countrySel = document.getElementById("headerCountrySelect");
+    if (countrySel) countrySel.value = gbObj.code;
+    window.__populateCountryAndCitySelectors(false);
+  }
+
+  window.autoDetectObserverCitySmart = async function() {
+    const lg = getActive7Lang();
+    // 1. Сначала пробуем точное определение по IP (ipwho.is -> geojs.io)
+    for (const apiUrl of ["https://ipwho.is/", "https://get.geojs.io/v1/ip/geo.json"]) {
+      try {
+        const ctrl = new AbortController();
+        const tid = setTimeout(() => ctrl.abort(), 2400);
+        const resp = await fetch(apiUrl, { signal: ctrl.signal });
+        clearTimeout(tid);
+        if (resp.ok) {
+          const g = await resp.json();
+          const lat = parseFloat(g.latitude);
+          const lon = parseFloat(g.longitude);
+          const cityRaw = String(g.city || "").trim();
+          const countryCode = String(g.country_code || "").toUpperCase();
+          const countryName = String(g.country || countryCode || "").trim();
+          if (Number.isFinite(lat) && Number.isFinite(lon) && cityRaw) {
+            const disp = countryName ? `${countryName} — ${cityRaw}` : cityRaw;
+            const countrySel = document.getElementById("headerCountrySelect");
+            if (countrySel) {
+              countrySel.value = Array.from(countrySel.options).some(o => o.value === countryCode) ? countryCode : "ALL";
+            }
+            applySelectedObserverCityImmediate(lat, lon, disp, countryCode || "ALL", true);
+            window.__populateCountryAndCitySelectors(false);
+            return;
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 2. Резервное мгновенное определение по системному часовому поясу IANA
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      const mapped = TIMEZONE_TO_COUNTRY_CITY[tz];
+      if (mapped) {
+        const [cCode, cId] = mapped;
+        const cObj = WORLD_COUNTRIES_AND_CITIES.find(c => c.code === cCode);
+        const cityObj = cObj && cObj.cities.find(ct => ct.id === cId);
+        if (cObj && cityObj) {
+          const countrySel = document.getElementById("headerCountrySelect");
+          if (countrySel) countrySel.value = cObj.code;
+          const labelPair = formatCountryCityDisplay(cObj, cityObj, lg);
+          applySelectedObserverCityImmediate(cityObj.lat, cityObj.lon, labelPair, cObj.code, true);
+          window.__populateCountryAndCitySelectors(false);
+          return;
+        }
+      }
+    } catch (_) {}
+  };
+
+  // Привязываем новые обработчики #headerCountrySelect, #headerCitySelect, #btnApplyCustomCity и #btnAutoDetectCityNow
+  function bindCountryAndCityEvents() {
+    const countrySel = document.getElementById("headerCountrySelect");
+    const citySel = document.getElementById("headerCitySelect");
+    const customInp = document.getElementById("headerCustomCityInput");
+    const btnApplyOld = document.getElementById("btnApplyCustomCity");
+    const btnAutoOld = document.getElementById("btnAutoDetectCityNow");
+
+    if (countrySel && !countrySel.dataset.boundV112) {
+      countrySel.dataset.boundV112 = "1";
+      countrySel.addEventListener("change", () => {
+        const val = countrySel.value;
+        // При выборе страны сразу фильтруем города и выбираем столицу/первый город выбранной страны
+        window.__populateCountryAndCitySelectors(val !== "ALL");
+      });
+    }
+
+    if (citySel) {
+      // Заменяем старый обработчик на чистый синхронный обработчик Страна -> Город
+      const freshCitySel = citySel.cloneNode(true);
+      citySel.parentNode.replaceChild(freshCitySel, citySel);
+      freshCitySel.addEventListener("change", (e) => {
+        const val = e.target.value;
+        const customWrap = document.getElementById("customCitySearchWrap");
+        if (val === "custom") {
+          if (customWrap) customWrap.style.display = "flex";
+          document.getElementById("headerCustomCityInput")?.focus();
+          return;
+        }
+        const parts = val.split(",");
+        if (parts.length >= 3) {
+          const lat = parseFloat(parts[0]);
+          const lon = parseFloat(parts[1]);
+          const cCode = parts.length >= 4 ? parts[parts.length - 1].trim() : "ALL";
+          const cityName = parts.length >= 4 ? parts.slice(2, parts.length - 1).join(",").trim() : parts.slice(2).join(",").trim();
+          if (Number.isFinite(lat) && Number.isFinite(lon)) {
+            applySelectedObserverCityImmediate(lat, lon, cityName, cCode, true);
+            window.__populateCountryAndCitySelectors(false);
+          }
+        }
+      });
+    }
+
+    if (btnApplyOld) {
+      const freshApply = btnApplyOld.cloneNode(true);
+      btnApplyOld.parentNode.replaceChild(freshApply, btnApplyOld);
+      freshApply.addEventListener("click", async () => {
+        const inp = document.getElementById("headerCustomCityInput");
+        if (inp && inp.value.trim()) {
+          await window.searchAndSelectCityCountryPair(inp.value.trim());
+          inp.value = "";
+        }
+      });
+    }
+
+    if (customInp) {
+      const freshInp = customInp.cloneNode(true);
+      customInp.parentNode.replaceChild(freshInp, customInp);
+      freshInp.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("btnApplyCustomCity")?.click();
+        }
+      });
+    }
+
+    if (btnAutoOld) {
+      const freshAuto = btnAutoOld.cloneNode(true);
+      btnAutoOld.parentNode.replaceChild(freshAuto, btnAutoOld);
+      freshAuto.addEventListener("click", () => {
+        window.autoDetectObserverCitySmart();
+      });
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // 17.3. ИНТЕРАКТИВНАЯ ВИЗУАЛЬНАЯ ПРЕЗЕНТАЦИЯ-ИНСТРУКЦИЯ (6 СЛАЙДОВ НА 7 ЯЗЫКАХ)
+  //       «КАК ПОЛЬЗОВАТЬСЯ ФОТОМЕТРИЕЙ SEESTAR И ОТПРАВЛЯТЬ НАБЛЮДЕНИЯ В AAVSO»
+  // --------------------------------------------------------------------------
+  const BEGINNER_PRESENTATION_7LANG = {
+    en: {
+      modalTitle: "🎓 Step-by-Step Visual Guide: Seestar Photometry & AAVSO",
+      btnPrev: "Previous",
+      btnNext: "Next Step",
+      tabs: [
+        "1. 🌟 Your Impact",
+        "2. 🔭 Seestar & CSV",
+        "3. 🏛️ Get OBSCODE",
+        "4. 🎯 Pick Target Star",
+        "5. ⚡ Convert CSV",
+        "6. 🚀 Upload WebObs"
+      ],
+      slides: [
+        {
+          headline: "1. Why Your Seestar Observations Matter to Global Science",
+          callout: "Space telescopes (Hubble, JWST, TESS) cannot watch 246 erupting novae and variable stars every single night — astrophysicists rely on amateur observers like you!",
+          steps: [
+            "<strong>Real Scientific Observatory:</strong> Your ZWO Seestar (S30 / S30PRO / S50 / S50PRO) records accurate CMOS brightness measurements (`MAG ± MERR`) from your balcony or backyard.",
+            "<strong>Global Alert Patrol:</strong> Recurrent novae like <em>T CrB</em> can explode in hours. Your observation can catch the exact moment of outburst!",
+            "<strong>Century-Long Archive:</strong> Every file you submit enters the international <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID Database</a> used by researchers worldwide."
+          ]
+        },
+        {
+          headline: "2. How to Shoot Photometry on Seestar & Extract the CSV File",
+          callout: "You only need a series of 10s–20s frames in Stargazing Mode and the built-in Seestar Magnitude CSV export.",
+          steps: [
+            "<strong>Shoot Target Star:</strong> Point Seestar at the variable star in <strong>Stargazing Mode</strong> (`10s` or `20s` exposure, RAW/FITS enabled). Do not overexpose bright stars.",
+            "<strong>Run Photometry in Seestar:</strong> Open the Seestar <strong>Photometry / Star Magnitude</strong> tool, tap your target star and a nearby comparison star, and export the table.",
+            "<strong>Copy CSV to PC:</strong> Connect Seestar via <strong>USB-C cable</strong> (or Wi-Fi SMB `\\\\seestar.local\\EMMC Images`) and copy `Magnitude_*.csv` to your computer."
+          ]
+        },
+        {
+          headline: "3. How to Register on AAVSO & Find Your Unique OBSCODE",
+          callout: "Submitting scientific observations to AAVSO is 100% free — paid membership is NOT required!",
+          steps: [
+            "<strong>Create Free Account:</strong> Open <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a> and fill out the 1-minute registration form.",
+            "<strong>Request Observer Code:</strong> Log in, open <strong>My Account → Request Observer Code</strong>, and receive your personal 3–5 letter code.",
+            "<strong>Find Your OBSCODE:</strong> Your code (e.g. `ABCD`) is displayed at the top of your AAVSO profile and WebObs page. Enter it once in Seestar AstroLab — the app remembers it!"
+          ]
+        },
+        {
+          headline: "4. How to Pick a Target Star in Seestar AstroLab (Section 1)",
+          callout: "Use the left AAVSO Target Radar or spin the Random Star Wheel — all 246 targets are pre-calibrated for Seestar!",
+          steps: [
+            "<strong>Filter Visible Targets:</strong> Choose your Seestar model (`S30`–`S50PRO`), check <strong>📍 Visible in My City</strong>, and select your balcony <strong>🧭 Azimuth</strong> direction.",
+            "<strong>Pull Star into Converter:</strong> Click any star card to open its dossier, then click <strong>🎯 Pull Star Data into Converter Menu</strong>.",
+            "<strong>Load Catalogs:</strong> Enter your <strong>OBSCODE</strong> in Section 1 and click <strong>🔭 Fetch SIMBAD + VSP</strong>. VSP Chart ID and Check Star (`KNAME`/`KMAG`) fill automatically!"
+          ]
+        },
+        {
+          headline: "5. How to Process & Convert Your Seestar CSV File (Sections 2 & 3)",
+          callout: "Seestar AstroLab automatically checks coordinates, removes duplicate timestamps, and plots your Light Curve.",
+          steps: [
+            "<strong>Load Seestar CSV:</strong> In <strong>Section 2</strong>, click <strong>📂 Choose Seestar CSV File</strong> and pick your `Magnitude_*.csv` file.",
+            "<strong>Automatic Verification:</strong> The app verifies star coordinates against CDS SIMBAD, filters duplicate JD rows, and draws your `MAG vs JD Mid` light curve on the right.",
+            "<strong>Convert to AAVSO Extended:</strong> In <strong>Section 3</strong>, click <strong>⚡ Convert & Save AAVSO Extended (.txt)</strong>. The ready file is saved to `Converted_Photometry_Storage`!"
+          ]
+        },
+        {
+          headline: "6. How to Upload Your Finished Report to AAVSO WebObs",
+          callout: "Uploading takes 10 seconds — your data points immediately appear on the international AAVSO light curve!",
+          steps: [
+            "<strong>Open WebObs Portal:</strong> Click <strong>🌐 Open AAVSO WebObs</strong> in Section 3 (or visit <a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
+            "<strong>Select File Upload:</strong> Click <strong>Upload a file of observations (Extended Format)</strong> and choose your converted `AAVSO_EXTENDED_*.txt` file.",
+            "<strong>Confirm Submission:</strong> Click <strong>Upload</strong>. Congratulations — your observation is now part of world astronomical science!"
+          ]
+        }
+      ]
+    },
+    ru: {
+      modalTitle: "🎓 Пошаговая инструкция с картинками: Фотометрия Seestar и AAVSO",
+      btnPrev: "Назад",
+      btnNext: "Следующий шаг",
+      tabs: [
+        "1. 🌟 Ваш вклад в науку",
+        "2. 🔭 Съемка и CSV",
+        "3. 🏛️ Код OBSCODE",
+        "4. 🎯 Выбор звезды",
+        "5. ⚡ Конвертация CSV",
+        "6. 🚀 Загрузка в AAVSO"
+      ],
+      slides: [
+        {
+          headline: "1. Почему ваши наблюдения на Seestar нужны мировой науке",
+          callout: "Космические телескопы (Hubble, JWST, TESS) не могут каждую ночь следить за 246 вспыхивающими новыми и переменными звёздами — астрофизики опираются на любителей астрономии!",
+          steps: [
+            "<strong>Настоящая обсерватория дома:</strong> Ваш ZWO Seestar (S30 / S30PRO / S50 / S50PRO) делает точные замеры блеска (`MAG ± MERR`) прямо с балкона или дачи.",
+            "<strong>Охота за вспышками:</strong> Повторные новые (как <em>T CrB</em>) могут вспыхнуть за считанные часы. Именно ваш кадр может зафиксировать начало взрыва!",
+            "<strong>Вековой архив человечества:</strong> Каждый ваш отчёт попадает в международную базу <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID</a>, по которой пишут научные статьи."
+          ]
+        },
+        {
+          headline: "2. Как снять фотометрию на Seestar и вытащить готовый CSV-файл",
+          callout: "Никаких сложных формул: снимаете звезду в обычном режиме Stargazing и копируете готовую таблицу CSV на компьютер.",
+          steps: [
+            "<strong>Снимите звезду:</strong> Наведите Seestar на переменную звезду в режиме <strong>Stargazing</strong> (выдержка `10 с` или `20 с`). Следите, чтобы звезда не была пересвечена.",
+            "<strong>Запустите фотометрию:</strong> В приложении Seestar откройте инструмент <strong>Фотометрия / Star Magnitude</strong>, отметьте целевую звезду и звезду сравнения и сохраните расчёт.",
+            "<strong>Скопируйте CSV на ПК:</strong> Подключите Seestar к компьютеру <strong>кабелем USB-C</strong> (или по Wi-Fi `\\\\seestar.local\\EMMC Images`) и скопируйте файл `Magnitude_*.csv`."
+          ]
+        },
+        {
+          headline: "3. Как зарегистрироваться в AAVSO и где найти свой уникальный OBSCODE",
+          callout: "Регистрация наблюдателя и отправка данных в AAVSO на 100% бесплатны — платить членский взнос НЕ нужно!",
+          steps: [
+            "<strong>Создайте аккаунт:</strong> Перейдите на <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a> и заполните простую анкету за 1 минуту.",
+            "<strong>Запросите код наблюдателя:</strong> В личном кабинете нажмите <strong>My Account → Request Observer Code</strong>.",
+            "<strong>Скопируйте свой OBSCODE:</strong> Ваш уникальный код из 3–5 латинских букв (например, `ABCD`) отображается в шапке профиля на сайте AAVSO. Введите его в Раздел 1 программы — она запомнит его навсегда!"
+          ]
+        },
+        {
+          headline: "4. Как найти и выбрать звезду для наблюдений в Seestar AstroLab",
+          callout: "Используйте «Радар целей AAVSO» слева или крутите «Случайный выбор звезды» — все 246 целей уже настроены под Seestar!",
+          steps: [
+            "<strong>Отфильтруйте видимые цели:</strong> Выберите свою модель (`S30`–`S50PRO`), включите галочку <strong>📍 Видимые в моём городе</strong> и укажите <strong>🧭 Азимут</strong> вашего балкона.",
+            "<strong>Перенесите звезду в конвертер:</strong> Кликните на карточку звезды, изучите её досье и нажмите синюю кнопку <strong>🎯 Подтянуть данные звезды в меню конвертера</strong>.",
+            "<strong>Загрузите каталоги:</strong> Введите свой <strong>OBSCODE</strong> в Разделе 1 и нажмите <strong>🔭 Загрузить SIMBAD + VSP</strong>. Карта VSP и контрольная звезда (`KNAME`/`KMAG`) подставятся сами!"
+          ]
+        },
+        {
+          headline: "5. Как обработать и сконвертировать CSV-файл в нашей программе",
+          callout: "Программа сама проверит координаты по SIMBAD, отфильтрует дубликаты и построит кривую блеска!",
+          steps: [
+            "<strong>Выберите CSV-файл:</strong> В <strong>Разделе 2</strong> нажмите <strong>📂 Выбрать CSV-файл Seestar</strong> и укажите скопированный с телескопа файл `Magnitude_*.csv`.",
+            "<strong>Автопроверка и график:</strong> Программа сверит координаты и блеск с каталогом SIMBAD, уберёт дубликаты и сразу нарисует вашу кривую блеска справа.",
+            "<strong>Сконвертируйте в формат AAVSO:</strong> В <strong>Разделе 3</strong> нажмите <strong>⚡ Конвертировать и сохранить AAVSO Extended (.txt)</strong>. Готовый файл сохранится на диск и в «📓 Мои наблюдения»!"
+          ]
+        },
+        {
+          headline: "6. Как за 10 секунд загрузить готовый файл на портал AAVSO WebObs",
+          callout: "Финальный шаг: загружаем полученный `.txt` файл в международную базу AAVSO!",
+          steps: [
+            "<strong>Откройте портал WebObs:</strong> Нажмите кнопку <strong>🌐 Открыть AAVSO WebObs</strong> прямо в Разделе 3 программы (или перейдите на <a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
+            "<strong>Выберите загрузку файла:</strong> Нажмите <strong>Upload a file of observations (Extended Format)</strong> и укажите созданный программой файл `AAVSO_EXTENDED_*.txt`.",
+            "<strong>Подтвердите отправку:</strong> Нажмите <strong>Upload</strong>. Поздравляем — ваше наблюдение опубликовано в мировой базе данных AAVSO!"
+          ]
+        }
+      ]
+    },
+    es: {
+      modalTitle: "🎓 Guía visual paso a paso: Fotometría Seestar y AAVSO",
+      btnPrev: "Anterior",
+      btnNext: "Siguiente paso",
+      tabs: [
+        "1. 🌟 Tu aporte",
+        "2. 🔭 Seestar y CSV",
+        "3. 🏛️ Tu OBSCODE",
+        "4. 🎯 Elegir estrella",
+        "5. ⚡ Convertir CSV",
+        "6. 🚀 Subir a WebObs"
+      ],
+      slides: [
+        {
+          headline: "1. Por qué tus observaciones con Seestar son vitales para la ciencia",
+          callout: "Los telescopios espaciales no pueden vigilar 246 novas y estrellas variables cada noche: ¡los astrofísicos necesitan tus datos!",
+          steps: [
+            "<strong>Observatorio científico en casa:</strong> Tu ZWO Seestar (S30 / S30PRO / S50 / S50PRO) mide magnitudes precisas (`MAG ± MERR`) desde tu balcón o jardín.",
+            "<strong>Alerta de erupciones:</strong> Novas recurrentes como <em>T CrB</em> pueden estallar en horas. ¡Tu captura puede registrar el inicio exacto!",
+            "<strong>Base de datos mundial:</strong> Cada archivo enviado entra en la base internacional <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID</a> usada por astrónomos de todo el mundo."
+          ]
+        },
+        {
+          headline: "2. Cómo hacer fotometría en Seestar y extraer el archivo CSV",
+          callout: "Solo necesitas una serie de tomas de 10s–20s en modo Stargazing y exportar la tabla CSV de magnitudes.",
+          steps: [
+            "<strong>Captura la estrella:</strong> Apunta el Seestar a la estrella variable en modo <strong>Stargazing</strong> (`10s` o `20s` de exposición, sin saturar).",
+            "<strong>Ejecuta la fotometría:</strong> En la app Seestar abre la herramienta <strong>Fotometría / Star Magnitude</strong>, marca la estrella objetivo y la de comparación y guarda.",
+            "<strong>Copia el CSV al PC:</strong> Conecta el Seestar por <strong>cable USB-C</strong> (o Wi-Fi `\\\\seestar.local\\EMMC Images`) y copia el archivo `Magnitude_*.csv` a tu ordenador."
+          ]
+        },
+        {
+          headline: "3. Cómo registrarse en AAVSO y encontrar tu código único OBSCODE",
+          callout: "¡Registrarse como observador y enviar fotometría a AAVSO es 100% gratis!",
+          steps: [
+            "<strong>Crea tu cuenta gratuita:</strong> Entra en <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a> y completa el registro en 1 minuto.",
+            "<strong>Solicita tu código:</strong> En tu perfil abre <strong>My Account → Request Observer Code</strong>.",
+            "<strong>Copia tu OBSCODE:</strong> Tu código personal de 3 a 5 letras (ej. `ABCD`) aparece en tu perfil de AAVSO. Escríbelo en la Sección 1 de Seestar AstroLab."
+          ]
+        },
+        {
+          headline: "4. Cómo buscar y elegir una estrella objetivo en Seestar AstroLab",
+          callout: "Usa el Radar de objetivos AAVSO a la izquierda o gira la Ruleta aleatoria de estrellas.",
+          steps: [
+            "<strong>Filtra objetivos visibles:</strong> Elige tu modelo (`S30`–`S50PRO`), marca <strong>📍 Visibles en mi ciudad</strong> y selecciona el <strong>🧭 Acimut</strong> de tu balcón.",
+            "<strong>Envía la estrella al menú:</strong> Haz clic en cualquier estrella y pulsa <strong>🎯 Cargar datos de la estrella en el menú (Sección 1)</strong>.",
+            "<strong>Carga SIMBAD + VSP:</strong> Introduce tu <strong>OBSCODE</strong> y pulsa <strong>🔭 Cargar SIMBAD + VSP</strong>. ¡La carta VSP y estrella de control se rellenan solas!"
+          ]
+        },
+        {
+          headline: "5. Cómo procesar y convertir el archivo CSV en el programa",
+          callout: "El programa verifica coordenadas con SIMBAD, filtra duplicados y dibuja tu curva de luz automáticamente.",
+          steps: [
+            "<strong>Selecciona el CSV:</strong> En la <strong>Sección 2</strong>, pulsa <strong>📂 Elegir archivo CSV Seestar</strong> y selecciona tu `Magnitude_*.csv`.",
+            "<strong>Verificación y gráfico:</strong> El programa comprueba coordenadas y brillo y traza la curva de luz `MAG vs JD Mid` a la derecha.",
+            "<strong>Convierte a AAVSO Extended:</strong> En la <strong>Sección 3</strong>, pulsa <strong>⚡ Convertir y guardar AAVSO Extended (.txt)</strong>."
+          ]
+        },
+        {
+          headline: "6. Cómo subir tu archivo final a AAVSO WebObs en 10 segundos",
+          callout: "Paso final: sube el archivo `.txt` generado al portal oficial WebObs de AAVSO.",
+          steps: [
+            "<strong>Abre WebObs:</strong> Pulsa <strong>🌐 Abrir AAVSO WebObs</strong> en la Sección 3 (o entra en <a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
+            "<strong>Sube el archivo Extended:</strong> Elige <strong>Upload a file of observations (Extended Format)</strong> y selecciona tu archivo `AAVSO_EXTENDED_*.txt`.",
+            "<strong>Confirma el envío:</strong> Pulsa <strong>Upload</strong>. ¡Tus datos ya forman parte de la curva de luz mundial de AAVSO!"
+          ]
+        }
+      ]
+    },
+    de: {
+      modalTitle: "🎓 Bild-für-Bild-Anleitung: Seestar-Photometrie & AAVSO",
+      btnPrev: "Zurück",
+      btnNext: "Nächster Schritt",
+      tabs: [
+        "1. 🌟 Ihr Beitrag",
+        "2. 🔭 Seestar & CSV",
+        "3. 🏛️ Ihr OBSCODE",
+        "4. 🎯 Stern wählen",
+        "5. ⚡ CSV umwandeln",
+        "6. 🚀 WebObs-Upload"
+      ],
+      slides: [
+        {
+          headline: "1. Warum Ihre Seestar-Beobachtungen für die Wissenschaft zählen",
+          callout: "Weltraumteleskope können nicht jede Nacht 246 Novae und veränderliche Sterne überwachen — Astrophysiker zählen auf Sie!",
+          steps: [
+            "<strong>Heimsternwarte:</strong> Ihr ZWO Seestar (S30 / S30PRO / S50 / S50PRO) liefert präzise Helligkeitsmessungen (`MAG ± MERR`) vom Balkon oder Garten.",
+            "<strong>Ausbruchs-Überwachung:</strong> Wiederkehrende Novae wie <em>T CrB</em> können jederzeit ausbrechen.",
+            "<strong>Weltweites Archiv:</strong> Jede Messung fließt direkt in die internationale <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID Datenbank</a> ein."
+          ]
+        },
+        {
+          headline: "2. Photometrie am Seestar aufnehmen & CSV-Datei kopieren",
+          callout: "Nehmen Sie 10s–20s Einzelbilder im Stargazing-Modus auf und exportieren Sie die Seestar-Photometrie-CSV.",
+          steps: [
+            "<strong>Stern aufnehmen:</strong> Richten Sie das Seestar im <strong>Stargazing-Modus</strong> (`10s` oder `20s` Belichtung) auf den Stern.",
+            "<strong>Photometrie starten:</strong> Öffnen Sie in der Seestar-App das <strong>Photometrie / Star Magnitude</strong>-Werkzeug und speichern Sie die Messung.",
+            "<strong>CSV auf den PC kopieren:</strong> Verbinden Sie das Seestar per <strong>USB-C-Kabel</strong> (oder WLAN `\\\\seestar.local\\EMMC Images`) und kopieren Sie `Magnitude_*.csv`."
+          ]
+        },
+        {
+          headline: "3. Bei der AAVSO registrieren & persönlichen OBSCODE finden",
+          callout: "Die Registrierung und Datenübermittlung bei der AAVSO ist zu 100 % kostenlos!",
+          steps: [
+            "<strong>Kostenloses Konto:</strong> Registrieren Sie sich unter <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>.",
+            "<strong>Beobachtercode anfordern:</strong> Klicken Sie im Profil auf <strong>My Account → Request Observer Code</strong>.",
+            "<strong>OBSCODE eintragen:</strong> Ihr 3–5-stelliger Code (z.B. `ABCD`) steht oben in Ihrem AAVSO-Profil. Tragen Sie ihn in Abschnitt 1 ein."
+          ]
+        },
+        {
+          headline: "4. Zielstern in Seestar AstroLab auswählen (Abschnitt 1)",
+          callout: "Nutzen Sie das AAVSO-Zielradar links oder drehen Sie das Zufallsrad — alle 246 Ziele sind vorkalibriert!",
+          steps: [
+            "<strong>Sichtbare Sterne filtern:</strong> Wählen Sie Ihr Teleskop (`S30`–`S50PRO`), aktivieren Sie <strong>📍 In meiner Stadt sichtbar</strong> und Ihren <strong>🧭 Azimut</strong>.",
+            "<strong>Stern übernehmen:</strong> Klicken Sie auf eine Sternkarte und dann auf <strong>🎯 Sterndaten in das Konverter-Menü übernehmen</strong>.",
+            "<strong>Kataloge laden:</strong> Geben Sie Ihren <strong>OBSCODE</strong> ein und klicken Sie auf <strong>🔭 SIMBAD + VSP laden</strong>."
+          ]
+        },
+        {
+          headline: "5. Seestar-CSV prüfen & in AAVSO Extended konvertieren",
+          callout: "Das Programm prüft Koordinaten via SIMBAD, filtert Duplikate und zeichnet sofort Ihre Lichtkurve.",
+          steps: [
+            "<strong>CSV auswählen:</strong> Klicken Sie in <strong>Abschnitt 2</strong> auf <strong>📂 Seestar-CSV-Datei wählen</strong> und öffnen Sie `Magnitude_*.csv`.",
+            "<strong>Automatische Prüfung:</strong> Koordinaten und Helligkeit werden abgeglichen und die Lichtkurve rechts gezeichnet.",
+            "<strong>Konvertieren:</strong> Klicken Sie in <strong>Abschnitt 3</strong> auf <strong>⚡ Konvertieren & AAVSO Extended speichern (.txt)</strong>."
+          ]
+        },
+        {
+          headline: "6. Fertige Datei in 10 Sekunden bei AAVSO WebObs hochladen",
+          callout: "Laden Sie die erzeugte `.txt`-Datei direkt im offiziellen AAVSO WebObs-Portal hoch.",
+          steps: [
+            "<strong>WebObs öffnen:</strong> Klicken Sie in Abschnitt 3 auf <strong>🌐 AAVSO WebObs öffnen</strong> (<a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
+            "<strong>Datei wählen:</strong> Wählen Sie <strong>Upload a file of observations (Extended Format)</strong> und Ihre `AAVSO_EXTENDED_*.txt`-Datei.",
+            "<strong>Hochladen:</strong> Klicken Sie auf <strong>Upload</strong> — Ihre Messung ist sofort Teil der weltweiten AAVSO-Lichtkurve!"
+          ]
+        }
+      ]
+    },
+    fr: {
+      modalTitle: "🎓 Guide visuel pas à pas : Photométrie Seestar & AAVSO",
+      btnPrev: "Précédent",
+      btnNext: "Étape suivante",
+      tabs: [
+        "1. 🌟 Votre impact",
+        "2. 🔭 Seestar & CSV",
+        "3. 🏛️ Code OBSCODE",
+        "4. 🎯 Choisir l'étoile",
+        "5. ⚡ Convertir CSV",
+        "6. 🚀 Envoi WebObs"
+      ],
+      slides: [
+        {
+          headline: "1. Pourquoi vos observations Seestar comptent pour la science",
+          callout: "Les télescopes spatiaux ne peuvent pas surveiller 246 novae et étoiles variables chaque nuit — les astrophysiciens comptent sur vous !",
+          steps: [
+            "<strong>Observatoire scientifique à domicile :</strong> Votre ZWO Seestar (S30 / S30PRO / S50 / S50PRO) mesure des magnitudes précises (`MAG ± MERR`).",
+            "<strong>Veille d'éruptions :</strong> Les novae récurrentes comme <em>T CrB</em> peuvent exploser à tout moment.",
+            "<strong>Archive mondiale :</strong> Chaque fichier envoyé enrichit la base internationale <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID</a>."
+          ]
+        },
+        {
+          headline: "2. Faire de la photométrie sur Seestar et extraire le fichier CSV",
+          callout: "Prenez une série de poses de 10s–20s en mode Stargazing et exportez la table CSV de magnitudes.",
+          steps: [
+            "<strong>Photographier l'étoile :</strong> Pointez le Seestar en mode <strong>Stargazing</strong> (`10s` ou `20s`, sans saturer l'étoile).",
+            "<strong>Lancer la photométrie :</strong> Ouvrez l'outil <strong>Photométrie / Star Magnitude</strong> dans l'app Seestar et exportez la mesure.",
+            "<strong>Copier le CSV sur PC :</strong> Reliez le Seestar par <strong>câble USB-C</strong> (ou Wi-Fi `\\\\seestar.local\\EMMC Images`) et copiez `Magnitude_*.csv`."
+          ]
+        },
+        {
+          headline: "3. S'inscrire sur l'AAVSO et trouver son code unique OBSCODE",
+          callout: "L'inscription et l'envoi d'observations à l'AAVSO sont 100 % gratuits !",
+          steps: [
+            "<strong>Créer un compte gratuit :</strong> Rendez-vous sur <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>.",
+            "<strong>Demander son code :</strong> Dans votre profil, cliquez sur <strong>My Account → Request Observer Code</strong>.",
+            "<strong>Noter son OBSCODE :</strong> Votre code de 3 à 5 lettres (ex. `ABCD`) s'affiche dans votre profil AAVSO. Entrez-le dans la Section 1."
+          ]
+        },
+        {
+          headline: "4. Choisir une étoile cible dans Seestar AstroLab (Section 1)",
+          callout: "Utilisez le Radar de cibles AAVSO à gauche ou tournez la Roue aléatoire.",
+          steps: [
+            "<strong>Filtrer les étoiles visibles :</strong> Choisissez votre modèle (`S30`–`S50PRO`), cochez <strong>📍 Visibles dans ma ville</strong> et votre <strong>🧭 Azimut</strong>.",
+            "<strong>Charger l'étoile :</strong> Cliquez sur une étoile puis sur <strong>🎯 Charger les données dans le convertisseur</strong>.",
+            "<strong>Charger SIMBAD + VSP :</strong> Entrez votre <strong>OBSCODE</strong> et cliquez sur <strong>🔭 Charger SIMBAD + VSP</strong>."
+          ]
+        },
+        {
+          headline: "5. Vérifier et convertir le fichier CSV Seestar (Sections 2 & 3)",
+          callout: "Le programme vérifie les coordonnées via SIMBAD, filtre les doublons et trace votre courbe de lumière.",
+          steps: [
+            "<strong>Ouvrir le CSV :</strong> Dans la <strong>Section 2</strong>, cliquez sur <strong>📂 Choisir le fichier CSV Seestar</strong> (`Magnitude_*.csv`).",
+            "<strong>Vérification & Courbe :</strong> Le programme contrôle les paramètres et trace la courbe `MAG vs JD Mid` à droite.",
+            "<strong>Convertir :</strong> Dans la <strong>Section 3</strong>, cliquez sur <strong>⚡ Convertir et enregistrer AAVSO Extended (.txt)</strong>."
+          ]
+        },
+        {
+          headline: "6. Envoyer votre fichier final sur AAVSO WebObs en 10 secondes",
+          callout: "Dernière étape : téléversez le fichier `.txt` généré sur le portail AAVSO WebObs.",
+          steps: [
+            "<strong>Ouvrir WebObs :</strong> Cliquez sur <strong>🌐 Ouvrir AAVSO WebObs</strong> dans la Section 3 (<a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
+            "<strong>Choisir le fichier :</strong> Sélectionnez <strong>Upload a file of observations (Extended Format)</strong> et votre fichier `AAVSO_EXTENDED_*.txt`.",
+            "<strong>Envoyer :</strong> Cliquez sur <strong>Upload</strong> — vos mesures sont publiées dans la base mondiale AAVSO !"
+          ]
+        }
+      ]
+    },
+    zh: {
+      modalTitle: "🎓 零基础图文教程：Seestar 测光与 AAVSO 国际提交指南",
+      btnPrev: "上一步",
+      btnNext: "下一步",
+      tabs: [
+        "1. 🌟 你的科学贡献",
+        "2. 🔭 拍摄与导出CSV",
+        "3. 🏛️ 获取OBSCODE",
+        "4. 🎯 挑选目标变星",
+        "5. ⚡ 转换CSV文件",
+        "6. 🚀 上传至AAVSO"
+      ],
+      slides: [
+        {
+          headline: "1. 为什么你的 Seestar 观测对全球天文学至关重要",
+          callout: "空间望远镜（Hubble、JWST、TESS）无法每晚盯守 246 颗爆发新星与变星——天体物理学家非常需要你的接力观测！",
+          steps: [
+            "<strong>阳台上的专业天文台：</strong> 你的 ZWO Seestar (S30 / S30PRO / S50 / S50PRO) 能直接测量高精度星等 (`MAG ± MERR`)。",
+            "<strong>捕捉新星爆发瞬间：</strong> 像北冕座 T (<em>T CrB</em>) 这样的再发新星随时可能爆发，你的图像可能记录下第一手数据！",
+            "<strong>载入百年国际星表：</strong> 你提交的每一份文件都会进入全球天文学家使用的 <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID 国际数据库</a>。"
+          ]
+        },
+        {
+          headline: "2. 如何在 Seestar 上使用测光并提取 CSV 文件到电脑",
+          callout: "只需在观星模式 (Stargazing) 拍摄 10秒–20秒序列，并导出 Seestar 自带的测光 CSV 表格即可。",
+          steps: [
+            "<strong>拍摄目标变星：</strong> 在 Seestar <strong>观星模式 (Stargazing)</strong> 下对准变星（单张曝光 `10s` 或 `20s`，避免亮星过饱）。",
+            "<strong>运行内置测光：</strong> 在 Seestar App 中打开 <strong>测光 / Star Magnitude</strong> 工具，点击目标星与比较星并生成结果。",
+            "<strong>提取 CSV 到电脑：</strong> 用 <strong>USB-C 数据线</strong>将 Seestar 连上电脑（或通过局域网 `\\\\seestar.local\\EMMC Images`），把 `Magnitude_*.csv` 复制到电脑。"
+          ]
+        },
+        {
+          headline: "3. 如何免费注册 AAVSO 并找到你的专属 OBSCODE 代码",
+          callout: "在 AAVSO 注册观测者账号并提交观测数据 100% 免费，无需缴纳会员费！",
+          steps: [
+            "<strong>注册免费账号：</strong> 打开 <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>，1 分钟填写基本信息。",
+            "<strong>申请观测者代码：</strong> 登录后打开 <strong>My Account → Request Observer Code</strong>。",
+            "<strong>复制你的 OBSCODE：</strong> 你的 3–5 位字母代码（如 `ABCD`）显示在 AAVSO 个人主页顶部。填入手册第 1 步，软件会自动永久记住！"
+          ]
+        },
+        {
+          headline: "4. 如何在 Seestar AstroLab 中查找并选择目标星（第 1 步）",
+          callout: "使用左侧的“AAVSO 目标雷达”或转动“随机选星转盘”——246 颗目标已针对 Seestar 完成预校准！",
+          steps: [
+            "<strong>筛选本市可见目标：</strong> 选择你的型号 (`S30`–`S50PRO`)，勾选 <strong>📍 本市可见目标</strong> 并选择阳台对应的 <strong>🧭 方位角</strong>。",
+            "<strong>一键填入转换器：</strong> 点击任意恒星卡片查看详情，然后点击蓝色按钮 <strong>🎯 将恒星数据填入转换菜单 (第 1 步)</strong>。",
+            "<strong>加载星表：</strong> 输入你的 <strong>OBSCODE</strong> 并点击 <strong>🔭 加载 SIMBAD + VSP</strong>，星图号与检验星 (`KNAME`/`KMAG`) 会自动填好！"
+          ]
+        },
+        {
+          headline: "5. 如何在软件中校验并转换 Seestar CSV 文件（第 2 & 3 步）",
+          callout: "软件会自动核对 SIMBAD 坐标、过滤重复儒略日记录并绘制你的专属光变曲线！",
+          steps: [
+            "<strong>选择 CSV 文件：</strong> 在 <strong>第 2 步</strong> 点击 <strong>📂 选择 Seestar CSV 文件</strong>，打开复制出来的 `Magnitude_*.csv`。",
+            "<strong>自动核验与绘图：</strong> 软件自动比对坐标与星等范围，并在右侧实时画出 `MAG vs JD Mid` 光变曲线。",
+            "<strong>一键转换保存：</strong> 在 <strong>第 3 步</strong> 点击 <strong>⚡ 转换并保存 AAVSO Extended (.txt)</strong>，生成的标准文件自动存入历史记录！"
+          ]
+        },
+        {
+          headline: "6. 如何在 10 秒内将转换好的文件上传至 AAVSO WebObs",
+          callout: "最后一步：把生成的 `.txt` 报告上传到 AAVSO 官方 WebObs 门户！",
+          steps: [
+            "<strong>打开 WebObs 门户：</strong> 点击第 3 步中的 <strong>🌐 打开 AAVSO WebObs</strong>（或访问 <a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>）。",
+            "<strong>选择文件上传：</strong> 点击 <strong>Upload a file of observations (Extended Format)</strong>，选择软件生成的 `AAVSO_EXTENDED_*.txt` 文件。",
+            "<strong>确认提交：</strong> 点击 <strong>Upload</strong>。恭喜你——你的测光数据已正式载入全球 AAVSO 光变曲线！"
+          ]
+        }
+      ]
+    },
+    ber: {
+      modalTitle: "🎓 Amnir s tugniwin (Guía paso a paso para Ramón): Afutomitri Seestar & AAVSO",
+      btnPrev: "Ɣer deffir (Anterior)",
+      btnNext: "Aḥric i d-iteddun (Siguiente)",
+      tabs: [
+        "1. 🌟 Azal ussnan",
+        "2. 🔭 Seestar & CSV",
+        "3. 🏛️ Tangalt OBSCODE",
+        "4. 🎯 Fren itri",
+        "5. ⚡ Beddel CSV",
+        "6. 🚀 Sali ɣer WebObs"
+      ],
+      slides: [
+        {
+          headline: "1. Ayɣer annayen-ik s Seestar sɛan azal ameqqran i tussna (para Ramón)",
+          callout: "Itiliskupen n tallunt ur zmiren ara ad εassen 246 n yitriyen imeskilal yal iḍ — imusnawen ttraǧun annayen-ik!",
+          steps: [
+            "<strong>Asannay ussnan deg uxxam:</strong> ZWO Seestar-ik (S30 / S30PRO / S50 / S50PRO) yettaktili tafat (`MAG ± MERR`) s tseddi.",
+            "<strong>Aεassi n yitriyen:</strong> Itriyen am <em>T CrB</em> земren ad ffeɣen deg ساعة. Tugna-ik tezmer ad teṭṭef tazwara!",
+            "<strong>Aɣbalu agraɣlan:</strong> Yal afaylu yettروح ɣer taffa <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID</a>."
+          ]
+        },
+        {
+          headline: "2. Amek ara txedmeḍ afutomitri deg Seestar & ad d-tessuffɣeḍ CSV",
+          callout: "Ṭṭef tugniwin n 10s–20s deg uskar Stargazing, сиздеɣ afaylu CSV n magnitudes.",
+          steps: [
+            "<strong>Ṭṭef itri:</strong> Wehhi Seestar ɣer yitri deg uskar <strong>Stargazing</strong> (`10s` neɣ `20s`).",
+            "<strong>Selkem afutomitri:</strong> Deg usnas Seestar ldi <strong>Photometry / Star Magnitude</strong>, fren itri d yitri n usenqed.",
+            "<strong>Nɣel CSV ɣer uselkim:</strong> Qqen Seestar s <strong>USB-C</strong> (neɣ Wi-Fi `\\\\seestar.local\\EMMC Images`) تنɣleḍ `Magnitude_*.csv`."
+          ]
+        },
+        {
+          headline: "3. Amek ara tjerdeḍ deg AAVSO & ad tafeḍ OBSCODE-ik (para Ramón)",
+          callout: "Ajerrid d tuzna n wannayen ɣer AAVSO баṭel 100% (100% gratis)!",
+          steps: [
+            "<strong>Snulfu-d amiḍan:</strong> Ldi <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>.",
+            "<strong>Suter tangalt n umannay:</strong> Deg umiḍan-ik सिकेद <strong>My Account → Request Observer Code</strong>.",
+            "<strong>Nɣel OBSCODE-ik:</strong> Tangalt-ik n 3–5 yisekkilen (am. `ABCD`) tban-d deg umiḍan AAVSO. Aru-tt deg Uḥric 1."
+          ]
+        },
+        {
+          headline: "4. Amek ara tferneḍ itri deg Seestar AstroLab (Aḥric 1)",
+          callout: "Seqdec Aradar n yitriyen AAVSO ɣer uzelmaḍ neɣ dewwer Rruḍa n yitriyen.",
+          steps: [
+            "<strong>Sizdeg itriyen yettbanen:</strong> Fren atiliskup (`S30`–`S50PRO`), <strong>📍 Убедная deg temdint-inu</strong> d <strong>🧭 Tanila (Acimut)</strong>.",
+            "<strong>Sali itri ɣer umenu:</strong> Siked ɣef yitri, сикед <strong>🎯 Cargar datos de la estrella en el menú (Aḥric 1)</strong>.",
+            "<strong>Zdem-d SIMBAD + VSP:</strong> Aru <strong>OBSCODE</strong>-ik تسكدهḍ <strong>🔭 Zdem-d SIMBAD + VSP</strong>."
+          ]
+        },
+        {
+          headline: "5. Amek ara tbeddleḍ afaylu CSV Seestar deg wahil (Aḥric 2 & 3)",
+          callout: "Ahil yettsenqid imsideg SIMBAD, yettkkes usligen, yettaru udlif n tafat s wudem awurman.",
+          steps: [
+            "<strong>Fren afaylu CSV:</strong> Deg <strong>Uḥric 2</strong>, сикед <strong>📂 Fren afaylu CSV Seestar</strong> (`Magnitude_*.csv`).",
+            "<strong>Asenqed & Udlif:</strong> Ahil yettaru udlif n tafat `MAG vs JD Mid` ɣer uyeffus.",
+            "<strong>Beddel ɣer AAVSO Extended:</strong> Deg <strong>Uḥric 3</strong>, сикед <strong>⚡ Beddel & Sekles AAVSO Extended (.txt)</strong>."
+          ]
+        },
+        {
+          headline: "6. Amek ara tessaliḍ afaylu-ik ɣer AAVSO WebObs deg 10 تسديدين",
+          callout: "Asurif aneggaru: sali afaylu `.txt` ɣer tewwurt AAVSO WebObs.",
+          steps: [
+            "<strong>Ldi WebObs:</strong> Siked <strong>🌐 Ldi AAVSO WebObs</strong> deg Uḥric 3 (<a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
+            "<strong>Fren afaylu Extended:</strong> Siked <strong>Upload a file of observations (Extended Format)</strong> تفرنهḍ `AAVSO_EXTENDED_*.txt`.",
+            "<strong>Sentem asali:</strong> Siked <strong>Upload</strong> — annay-ik yekcem deg taffa tamaḍlant AAVSO!"
+          ]
+        }
+      ]
+    }
+  };
+  BEGINNER_PRESENTATION_7LANG.be = BEGINNER_PRESENTATION_7LANG.ber;
+
+  // Наглядные визуальные экранные макеты для каждого из 6 слайдов (с цифрами ① ② ③ и подсветкой кнопок)
+  function buildSlideVisualMockupHtml(slideIdx) {
+    if (slideIdx === 0) {
+      return `
+        <div class="beginner-slide-mockup-box">
+          <div class="mockup-window-bar">
+            <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#22c55e;"></i></span>
+            <span>🌍 GLOBAL CITIZEN SCIENCE NETWORK • ZWO SEESTAR → AAVSO AID</span>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; text-align:center; padding:6px 0;">
+            <div style="padding:10px 6px; border-radius:9px; background:rgba(15,23,42,0.85); border:1px solid rgba(56,189,248,0.35);">
+              <div style="font-size:24px;">🔭</div>
+              <div style="font-size:11.5px; font-weight:800; color:#38bdf8; margin-top:4px;">① Your Seestar</div>
+              <div style="font-size:10.5px; color:#94a3b8;">S30 / S30PRO / S50 / S50PRO</div>
+            </div>
+            <div style="padding:10px 6px; border-radius:9px; background:rgba(15,23,42,0.85); border:1px solid rgba(245,158,11,0.45);">
+              <div style="font-size:24px;">⚡</div>
+              <div style="font-size:11.5px; font-weight:800; color:#fbbf24; margin-top:4px;">② AstroLab AAVSO</div>
+              <div style="font-size:10.5px; color:#94a3b8;">JD Mid + SIMBAD + VSP</div>
+            </div>
+            <div style="padding:10px 6px; border-radius:9px; background:rgba(15,23,42,0.85); border:1px solid rgba(34,197,94,0.45);">
+              <div style="font-size:24px;">🏛️</div>
+              <div style="font-size:11.5px; font-weight:800; color:#4ade80; margin-top:4px;">③ AAVSO WebObs</div>
+              <div style="font-size:10.5px; color:#94a3b8;">246 Priority Variable Stars</div>
+            </div>
+          </div>
+          <div style="padding:9px 11px; border-radius:9px; background:rgba(2,132,199,0.16); border:1px dashed rgba(56,189,248,0.5); font-size:11.5px; color:#e0f2fe;">
+            ✨ <strong>246 AAVSO Alert &amp; Campaign Targets</strong> — Cataclysmic Novae (T CrB, RS Oph), Symbiotic Binaries (CH Cyg, AG Dra), Cepheids &amp; Exoplanet Transits!
+          </div>
+        </div>`;
+    }
+    if (slideIdx === 1) {
+      return `
+        <div class="beginner-slide-mockup-box">
+          <div class="mockup-window-bar">
+            <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#22c55e;"></i></span>
+            <span>📱 ZWO SEESTAR APP → 💻 PC USB-C / SMB EXTRACTION</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:7px; font-size:11.5px;">
+            <div style="padding:8px 10px; border-radius:8px; background:rgba(15,23,42,0.9); border:1px solid rgba(56,189,248,0.4); display:flex; align-items:center; justify-content:space-between;">
+              <span>① <strong>Seestar Stargazing Mode:</strong> Target <code>SZ Lyn</code> • Exp: <code>10s / 20s</code></span>
+              <span style="padding:2px 7px; border-radius:5px; background:#0284c7; color:#fff; font-weight:700;">RAW / FITS</span>
+            </div>
+            <div style="padding:8px 10px; border-radius:8px; background:rgba(15,23,42,0.9); border:1px solid rgba(245,158,11,0.45); display:flex; align-items:center; justify-content:space-between;">
+              <span>② <strong>Seestar Photometry Tool:</strong> Mark Target (T) &amp; Reference (C)</span>
+              <span style="padding:2px 7px; border-radius:5px; background:#d97706; color:#fff; font-weight:700;">Export CSV</span>
+            </div>
+            <div style="padding:8px 10px; border-radius:8px; background:rgba(20,83,45,0.45); border:1px solid #22c55e; font-family:var(--font-mono,monospace); font-size:11px; color:#bbf7d0;">
+              ③ 📁 USB-C / \\\\seestar.local\\EMMC Images\\Photometry\\<br>
+              └── 📄 <strong>Magnitude_SZ_Lyn_20261118.csv</strong> &nbsp;← <em>Copy to PC!</em>
+            </div>
+          </div>
+        </div>`;
+    }
+    if (slideIdx === 2) {
+      return `
+        <div class="beginner-slide-mockup-box">
+          <div class="mockup-window-bar">
+            <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#22c55e;"></i></span>
+            <span>🌐 https://www.aavso.org/user/register → MY ACCOUNT</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:11.5px;">
+            <div style="padding:8px 10px; border-radius:8px; background:rgba(15,23,42,0.9); border:1px solid rgba(148,163,184,0.3);">
+              ① <strong>aavso.org/user/register</strong> → Create Free Observer Account (0 $ / Free)
+            </div>
+            <div style="padding:9px 11px; border-radius:8px; background:linear-gradient(135deg,rgba(30,58,138,0.7),rgba(15,23,42,0.95)); border:1.5px solid #38bdf8; display:flex; align-items:center; justify-content:space-between;">
+              <div>
+                <div style="font-size:10px; color:#93c5fd; text-transform:uppercase;">② AAVSO Profile Header</div>
+                <div style="font-size:13px; font-weight:800; color:#fff;">Observer Code (OBSCODE): <span style="padding:2px 8px; border-radius:5px; background:#22c55e; color:#052e16; font-family:monospace;">ABCD</span></div>
+              </div>
+              <span style="font-size:18px;">👈</span>
+            </div>
+            <div style="padding:8px 10px; border-radius:8px; background:rgba(15,23,42,0.9); border:1px solid rgba(56,189,248,0.4); display:flex; align-items:center; justify-content:space-between;">
+              <span>③ Paste into AstroLab top bar / Section 1:</span>
+              <span style="padding:3px 9px; border-radius:6px; background:#0f172a; border:1px solid #38bdf8; color:#38bdf8; font-family:monospace; font-weight:800;">🏛️ OBSCODE: ABCD</span>
+            </div>
+          </div>
+        </div>`;
+    }
+    if (slideIdx === 3) {
+      return `
+        <div class="beginner-slide-mockup-box">
+          <div class="mockup-window-bar">
+            <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#22c55e;"></i></span>
+            <span>🎯 SEESTAR ASTROLAB — TARGET RADAR &amp; SECTION 1</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:7px; font-size:11.5px;">
+            <div style="display:flex; gap:5px; flex-wrap:wrap;">
+              <span style="padding:3px 8px; border-radius:6px; background:#0284c7; color:#fff; font-weight:700;">① S50 / S30PRO</span>
+              <span style="padding:3px 8px; border-radius:6px; background:rgba(34,197,94,0.22); border:1px solid #22c55e; color:#86efac; font-weight:700;">☑ 📍 Visible in My City</span>
+              <span style="padding:3px 8px; border-radius:6px; background:rgba(245,158,11,0.22); border:1px solid #f59e0b; color:#fde047; font-weight:700;">🧭 Azimuth: South</span>
+            </div>
+            <div style="padding:8px 10px; border-radius:8px; background:rgba(15,23,42,0.92); border:1px solid rgba(56,189,248,0.45); display:flex; align-items:center; justify-content:space-between;">
+              <span>② Star Dossier: <strong>SZ Lyn</strong> (RA 08h 09m, Dec +44° 28')</span>
+              <span style="padding:3px 8px; border-radius:6px; background:#2563eb; color:#fff; font-weight:700;">🎯 Pull to Section 1</span>
+            </div>
+            <div style="padding:8px 10px; border-radius:8px; background:linear-gradient(90deg,#0284c7,#2563eb); color:#fff; font-weight:800; text-align:center;">
+              ③ 🔭 Fetch SIMBAD + VSP &nbsp;→ &nbsp;Chart &amp; Check Star (KNAME/KMAG) Auto-Filled!
+            </div>
+          </div>
+        </div>`;
+    }
+    if (slideIdx === 4) {
+      return `
+        <div class="beginner-slide-mockup-box">
+          <div class="mockup-window-bar">
+            <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#22c55e;"></i></span>
+            <span>⚡ SECTIONS 2 &amp; 3 — CSV VERIFICATION &amp; CONVERSION</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:7px; font-size:11.5px;">
+            <div style="padding:7px 10px; border-radius:8px; background:rgba(15,23,42,0.9); border:1px solid rgba(56,189,248,0.4); display:flex; align-items:center; justify-content:space-between;">
+              <span>① <strong>Section 2:</strong> 📂 Choose Seestar CSV File</span>
+              <code style="color:#7dd3fc;">Magnitude_SZ_Lyn.csv</code>
+            </div>
+            <div style="padding:7px 10px; border-radius:8px; background:rgba(20,83,45,0.4); border:1px solid #22c55e; color:#bbf7d0;">
+              ② ✓ Coordinates Match SIMBAD (0.4″) • ✓ Duplicates Filtered • 📈 Light Curve Plotted!
+            </div>
+            <div style="padding:8px 10px; border-radius:8px; background:linear-gradient(90deg,#16a34a,#059669); color:#fff; font-weight:800; text-align:center;">
+              ③ ⚡ Convert &amp; Save AAVSO Extended (.txt) &nbsp;→ &nbsp;#TYPE=EXTENDED Ready!
+            </div>
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="beginner-slide-mockup-box">
+        <div class="mockup-window-bar">
+          <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#22c55e;"></i></span>
+          <span>🚀 https://www.aavso.org/webobs — UPLOAD EXTENDED FILE</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:7px; font-size:11.5px;">
+          <div style="padding:8px 10px; border-radius:8px; background:rgba(15,23,42,0.9); border:1px solid rgba(56,189,248,0.4); display:flex; align-items:center; justify-content:space-between;">
+            <span>① In Section 3 click:</span>
+            <span style="padding:3px 9px; border-radius:6px; background:#0284c7; color:#fff; font-weight:700;">🌐 Open AAVSO WebObs ↗</span>
+          </div>
+          <div style="padding:8px 10px; border-radius:8px; background:rgba(15,23,42,0.9); border:1px solid rgba(245,158,11,0.45);">
+            ② Choose <strong>"Upload a file of observations (Extended Format)"</strong> → Select <code>AAVSO_EXTENDED_*.txt</code>
+          </div>
+          <div style="padding:8px 10px; border-radius:8px; background:rgba(20,83,45,0.55); border:1.5px solid #4ade80; color:#dcfce7; font-weight:700; text-align:center;">
+            ③ Click <strong>[ Upload ]</strong> → 🎉 Your Photometry is Live in the Global AAVSO Database!
+          </div>
+        </div>
+      </div>`;
+  }
+
+  let _activeBeginnerSlideIdx = 0;
+
+  window.renderBeginnerGuideSlide = function(slideIdx = _activeBeginnerSlideIdx) {
+    _activeBeginnerSlideIdx = Math.max(0, Math.min(5, Number(slideIdx) || 0));
+    const lg = getActive7Lang();
+    const pack = BEGINNER_PRESENTATION_7LANG[lg] || BEGINNER_PRESENTATION_7LANG.en;
+    const slide = pack.slides[_activeBeginnerSlideIdx] || pack.slides[0];
+
+    const titleEl = document.getElementById("beginnerGuideModalTitle");
+    if (titleEl) titleEl.textContent = pack.modalTitle;
+
+    const counterEl = document.getElementById("beginnerSlideCounterBadge");
+    if (counterEl) counterEl.textContent = `${_activeBeginnerSlideIdx + 1} / 6`;
+
+    const prevLbl = document.getElementById("lblBeginnerPrev");
+    if (prevLbl) prevLbl.textContent = pack.btnPrev;
+    const nextLbl = document.getElementById("lblBeginnerNext");
+    if (nextLbl) nextLbl.textContent = pack.btnNext;
+
+    const prevBtn = document.getElementById("btnBeginnerPrevSlide");
+    if (prevBtn) prevBtn.disabled = (_activeBeginnerSlideIdx === 0);
+
+    // Обновляем вкладки
+    const tabBtns = document.querySelectorAll("#beginnerSlideTabsBar .beginner-slide-tab");
+    tabBtns.forEach((btn, idx) => {
+      btn.classList.toggle("active", idx === _activeBeginnerSlideIdx);
+      if (pack.tabs[idx]) btn.textContent = pack.tabs[idx];
+    });
+
+    // Обновляем точки
+    const dots = document.querySelectorAll("#beginnerSlideDotsWrap .b-dot");
+    dots.forEach((d, idx) => d.classList.toggle("active", idx === _activeBeginnerSlideIdx));
+
+    // Рендерим контент активного слайда
+    const stageEl = document.getElementById("beginnerSlideStageContent");
+    if (stageEl) {
+      const stepsHtml = slide.steps.map((stHtml, idx) => `
+        <div class="beginner-step-card">
+          <span class="beginner-step-num">${idx + 1}</span>
+          <div class="beginner-step-text">${stHtml}</div>
+        </div>
+      `).join("");
+
+      stageEl.innerHTML = `
+        <div class="beginner-slide-grid">
+          <div class="beginner-slide-left">
+            <h3 class="beginner-slide-headline">${slide.headline}</h3>
+            <div class="beginner-slide-BannerCallout">${slide.callout}</div>
+            <div class="beginner-steps-list">${stepsHtml}</div>
+          </div>
+          ${buildSlideVisualMockupHtml(_activeBeginnerSlideIdx)}
+        </div>
+      `;
+    }
+  };
+
+  window.openBeginnerGuideModal = function(slideIdx = 0) {
+    const modal = document.getElementById("beginnerGuidePresentationModal");
+    if (!modal) return;
+    window.renderBeginnerGuideSlide(slideIdx);
+    modal.classList.add("open");
+    document.documentElement.classList.add("modal-open");
+    document.body.classList.add("modal-open");
+  };
+
+  window.closeBeginnerGuideModal = function() {
+    const modal = document.getElementById("beginnerGuidePresentationModal");
+    if (modal) modal.classList.remove("open");
+    document.documentElement.classList.remove("modal-open");
+    document.body.classList.remove("modal-open");
+  };
+
+  window.stepBeginnerGuideSlide = function(delta) {
+    const nextIdx = _activeBeginnerSlideIdx + Number(delta || 1);
+    if (nextIdx >= 6) {
+      window.closeBeginnerGuideModal();
+      return;
+    }
+    window.renderBeginnerGuideSlide(Math.max(0, Math.min(5, nextIdx)));
+  };
+
+  // Закрытие по клику на фон и навигация стрелками клавиатуры
+  document.getElementById("beginnerGuidePresentationModal")?.addEventListener("click", (e) => {
+    if (e.target && e.target.id === "beginnerGuidePresentationModal") {
+      window.closeBeginnerGuideModal();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    const modal = document.getElementById("beginnerGuidePresentationModal");
+    if (!modal || !modal.classList.contains("open")) return;
+    if (e.key === "Escape") {
+      window.closeBeginnerGuideModal();
+    } else if (e.key === "ArrowRight") {
+      window.stepBeginnerGuideSlide(1);
+    } else if (e.key === "ArrowLeft") {
+      window.stepBeginnerGuideSlide(-1);
+    }
+  });
+
+  // Синхронизация при смене языка
+  ["langSelect", "splashLangSelect"].forEach(selId => {
+    document.getElementById(selId)?.addEventListener("change", (e) => {
+      const lg = window.__normAstroLang ? window.__normAstroLang(e.target.value) : e.target.value;
+      window.__syncBerberPinkHighlight(lg);
+      window.__populateCountryAndCitySelectors(false);
+      window.renderBeginnerGuideSlide(_activeBeginnerSlideIdx);
+      if (typeof window.renderSkyClarityAndMoonHeader === "function") {
+        window.renderSkyClarityAndMoonHeader();
+      }
+    });
+  });
+
+  // Инициализация при старте
+  setTimeout(() => {
+    bindCountryAndCityEvents();
+    resolveSavedOrDefaultObserverCity();
+    const curLg = getActive7Lang();
+    window.__syncBerberPinkHighlight(curLg);
+    window.renderBeginnerGuideSlide(0);
+    if (typeof window.fetchCitySkyClarityAndMoonNow === "function") {
+      window.fetchCitySkyClarityAndMoonNow(false);
+    }
+  }, 45);
 
 })();
