@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""
 ==============================================================================
-Seestar AstroLab by CosmoBehemothych – Native Desktop Runner (v1.1.3 beta)
+Seestar AstroLab by CosmoBehemothych – Native Desktop Runner (v1.2.1)
 ==============================================================================
 """
 
@@ -38,8 +38,8 @@ except ImportError:
         start_background_rpc_server = None
 
 
-APP_VERSION = "1.1.3 beta"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych – Фотометрия и Радар целей (v1.1.3 beta)"
+APP_VERSION = "1.2.1"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych – Фотометрия и Радар целей (v1.2.1)"
 APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
 
 
@@ -76,12 +76,12 @@ def get_html_path():
             return os.path.abspath(direct_p)
 
     # 2. [FIX PORTABLE --onefile] Если запущен одиночный Portable .exe из произвольной папки (файлы внутри sys._MEIPASS),
-    # синхронизируем pwa_mobile_and_electron в постоянную рабочую папку %APPDATA%\Seestar_AstroLab\ui_runtime_v113,
+    # синхронизируем pwa_mobile_and_electron в постоянную рабочую папку %APPDATA%\Seestar_AstroLab\ui_runtime_v121,
     # чтобы WebView2 корректно открывал локальный интерфейс без блокировок %TEMP%\_MEI* и сохранял настройки!
     meipass_pwa = os.path.join(base_dir, "pwa_mobile_and_electron")
     if getattr(sys, "frozen", False) and os.path.isdir(meipass_pwa):
         try:
-            runtime_pwa = os.path.join(get_persistent_data_dir(), "ui_runtime_v113", "pwa_mobile_and_electron")
+            runtime_pwa = os.path.join(get_persistent_data_dir(), "ui_runtime_v121", "pwa_mobile_and_electron")
             os.makedirs(runtime_pwa, exist_ok=True)
             for fn in os.listdir(meipass_pwa):
                 s_item = os.path.join(meipass_pwa, fn)
@@ -119,7 +119,7 @@ def get_html_path():
                 _raw = _bf.read()
             _pk = _raw.find(b"PK\x03\x04")
             if _pk != -1:
-                _runtime_ui = os.path.join(get_persistent_data_dir(), "ui_runtime_v113")
+                _runtime_ui = os.path.join(get_persistent_data_dir(), "ui_runtime_v121")
                 with _zf.ZipFile(_io.BytesIO(_raw[_pk:]), "r") as _z:
                     for _m in _z.namelist():
                         if _m.startswith("pwa_mobile_and_electron/") and not _m.endswith("/"):

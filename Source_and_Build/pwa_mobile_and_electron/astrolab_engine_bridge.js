@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.1.3 beta) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.2.1) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.1.3 beta.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.2.1.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -528,7 +528,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.1.3 beta",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.2.1",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -881,7 +881,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.1.3 beta session",
+      actAppStarted: "Started Seestar AstroLab v1.2.1 session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -1229,7 +1229,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.1.3 beta",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.2.1",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1553,7 +1553,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.1.3 beta",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.2.1",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1866,7 +1866,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.1.3 beta",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.2.1",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -2178,7 +2178,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.1.3 beta 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.2.1 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -8615,7 +8615,7 @@ function revealAndFocusField(inputId) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.1.3 beta",
+      application: "Seestar AstroLab AAVSO v1.2.1",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8666,7 +8666,7 @@ function revealAndFocusField(inputId) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.1.3 beta (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.2.1 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -11554,7 +11554,7 @@ function revealAndFocusField(inputId) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.1.3 beta — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.2.1 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -16755,7 +16755,7 @@ function revealAndFocusField(inputId) {
       lblToastsShort: "🔔 Enable Notifications",
       lblToggleTechBlock: "🔧 Technical Block & Catalog Status",
       btnResetLayoutShort: "✥ Reset Layout",
-      btnBeginnerGuide: "🎓 Quick Start Guide",
+      btnBeginnerGuide: "🚀 Getting Started",
       btnGraphGuide: "📖 How to Read Charts",
       btnObsTrackerMenu: "📓 My Observations",
       btnUrgentMenu: "AAVSO Target Radar"
@@ -16775,7 +16775,7 @@ function revealAndFocusField(inputId) {
       lblToastsShort: "🔔 Настройка уведомлений",
       lblToggleTechBlock: "🔧 Технический блок и статус каталогов",
       btnResetLayoutShort: "✥ Сброс блоков",
-      btnBeginnerGuide: "🎓 Инструкция",
+      btnBeginnerGuide: "🚀 С чего начать",
       btnGraphGuide: "📖 Как читать графики",
       btnObsTrackerMenu: "📓 Мои наблюдения",
       btnUrgentMenu: "Радар целей AAVSO"
@@ -16795,7 +16795,7 @@ function revealAndFocusField(inputId) {
       lblToastsShort: "🔔 Notificaciones",
       lblToggleTechBlock: "🔧 Bloque técnico y estado de catálogos",
       btnResetLayoutShort: "✥ Restablecer bloques",
-      btnBeginnerGuide: "🎓 Guía paso a paso",
+      btnBeginnerGuide: "🚀 Por dónde empezar",
       btnGraphGuide: "📖 Cómo leer gráficos",
       btnObsTrackerMenu: "📓 Mis observaciones",
       btnUrgentMenu: "Radar de objetivos AAVSO"
@@ -16815,7 +16815,7 @@ function revealAndFocusField(inputId) {
       lblToastsShort: "🔔 Benachrichtigungen",
       lblToggleTechBlock: "🔧 Technischer Block & Katalogstatus",
       btnResetLayoutShort: "✥ Layout zurücksetzen",
-      btnBeginnerGuide: "🎓 Anleitung",
+      btnBeginnerGuide: "🚀 Erste Schritte",
       btnGraphGuide: "📖 Diagramme lesen",
       btnObsTrackerMenu: "📓 Meine Beobachtungen",
       btnUrgentMenu: "AAVSO-Zielradar"
@@ -16835,7 +16835,7 @@ function revealAndFocusField(inputId) {
       lblToastsShort: "🔔 Notifications",
       lblToggleTechBlock: "🔧 Bloc technique et état des catalogues",
       btnResetLayoutShort: "✥ Réinitialiser",
-      btnBeginnerGuide: "🎓 Guide pas à pas",
+      btnBeginnerGuide: "🚀 Par où commencer",
       btnGraphGuide: "📖 Lire les graphiques",
       btnObsTrackerMenu: "📓 Mes observations",
       btnUrgentMenu: "Radar de cibles AAVSO"
@@ -16855,7 +16855,7 @@ function revealAndFocusField(inputId) {
       lblToastsShort: "🔔 开启通知提醒",
       lblToggleTechBlock: "🔧 技术状态与星表日志",
       btnResetLayoutShort: "✥ 重置布局",
-      btnBeginnerGuide: "🎓 新手图文教程",
+      btnBeginnerGuide: "🚀 新手入门",
       btnGraphGuide: "📖 如何看懂光变曲线",
       btnObsTrackerMenu: "📓 我的观测记录",
       btnUrgentMenu: "AAVSO 目标雷达"
@@ -16875,7 +16875,7 @@ function revealAndFocusField(inputId) {
       lblToastsShort: "🔔 Ilɣa (Notificaciones)",
       lblToggleTechBlock: "🔧 Aḥric atiknikan d waddad n yikaramen",
       btnResetLayoutShort: "✥ Err-d amezwaru",
-      btnBeginnerGuide: "🎓 Amnir s tugniwin (Guía)",
+      btnBeginnerGuide: "🚀 Tazwara (Empezar)",
       btnGraphGuide: "📖 Amek ara tɣerḍ udlifen",
       btnObsTrackerMenu: "📓 Annayen-inu",
       btnUrgentMenu: "Aradar n yitriyen AAVSO"
@@ -17641,522 +17641,519 @@ function revealAndFocusField(inputId) {
   //       «КАК ПОЛЬЗОВАТЬСЯ ФОТОМЕТРИЕЙ SEESTAR И ОТПРАВЛЯТЬ НАБЛЮДЕНИЯ В AAVSO»
   // --------------------------------------------------------------------------
   const BEGINNER_PRESENTATION_7LANG = {
-    en: {
-      modalTitle: "🎓 Step-by-Step Visual Guide: Seestar Photometry & AAVSO",
-      btnPrev: "Previous",
-      btnNext: "Next Step",
+    ru: {
+      modalTitle: "🚀 С чего начать: Гражданская фотометрия с Seestar и база AAVSO",
+      btnPrev: "Назад",
+      btnNext: "Следующий слайд",
       tabs: [
-        "1. 🌟 Your Impact",
-        "2. 🏛️ OBSCODE",
-        "3. 🎯 Pick Star",
-        "4. 🔭 Seestar & CSV",
-        "5. ⚡ Convert CSV",
-        "6. 🚀 Upload WebObs"
+        "1. Титул",
+        "2. Зачем это науке",
+        "3. Основы AAVSO",
+        "4. Код OBSCODE",
+        "5. Подготовка Seestar",
+        "6. Выбор цели",
+        "7. Процесс съёмки",
+        "8. Экспорт CSV",
+        "9. Конвертация",
+        "10. WebObs",
+        "11. Ошибки",
+        "12. Первый шаг"
       ],
       slides: [
         {
-          headline: "1. Your Seestar Balcony Can Make Real Astronomical Discoveries",
-          callout: "Space telescopes (Hubble, JWST, TESS) cannot watch 246 variable stars and novae every night — astrophysicists depend on citizen observers like you!",
+          type: "hero",
+          kicker: "ГРАЖДАНСКАЯ ФОТОМЕТРИЯ • ZWO SEESTAR",
+          headline: "Гражданская фотометрия с Seestar: от звёздного света до базы AAVSO",
+          callout: "Пошаговое руководство для наблюдателей переменных звёзд • Seestar S30 / S30PRO / S50 / S50PRO • Seestar AstroLab AAVSO • WebObs",
           steps: [
-            "<strong>Real Scientific Data:</strong> Your ZWO Seestar (S30 / S30PRO / S50 / S50PRO) measures stellar brightness (`MAG ± MERR`) accurately enough to track pulsating variables and eclipsing binaries.",
-            "<strong>Catch Cosmic Outbursts:</strong> Recurrent novae like <em>T CrB</em> can erupt in hours. Your clear night might capture the first datapoint of a historic outburst!",
-            "<strong>Permanent Scientific Legacy:</strong> Every converted `.csv` report enters the <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO International Database (AID)</a> used in peer-reviewed research."
+            "<strong>Для кого этот курс:</strong> для каждого владельца ZWO Seestar, кто хочет получать не только красивые снимки космоса, но и реальные научные данные.",
+            "<strong>Что вы освоите:</strong> регистрацию в <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO</a>, съёмку фотометрии в EQ-режиме, конвертацию <code>Magnitude_*.csv</code> и публикацию на WebObs.",
+            "<strong>Результат:</strong> ваши измерения блеска войдут в международную базу данных, на которую опираются астрофизики всего мира."
+          ],
+          img: "assets/pptx_slide_1.jpg",
+          caption: "Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO • WebObs"
+        },
+        {
+          kicker: "ЦЕННОСТЬ ГРАЖДАНСКОЙ НАУКИ",
+          headline: "Зачем любителю заниматься фотометрией?",
+          callout: "Профессиональные телескопы не могут непрерывно следить за всеми переменными звёздами — любители закрывают этот пробел.",
+          steps: [
+            "<strong>1. Патруль неба (Непрерывный мониторинг):</strong> AAVSO объединяет наблюдения тысяч наблюдателей в единую кривую блеска.",
+            "<strong>2. Алерты (Раннее предупреждение):</strong> данные любителей помогают вовремя заметить вспышки, затмения и необычное поведение.",
+            "<strong>3. Публикации (Реальный вклад):</strong> данные AAVSO используются в научных публикациях и для планирования космических миссий.",
+            "<strong>Схема:</strong> Телескоп → Наблюдатель → База AAVSO → Научная статья."
+          ],
+          cards: [
+            { num: "1", title: "Патруль неба", desc: "Непрерывный мониторинг переменных звёзд" },
+            { num: "2", title: "Алерты", desc: "Раннее обнаружение вспышек и затмений" },
+            { num: "3", title: "Публикации", desc: "Использование данных в научных статьях" }
           ]
         },
         {
-          headline: "2. Register on AAVSO (100% Free) & Find Your Unique OBSCODE",
-          callout: "You do NOT need a paid AAVSO membership to submit variable star observations — observer registration is completely free!",
+          kicker: "ОСНОВЫ И СТАНДАРТЫ",
+          headline: "Что такое фотометрия и почему именно AAVSO?",
+          callout: "AAVSO (с 1911 г.) — мировой стандарт любительских и научных данных о переменных звёздах.",
           steps: [
-            "<strong>Create Your Free Account:</strong> Visit <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a> and complete the quick sign-up.",
-            "<strong>Request Observer Code:</strong> Sign in and open <strong>My Account → Request Observer Code</strong> to generate your unique 3–5 letter ID.",
-            "<strong>Save Your OBSCODE:</strong> Your personal code (e.g. `ABCD`) appears at the top of your AAVSO profile and WebObs page — enter it once in AstroLab and it is saved automatically!"
+            "<strong>Фотометрия:</strong> точный перевод светового потока звезды в звёздную величину (<code>MAG ± MERR</code>).",
+            "<strong>AAVSO (с 1911 г.):</strong> международный архив <a href='https://www.aavso.org/aavso-international-database-aid' target='_blank' rel='noopener'>AAVSO AID</a>, объединяющий миллионы наблюдений.",
+            "<strong>Формат Extended:</strong> «сырой» CSV с телескопа не подходит напрямую — нужен наш конвертер <code>Seestar AstroLab AAVSO</code>."
+          ],
+          img: "assets/pptx_slide_3.png",
+          caption: "Кривая блеска переменной звезды (TG / V) и строгий стандарт #TYPE=EXTENDED (с 1911 г.)"
+        },
+        {
+          kicker: "ШАГ 1 • НАЧАЛО РАБОТЫ",
+          headline: "Регистрация в AAVSO и получение OBSCODE",
+          callout: "OBSCODE — твой постоянный идентификатор наблюдателя: все данные в базе AAVSO будут навсегда связаны с этим кодом. Без OBSCODE загрузка фотометрии невозможна.",
+          steps: [
+            "<strong>1. Создать бесплатный аккаунт на aavso.org:</strong> зарегистрируйся по email и паролю на <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a> (100% бесплатно).",
+            "<strong>2. Зайти в User Profile → Settings:</strong> открой раздел настроек профиля наблюдателя.",
+            "<strong>3. Нажать «Request an Obscode»:</strong> код наблюдателя (3–5 латинских букв) присваивается автоматически. Введи его в Раздел 1 программы."
+          ],
+          cards: [
+            { num: "1", title: "aavso.org/user/register", desc: "Бесплатная регистрация наблюдателя" },
+            { num: "2", title: "User Profile → Settings", desc: "Раздел настроек профиля" },
+            { num: "3", title: "Request an Obscode", desc: "Мгновенное получение личного кода" }
           ]
         },
         {
-          headline: "3. Pick a Target Star in Seestar AstroLab",
-          callout: "All 246 priority stars in the left AAVSO Target Radar are pre-filtered for Seestar's aperture and sensor limits!",
+          kicker: "ШАГ 2 • ПОДГОТОВКА К СЪЁМКЕ",
+          headline: "Подготовка Seestar к фотометрии",
+          callout: "Правильная подготовка телескопа до начала серии кадров обеспечивает стабильность кривой блеска.",
           steps: [
-            "<strong>Filter for Your Sky:</strong> Select your Seestar model (`S30`–`S50PRO`), check <strong>📍 Visible in My City</strong>, and set your balcony <strong>🧭 Azimuth</strong>.",
-            "<strong>Or Spin the Celestial Wheel:</strong> Click <strong>🎰 Random Star Selection</strong> to let the wheel pick an urgent high-priority target visible tonight.",
-            "<strong>Pull Star into Converter:</strong> Click any target card to inspect its J2000 coordinates and exposure guide, then click <strong>🎯 Pull Star Data into Converter Menu (Section 1)</strong>."
+            "<strong>Включай EQ-режим (экваториальный):</strong> устраняет вращение поля и повышает стабильность измерений.",
+            "<strong>Стандартные поля AAVSO (напр., SA20):</strong> используй для первых тренировок — так проще проверить правильность методики.",
+            "<strong>Ограничение Seestar:</strong> встроенная фотометрия работает по зелёному каналу (<code>TG</code>) цветной матрицы; учитывай это при интерпретации данных."
+          ],
+          img: "assets/pptx_slide_5.png",
+          caption: "Стандартное поле AAVSO (SA20) • EQ-режим устраняет вращение поля"
+        },
+        {
+          kicker: "ШАГ 3 • ВЫБОР ЦЕЛИ",
+          headline: "Выбор цели в Радаре целей Seestar AstroLab AAVSO",
+          callout: "Фильтры видимости, рекомендации по выдержке и точные координаты J2000.0 для наведения телескопа.",
+          steps: [
+            "<strong>Фильтры радара (246 целей):</strong> выбери модель Seestar (<code>S30/S30PRO/S50/S50PRO</code>) и отфильтруй цели по полушарию, азимуту, видимости в городе и высоте над горизонтом.",
+            "<strong>Выдержка для срочных целей:</strong> при выборе срочной звезды обязательно учитывай рекомендации по экспозиции (например, <code>10 с</code> или <code>10–20 с</code>) и риск насыщения из досье.",
+            "<strong>Поиск по координатам:</strong> если звезду не удалось найти по имени в приложении Seestar, возьми точные координаты <code>RA / Dec (J2000.0)</code> из досье цели в конвертере."
+          ],
+          img: "assets/pptx_slide_6.png",
+          caption: "Полное досье цели AAVSO: координаты J2000.0, блеск, VSP и рекомендации Seestar"
+        },
+        {
+          kicker: "ШАГ 4 • ПРОЦЕСС СЪЁМКИ",
+          headline: "Проведение фотометрии на Seestar",
+          callout: "Логирование начинается вручную для каждой цели; оптимальная экспозиция — 10 секунд.",
+          steps: [
+            "<strong>1. НАВЕДЕНИЕ (Навёл на звезду):</strong> выбери цель в приложении Seestar (по имени или координатам J2000.0).",
+            "<strong>2. СТАРТ (Запустил логирование):</strong> логирование фотометрии начинается вручную для каждой цели.",
+            "<strong>3. СЕРИЯ 10 С (Накопил серию):</strong> оптимальная экспозиция <code>10 с</code>; снимай серию кадров, а не один снимок.",
+            "<strong>4. СТОП (Остановил съёмку):</strong> следи за насыщением — Seestar не всегда предупреждает о пересвете ярких звёзд."
+          ],
+          cards: [
+            { num: "1", title: "НАВЕДЕНИЕ", desc: "Выбери цель в приложении Seestar" },
+            { num: "2", title: "СТАРТ", desc: "Запусти логирование вручную" },
+            { num: "3", title: "СЕРИЯ 10 С", desc: "Накопи серию кадров по 10 с" },
+            { num: "4", title: "СТОП", desc: "Контролируй отсутствие пересвета" }
           ]
         },
         {
-          headline: "4. Shoot Photometry on Seestar (Latest Firmware) & Extract CSV",
-          callout: "In the latest ZWO Seestar firmware, built-in Photometry runs inside Stargazing mode, automatically picks ~15 Gaia G reference stars, and logs every exposure to CSV!",
+          kicker: "ШАГ 5 • ЭКСПОРТ ДАННЫХ",
+          headline: "Выгрузка CSV из Seestar",
+          callout: "Не загружай сырой CSV напрямую в AAVSO — формат не совпадёт, ты получишь ошибку.",
           steps: [
-            "<strong>Point & Configure Seestar:</strong> GoTo your target in <strong>Stargazing Mode</strong> (use <strong>EQ Mode</strong> for long series to prevent field rotation, and short `2s–20s` exposures so bright stars don't saturate).",
-            "<strong>Enable Built-in Photometry:</strong> Open Seestar's <strong>Photometry</strong> tool, tap your target variable star (Seestar automatically pairs ~15 Gaia G comparison stars), and let it log the series.",
-            "<strong>Copy CSV to PC:</strong> Connect Seestar via <strong>USB-C</strong> (or Wi-Fi SMB `\\\\seestar.local\\EMMC Images`) and copy the generated `Magnitude_*.csv` file to your computer."
+            "<strong>1. Найди файл фотометрии:</strong> в приложении / памяти Seestar найди файл вида <code>Magnitude_*.csv</code> — это «сырые» фотометрические данные.",
+            "<strong>2. Скопируй на компьютер:</strong> перенеси файл на ПК (по USB-C кабелю, через облако или экспорт из приложения).",
+            "<strong>3. Важное предупреждение:</strong> следующий шаг — передача «сырого» CSV в наш конвертер <code>Seestar AstroLab AAVSO</code>."
+          ],
+          cards: [
+            { num: "📄", title: "Magnitude_*.csv", desc: "Сырой файл из Seestar (USB-C / Wi-Fi)" },
+            { num: "⚠️", title: "Не грузи напрямую!", desc: "AAVSO WebObs отклонит сырой формат" },
+            { num: "⚡", title: "Передай в AstroLab", desc: "Открой Раздел 1 → Раздел 2 программы" }
           ]
         },
         {
-          headline: "5. Process & Convert Your File in AstroLab (Section 1 → 2 → 3)",
-          callout: "Follow the 3 numbered sections in order: Section 1 loads catalogs, Section 2 checks your Seestar CSV, and Section 3 exports your AAVSO Extended `.csv`!",
+          kicker: "ШАГ 6 • КОНВЕРТАЦИЯ",
+          headline: "Конвертация в Seestar AstroLab AAVSO (Раздел 1 → 2 → 3)",
+          callout: "Сначала проверь OBSCODE и звезду в Разделе 1 (загрузи SIMBAD + VSP), затем загрузи Magnitude_*.csv в Раздел 2!",
           steps: [
-            "<strong>Section 1 (Observer & Star):</strong> Enter your <strong>OBSCODE</strong> and <strong>STARID</strong>, then click <strong>🔭 Fetch SIMBAD + VSP</strong> to auto-fill the VSP Chart and Check Star (`KNAME`/`KMAG`).",
-            "<strong>Section 2 (Select & Verify CSV):</strong> Click <strong>📂 Choose Seestar CSV File</strong> (`Magnitude_*.csv`). The app verifies SIMBAD coordinates, removes duplicate JD rows, and plots your Light Curve.",
-            "<strong>Section 3 (Convert & Save):</strong> Click <strong>⚡ Convert & Save AAVSO Extended (.csv)</strong> — your formatted `*_Seestar.csv` report is saved to `Converted_Photometry_Storage/`!"
+            "<strong>JD_Mid и фильтрация:</strong> программа автоматически вычисляет середину экспозиции (<code>JD_Mid</code>) и фильтрует целевые строки (<code>Non-reference star</code>).",
+            "<strong>Точность и формат:</strong> округляет <code>MAG</code> и <code>MERR</code> до 4 знаков, подставляет твой <code>OBSCODE</code> и формирует файл <code>#TYPE=EXTENDED</code> (<code>*_Seestar.csv</code>).",
+            "<strong>Сверка графика:</strong> приложение сразу показывает твою кривую блеска и известную кривую AAVSO (AID) для сравнения."
+          ],
+          img: "assets/pptx_slide_9.png",
+          caption: "Сверка твоих данных Seestar с международной кривой блеска базы AAVSO"
+        },
+        {
+          kicker: "ШАГ 7 • ПУБЛИКАЦИЯ",
+          headline: "Загрузка в AAVSO WebObs",
+          callout: "Твои измерения попадают в открытую международную базу данных AAVSO!",
+          steps: [
+            "<strong>1. Нажми «Конвертировать данные для загрузки на AAVSO»:</strong> в Разделе 3 сгенерируется готовый файл <code>*_Seestar.csv</code> в формате AAVSO Extended.",
+            "<strong>2. Зайди на AAVSO WebObs:</strong> открой <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>apps.aavso.org/v2/data/submit/photometry/</a> (или <a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>) под своим аккаунтом.",
+            "<strong>3. Выбери «Upload a file of observations»:</strong> загрузи сгенерированный файл <code>*_Seestar.csv</code> и подтверди отправку.",
+            "<strong>4. Проверь публикацию в базе:</strong> после загрузки твои точки появятся в общем доступе в AAVSO International Database."
+          ],
+          cards: [
+            { num: "1", title: "Конвертация (.csv)", desc: "Файл #TYPE=EXTENDED готов" },
+            { num: "2", title: "AAVSO WebObs", desc: "Портал отправки фотометрии" },
+            { num: "3", title: "Upload Observations", desc: "Загрузка файла за 10 секунд" },
+            { num: "4", title: "В базе AAVSO AID", desc: "Точки доступны учёным всего мира" }
           ]
         },
         {
-          headline: "6. Upload Your Finished `.csv` Report to AAVSO WebObs",
-          callout: "Submission takes 10 seconds — your datapoints appear on the global AAVSO light curve immediately!",
+          kicker: "ТИПИЧНЫЕ ПОДВОДНЫЕ КАМНИ",
+          headline: "Частые ошибки и как их избежать",
+          callout: "Проверь этот чек-лист перед каждой отправкой наблюдений — и твои данные всегда будут приниматься с первого раза.",
+          table: {
+            headers: ["Ошибка", "Последствие", "Решение"],
+            rows: [
+              ["Загрузил сырой CSV", "Ошибка формата при загрузке в WebObs", "Всегда конвертируй через Seestar AstroLab AAVSO"],
+              ["Забыл OBSCODE", "Данные не привяжутся к твоему профилю", "Проверь профиль AAVSO и Раздел 1 перед загрузкой"],
+              ["Слишком яркая звезда (насыщение)", "Кривая блеска «плывёт»", "Проверяй блеск и выдержку в Радаре целей, следи за MERR"],
+              ["Игнорирование check star", "Нельзя проверить качество ночи", "Доверь автоподбор программе, но проверяй её в интерфейсе"]
+            ]
+          }
+        },
+        {
+          kicker: "ИТОГ И ПЕРВЫЙ ШАГ",
+          headline: "Итог: путь от Seestar до AAVSO",
+          callout: "Первое задание: выбери переменную звезду, сними 10–20 кадров по 10 с, сконвертируй в AstroLab и загрузи — даже 1 точка ценна!",
           steps: [
-            "<strong>Open AAVSO WebObs:</strong> Click <strong>🌐 Open AAVSO WebObs</strong> in Section 3 (or open <a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
-            "<strong>Select Extended Upload:</strong> Click <strong>Upload a file of observations (Extended Format)</strong> and choose your converted `*_Seestar.csv` file.",
-            "<strong>Click Upload:</strong> Congratulations — your Seestar photometry is now officially part of world astronomical science!"
+            "<strong>1–2. Ценность и аккаунт:</strong> понял ценность науки → зарегистрировался на <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a>.",
+            "<strong>3–4. OBSCODE и звезда:</strong> получил личный OBSCODE → выбрал цель в Радаре целей Seestar AstroLab.",
+            "<strong>5–6. Съёмка и CSV:</strong> снял фотометрию (10 с, EQ-режим) → выгрузил <code>Magnitude_*.csv</code>.",
+            "<strong>7–8. Конвертация и AAVSO:</strong> сконвертировал в AstroLab (<code>*_Seestar.csv</code>) → загрузил в <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>AAVSO WebObs</a>."
+          ],
+          cards: [
+            { num: "1–2", title: "Ценность и аккаунт", desc: "aavso.org" },
+            { num: "3–4", title: "OBSCODE и цель", desc: "Радар целей (246)" },
+            { num: "5–6", title: "Съёмка и CSV", desc: "10 с → Magnitude_*.csv" },
+            { num: "7–8", title: "AstroLab → WebObs", desc: "Публикация в базе AAVSO" }
           ]
         }
       ]
     },
-    ru: {
-      modalTitle: "🎓 Пошаговая инструкция: Фотометрия на Seestar и отправка в AAVSO",
-      btnPrev: "Назад",
-      btnNext: "Следующий шаг",
+    en: {
+      modalTitle: "🚀 Getting Started: Citizen Photometry with Seestar & AAVSO",
+      btnPrev: "Previous",
+      btnNext: "Next Slide",
       tabs: [
-        "1. 🌟 Ваш вклад",
-        "2. 🏛️ Код OBSCODE",
-        "3. 🎯 Выбор звезды",
-        "4. 🔭 Съемка и CSV",
-        "5. ⚡ Конвертация CSV",
-        "6. 🚀 Загрузка в AAVSO"
+        "1. Title",
+        "2. Why Science",
+        "3. AAVSO Basics",
+        "4. OBSCODE",
+        "5. Seestar Setup",
+        "6. Target Radar",
+        "7. Shooting",
+        "8. Export CSV",
+        "9. Convert",
+        "10. WebObs",
+        "11. Pitfalls",
+        "12. Summary"
       ],
       slides: [
         {
-          headline: "1. Ваши кадры с балкона помогают мировой астрофизике",
-          callout: "Космические телескопы (Hubble, JWST, TESS) не могут каждую ночь следить за 246 переменными и новыми звёздами — наука опирается на наблюдателей-любителей!",
+          type: "hero",
+          kicker: "CITIZEN PHOTOMETRY • ZWO SEESTAR",
+          headline: "Citizen Photometry with Seestar: From Starlight to the AAVSO Database",
+          callout: "Step-by-step guide for variable star observers • Seestar S30 / S30PRO / S50 / S50PRO • Seestar AstroLab AAVSO • WebObs",
           steps: [
-            "<strong>Реальная обсерватория дома:</strong> Ваш ZWO Seestar (S30 / S30PRO / S50 / S50PRO) измеряет блеск (`MAG ± MERR`) с точностью, достаточной для анализа затменных и пульсирующих звёзд.",
-            "<strong>Поймайте вспышку первыми:</strong> Повторная новая <em>T CrB</em> может вспыхнуть за считанные часы — именно ваше ночное наблюдение способно зафиксировать начало взрыва.",
-            "<strong>Вечный вклад в науку:</strong> Каждый отправленный файл `.csv` попадает в международную базу <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID</a>, по которой публикуются научные статьи."
+            "<strong>Who this guide is for:</strong> every ZWO Seestar owner who wants to turn clear nights into real scientific measurements.",
+            "<strong>What you will learn:</strong> registering on <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO</a>, shooting EQ-mode photometry, converting <code>Magnitude_*.csv</code>, and uploading to WebObs.",
+            "<strong>Your impact:</strong> your brightness datapoints join the international database used by astrophysicists worldwide."
+          ],
+          img: "assets/pptx_slide_1.jpg",
+          caption: "Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO • WebObs"
+        },
+        {
+          kicker: "VALUE OF CITIZEN SCIENCE",
+          headline: "Why Should Amateurs Do Photometry?",
+          callout: "Professional telescopes cannot continuously monitor every variable star — citizen observers bridge that gap.",
+          steps: [
+            "<strong>1. Sky Patrol (Continuous Monitoring):</strong> AAVSO combines observations from thousands of observers into a single light curve.",
+            "<strong>2. Alerts (Early Warning):</strong> amateur data helps spot outbursts, eclipses, and unusual behavior in time.",
+            "<strong>3. Publications (Real Contribution):</strong> AAVSO data is cited in scientific papers and used to schedule space telescope observations.",
+            "<strong>Workflow:</strong> Telescope → Observer → AAVSO Database → Scientific Paper."
+          ],
+          cards: [
+            { num: "1", title: "Sky Patrol", desc: "Continuous monitoring of variable stars" },
+            { num: "2", title: "Alerts", desc: "Early detection of outbursts & eclipses" },
+            { num: "3", title: "Publications", desc: "Real contribution to astrophysics papers" }
           ]
         },
         {
-          headline: "2. Регистрация в AAVSO (бесплатно) и поиск своего OBSCODE",
-          callout: "Регистрация наблюдателя и отправка данных в AAVSO на 100% бесплатны — платить членский взнос НЕ нужно!",
+          kicker: "BASICS & STANDARDS",
+          headline: "What Is Photometry & Why AAVSO?",
+          callout: "AAVSO (founded 1911) is the global standard for amateur and professional variable star data.",
           steps: [
-            "<strong>Создайте бесплатный аккаунт:</strong> Перейдите на <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a> и заполните короткую анкету.",
-            "<strong>Запросите код наблюдателя:</strong> Войдите в личный кабинет и откройте <strong>My Account → Request Observer Code</strong>.",
-            "<strong>Скопируйте свой OBSCODE:</strong> Ваш личный 3–5 буквенный код (например, `ABCD`) отображается в шапке профиля AAVSO — введите его один раз, и программа запомнит его навсегда."
+            "<strong>Photometry:</strong> converting a star's light flux into precise stellar magnitude (<code>MAG ± MERR</code>).",
+            "<strong>AAVSO (since 1911):</strong> the <a href='https://www.aavso.org/aavso-international-database-aid' target='_blank' rel='noopener'>AAVSO AID</a> archive uniting millions of datapoints.",
+            "<strong>Extended Format:</strong> raw Seestar CSV cannot be uploaded directly — you need the <code>Seestar AstroLab AAVSO</code> converter."
+          ],
+          img: "assets/pptx_slide_3.png",
+          caption: "Variable star light curve (TG / V) & strict #TYPE=EXTENDED standard (since 1911)"
+        },
+        {
+          kicker: "STEP 1 • GETTING STARTED",
+          headline: "Registering on AAVSO & Getting Your OBSCODE",
+          callout: "OBSCODE is your permanent observer ID: all your data in the AAVSO database is linked to it forever. Uploads are impossible without an OBSCODE.",
+          steps: [
+            "<strong>1. Create a free account on aavso.org:</strong> sign up with email & password at <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a> (100% free).",
+            "<strong>2. Go to User Profile → Settings:</strong> open your observer profile settings.",
+            "<strong>3. Click «Request an Obscode»:</strong> your personal 3–5 letter observer code is assigned automatically. Enter it in Section 1."
+          ],
+          cards: [
+            { num: "1", title: "aavso.org/user/register", desc: "Free observer registration" },
+            { num: "2", title: "User Profile → Settings", desc: "Observer profile settings" },
+            { num: "3", title: "Request an Obscode", desc: "Instant personal observer code" }
           ]
         },
         {
-          headline: "3. Как найти и выбрать звезду для наблюдений в Seestar AstroLab",
-          callout: "Все 246 приоритетных целей в левом «Радаре целей AAVSO» уже откалиброваны под апертуру и матрицу вашего Seestar!",
+          kicker: "STEP 2 • PREPARING TO SHOOT",
+          headline: "Preparing Your Seestar for Photometry",
+          callout: "Proper telescope setup before starting a series ensures a clean, scatter-free light curve.",
           steps: [
-            "<strong>Отфильтруйте видимые звёзды:</strong> Выберите модель телескопа (`S30`–`S50PRO`), включите галочку <strong>📍 Видимые в моём городе</strong> и выберите <strong>🧭 Азимут</strong> вашего балкона.",
-            "<strong>Или крутите Колесо удачи:</strong> Нажмите <strong>🎰 Случайный выбор звезды</strong>, чтобы программа сама выбрала срочную цель на сегодняшнюю ночь.",
-            "<strong>Перенесите цель в меню:</strong> Кликните по карточке звезды, изучите её досье и нажмите <strong>🎯 Подтянуть данные звезды в меню конвертера (Раздел 1)</strong>."
+            "<strong>Enable EQ Mode (Equatorial):</strong> eliminates field rotation and boosts measurement stability.",
+            "<strong>AAVSO Standard Fields (e.g., SA20):</strong> great for your first practice runs to verify your workflow.",
+            "<strong>Seestar Sensor Note:</strong> built-in photometry measures the green channel (<code>TG</code>) of the color sensor — keep this in mind when interpreting results."
+          ],
+          img: "assets/pptx_slide_5.png",
+          caption: "AAVSO Standard Field (SA20) • EQ mode eliminates field rotation"
+        },
+        {
+          kicker: "STEP 3 • TARGET SELECTION",
+          headline: "Picking a Target in the Seestar AstroLab AAVSO Radar",
+          callout: "Visibility filters, exposure guidance, and J2000.0 pointing coordinates for your telescope.",
+          steps: [
+            "<strong>Radar Filters (246 targets):</strong> pick your Seestar model (<code>S30/S30PRO/S50/S50PRO</code>) and filter by hemisphere, azimuth, city visibility, and altitude.",
+            "<strong>Exposure for Urgent Targets:</strong> always check exposure recommendations (e.g., <code>10s</code> or <code>10–20s</code>) and saturation warnings in the target dossier.",
+            "<strong>Search by Coordinates:</strong> if a star isn't found by name in the Seestar app, copy its exact <code>RA / Dec (J2000.0)</code> from the dossier."
+          ],
+          img: "assets/pptx_slide_6.png",
+          caption: "Full AAVSO Target Dossier: J2000.0 coordinates, magnitude, VSP & Seestar guidance"
+        },
+        {
+          kicker: "STEP 4 • CAPTURING DATA",
+          headline: "Running Photometry on Seestar",
+          callout: "Photometry logging starts manually for each target; optimal exposure is 10 seconds.",
+          steps: [
+            "<strong>1. POINT:</strong> select and GoTo your target star in the Seestar app.",
+            "<strong>2. START:</strong> start photometry logging manually for each target.",
+            "<strong>3. 10s SERIES:</strong> accumulate a series of <code>10s</code> exposures (multiple frames, not just one shot).",
+            "<strong>4. STOP:</strong> monitor for saturation — Seestar does not always warn if a bright star is overexposed."
+          ],
+          cards: [
+            { num: "1", title: "POINT", desc: "Select target in Seestar app" },
+            { num: "2", title: "START", desc: "Start logging manually" },
+            { num: "3", title: "10s SERIES", desc: "Capture a series of 10s frames" },
+            { num: "4", title: "STOP", desc: "Watch for bright-star saturation" }
           ]
         },
         {
-          headline: "4. Как снимать фотометрию в новой прошивке Seestar и вытащить CSV",
-          callout: "В актуальной прошивке ZWO Seestar встроенная фотометрия запускается в режиме Stargazing: телескоп сам подбирает ~15 опорных звёзд Gaia G и пишет замеры каждой экспозиции в CSV!",
+          kicker: "STEP 5 • DATA EXPORT",
+          headline: "Extracting the CSV from Seestar",
+          callout: "Do NOT upload this raw CSV directly to AAVSO — the format won't match and will be rejected.",
           steps: [
-            "<strong>Наведите Seestar в Stargazing:</strong> Наведите телескоп на звезду (для длинных серий включите <strong>EQ-режим</strong>; ставьте короткую выдержку `2–20 с`, чтобы яркие звёзды не пересветились).",
-            "<strong>Включите режим Photometry:</strong> В приложении Seestar откройте инструмент <strong>Photometry</strong>, укажите целевую звезду — прошивка сама выберет ~15 звёзд сравнения (Gaia G) и начнёт запись серии.",
-            "<strong>Скопируйте CSV на ПК:</strong> Подключите Seestar по <strong>кабелю USB-C</strong> (или по Wi-Fi `\\\\seestar.local\\EMMC Images`) и скопируйте готовый файл `Magnitude_*.csv` на компьютер."
+            "<strong>1. Locate the file:</strong> find <code>Magnitude_*.csv</code> in the Seestar app / storage — this contains your raw photometric measurements.",
+            "<strong>2. Copy to PC:</strong> transfer the file to your computer via USB-C cable, cloud, or app export.",
+            "<strong>3. Next Step:</strong> pass the raw CSV into the <code>Seestar AstroLab AAVSO</code> converter."
+          ],
+          cards: [
+            { num: "📄", title: "Magnitude_*.csv", desc: "Raw Seestar output (USB-C / Wi-Fi)" },
+            { num: "⚠️", title: "Do Not Upload Raw!", desc: "WebObs rejects raw Seestar CSV" },
+            { num: "⚡", title: "Open AstroLab", desc: "Start with Section 1 → Section 2" }
           ]
         },
         {
-          headline: "5. Обработка и конвертация CSV в программе (Раздел 1 → 2 → 3)",
-          callout: "Проходите разделы строго по порядку: сначала Раздел 1 (каталоги), затем Раздел 2 (CSV) и Раздел 3 (сохранение файла AAVSO Extended `.csv`).",
+          kicker: "STEP 6 • CONVERSION",
+          headline: "Converting in Seestar AstroLab AAVSO (Section 1 → 2 → 3)",
+          callout: "First verify OBSCODE & Star in Section 1 (Fetch SIMBAD + VSP), then load Magnitude_*.csv in Section 2!",
           steps: [
-            "<strong>Раздел 1 (Наблюдатель и звезда):</strong> Проверьте ваш <strong>OBSCODE</strong> и имя звезды <strong>STARID</strong>, затем нажмите <strong>🔭 Загрузить SIMBAD + VSP</strong> — карта VSP и чек-звезда (`KNAME`/`KMAG`) заполнятся сами.",
-            "<strong>Раздел 2 (Выбор и проверка CSV):</strong> Нажмите <strong>📂 Выбрать CSV-файл Seestar</strong> (`Magnitude_*.csv`). Программа сверит координаты с SIMBAD, уберёт дубликаты и построит кривую блеска справа.",
-            "<strong>Раздел 3 (Конвертация):</strong> Нажмите <strong>⚡ Сконвертировать и сохранить AAVSO Extended (.csv)</strong> — готовый файл `*_Seestar.csv` сохранится в `Converted_Photometry_Storage/`."
+            "<strong>JD_Mid & Filtering:</strong> automatically computes mid-exposure Julian Date (<code>JD_Mid</code>) and keeps target rows (<code>Non-reference star</code>).",
+            "<strong>Precision & Format:</strong> rounds <code>MAG</code> & <code>MERR</code> to 4 decimals, inserts your <code>OBSCODE</code>, and builds a <code>#TYPE=EXTENDED</code> file (<code>*_Seestar.csv</code>).",
+            "<strong>Light Curve Comparison:</strong> overlays your Seestar light curve with the official AAVSO (AID) curve for verification."
+          ],
+          img: "assets/pptx_slide_9.png",
+          caption: "Comparing your Seestar measurements with the international AAVSO database curve"
+        },
+        {
+          kicker: "STEP 7 • SUBMISSION",
+          headline: "Uploading to AAVSO WebObs",
+          callout: "Your observations immediately become part of the public AAVSO International Database!",
+          steps: [
+            "<strong>1. Click «Convert Data for AAVSO Upload»:</strong> Section 3 generates your ready <code>*_Seestar.csv</code> file in AAVSO Extended format.",
+            "<strong>2. Open AAVSO WebObs:</strong> sign in at <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>apps.aavso.org/v2/data/submit/photometry/</a> (or <a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
+            "<strong>3. Choose «Upload a file of observations»:</strong> select your generated <code>*_Seestar.csv</code> file and submit.",
+            "<strong>4. Verify Publication:</strong> your datapoints appear publicly in the AAVSO International Database."
+          ],
+          cards: [
+            { num: "1", title: "Convert (.csv)", desc: "#TYPE=EXTENDED file ready" },
+            { num: "2", title: "AAVSO WebObs", desc: "Official photometry upload portal" },
+            { num: "3", title: "Upload File", desc: "10-second submission" },
+            { num: "4", title: "Published in AID", desc: "Live for scientists worldwide" }
           ]
         },
         {
-          headline: "6. Загрузка готового `.csv` отчёта на портал AAVSO WebObs",
-          callout: "Финальный шаг занимает 10 секунд — ваши измерения сразу появятся на международной кривой блеска AAVSO!",
+          kicker: "COMMON PITFALLS",
+          headline: "Common Mistakes & How to Avoid Them",
+          callout: "Review this quick checklist before every submission so your observations pass validation on the first try.",
+          table: {
+            headers: ["Mistake", "Consequence", "Solution"],
+            rows: [
+              ["Uploading raw CSV", "Format error in WebObs", "Always convert through Seestar AstroLab AAVSO"],
+              ["Missing OBSCODE", "Data won't link to your account", "Check your AAVSO profile & Section 1 before uploading"],
+              ["Bright star saturation", "Light curve drifts / clips", "Check magnitude & exposure limits in Target Radar, watch MERR"],
+              ["Ignoring check star", "Cannot verify night quality", "Let AstroLab auto-pick KNAME/KMAG and review it in UI"]
+            ]
+          }
+        },
+        {
+          kicker: "SUMMARY & FIRST MISSION",
+          headline: "Summary: From Seestar to AAVSO",
+          callout: "First assignment: pick a variable star, shoot 10–20 frames at 10s, convert in AstroLab, and upload — even 1 datapoint is valuable!",
           steps: [
-            "<strong>Откройте портал WebObs:</strong> Нажмите кнопку <strong>🌐 Открыть AAVSO WebObs</strong> в Разделе 3 (или откройте <a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
-            "<strong>Выберите загрузку файла:</strong> Нажмите <strong>Upload a file of observations (Extended Format)</strong> и укажите созданный программой файл `*_Seestar.csv`.",
-            "<strong>Подтвердите отправку:</strong> Нажмите <strong>Upload</strong>. Поздравляем — ваше наблюдение официально вошло в мировую базу данных AAVSO!"
+            "<strong>1–2. Impact & Account:</strong> understand the science → register free at <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a>.",
+            "<strong>3–4. OBSCODE & Star:</strong> get your OBSCODE → pick a target in the Seestar AstroLab Radar.",
+            "<strong>5–6. Shoot & CSV:</strong> capture photometry (10s, EQ mode) → export <code>Magnitude_*.csv</code>.",
+            "<strong>7–8. Convert & Upload:</strong> convert in AstroLab (<code>*_Seestar.csv</code>) → upload to <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>AAVSO WebObs</a>."
+          ],
+          cards: [
+            { num: "1–2", title: "Impact & Account", desc: "aavso.org" },
+            { num: "3–4", title: "OBSCODE & Target", desc: "Target Radar (246)" },
+            { num: "5–6", title: "Shoot & CSV", desc: "10s → Magnitude_*.csv" },
+            { num: "7–8", title: "AstroLab → WebObs", desc: "Live in AAVSO AID" }
           ]
         }
       ]
     },
     es: {
-      modalTitle: "🎓 Guía visual paso a paso: Fotometría Seestar y AAVSO",
+      modalTitle: "🚀 Por dónde empezar: Fotometría ciudadana con Seestar y AAVSO",
       btnPrev: "Anterior",
-      btnNext: "Siguiente paso",
+      btnNext: "Siguiente",
       tabs: [
-        "1. 🌟 Tu aporte",
-        "2. 🏛️ Tu OBSCODE",
-        "3. 🎯 Elegir estrella",
-        "4. 🔭 Seestar y CSV",
-        "5. ⚡ Convertir CSV",
-        "6. 🚀 Subir a WebObs"
+        "1. Título", "2. Ciencia", "3. Estándar AAVSO", "4. OBSCODE",
+        "5. Prep. Seestar", "6. Elegir estrella", "7. Captura", "8. Exportar CSV",
+        "9. Conversión", "10. WebObs", "11. Errores", "12. Primer paso"
       ],
       slides: [
-        {
-          headline: "1. Tus observaciones con Seestar impulsan la ciencia mundial",
-          callout: "Los telescopios espaciales no pueden vigilar 246 estrellas variables cada noche: ¡los astrofísicos cuentan contigo!",
-          steps: [
-            "<strong>Observatorio real en casa:</strong> Tu ZWO Seestar (S30 / S30PRO / S50 / S50PRO) mide magnitudes (`MAG ± MERR`) con precisión científica.",
-            "<strong>Captura erupciones:</strong> Novas recurrentes como <em>T CrB</em> pueden estallar en horas. ¡Tu toma puede registrar el inicio!",
-            "<strong>Legado permanente:</strong> Cada archivo `.csv` entra en la base internacional <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID</a>."
-          ]
-        },
-        {
-          headline: "2. Regístrate en AAVSO (100% gratis) y obtén tu OBSCODE",
-          callout: "¡Registrarse y enviar datos a AAVSO es totalmente gratuito!",
-          steps: [
-            "<strong>Crea tu cuenta gratis:</strong> Entra en <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>.",
-            "<strong>Solicita tu código:</strong> Abre <strong>My Account → Request Observer Code</strong>.",
-            "<strong>Guarda tu OBSCODE:</strong> Tu código personal de 3–5 letras (ej. `ABCD`) aparece en tu perfil AAVSO; introdúcelo una vez en AstroLab."
-          ]
-        },
-        {
-          headline: "3. Elige una estrella objetivo en Seestar AstroLab",
-          callout: "¡Los 246 objetivos del Radar AAVSO están calibrados para tu Seestar!",
-          steps: [
-            "<strong>Filtra por tu cielo:</strong> Elige modelo (`S30`–`S50PRO`), marca <strong>📍 Visibles en mi ciudad</strong> y el <strong>🧭 Acimut</strong> de tu balcón.",
-            "<strong>O gira la Ruleta aleatoria:</strong> Pulsa <strong>🎰 Selección aleatoria</strong> para elegir un objetivo urgente visible hoy.",
-            "<strong>Carga la estrella:</strong> Haz clic en la estrella y pulsa <strong>🎯 Cargar datos de la estrella en el menú (Sección 1)</strong>."
-          ]
-        },
-        {
-          headline: "4. Fotometría en el último firmware de Seestar y extracción CSV",
-          callout: "El último firmware de Seestar incluye Fotometría nativa en Stargazing: selecciona ~15 estrellas de referencia Gaia G automáticamente y guarda cada toma en CSV.",
-          steps: [
-            "<strong>Apunta en Stargazing:</strong> Usa <strong>Modo EQ</strong> en series largas y exposiciones cortas (`2–20 s`) sin saturar la estrella.",
-            "<strong>Activa Photometry:</strong> Abre la herramienta <strong>Photometry</strong> en la app Seestar y marca tu estrella objetivo.",
-            "<strong>Copia el CSV al PC:</strong> Conecta por <strong>USB-C</strong> (o Wi-Fi `\\\\seestar.local\\EMMC Images`) y copia `Magnitude_*.csv`."
-          ]
-        },
-        {
-          headline: "5. Procesa y convierte el CSV (Sección 1 → Sección 2 → Sección 3)",
-          callout: "Sigue el orden exacto: primero Sección 1 (catálogos), luego Sección 2 (CSV) y Sección 3 (exportación `.csv`).",
-          steps: [
-            "<strong>Sección 1 (Observador y estrella):</strong> Introduce <strong>OBSCODE</strong> y <strong>STARID</strong>, pulsa <strong>🔭 Cargar SIMBAD + VSP</strong>.",
-            "<strong>Sección 2 (Elegir y verificar CSV):</strong> Pulsa <strong>📂 Elegir archivo CSV Seestar</strong> (`Magnitude_*.csv`) para verificar y trazar la curva de luz.",
-            "<strong>Sección 3 (Convertir):</strong> Pulsa <strong>⚡ Convertir y guardar AAVSO Extended (.csv)</strong> (`*_Seestar.csv`)."
-          ]
-        },
-        {
-          headline: "6. Sube tu archivo `.csv` final a AAVSO WebObs en 10 segundos",
-          callout: "¡Tus puntos aparecerán al instante en la curva de luz mundial de AAVSO!",
-          steps: [
-            "<strong>Abre WebObs:</strong> Pulsa <strong>🌐 Abrir AAVSO WebObs</strong> en Sección 3 (<a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
-            "<strong>Sube el archivo:</strong> Elige <strong>Upload a file of observations (Extended Format)</strong> y selecciona `*_Seestar.csv`.",
-            "<strong>Confirma con Upload:</strong> ¡Enhorabuena, tu observación ya es parte de la ciencia mundial!"
-          ]
-        }
+        { type: "hero", kicker: "FOTOMETRÍA CIUDADANA • ZWO SEESTAR", headline: "Fotometría ciudadana con Seestar: de la luz estelar a la base AAVSO", callout: "Guía paso a paso para observadores de estrellas variables • Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO", steps: ["<strong>Para quién es:</strong> propietarios de ZWO Seestar que desean aportar datos científicos reales.", "<strong>Qué aprenderás:</strong> registro en <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO</a>, captura en modo EQ, conversión de <code>Magnitude_*.csv</code> y subida a WebObs.", "<strong>Resultado:</strong> tus mediciones entran en la base mundial de astrofísica."], img: "assets/pptx_slide_1.jpg", caption: "Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO • WebObs" },
+        { kicker: "CIENCIA CIUDADANA", headline: "¿Por qué hacer fotometría amateur?", callout: "Los telescopios profesionales no pueden vigilar todas las estrellas variables cada noche: los aficionados cubren ese vacío.", steps: ["<strong>1. Patrulla del cielo:</strong> AAVSO une miles de observaciones en una sola curva de luz.", "<strong>2. Alertas tempranas:</strong> detectan erupciones y eclipses a tiempo.", "<strong>3. Publicaciones:</strong> los datos de AAVSO se usan en artículos científicos y misiones espaciales."], cards: [{ num: "1", title: "Patrulla del cielo", desc: "Monitoreo continuo" }, { num: "2", title: "Alertas", desc: "Detección temprana" }, { num: "3", title: "Publicaciones", desc: "Aporte científico real" }] },
+        { kicker: "FUNDAMENTOS", headline: "¿Qué es la fotometría y por qué AAVSO?", callout: "AAVSO (desde 1911) es el estándar internacional de estrellas variables.", steps: ["<strong>Fotometría:</strong> convierte el flujo luminoso en magnitud estelar (<code>MAG ± MERR</code>).", "<strong>AAVSO (1911):</strong> archivo <a href='https://www.aavso.org/aavso-international-database-aid' target='_blank' rel='noopener'>AAVSO AID</a>.", "<strong>Formato Extended:</strong> el CSV crudo requiere el conversor <code>Seestar AstroLab AAVSO</code>."], img: "assets/pptx_slide_3.png", caption: "Curva de luz (TG / V) y formato #TYPE=EXTENDED" },
+        { kicker: "PASO 1 • INICIO", headline: "Registro en AAVSO y código OBSCODE", callout: "OBSCODE es tu identificador permanente en AAVSO. Sin él no puedes subir fotometría.", steps: ["<strong>1. Cuenta gratis en aavso.org:</strong> regístrate en <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>.", "<strong>2. User Profile → Settings:</strong> abre la configuración de perfil.", "<strong>3. Pulsa «Request an Obscode»:</strong> recibirás tu código personal de 3–5 letras."], cards: [{ num: "1", title: "aavso.org/user/register", desc: "Cuenta gratuita" }, { num: "2", title: "User Profile → Settings", desc: "Ajustes de perfil" }, { num: "3", title: "Request an Obscode", desc: "Código asignado" }] },
+        { kicker: "PASO 2 • PREPARACIÓN", headline: "Preparar Seestar para fotometría", callout: "Activa el modo ecuatorial (EQ) para eliminar la rotación de campo.", steps: ["<strong>Modo EQ:</strong> mejora la estabilidad de la medición.", "<strong>Campos estándar AAVSO (ej. SA20):</strong> ideales para tus primeras prácticas.", "<strong>Canal verde (TG):</strong> ten en cuenta que la fotometría de Seestar usa el canal verde."], img: "assets/pptx_slide_5.png", caption: "Campo estándar AAVSO (SA20) • El modo EQ elimina rotación de campo" },
+        { kicker: "PASO 3 • OBJETIVO", headline: "Elegir estrella en el Radar de Seestar AstroLab", callout: "Filtros de visibilidad, recomendación de exposición y coordenadas J2000.0.", steps: ["<strong>Filtros del radar (246 objetivos):</strong> elige tu modelo Seestar y filtra por ciudad, hemisferio y acimut.", "<strong>Exposición recomendada:</strong> revisa el tiempo (ej. <code>10s</code>) y riesgo de saturación en el dossier.", "<strong>Coordenadas J2000.0:</strong> cópialas si la estrella no aparece por nombre en Seestar."], img: "assets/pptx_slide_6.png", caption: "Dossier completo AAVSO: J2000.0, magnitud, carta VSP y guía Seestar" },
+        { kicker: "PASO 4 • CAPTURA", headline: "Fotometría en Seestar", callout: "El registro comienza manualmente; exposición óptima: 10 segundos.", steps: ["<strong>1. APUNTAR:</strong> selecciona el objetivo en la app Seestar.", "<strong>2. INICIAR:</strong> inicia el registro manualmente.", "<strong>3. SERIE 10 s:</strong> acumula una serie de tomas de <code>10 s</code>.", "<strong>4. DETENER:</strong> evita la saturación en estrellas brillantes."], cards: [{ num: "1", title: "APUNTAR", desc: "Elige objetivo" }, { num: "2", title: "INICIAR", desc: "Registro manual" }, { num: "3", title: "SERIE 10s", desc: "Serie de tomas" }, { num: "4", title: "DETENER", desc: "Controla saturación" }] },
+        { kicker: "PASO 5 • EXPORTAR", headline: "Extraer CSV de Seestar", callout: "No subas el CSV crudo directamente a AAVSO: dará error de formato.", steps: ["<strong>1. Busca <code>Magnitude_*.csv</code>:</strong> contiene tus datos fotométricos crudos.", "<strong>2. Copia al PC:</strong> por cable USB-C o Wi-Fi.", "<strong>3. Siguiente paso:</strong> pásalo por el conversor <code>Seestar AstroLab AAVSO</code>."], cards: [{ num: "📄", title: "Magnitude_*.csv", desc: "Archivo crudo Seestar" }, { num: "⚠️", title: "¡No subir directo!", desc: "WebObs lo rechazará" }, { num: "⚡", title: "Usar AstroLab", desc: "Sección 1 → Sección 2" }] },
+        { kicker: "PASO 6 • CONVERSIÓN", headline: "Conversión en Seestar AstroLab (Sección 1 → 2 → 3)", callout: "Primero verifica OBSCODE y SIMBAD+VSP en Sección 1, luego carga Magnitude_*.csv en Sección 2.", steps: ["<strong>JD_Mid y filtrado:</strong> calcula el centro de exposición y filtra <code>Non-reference star</code>.", "<strong>Formato Extended:</strong> redondea a 4 decimales y genera <code>*_Seestar.csv</code>.", "<strong>Comparación gráfica:</strong> muestra tu curva frente a la base AAVSO (AID)."], img: "assets/pptx_slide_9.png", caption: "Comparación de tus datos Seestar con la curva oficial AAVSO" },
+        { kicker: "PASO 7 • PUBLICACIÓN", headline: "Subida a AAVSO WebObs", callout: "¡Tus puntos se publican al instante en AAVSO International Database!", steps: ["<strong>1. Pulsa Convertir:</strong> genera el archivo <code>*_Seestar.csv</code> (#TYPE=EXTENDED).", "<strong>2. Entra en WebObs:</strong> <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>apps.aavso.org/v2/data/submit/photometry/</a>.", "<strong>3. Upload a file of observations:</strong> selecciona <code>*_Seestar.csv</code> y envía.", "<strong>4. Comprueba en la base:</strong> ya eres parte de la ciencia mundial."], cards: [{ num: "1", title: "Archivo .csv", desc: "#TYPE=EXTENDED" }, { num: "2", title: "WebObs", desc: "Portal oficial" }, { num: "3", title: "Subida", desc: "10 segundos" }, { num: "4", title: "Publicado", desc: "Base AAVSO AID" }] },
+        { kicker: "ERRORES COMUNES", headline: "Errores frecuentes y cómo evitarlos", callout: "Revisa esta tabla antes de cada envío.", table: { headers: ["Error", "Consecuencia", "Solución"], rows: [["Subir CSV crudo", "Error de formato", "Convierte siempre con Seestar AstroLab AAVSO"], ["Olvidar OBSCODE", "No se vincula a tu perfil", "Verifica OBSCODE en Sección 1"], ["Estrella saturada", "Curva deformada", "Revisa magnitud/exposición en el Radar"], ["Ignorar check star", "Sin control de calidad", "Revisa KNAME/KMAG en pantalla"]] } },
+        { kicker: "RESUMEN", headline: "Resumen: de Seestar a AAVSO", callout: "Primera misión: elige una variable, toma 10–20 cuadros de 10s, convierte y sube.", steps: ["<strong>1–2. Ciencia y cuenta:</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a>.", "<strong>3–4. OBSCODE y estrella:</strong> Radar de objetivos.", "<strong>5–6. Captura y CSV:</strong> 10s EQ → <code>Magnitude_*.csv</code>.", "<strong>7–8. Conversión y WebObs:</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>."], cards: [{ num: "1–2", title: "Cuenta", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "Radar 246" }, { num: "5–6", title: "Captura", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "Base AAVSO" }] }
       ]
     },
     de: {
-      modalTitle: "🎓 Schritt-für-Schritt-Anleitung: Seestar-Photometrie & AAVSO",
+      modalTitle: "🚀 Erste Schritte: Bürgerwissenschaftliche Photometrie mit Seestar & AAVSO",
       btnPrev: "Zurück",
-      btnNext: "Nächster Schritt",
+      btnNext: "Weiter",
       tabs: [
-        "1. 🌟 Ihr Beitrag",
-        "2. 🏛️ OBSCODE",
-        "3. 🎯 Stern wählen",
-        "4. 🔭 Seestar & CSV",
-        "5. ⚡ CSV konvertieren",
-        "6. 🚀 WebObs-Upload"
+        "1. Titel", "2. Wissenschaft", "3. AAVSO", "4. OBSCODE",
+        "5. Setup", "6. Zielwahl", "7. Aufnahme", "8. CSV-Export",
+        "9. Konvertieren", "10. WebObs", "11. Fehler", "12. Fazit"
       ],
       slides: [
-        {
-          headline: "1. Warum Ihre Seestar-Beobachtungen für die Wissenschaft zählen",
-          callout: "Weltraumteleskope können nicht jede Nacht 246 Novae und veränderliche Sterne überwachen — Astrophysiker zählen auf Sie!",
-          steps: [
-            "<strong>Heimsternwarte:</strong> Ihr ZWO Seestar misst Helligkeiten (`MAG ± MERR`) präzise vom Balkon.",
-            "<strong>Ausbrüche erfassen:</strong> Wiederkehrende Novae wie <em>T CrB</em> können binnen Stunden ausbrechen.",
-            "<strong>Weltweites Archiv:</strong> Jede `.csv`-Datei fließt in die <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID Datenbank</a> ein."
-          ]
-        },
-        {
-          headline: "2. Kostenlos bei der AAVSO registrieren & OBSCODE finden",
-          callout: "Die Registrierung und Datenübermittlung bei der AAVSO ist 100 % kostenlos!",
-          steps: [
-            "<strong>Kostenloses Konto:</strong> Registrieren unter <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>.",
-            "<strong>Code anfordern:</strong> Öffnen Sie <strong>My Account → Request Observer Code</strong>.",
-            "<strong>OBSCODE speichern:</strong> Tragen Sie Ihren 3–5-stelligen Code in Abschnitt 1 ein."
-          ]
-        },
-        {
-          headline: "3. Zielstern in Seestar AstroLab auswählen",
-          callout: "Alle 246 Ziele im linken AAVSO-Zielradar sind für Ihr Seestar vorkalibriert!",
-          steps: [
-            "<strong>Himmel filtern:</strong> Modell wählen (`S30`–`S50PRO`), <strong>📍 In meiner Stadt sichtbar</strong> & <strong>🧭 Azimut</strong> setzen.",
-            "<strong>Oder Zufallsrad drehen:</strong> Klicken Sie auf <strong>🎰 Zufällige Sternauswahl</strong>.",
-            "<strong>Übernehmen:</strong> Sternkarte anklicken → <strong>🎯 Sterndaten in das Konverter-Menü übernehmen (Abschnitt 1)</strong>."
-          ]
-        },
-        {
-          headline: "4. Photometrie in der neuesten Seestar-Firmware & CSV-Export",
-          callout: "Die aktuelle Seestar-Firmware misst im Stargazing-Modus automatisch ~15 Gaia-G-Referenzsterne und schreibt jede Belichtung in eine CSV-Datei!",
-          steps: [
-            "<strong>Im Stargazing-Modus anfahren:</strong> Bei langen Serien <strong>EQ-Modus</strong> aktivieren, kurze Belichtung (`2–20 s`) wählen.",
-            "<strong>Photometry starten:</strong> Zielstern im Seestar-<strong>Photometry</strong>-Tool antippen.",
-            "<strong>CSV kopieren:</strong> Per <strong>USB-C</strong> (oder WLAN `\\\\seestar.local\\EMMC Images`) `Magnitude_*.csv` auf den PC kopieren."
-          ]
-        },
-        {
-          headline: "5. CSV verarbeiten & konvertieren (Abschnitt 1 → 2 → 3)",
-          callout: "Beginnen Sie mit Abschnitt 1 (Kataloge), dann Abschnitt 2 (CSV) und Abschnitt 3 (`.csv`-Export).",
-          steps: [
-            "<strong>Abschnitt 1 (Beobachter & Stern):</strong> <strong>OBSCODE</strong> und <strong>STARID</strong> prüfen → <strong>🔭 SIMBAD + VSP laden</strong>.",
-            "<strong>Abschnitt 2 (CSV wählen):</strong> <strong>📂 Seestar-CSV-Datei wählen</strong> (`Magnitude_*.csv`) — Lichtkurve erscheint rechts.",
-            "<strong>Abschnitt 3 (Konvertieren):</strong> <strong>⚡ Konvertieren & AAVSO Extended (.csv) speichern</strong> (`*_Seestar.csv`)."
-          ]
-        },
-        {
-          headline: "6. Fertige `.csv`-Datei bei AAVSO WebObs hochladen",
-          callout: "Ihre Messpunkte erscheinen sofort in der weltweiten AAVSO-Lichtkurve!",
-          steps: [
-            "<strong>WebObs öffnen:</strong> Klicken Sie auf <strong>🌐 AAVSO WebObs öffnen</strong> (<a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
-            "<strong>Datei wählen:</strong> <strong>Upload a file of observations (Extended Format)</strong> → `*_Seestar.csv`.",
-            "<strong>Upload klicken:</strong> Glückwunsch zu Ihrem wissenschaftlichen Beitrag!"
-          ]
-        }
+        { type: "hero", kicker: "CITIZEN PHOTOMETRY • ZWO SEESTAR", headline: "Photometrie mit Seestar: Vom Sternenlicht in die AAVSO-Datenbank", callout: "Schritt-für-Schritt-Anleitung • Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO", steps: ["<strong>Für wen:</strong> alle ZWO Seestar-Besitzer, die echte wissenschaftliche Daten sammeln möchten.", "<strong>Lernziele:</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO</a>-Konto, EQ-Modus, <code>Magnitude_*.csv</code>-Konvertierung & WebObs-Upload."], img: "assets/pptx_slide_1.jpg", caption: "Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO • WebObs" },
+        { kicker: "BÜRGERWISSENSCHAFT", headline: "Warum Amateur-Photometrie?", callout: "Profi-Teleskope können nicht alle veränderlichen Sterne jede Nacht überwachen.", steps: ["<strong>1. Himmelspatrouille:</strong> AAVSO vereint tausende Beobachtungen.", "<strong>2. Alarme:</strong> frühe Entdeckung von Ausbrüchen.", "<strong>3. Publikationen:</strong> Daten fließen in Fachartikel ein."], cards: [{ num: "1", title: "Patrouille", desc: "Dauerbeobachtung" }, { num: "2", title: "Alarme", desc: "Frühwarnung" }, { num: "3", title: "Forschung", desc: "Fachpublikationen" }] },
+        { kicker: "STANDARDS", headline: "Was ist Photometrie & warum AAVSO?", callout: "AAVSO (seit 1911) ist der weltweite Standard für veränderliche Sterne.", steps: ["<strong>Photometrie:</strong> Umrechnung von Sternlicht in Helligkeit (<code>MAG ± MERR</code>).", "<strong>Extended-Format:</strong> rohe CSVs benötigen <code>Seestar AstroLab AAVSO</code>."], img: "assets/pptx_slide_3.png", caption: "Lichtkurve (TG / V) & #TYPE=EXTENDED Standard" },
+        { kicker: "SCHRITT 1", headline: "AAVSO-Registrierung & OBSCODE", callout: "Ohne persönlichen OBSCODE ist kein Upload möglich.", steps: ["<strong>1. Konto erstellen:</strong> <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a> (kostenlos).", "<strong>2. User Profile → Settings</strong> öffnen.", "<strong>3. «Request an Obscode»</strong> klicken."], cards: [{ num: "1", title: "Registrierung", desc: "Kostenlos" }, { num: "2", title: "Settings", desc: "Profilbereich" }, { num: "3", title: "OBSCODE", desc: "Automatisch vergeben" }] },
+        { kicker: "SCHRITT 2", headline: "Seestar für Photometrie vorbereiten", callout: "EQ-Modus aktivieren, um Bildfelddrehung zu vermeiden.", steps: ["<strong>EQ-Modus:</strong> stabilere Messreihen.", "<strong>Standardfelder (z.B. SA20):</strong> ideal zum Üben.", "<strong>Grünkanal (TG):</strong> Farbsensor-Photometrie beachten."], img: "assets/pptx_slide_5.png", caption: "AAVSO-Standardfeld (SA20) • EQ-Modus" },
+        { kicker: "SCHRITT 3", headline: "Zielwahl im Seestar AstroLab Radar", callout: "Sichtbarkeitsfilter, Belichtungsempfehlungen & J2000.0-Koordinaten.", steps: ["<strong>Radar-Filter (246 Ziele):</strong> Teleskop, Stadt & Azimut wählen.", "<strong>Belichtungszeit:</strong> Hinweise zu <code>10s</code> und Sättigung beachten.", "<strong>J2000.0-Koordinaten:</strong> direkt aus dem Zieldossier nutzen."], img: "assets/pptx_slide_6.png", caption: "AAVSO-Zieldossier mit J2000.0 & Belichtungshinweisen" },
+        { kicker: "SCHRITT 4", headline: "Photometrie-Aufnahme am Seestar", callout: "Manueller Start pro Ziel; optimale Belichtung: 10 Sekunden.", steps: ["<strong>1. ANFAHREN:</strong> Ziel in Seestar wählen.", "<strong>2. START:</strong> Logging manuell starten.", "<strong>3. 10s SERIE:</strong> Aufnahmeserie sammeln.", "<strong>4. STOPP:</strong> Sättigung heller Sterne vermeiden."], cards: [{ num: "1", title: "ANFAHREN", desc: "Ziel wählen" }, { num: "2", title: "START", desc: "Manuell starten" }, { num: "3", title: "10s SERIE", desc: "Bildserie" }, { num: "4", title: "STOPP", desc: "Keine Sättigung" }] },
+        { kicker: "SCHRITT 5", headline: "CSV aus Seestar exportieren", callout: "Rohe CSV niemals direkt bei AAVSO hochladen!", steps: ["<strong>1. <code>Magnitude_*.csv</code></strong> auf dem Seestar suchen.", "<strong>2. Per USB-C / WLAN</strong> auf den PC kopieren.", "<strong>3. In AstroLab</strong> konvertieren."], cards: [{ num: "📄", title: "Magnitude_*.csv", desc: "Rohdatei" }, { num: "⚠️", title: "Kein Direkt-Upload!", desc: "Formatfehler" }, { num: "⚡", title: "AstroLab", desc: "Abschnitt 1 → 2" }] },
+        { kicker: "SCHRITT 6", headline: "Konvertierung in AstroLab (Abschnitt 1 → 2 → 3)", callout: "Erst Abschnitt 1 (OBSCODE + SIMBAD/VSP), dann Abschnitt 2 (CSV) und Abschnitt 3 (`.csv`).", steps: ["<strong>JD_Mid & Filter:</strong> automatische Mittelwertberechnung.", "<strong>Format #TYPE=EXTENDED:</strong> exportiert <code>*_Seestar.csv</code>.", "<strong>Kurvenvergleich:</strong> direkt mit AAVSO AID."], img: "assets/pptx_slide_9.png", caption: "Vergleich Ihrer Seestar-Daten mit AAVSO AID" },
+        { kicker: "SCHRITT 7", headline: "Upload zu AAVSO WebObs", callout: "Ihre Daten erscheinen sofort in der AAVSO-Datenbank!", steps: ["<strong>1. Konvertieren:</strong> <code>*_Seestar.csv</code> erzeugen.", "<strong>2. WebObs öffnen:</strong> <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>apps.aavso.org/v2/data/submit/photometry/</a>.", "<strong>3. Upload a file of observations:</strong> Datei hochladen."], cards: [{ num: "1", title: ".csv Datei", desc: "#TYPE=EXTENDED" }, { num: "2", title: "WebObs", desc: "Upload-Portal" }, { num: "3", title: "Upload", desc: "10 Sekunden" }, { num: "4", title: "Live in AID", desc: "Weltweit sichtbar" }] },
+        { kicker: "FEHLER VERMEIDEN", headline: "Typische Fehler & Lösungen", callout: "Kurze Checkliste vor jedem Upload.", table: { headers: ["Fehler", "Folge", "Lösung"], rows: [["Rohe CSV hochgeladen", "Formatfehler", "Immer über AstroLab konvertieren"], ["OBSCODE vergessen", "Keine Zuordnung", "OBSCODE in Abschnitt 1 prüfen"], ["Stern überbelichtet", "Lichtkurve verzerrt", "Belichtung im Radar prüfen"], ["Check Star ignoriert", "Keine Qualitätsprüfung", "KNAME/KMAG im UI prüfen"]] } },
+        { kicker: "FAZIT", headline: "Zusammenfassung: Von Seestar zu AAVSO", callout: "Erste Aufgabe: 10–20 Bilder à 10s aufnehmen, konvertieren & hochladen!", steps: ["<strong>1–2.</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a> Konto.", "<strong>3–4.</strong> OBSCODE & Zielradar.", "<strong>5–6.</strong> 10s EQ → <code>Magnitude_*.csv</code>.", "<strong>7–8.</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>."], cards: [{ num: "1–2", title: "Konto", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "Radar" }, { num: "5–6", title: "Aufnahme", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "AAVSO AID" }] }
       ]
     },
     fr: {
-      modalTitle: "🎓 Guide visuel pas à pas : Photométrie Seestar & AAVSO",
+      modalTitle: "🚀 Par où commencer : Photométrie citoyenne Seestar & AAVSO",
       btnPrev: "Précédent",
-      btnNext: "Étape suivante",
+      btnNext: "Suivant",
       tabs: [
-        "1. 🌟 Votre impact",
-        "2. 🏛️ OBSCODE",
-        "3. 🎯 Choisir l'étoile",
-        "4. 🔭 Seestar & CSV",
-        "5. ⚡ Convertir CSV",
-        "6. 🚀 Envoi WebObs"
+        "1. Titre", "2. Science", "3. Standards", "4. OBSCODE",
+        "5. Préparation", "6. Cible", "7. Capture", "8. Export CSV",
+        "9. Conversion", "10. WebObs", "11. Erreurs", "12. Résumé"
       ],
       slides: [
-        {
-          headline: "1. Vos observations Seestar font avancer l'astrophysique",
-          callout: "Les télescopes spatiaux ne peuvent pas surveiller 246 étoiles variables chaque nuit — la science compte sur vous !",
-          steps: [
-            "<strong>Observatoire à domicile :</strong> Votre ZWO Seestar mesure la magnitude (`MAG ± MERR`) avec précision.",
-            "<strong>Détecter les éruptions :</strong> Des novae comme <em>T CrB</em> peuvent exploser en quelques heures.",
-            "<strong>Archive mondiale :</strong> Chaque fichier `.csv` rejoint la base <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID</a>."
-          ]
-        },
-        {
-          headline: "2. Inscription gratuite à l'AAVSO & code OBSCODE",
-          callout: "L'inscription et l'envoi de données à l'AAVSO sont 100 % gratuits !",
-          steps: [
-            "<strong>Créer un compte :</strong> Ouvrez <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>.",
-            "<strong>Demander votre code :</strong> Dans votre profil, cliquez sur <strong>My Account → Request Observer Code</strong>.",
-            "<strong>Enregistrer l'OBSCODE :</strong> Saisissez votre code (ex. `ABCD`) dans la Section 1 d'AstroLab."
-          ]
-        },
-        {
-          headline: "3. Choisir une étoile cible dans Seestar AstroLab",
-          callout: "Les 246 cibles du Radar AAVSO sont calibrées pour votre Seestar !",
-          steps: [
-            "<strong>Filtrer votre ciel :</strong> Modèle (`S30`–`S50PRO`), <strong>📍 Visibles dans ma ville</strong> et <strong>🧭 Azimut</strong>.",
-            "<strong>Ou tourner la Roue :</strong> Cliquez sur <strong>🎰 Sélection aléatoire d'étoile</strong>.",
-            "<strong>Charger dans le menu :</strong> Cliquez sur une étoile → <strong>🎯 Charger les données (Section 1)</strong>."
-          ]
-        },
-        {
-          headline: "4. Photométrie sur le dernier firmware Seestar & export CSV",
-          callout: "Le dernier firmware Seestar intègre la Photométrie en mode Stargazing avec ~15 étoiles de référence Gaia G et export CSV automatique !",
-          steps: [
-            "<strong>Pointer en Stargazing :</strong> Activez le <strong>Mode EQ</strong> pour les longues séries et des poses courtes (`2–20 s`).",
-            "<strong>Activer Photometry :</strong> Ouvrez <strong>Photometry</strong> dans l'app Seestar et sélectionnez l'étoile cible.",
-            "<strong>Copier le CSV sur PC :</strong> Via <strong>USB-C</strong> (ou Wi-Fi `\\\\seestar.local\\EMMC Images`), copiez `Magnitude_*.csv`."
-          ]
-        },
-        {
-          headline: "5. Traiter et convertir le CSV (Section 1 → 2 → 3)",
-          callout: "Suivez l'ordre exact : Section 1 (catalogues), puis Section 2 (CSV) et Section 3 (export `.csv`).",
-          steps: [
-            "<strong>Section 1 (Observateur & Étoile) :</strong> Entrez <strong>OBSCODE</strong> et <strong>STARID</strong> → <strong>🔭 Charger SIMBAD + VSP</strong>.",
-            "<strong>Section 2 (Choisir le CSV) :</strong> Cliquez sur <strong>📂 Choisir le fichier CSV Seestar</strong> (`Magnitude_*.csv`).",
-            "<strong>Section 3 (Convertir) :</strong> Cliquez sur <strong>⚡ Convertir et enregistrer AAVSO Extended (.csv)</strong> (`*_Seestar.csv`)."
-          ]
-        },
-        {
-          headline: "6. Envoyer votre fichier `.csv` sur AAVSO WebObs",
-          callout: "Vos mesures apparaissent immédiatement sur la courbe de lumière mondiale AAVSO !",
-          steps: [
-            "<strong>Ouvrir WebObs :</strong> Cliquez sur <strong>🌐 Ouvrir AAVSO WebObs</strong> (<a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
-            "<strong>Choisir le fichier :</strong> <strong>Upload a file of observations (Extended Format)</strong> → `*_Seestar.csv`.",
-            "<strong>Valider Upload :</strong> Félicitations pour votre contribution scientifique !"
-          ]
-        }
+        { type: "hero", kicker: "PHOTOMÉTRIE CITOYENNE • ZWO SEESTAR", headline: "Photométrie Seestar : de la lumière des étoiles à la base AAVSO", callout: "Guide pas à pas • Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO", steps: ["<strong>Pour qui :</strong> tout possesseur de ZWO Seestar souhaitant contribuer à la science.", "<strong>Programme :</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO</a>, mode EQ, conversion <code>Magnitude_*.csv</code> et envoi WebObs."], img: "assets/pptx_slide_1.jpg", caption: "Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO • WebObs" },
+        { kicker: "SCIENCE CITOYENNE", headline: "Pourquoi faire de la photométrie amateur ?", callout: "Les télescopes professionnels ne peuvent pas suivre toutes les variables chaque nuit.", steps: ["<strong>1. Patrouille du ciel :</strong> suivi continu.", "<strong>2. Alertes :</strong> détection précoce des éruptions.", "<strong>3. Publications :</strong> données utilisées par les chercheurs."], cards: [{ num: "1", title: "Patrouille", desc: "Suivi continu" }, { num: "2", title: "Alertes", desc: "Éruptions & éclipses" }, { num: "3", title: "Publications", desc: "Articles scientifiques" }] },
+        { kicker: "FONDAMENTAUX", headline: "Qu'est-ce que la photométrie & l'AAVSO ?", callout: "AAVSO (depuis 1911) : la référence mondiale des étoiles variables.", steps: ["<strong>Photométrie :</strong> mesure de magnitude (<code>MAG ± MERR</code>).", "<strong>Format Extended :</strong> utilisez <code>Seestar AstroLab AAVSO</code>."], img: "assets/pptx_slide_3.png", caption: "Courbe de lumière (TG / V) & format #TYPE=EXTENDED" },
+        { kicker: "ÉTAPE 1", headline: "Inscription AAVSO & code OBSCODE", callout: "L'OBSCODE est obligatoire pour soumettre vos observations.", steps: ["<strong>1. Compte gratuit :</strong> <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>.", "<strong>2. User Profile → Settings</strong>.", "<strong>3. «Request an Obscode»</strong>."], cards: [{ num: "1", title: "aavso.org", desc: "Inscription gratuite" }, { num: "2", title: "Settings", desc: "Profil" }, { num: "3", title: "OBSCODE", desc: "Code personnel" }] },
+        { kicker: "ÉTAPE 2", headline: "Préparer le Seestar", callout: "Activez le mode EQ pour supprimer la rotation de champ.", steps: ["<strong>Mode EQ :</strong> mesures stables.", "<strong>Champs standard (SA20) :</strong> idéal pour débuter.", "<strong>Canal vert (TG) :</strong> capteur couleur."], img: "assets/pptx_slide_5.png", caption: "Champ standard AAVSO (SA20) • Mode EQ" },
+        { kicker: "ÉTAPE 3", headline: "Choisir une cible dans le Radar AstroLab", callout: "Filtres de visibilité, temps de pose & coordonnées J2000.0.", steps: ["<strong>Filtres (246 cibles) :</strong> modèle, ville, azimut.", "<strong>Temps de pose :</strong> suivez les recommandations du dossier.", "<strong>J2000.0 :</strong> utilisez RA/Dec si besoin."], img: "assets/pptx_slide_6.png", caption: "Dossier AAVSO complet : J2000.0, VSP & Seestar" },
+        { kicker: "ÉTAPE 4", headline: "Capture photométrique sur Seestar", callout: "Démarrage manuel par cible ; pose optimale : 10 secondes.", steps: ["<strong>1. POINTER</strong> l'étoile.", "<strong>2. DÉMARRER</strong> manuellement.", "<strong>3. SÉRIE 10s</strong> d'images.", "<strong>4. ARRÊTER</strong> sans saturer."], cards: [{ num: "1", title: "POINTER", desc: "Cible Seestar" }, { num: "2", title: "DÉMARRER", desc: "Log manuel" }, { num: "3", title: "SÉRIE 10s", desc: "Poses multiples" }, { num: "4", title: "ARRÊTER", desc: "Éviter saturation" }] },
+        { kicker: "ÉTAPE 5", headline: "Exporter le CSV depuis Seestar", callout: "Ne téléversez jamais le CSV brut directement sur AAVSO !", steps: ["<strong>1. Trouvez <code>Magnitude_*.csv</code></strong>.", "<strong>2. Copiez sur PC</strong> (USB-C / Wi-Fi).", "<strong>3. Convertissez</strong> dans AstroLab."], cards: [{ num: "📄", title: "Magnitude_*.csv", desc: "Fichier brut" }, { num: "⚠️", title: "Pas d'envoi brut !", desc: "Erreur format" }, { num: "⚡", title: "AstroLab", desc: "Section 1 → 2" }] },
+        { kicker: "ÉTAPE 6", headline: "Conversion dans AstroLab (Section 1 → 2 → 3)", callout: "Vérifiez OBSCODE/SIMBAD en Section 1, chargez le CSV en Section 2, exportez en Section 3.", steps: ["<strong>JD_Mid & filtrage :</strong> calcul automatique.", "<strong>Format #TYPE=EXTENDED :</strong> crée <code>*_Seestar.csv</code>.", "<strong>Comparaison :</strong> courbe superposée à AAVSO AID."], img: "assets/pptx_slide_9.png", caption: "Comparaison de vos mesures Seestar avec AAVSO AID" },
+        { kicker: "ÉTAPE 7", headline: "Envoi sur AAVSO WebObs", callout: "Vos données sont immédiatement publiées !", steps: ["<strong>1. Convertir (.csv)</strong> en Section 3.", "<strong>2. Ouvrir :</strong> <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>apps.aavso.org/v2/data/submit/photometry/</a>.", "<strong>3. Upload a file of observations :</strong> envoyer <code>*_Seestar.csv</code>."], cards: [{ num: "1", title: ".csv prêt", desc: "#TYPE=EXTENDED" }, { num: "2", title: "WebObs", desc: "Portail officiel" }, { num: "3", title: "Upload", desc: "10 secondes" }, { num: "4", title: "Publié", desc: "Base AAVSO AID" }] },
+        { kicker: "PIÈGES À ÉVITER", headline: "Erreurs fréquentes", callout: "Vérifiez ces 4 points avant chaque envoi.", table: { headers: ["Erreur", "Conséquence", "Solution"], rows: [["CSV brut envoyé", "Erreur de format", "Convertir via AstroLab"], ["OBSCODE oublié", "Non lié au compte", "Vérifier Section 1"], ["Étoile saturée", "Courbe fausse", "Suivre le temps de pose du Radar"], ["Check star ignorée", "Qualité non vérifiée", "Vérifier KNAME/KMAG"]] } },
+        { kicker: "RÉSUMÉ", headline: "Résumé : de Seestar à l'AAVSO", callout: "Premier défi : 10–20 poses de 10s, conversion et envoi WebObs !", steps: ["<strong>1–2.</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a>.", "<strong>3–4.</strong> OBSCODE & Radar.", "<strong>5–6.</strong> 10s EQ → <code>Magnitude_*.csv</code>.", "<strong>7–8.</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>."], cards: [{ num: "1–2", title: "Compte", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "Radar" }, { num: "5–6", title: "Capture", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "AAVSO AID" }] }
       ]
     },
     zh: {
-      modalTitle: "🎓 图文教程：最新版 Seestar 测光与 AAVSO 提交流程",
+      modalTitle: "🚀 新手入门：Seestar 公民天文学测光与 AAVSO 国际上传指南",
       btnPrev: "上一步",
       btnNext: "下一步",
       tabs: [
-        "1. 🌟 科学贡献",
-        "2. 🏛️ OBSCODE",
-        "3. 🎯 挑选变星",
-        "4. 🔭 拍摄与CSV",
-        "5. ⚡ 转换CSV",
-        "6. 🚀 上传WebObs"
+        "1. 首页", "2. 科学价值", "3. AAVSO标准", "4. OBSCODE",
+        "5. 拍摄准备", "6. 挑选目标", "7. 拍摄流程", "8. 导出CSV",
+        "9. 格式转换", "10. 上传WebObs", "11. 常见错误", "12. 首步总结"
       ],
       slides: [
-        {
-          headline: "1. 你的阳台 Seestar 观测对全球天文学至关重要",
-          callout: "空间望远镜无法每晚盯守 246 颗爆发新星与变星——天体物理学家需要你的接力数据！",
-          steps: [
-            "<strong>家用科学天文台：</strong> ZWO Seestar 能测量高精度星等 (`MAG ± MERR`)。",
-            "<strong>捕捉爆发瞬间：</strong> 再发新星 <em>T CrB</em> 随时可能爆发。",
-            "<strong>载入百年数据库：</strong> 每份 `.csv` 报告都会进入 <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID 国际数据库</a>。"
-          ]
-        },
-        {
-          headline: "2. 免费注册 AAVSO 并获取你的专属 OBSCODE",
-          callout: "注册 AAVSO 观测者并提交数据 100% 免费！",
-          steps: [
-            "<strong>注册账号：</strong> 访问 <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>。",
-            "<strong>申请代码：</strong> 登录后打开 <strong>My Account → Request Observer Code</strong>。",
-            "<strong>填入 OBSCODE：</strong> 在第 1 步中输入你的 3–5 位代码（如 `ABCD`），软件会自动记住。"
-          ]
-        },
-        {
-          headline: "3. 在 Seestar AstroLab 中挑选目标变星",
-          callout: "左侧雷达中的 246 颗优先目标已全部针对 Seestar 完成校准！",
-          steps: [
-            "<strong>筛选可见目标：</strong> 选择型号 (`S30`–`S50PRO`)，勾选 <strong>📍 本市可见目标</strong> 与 <strong>🧭 方位角</strong>。",
-            "<strong>或转动选星转盘：</strong> 点击 <strong>🎰 随机选星</strong> 自动抽取今晚高优先级目标。",
-            "<strong>一键填入第 1 步：</strong> 点击星卡 → <strong>🎯 将恒星数据填入转换菜单 (第 1 步)</strong>。"
-          ]
-        },
-        {
-          headline: "4. 最新 Seestar 固件测光拍摄与导出 CSV 文件",
-          callout: "最新版 Seestar 固件在观星模式 (Stargazing) 内置测光功能：自动匹配约 15 颗 Gaia G 参考星并实时写入 CSV！",
-          steps: [
-            "<strong>观星模式对准：</strong> 长序列建议开启 <strong>EQ 赤道仪模式</strong>，短曝光 (`2–20 s`) 防止过曝。",
-            "<strong>开启内置 Photometry：</strong> 在 Seestar App 中打开 <strong>Photometry</strong> 选中目标星，固件会自动选取参考星并记录每帧数据。",
-            "<strong>复制 CSV 到电脑：</strong> 用 <strong>USB-C 数据线</strong>（或 Wi-Fi `\\\\seestar.local\\EMMC Images`）复制 `Magnitude_*.csv`。"
-          ]
-        },
-        {
-          headline: "5. 在软件中校验并转换 CSV（第 1 步 → 第 2 步 → 第 3 步）",
-          callout: "请按顺序操作：先第 1 步加载星表，再第 2 步导入 CSV，最后第 3 步导出 `.csv`！",
-          steps: [
-            "<strong>第 1 步（观测者与恒星）：</strong> 核对 <strong>OBSCODE</strong> 与 <strong>STARID</strong>，点击 <strong>🔭 加载 SIMBAD + VSP</strong>。",
-            "<strong>第 2 步（选择并校验 CSV）：</strong> 点击 <strong>📂 选择 Seestar CSV 文件</strong> (`Magnitude_*.csv`)，右侧实时绘制光变曲线。",
-            "<strong>第 3 步（转换保存）：</strong> 点击 <strong>⚡ 转换并保存 AAVSO Extended (.csv)</strong> (`*_Seestar.csv`)。"
-          ]
-        },
-        {
-          headline: "6. 将生成的 `.csv` 报告上传至 AAVSO WebObs",
-          callout: "仅需 10 秒，你的观测点就会立即出现在全球 AAVSO 光变曲线上！",
-          steps: [
-            "<strong>打开 WebObs：</strong> 点击第 3 步 <strong>🌐 打开 AAVSO WebObs</strong>（<a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>）。",
-            "<strong>上传文件：</strong> 选择 <strong>Upload a file of observations (Extended Format)</strong> 并选中 `*_Seestar.csv`。",
-            "<strong>点击 Upload：</strong> 恭喜你正式成为全球公民天文学家！"
-          ]
-        }
+        { type: "hero", kicker: "公民测光 • ZWO SEESTAR", headline: "Seestar 公民测光：从星光到 AAVSO 国际数据库", callout: "变星观测者分步指南 • Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO • WebObs", steps: ["<strong>适用人群：</strong> 每位想用 ZWO Seestar 产出真实科研数据的天文爱好者。", "<strong>学习内容：</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO</a> 免费注册、EQ 赤道仪模式测光、转换 <code>Magnitude_*.csv</code> 并提交至 WebObs。"], img: "assets/pptx_slide_1.jpg", caption: "Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO • WebObs" },
+        { kicker: "公民科学价值", headline: "为什么业余爱好者要做测光？", callout: "专业望远镜无法每晚盯守所有变星——爱好者填补了这一空白。", steps: ["<strong>1. 天空巡天：</strong> AAVSO 汇聚全球数千名观测者的光变曲线。", "<strong>2. 爆发预警：</strong> 及时发现新星爆发与食变星异常。", "<strong>3. 科研论文：</strong> 数据直接用于天体物理论文与空间望远镜规划。"], cards: [{ num: "1", title: "天空巡天", desc: "持续监测变星" }, { num: "2", title: "爆发预警", desc: "早期发现异常" }, { num: "3", title: "科研贡献", desc: "写入学术论文" }] },
+        { kicker: "基础与标准", headline: "什么是测光？为什么选择 AAVSO？", callout: "AAVSO（始于 1911 年）是全球变星观测数据的黄金标准。", steps: ["<strong>测光：</strong> 将星光通量转化为精确星等 (<code>MAG ± MERR</code>)。", "<strong>Extended 格式：</strong> 原始 CSV 无法直接上传，需使用 <code>Seestar AstroLab AAVSO</code> 转换。"], img: "assets/pptx_slide_3.png", caption: "变星光变曲线 (TG / V) 与 #TYPE=EXTENDED 严格标准" },
+        { kicker: "第 1 步 • 起步", headline: "注册 AAVSO 并获取专属 OBSCODE", callout: "没有 OBSCODE 将无法上传测光数据。", steps: ["<strong>1. 免费注册：</strong> 访问 <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>。", "<strong>2. 打开 User Profile → Settings</strong>。", "<strong>3. 点击 «Request an Obscode»</strong> 自动分配代码。"], cards: [{ num: "1", title: "aavso.org", desc: "免费注册账号" }, { num: "2", title: "Settings", desc: "个人资料设置" }, { num: "3", title: "OBSCODE", desc: "自动生成代码" }] },
+        { kicker: "第 2 步 • 拍摄准备", headline: "Seestar 测光拍摄准备", callout: "开启 EQ 赤道仪模式以消除视场旋转。", steps: ["<strong>EQ 模式：</strong> 提升长序列测量稳定性。", "<strong>标准天区 (如 SA20)：</strong> 适合新手初次练习校准。", "<strong>绿通道 (TG)：</strong> 彩色传感器测光对应 TG 滤镜标准。"], img: "assets/pptx_slide_5.png", caption: "AAVSO 标准天区 (SA20) • EQ 模式消除旋转" },
+        { kicker: "第 3 步 • 目标选择", headline: "在 Seestar AstroLab 雷达中挑选目标", callout: "城市可见度过滤、曝光建议与 J2000.0 精确坐标。", steps: ["<strong>雷达过滤 (246 颗目标)：</strong> 选择望远镜型号与城市方位角。", "<strong>曝光与饱和提示：</strong> 查看档案中的建议曝光 (如 <code>10s</code>)。", "<strong>J2000.0 坐标：</strong> 找不到星名时直接输入 RA/Dec。"], img: "assets/pptx_slide_6.png", caption: "AAVSO 完整目标档案：J2000.0 坐标、VSP 与曝光建议" },
+        { kicker: "第 4 步 • 拍摄过程", headline: "在 Seestar 上执行测光拍摄", callout: "每颗星需手动开启记录；推荐曝光 10 秒。", steps: ["<strong>1. 对准目标</strong>星。", "<strong>2. 手动开启</strong>测光记录。", "<strong>3. 10秒连拍</strong>累积序列。", "<strong>4. 停止拍摄</strong>注意防止亮星过曝。"], cards: [{ num: "1", title: "对准", desc: "选择目标星" }, { num: "2", title: "开始", desc: "手动启动记录" }, { num: "3", title: "10秒序列", desc: "多帧连续拍摄" }, { num: "4", title: "停止", desc: "防止亮星过曝" }] },
+        { kicker: "第 5 步 • 导出数据", headline: "从 Seestar 导出 CSV 文件", callout: "切勿将原始 CSV 直接上传至 AAVSO，否则会报错！", steps: ["<strong>1. 找到 <code>Magnitude_*.csv</code></strong> 文件。", "<strong>2. 复制到电脑</strong> (USB-C 或 Wi-Fi)。", "<strong>3. 传入 AstroLab</strong> 进行转换。"], cards: [{ num: "📄", title: "Magnitude_*.csv", desc: "原始测光数据" }, { num: "⚠️", title: "切勿直接上传！", desc: "格式不兼容" }, { num: "⚡", title: "打开 AstroLab", desc: "第 1 步 → 第 2 步" }] },
+        { kicker: "第 6 步 • 格式转换", headline: "在 AstroLab 中转换（第 1 步 → 2 → 3）", callout: "先在第 1 步核对 OBSCODE 并加载 SIMBAD+VSP，再在第 2 步导入 CSV！", steps: ["<strong>JD_Mid 与过滤：</strong> 自动计算曝光中点并筛选目标行。", "<strong>#TYPE=EXTENDED：</strong> 导出标准 <code>*_Seestar.csv</code>。", "<strong>曲线对比：</strong> 实时叠加 AAVSO AID 历史曲线。"], img: "assets/pptx_slide_9.png", caption: "你的 Seestar 数据与 AAVSO AID 国际光变曲线实时对比" },
+        { kicker: "第 7 步 • 发布数据", headline: "上传至 AAVSO WebObs", callout: "10 秒完成上传，你的数据点将立即公开显示！", steps: ["<strong>1. 生成 <code>*_Seestar.csv</code></strong>。", "<strong>2. 登录：</strong> <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>apps.aavso.org/v2/data/submit/photometry/</a>。", "<strong>3. 选择 Upload a file of observations</strong> 提交。"], cards: [{ num: "1", title: ".csv 就绪", desc: "#TYPE=EXTENDED" }, { num: "2", title: "WebObs", desc: "官方上传入口" }, { num: "3", title: "上传", desc: "仅需 10 秒" }, { num: "4", title: "已入库", desc: "全球科学家可见" }] },
+        { kicker: "常见误区", headline: "常见错误与规避方法", callout: "每次提交前对照自查。", table: { headers: ["错误", "后果", "解决方法"], rows: [["直接上传原始 CSV", "格式报错", "务必通过 Seestar AstroLab AAVSO 转换"], ["忘记填 OBSCODE", "无法关联账号", "在第 1 步核对你的 OBSCODE"], ["亮星过曝饱和", "光变曲线失真", "按雷达建议控制曝光并关注 MERR"], ["忽略检验星", "无法评估夜空质量", "保留软件自动匹配的 KNAME/KMAG"]] } },
+        { kicker: "总结与首步", headline: "总结：从 Seestar 到 AAVSO 之旅", callout: "首次任务：选一颗变星，10秒曝光拍 10–20 帧，转换并上传——哪怕 1 个数据点也很宝贵！", steps: ["<strong>1–2.</strong> 注册 <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a>。", "<strong>3–4.</strong> 获取 OBSCODE 与目标。", "<strong>5–6.</strong> 10s EQ 拍摄 → <code>Magnitude_*.csv</code>。", "<strong>7–8.</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>。"], cards: [{ num: "1–2", title: "账号", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "目标雷达" }, { num: "5–6", title: "拍摄", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "入库 AAVSO" }] }
       ]
     },
     ber: {
-      modalTitle: "🎓 Amnir s tugniwin (Guía para Ramón): Afutomitri Seestar & AAVSO",
+      modalTitle: "🚀 Tazwara (Guía para Ramón): Afutomitri s Seestar & AAVSO",
       btnPrev: "Ɣer deffir",
-      btnNext: "Aḥric i d-iteddun",
+      btnNext: "Uḍfir",
       tabs: [
-        "1. 🌟 Azal ussnan",
-        "2. 🏛️ OBSCODE",
-        "3. 🎯 Fren itri",
-        "4. 🔭 Seestar & CSV",
-        "5. ⚡ Beddel CSV",
-        "6. 🚀 Sali WebObs"
+        "1. Azwel", "2. Tussna", "3. AAVSO", "4. OBSCODE",
+        "5. Aheggi", "6. Itri", "7. Tuṭṭfa", "8. CSV",
+        "9. Abeddel", "10. WebObs", "11. Tuccḍiwin", "12. Agzul"
       ],
       slides: [
-        {
-          headline: "1. Ayɣer annayen-ik s Seestar sɛan azal ameqqran (para Ramón)",
-          callout: "Itiliskupen n tallunt ur zmiren ara ad εassen 246 n yitriyen yal iḍ — imusnawen ttraǧun annayen-ik!",
-          steps: [
-            "<strong>Asannay deg uxxam:</strong> ZWO Seestar-ik yettaktili tafat (`MAG ± MERR`) s tseddi.",
-            "<strong>Aεassi n yitriyen:</strong> Itriyen am <em>T CrB</em> zemren ad ffɣen deg kra n tsaɛtin.",
-            "<strong>Taffa tamaḍlant:</strong> Yal afaylu `.csv` yettruḥu ɣer <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO AID</a>."
-          ]
-        },
-        {
-          headline: "2. Jerred deg AAVSO (baṭel 100%) & af-d OBSCODE-ik",
-          callout: "Ajerrid d tuzna n wannayen ɣer AAVSO baṭel 100% (100% gratis)!",
-          steps: [
-            "<strong>Snulfu-d amiḍan:</strong> Ldi <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>.",
-            "<strong>Suter tangalt:</strong> Ldi <strong>My Account → Request Observer Code</strong>.",
-            "<strong>Sekles OBSCODE:</strong> Aru tangalt-ik (am. `ABCD`) deg Uḥric 1 n AstroLab."
-          ]
-        },
-        {
-          headline: "3. Fren itri deg Seestar AstroLab",
-          callout: "246 n yitriyen deg Uradar AAVSO heggant i Seestar-ik!",
-          steps: [
-            "<strong>Sizdeg itriyen:</strong> Fren atiliskup (`S30`–`S50PRO`), <strong>📍 deg temdint-inu</strong> d <strong>🧭 Tanila</strong>.",
-            "<strong>Neɣ dewwer Rruḍa:</strong> Siked <strong>🎰 Afran agacuran n yitri</strong>.",
-            "<strong>Sali ɣer umenu:</strong> Siked ɣef yitri → <strong>🎯 Cargar datos en el menú (Aḥric 1)</strong>."
-          ]
-        },
-        {
-          headline: "4. Afutomitri deg firmware aneggaru n Seestar & CSV",
-          callout: "Deg firmware aneggaru n Seestar, Photometry yetteddu deg uskar Stargazing s ~15 n yitriyen Gaia G s wudem awurman!",
-          steps: [
-            "<strong>Wehhi deg Stargazing:</strong> Seqdec <strong>Askar EQ</strong> i tseqquma tiɣezfanin, s tteswirin (`2–20 s`).",
-            "<strong>Rmed Photometry:</strong> Deg usnas Seestar ldi <strong>Photometry</strong> tfreneḍ itri-k.",
-            "<strong>Nɣel CSV ɣer PC:</strong> S <strong>USB-C</strong> (neɣ Wi-Fi `\\\\seestar.local\\EMMC Images`) nɣel `Magnitude_*.csv`."
-          ]
-        },
-        {
-          headline: "5. Beddel afaylu CSV deg wahil (Aḥric 1 → 2 → 3)",
-          callout: "Ḍfer amizzwer: Aḥric 1 (ikaramen), sinna Aḥric 2 (CSV) d Uḥric 3 (`.csv`).",
-          steps: [
-            "<strong>Aḥric 1 (Amannay & Itri):</strong> Senqed <strong>OBSCODE</strong> d <strong>STARID</strong> → <strong>🔭 Zdem-d SIMBAD + VSP</strong>.",
-            "<strong>Aḥric 2 (Fren CSV):</strong> Siked <strong>📂 Fren afaylu CSV Seestar</strong> (`Magnitude_*.csv`).",
-            "<strong>Aḥric 3 (Beddel):</strong> Siked <strong>⚡ Beddel & Sekles AAVSO Extended (.csv)</strong> (`*_Seestar.csv`)."
-          ]
-        },
-        {
-          headline: "6. Sali afaylu-ik `.csv` ɣer AAVSO WebObs",
-          callout: "Deg 10 n tsidyin, annay-ik ad yekcem deg taffa tamaḍlant AAVSO!",
-          steps: [
-            "<strong>Ldi WebObs:</strong> Siked <strong>🌐 Ldi AAVSO WebObs</strong> (<a href='https://www.aavso.org/webobs' target='_blank' rel='noopener'>aavso.org/webobs</a>).",
-            "<strong>Fren afaylu:</strong> <strong>Upload a file of observations (Extended Format)</strong> → `*_Seestar.csv`.",
-            "<strong>Sentem Upload:</strong> Tanemmirt i uttekki-ik deg tussna tamaḍlant!"
-          ]
-        }
+        { type: "hero", kicker: "AFUTOMITRI • ZWO SEESTAR (para Ramón)", headline: "Afutomitri s Seestar: seg tafat n yitriyen ɣer taffa AAVSO", callout: "Amnir s tseddi i Ramón • Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO", steps: ["<strong>I wumi:</strong> yal bab n ZWO Seestar yebɣan ad yefk annayen ussnanen.", "<strong>Ayen ara telmdeḍ:</strong> ajerrid deg <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO</a>, asnerni EQ, abeddel <code>Magnitude_*.csv</code> d tuzna ɣer WebObs."], img: "assets/pptx_slide_1.jpg", caption: "Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO • WebObs" },
+        { kicker: "TUSSNA", headline: "Ayɣer afutomitri n imanayen?", callout: "Itiliskupen imeqqranen ur zmiren ara ad εassen yal itri yal iḍ.", steps: ["<strong>1. Aεassi n ujenna:</strong> AAVSO tesseddukal annayen.", "<strong>2. Ilɣa:</strong> tifin tazikant n yitriyen.", "<strong>3. Tizrawin:</strong> tussna tamaḍlant."], cards: [{ num: "1", title: "Aεassi", desc: "Annay yezgan" }, { num: "2", title: "Ilɣa", desc: "Tifin tazikant" }, { num: "3", title: "Tussna", desc: "Imagraden" }] },
+        { kicker: "ILUGAN", headline: "D acu-t ufutomitri & AAVSO?", callout: "AAVSO (seg 1911) d aswir agraɣlan.", steps: ["<strong>Afutomitri:</strong> aktili n tafat (<code>MAG ± MERR</code>).", "<strong>Extended:</strong> seqdec <code>Seestar AstroLab AAVSO</code>."], img: "assets/pptx_slide_3.png", caption: "Udlif n tafat (TG / V) & #TYPE=EXTENDED" },
+        { kicker: "ASURIF 1", headline: "Ajerrid deg AAVSO & OBSCODE", callout: "War OBSCODE ulamek tuzna n wannayen.", steps: ["<strong>1. Amiḍan baṭel:</strong> <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>.", "<strong>2. User Profile → Settings</strong>.", "<strong>3. «Request an Obscode»</strong>."], cards: [{ num: "1", title: "aavso.org", desc: "Baṭel 100%" }, { num: "2", title: "Settings", desc: "Iɣewwaren" }, { num: "3", title: "OBSCODE", desc: "Tangalt-ik" }] },
+        { kicker: "ASURIF 2", headline: "Aheggi n Seestar", callout: "Rmed asnerni EQ iwakken ur itezzi ara yiger.", steps: ["<strong>Askar EQ:</strong> aktili urkid.", "<strong>Iger SA20:</strong> i ulmad.", "<strong>TG:</strong> abadu azegzaw."], img: "assets/pptx_slide_5.png", caption: "Iger AAVSO (SA20) • Askar EQ" },
+        { kicker: "ASURIF 3", headline: "Afran n yitri deg Uradar", callout: "Imizdag n tmuɣli & imsideg J2000.0.", steps: ["<strong>Aradar (246):</strong> fren atiliskup d temdint.", "<strong>Akud (10s):</strong> senqed akud n tuṭṭfa.", "<strong>J2000.0:</strong> RA / Dec."], img: "assets/pptx_slide_6.png", caption: "Akaram AAVSO: J2000.0, VSP & Seestar" },
+        { kicker: "ASURIF 4", headline: "Tuṭṭfa deg Seestar", callout: "Bdu s ufus; akud igerrzen: 10s.", steps: ["<strong>1. WEHHI</strong> ɣer yitri.", "<strong>2. BDU</strong> s ufus.", "<strong>3. 10s</strong> tteswirin.", "<strong>4. HḤBES</strong> war aserɣi."], cards: [{ num: "1", title: "WEHHI", desc: "Fren itri" }, { num: "2", title: "BDU", desc: "S ufus" }, { num: "3", title: "10s", desc: "Tteswirin" }, { num: "4", title: "HḤBES", desc: "Ur serɣay" }] },
+        { kicker: "ASURIF 5", headline: "Asuffeɣ n CSV", callout: "Ur ttazn ara CSV azegzaw ɣer AAVSO!", steps: ["<strong>1. Af-d <code>Magnitude_*.csv</code></strong>.", "<strong>2. Nɣel ɣer PC</strong>.", "<strong>3. Beddel</strong> deg AstroLab."], cards: [{ num: "📄", title: "Magnitude_*.csv", desc: "Afaylu azegzaw" }, { num: "⚠️", title: "Ur ttazn ara!", desc: "Tuccḍa" }, { num: "⚡", title: "AstroLab", desc: "Aḥric 1 → 2" }] },
+        { kicker: "ASURIF 6", headline: "Abeddel deg AstroLab (Aḥric 1 → 2 → 3)", callout: "Aḥric 1 (OBSCODE + SIMBAD), sinna Aḥric 2 (CSV) d Uḥric 3 (`.csv`).", steps: ["<strong>JD_Mid:</strong> aktili awurman.", "<strong>#TYPE=EXTENDED:</strong> <code>*_Seestar.csv</code>.", "<strong>Udlif:</strong> s wudem agraɣlan."], img: "assets/pptx_slide_9.png", caption: "Asenqed n udlif-ik akked AAVSO AID" },
+        { kicker: "ASURIF 7", headline: "Tuzna ɣer AAVSO WebObs", callout: "Deg 10s ad yili deg taffa tamaḍlant!", steps: ["<strong>1. Beddel (.csv)</strong>.", "<strong>2. Ldi:</strong> <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>apps.aavso.org/v2/data/submit/photometry/</a>.", "<strong>3. Upload:</strong> <code>*_Seestar.csv</code>."], cards: [{ num: "1", title: ".csv", desc: "#TYPE=EXTENDED" }, { num: "2", title: "WebObs", desc: "Tawwurt" }, { num: "3", title: "Upload", desc: "10s" }, { num: "4", title: "AAVSO AID", desc: "Yekcem" }] },
+        { kicker: "TUCCḌIWIN", headline: "Tuccḍiwin & Tifrat", callout: "Senqed uqbel tuzna.", table: { headers: ["Tuccḍa", "Agemmuḍ", "Tifrat"], rows: [["CSV azegzaw", "Tuccḍa", "Beddel s AstroLab"], ["Tettuḍ OBSCODE", "Ur yettwaqqen", "Senqed Aḥric 1"], ["Itri yesserɣ", "Udlif yerka", "Senqed akud deg Uradar"], ["Check star", "Ulac asenqed", "Senqed KNAME/KMAG"]] } },
+        { kicker: "AGZUL", headline: "Agzul: seg Seestar ɣer AAVSO", callout: "Amahil amenzu: 10–20 n tteswirin n 10s, beddel & sali!", steps: ["<strong>1–2.</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a>.", "<strong>3–4.</strong> OBSCODE & Aradar.", "<strong>5–6.</strong> 10s EQ → <code>Magnitude_*.csv</code>.", "<strong>7–8.</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>."], cards: [{ num: "1–2", title: "Amiḍan", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "Aradar" }, { num: "5–6", title: "Tuṭṭfa", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "AAVSO AID" }] }
       ]
     }
   };
   BEGINNER_PRESENTATION_7LANG.be = BEGINNER_PRESENTATION_7LANG.ber;
 
-  // Наглядная панель справа: сгенерированная обучающая иллюстрация + аннотация шагов
-  function buildSlideVisualMockupHtml(slideIdx) {
-    const imgNum = Math.max(1, Math.min(6, slideIdx + 1));
-    const captions = [
-      "🌍 ZWO Seestar → AAVSO International Database (AID) • 246 Priority Targets",
-      "🏛️ Free AAVSO Account (aavso.org/user/register) → Personal OBSCODE",
-      "🎯 Target Radar & Celestial Wheel → Pull Star into Section 1",
-      "📱 Seestar Stargazing Photometry (Gaia G auto-refs) → USB-C Magnitude_*.csv",
-      "⚡ Section 1 (SIMBAD+VSP) → Section 2 (CSV Check) → Section 3 (*_Seestar.csv)",
-      "🚀 AAVSO WebObs (aavso.org/webobs) → Upload Extended Format (*_Seestar.csv)"
-    ];
-    return `
-      <div class="beginner-slide-mockup-box">
-        <div class="mockup-window-bar">
-          <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#22c55e;"></i></span>
-          <span>${captions[slideIdx] || captions[0]}</span>
-        </div>
-        <div class="beginner-slide-img-wrap">
-          <img src="assets/guide_slide_${imgNum}.jpg" alt="Seestar Photometry Guide Slide ${imgNum}" loading="eager" />
-        </div>
-        <div style="padding:8px 10px; border-radius:8px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.38); font-size:11.5px; color:#e0f2fe; font-weight:600; text-align:center;">
-          ${captions[slideIdx] || captions[0]}
-        </div>
-      </div>`;
-  }
-
   let _activeBeginnerSlideIdx = 0;
 
   window.renderBeginnerGuideSlide = function(slideIdx = _activeBeginnerSlideIdx) {
-    _activeBeginnerSlideIdx = Math.max(0, Math.min(5, Number(slideIdx) || 0));
+    _activeBeginnerSlideIdx = Math.max(0, Math.min(11, Number(slideIdx) || 0));
     const lg = getActive7Lang();
     const pack = BEGINNER_PRESENTATION_7LANG[lg] || BEGINNER_PRESENTATION_7LANG.en;
     const slide = pack.slides[_activeBeginnerSlideIdx] || pack.slides[0];
@@ -18165,7 +18162,7 @@ function revealAndFocusField(inputId) {
     if (titleEl) titleEl.textContent = pack.modalTitle;
 
     const counterEl = document.getElementById("beginnerSlideCounterBadge");
-    if (counterEl) counterEl.textContent = `${_activeBeginnerSlideIdx + 1} / 6`;
+    if (counterEl) counterEl.textContent = `${_activeBeginnerSlideIdx + 1} / 12`;
 
     const prevLbl = document.getElementById("lblBeginnerPrev");
     if (prevLbl) prevLbl.textContent = pack.btnPrev;
@@ -18175,37 +18172,99 @@ function revealAndFocusField(inputId) {
     const prevBtn = document.getElementById("btnBeginnerPrevSlide");
     if (prevBtn) prevBtn.disabled = (_activeBeginnerSlideIdx === 0);
 
-    // Обновляем вкладки
     const tabBtns = document.querySelectorAll("#beginnerSlideTabsBar .beginner-slide-tab");
     tabBtns.forEach((btn, idx) => {
       btn.classList.toggle("active", idx === _activeBeginnerSlideIdx);
       if (pack.tabs[idx]) btn.textContent = pack.tabs[idx];
     });
 
-    // Обновляем точки
     const dots = document.querySelectorAll("#beginnerSlideDotsWrap .b-dot");
     dots.forEach((d, idx) => d.classList.toggle("active", idx === _activeBeginnerSlideIdx));
 
-    // Рендерим контент активного слайда
     const stageEl = document.getElementById("beginnerSlideStageContent");
     if (stageEl) {
-      const stepsHtml = slide.steps.map((stHtml, idx) => `
-        <div class="beginner-step-card">
-          <span class="beginner-step-num">${idx + 1}</span>
-          <div class="beginner-step-text">${stHtml}</div>
-        </div>
-      `).join("");
-
-      stageEl.innerHTML = `
-        <div class="beginner-slide-grid">
-          <div class="beginner-slide-left">
-            <h3 class="beginner-slide-headline">${slide.headline}</h3>
-            <div class="beginner-slide-BannerCallout">${slide.callout}</div>
-            <div class="beginner-steps-list">${stepsHtml}</div>
-          </div>
-          ${buildSlideVisualMockupHtml(_activeBeginnerSlideIdx)}
-        </div>
+      let leftHtml = `
+        <div style="font-size:11px; font-weight:800; letter-spacing:0.9px; color:#10b981; text-transform:uppercase;">${slide.kicker || ""}</div>
+        <h3 class="beginner-slide-headline">${slide.headline}</h3>
+        <div class="beginner-slide-BannerCallout">${slide.callout}</div>
       `;
+      if (Array.isArray(slide.steps) && slide.steps.length > 0) {
+        const stepsHtml = slide.steps.map((stHtml, idx) => `
+          <div class="beginner-step-card">
+            <span class="beginner-step-num">${idx + 1}</span>
+            <div class="beginner-step-text">${stHtml}</div>
+          </div>
+        `).join("");
+        leftHtml += `<div class="beginner-steps-list">${stepsHtml}</div>`;
+      }
+
+      let rightHtml = "";
+      if (slide.img) {
+        rightHtml = `
+          <div class="beginner-slide-mockup-box">
+            <div class="mockup-window-bar">
+              <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#10b981;"></i></span>
+              <span>${slide.kicker || "SEESTAR → AAVSO"}</span>
+            </div>
+            <div class="beginner-slide-img-wrap">
+              <img src="${slide.img}" alt="${slide.headline}" loading="eager" />
+            </div>
+            <div style="padding:8px 10px; border-radius:8px; background:rgba(16,185,129,0.14); border:1px solid rgba(16,185,129,0.42); font-size:12px; color:#d1fae5; font-weight:600; text-align:center;">
+              ${slide.caption || ""}
+            </div>
+          </div>
+        `;
+      } else if (slide.table) {
+        const ths = slide.table.headers.map(h => `<th>${h}</th>`).join("");
+        const trs = slide.table.rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("");
+        rightHtml = `
+          <div class="beginner-slide-mockup-box">
+            <div class="mockup-window-bar">
+              <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#10b981;"></i></span>
+              <span>${slide.kicker}</span>
+            </div>
+            <table class="pitfalls-table">
+              <thead><tr>${ths}</tr></thead>
+              <tbody>${trs}</tbody>
+            </table>
+          </div>
+        `;
+      } else if (Array.isArray(slide.cards)) {
+        const cardsHtml = slide.cards.map(c => `
+          <div style="padding:12px 14px; border-radius:10px; background:rgba(15,23,42,0.92); border:1px solid rgba(16,185,129,0.38); display:flex; align-items:center; gap:12px;">
+            <span style="min-width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#10b981,#059669); color:#fff; font-weight:800; font-size:13px; display:inline-flex; align-items:center; justify-content:center;">${c.num}</span>
+            <div>
+              <div style="font-size:13.5px; font-weight:800; color:#f8fafc;">${c.title}</div>
+              <div style="font-size:12px; color:#94a3b8; margin-top:2px;">${c.desc}</div>
+            </div>
+          </div>
+        `).join("");
+        rightHtml = `
+          <div class="beginner-slide-mockup-box" style="gap:10px;">
+            <div class="mockup-window-bar">
+              <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#10b981;"></i></span>
+              <span>${slide.kicker}</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">${cardsHtml}</div>
+          </div>
+        `;
+      }
+
+      if (slide.table) {
+        stageEl.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="beginner-slide-left">${leftHtml}</div>
+            ${rightHtml}
+          </div>
+        `;
+      } else {
+        stageEl.innerHTML = `
+          <div class="beginner-slide-grid">
+            <div class="beginner-slide-left">${leftHtml}</div>
+            ${rightHtml}
+          </div>
+        `;
+      }
     }
   };
 
@@ -18227,11 +18286,11 @@ function revealAndFocusField(inputId) {
 
   window.stepBeginnerGuideSlide = function(delta) {
     const nextIdx = _activeBeginnerSlideIdx + Number(delta || 1);
-    if (nextIdx >= 6) {
+    if (nextIdx >= 12) {
       window.closeBeginnerGuideModal();
       return;
     }
-    window.renderBeginnerGuideSlide(Math.max(0, Math.min(5, nextIdx)));
+    window.renderBeginnerGuideSlide(Math.max(0, Math.min(11, nextIdx)));
   };
 
   // Закрытие по клику на фон и навигация стрелками клавиатуры
