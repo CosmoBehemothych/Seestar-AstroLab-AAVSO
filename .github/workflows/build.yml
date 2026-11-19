@@ -86,19 +86,12 @@ jobs:
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
 
-      - name: Package Portable Windows Archive
+      - name: Package Portable Windows Executable
         working-directory: Source_and_Build
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path "dist_installer" | Out-Null
           Copy-Item "dist/Seestar AstroLab.exe" "dist_installer/Seestar_AstroLab_Portable_v1.2.1.exe" -Force
-          $portStage = "dist/Seestar_AstroLab_Portable"
-          New-Item -ItemType Directory -Force -Path $portStage | Out-Null
-          Copy-Item "dist/Seestar AstroLab.exe" "$portStage/Seestar AstroLab.exe" -Force
-          if (Test-Path "pwa_mobile_and_electron") { Copy-Item "pwa_mobile_and_electron" "$portStage/pwa_mobile_and_electron" -Recurse -Force }
-          if (Test-Path "assets") { Copy-Item "assets" "$portStage/assets" -Recurse -Force }
-          if (Test-Path "../Converted_Photometry_Storage") { Copy-Item "../Converted_Photometry_Storage" "$portStage/Converted_Photometry_Storage" -Recurse -Force }
-          Compress-Archive -Path "$portStage/*" -DestinationPath "dist_installer/Seestar_AstroLab_Portable_Windows.zip" -Force
 
       - name: Build Standalone Windows Installer (Inno Setup 6)
         working-directory: Source_and_Build
@@ -144,8 +137,7 @@ jobs:
           
           $files = @(
             "Source_and_Build/dist_installer/Seestar_AstroLab_Setup_v1.2.1.exe",
-            "Source_and_Build/dist_installer/Seestar_AstroLab_Portable_v1.2.1.exe",
-            "Source_and_Build/dist_installer/Seestar_AstroLab_Portable_Windows.zip"
+            "Source_and_Build/dist_installer/Seestar_AstroLab_Portable_v1.2.1.exe"
           )
           
           gh release delete $tag --yes 2>$null
