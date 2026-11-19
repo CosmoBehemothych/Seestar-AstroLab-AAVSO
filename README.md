@@ -66,12 +66,25 @@ All source code is open and built via GitHub Actions: simply click **More info �
 
 ## 📸 Screenshots (`v1.2.1`)
 
-![Welcome Splash](screenshots/01_splash_welcome_v110.png)
-![Main Workspace & Target Radar](screenshots/02_main_radar_and_workspace.png)
-![Getting Started Full-Page Course](screenshots/08_getting_started_fullpage_guide.png)
-![Photometry Charts & Verification](screenshots/03_photometry_charts_and_verification.png)
-![Light Theme & Multilang](screenshots/04_light_theme_and_multilang.png)
-![Full-Screen Light Curve](screenshots/06_fullscreen_light_curve_sz_lyn.png)
+### 1. Main Workspace & Converter (Main Menu)
+The primary dashboard brings together your telescope selector (`S30`–`S50PRO`), local **Sky Clarity & Moon** conditions, the **Target Radar** dock on the left, the **4-step CSV converter** in the center, and live **Light Curve** & **SIMBAD/AAVSO verification** on the right.  
+![Main Workspace and Converter](screenshots/01_main_dashboard_and_converter.png)
+
+### 2. Urgent Stars (AAVSO Priority Targets)
+Browse **246 urgent AAVSO targets** with automatic 10-minute online updates, filterable by your city's horizon, hemisphere, balcony azimuth, and Seestar model limits (`S30`–`S50PRO`), with ready J2000 coordinates and exposure hints.  
+![Urgent Stars - AAVSO Priority Targets](screenshots/02_urgent_stars_priority_targets.png)
+
+### 3. My Observations (Personal Analytics)
+Track your personal photometry history across all sessions: total observing minutes, frame counts, an activity trend chart, and filterable logs by date, star name, and Seestar model.  
+![My Observations Analytics](screenshots/03_my_observations_analytics.png)
+
+### 4. Getting Started: Citizen Photometry with Seestar & AAVSO
+A full-page, 12-slide visual guide (available in all **8 languages**) walking beginners step by step from registering a free AAVSO `OBSCODE` and shooting `EQ Mode` photometry to uploading the finished CSV report to WebObs.  
+![Getting Started: Citizen Photometry with Seestar and AAVSO](screenshots/04_getting_started_guide.png)
+
+### 5. AAVSO Light Curve (AID) & Your Seestar Contribution
+Inspect your newly loaded **Seestar** measurements (orange) plotted directly alongside historical and recent observations from other **AAVSO** observers worldwide (blue) so you can immediately see how your data complements the international light curve.  
+![AAVSO Light Curve (AID) and Your Contribution](screenshots/05_aavso_light_curve_combined.png)
 
 ---
 
@@ -105,6 +118,14 @@ All source code is open and built via GitHub Actions: simply click **More info �
 ### 🛡️ Предупреждение Windows SmartScreen при запуске
 При запуске установщика Windows может показать уведомление (*«Система Windows защитила ваш компьютер»*), поскольку у данного приложения пока нет платной лицензии (сертификата подписи кода). Бесплатную лицензию для open-source проекта можно получить, только если программа станет более популярной — так что ждём и надеемся 🙂  
 Весь исходный код открыт и собирается через GitHub Actions: нажмите **«Подробнее» → «Выполнить в любом случае»**.
+
+### 📸 Скриншоты интерфейса (`v1.2.1`)
+
+1. **Основное меню и рабочий стол конвертера** — единый экран с выбором модели Seestar, погодой и фазой Луны, боковым радаром целей, пошаговым конвертером и графиком блеска ([скриншот](screenshots/01_main_dashboard_and_converter.png)).
+2. **Звёзды с пометкой «Срочно» (Приоритетные цели AAVSO)** — 246 актуальных целей с автообновлением каждые 10 минут, фильтрами по вашему городу, полушарию, стороне света (балкону) и готовыми координатами для наведения ([скриншот](screenshots/02_urgent_stars_priority_targets.png)).
+3. **Мои наблюдения** — личная статистика ваших фотометрических сессий, график активности по датам и журнал конвертированных файлов ([скриншот](screenshots/03_my_observations_analytics.png)).
+4. **С чего начать: Гражданская фотометрия с Seestar и база AAVSO** — полноэкранная 12-слайдовая инструкция на 8 языках от регистрации `OBSCODE` до загрузки CSV в AAVSO WebObs ([скриншот](screenshots/04_getting_started_guide.png)).
+5. **Кривая блеска AAVSO (AID) и ваш вклад** — наложение ваших замеров с Seestar (оранжевый) на кривую блеска других наблюдателей мира из базы AAVSO (синий), наглядно показывающее, как ваши данные дополняют общую кривую ([скриншот](screenshots/05_aavso_light_curve_combined.png)).
 
 ---
 

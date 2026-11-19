@@ -538,7 +538,7 @@
       errNoObscodeMsg: "Укажите ваш личный код наблюдателя AAVSO (OBSCODE) перед конвертацией данных для загрузки на AAVSO.",
       errNoObscodeExplain: "Стандарт AAVSO Extended требует обязательного указания персонального кода наблюдателя в заголовке #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Версия 1.1.1 beta",
+      appVersionLabel: "Версия 1.2.1",
       starIdFromCatalogHint: "✓ Каталожный идентификатор звезды (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -891,7 +891,7 @@
       errNoObscodeMsg: "Please enter your personal AAVSO Observer Code (OBSCODE) before converting data for AAVSO upload.",
       errNoObscodeExplain: "The AAVSO Extended format strictly requires a valid personal observer code in the #OBSCODE header.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.1.1 beta",
+      appVersionLabel: "Version 1.2.1",
       starIdFromCatalogHint: "✓ Canonical Catalog Star ID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometry Observatory",
       
@@ -1239,7 +1239,7 @@
       errNoObscodeMsg: "Ingrese su código personal de observador AAVSO (OBSCODE) antes de convertir los datos.",
       errNoObscodeExplain: "El formato AAVSO Extended requiere un código de observador válido en el encabezado #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Versión 1.1.1 beta",
+      appVersionLabel: "Versión 1.2.1",
       starIdFromCatalogHint: "✓ Identificador de catálogo (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatorio Fotométrico Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -1563,7 +1563,7 @@
       errNoObscodeMsg: "Bitte geben Sie Ihren persönlichen AAVSO-Beobachtercode (OBSCODE) vor der Konvertierung ein.",
       errNoObscodeExplain: "Das AAVSO-Extended-Format erfordert zwingend einen gültigen Beobachtercode im Header #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.1.1 beta",
+      appVersionLabel: "Version 1.2.1",
       starIdFromCatalogHint: "✓ Kanonische Katalog-STARID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometrie-Observatorium",
       
@@ -1876,7 +1876,7 @@
       errNoObscodeMsg: "Veuillez saisir votre code observateur AAVSO (OBSCODE) avant de convertir les données.",
       errNoObscodeExplain: "Le standard AAVSO Extended exige un code observateur personnel valide dans l'en-tête #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.1.1 beta",
+      appVersionLabel: "Version 1.2.1",
       starIdFromCatalogHint: "✓ Identifiant catalogue canonique (SIMBAD / AAVSO VSX) : {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -2188,7 +2188,7 @@
       errNoObscodeMsg: "请在转换上传至 AAVSO 的数据前填写您的 AAVSO 观测者代码 (OBSCODE)。",
       errNoObscodeExplain: "AAVSO Extended 格式要求在 #OBSCODE 标头中提供有效的个人观测者代码。",
       radarSubTag: "",
-      appVersionLabel: "版本 1.1.1 beta",
+      appVersionLabel: "版本 1.2.1",
       starIdFromCatalogHint: "✓ 星表标准目标名称 (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO 测光天文台",
       
@@ -5841,7 +5841,13 @@ function revealAndFocusField(inputId) {
     if (typeof window.__syncBerberPinkHighlight === "function") window.__syncBerberPinkHighlight(currentLang);
     applyTranslations();
     if (typeof applyScopeModelUI === "function") applyScopeModelUI(false);
+    if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
+    if (typeof window.__populateCountryAndCitySelectors === "function") window.__populateCountryAndCitySelectors(false);
+    if (typeof window.renderSkyClarityAndMoonHeader === "function") window.renderSkyClarityAndMoonHeader();
     if (typeof renderV6RadarDock === "function") renderV6RadarDock();
+    if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
+    if (typeof window.renderObsTrackerModal === "function") window.renderObsTrackerModal();
+    if (typeof window.renderBeginnerGuideSlide === "function") window.renderBeginnerGuideSlide(window._currentBeginnerSlideIdx || 0);
     if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards(urgentSearchField ? urgentSearchField.value : "");
     if (typeof updateCatalogStatusCardTelemetry === "function") updateCatalogStatusCardTelemetry();
     if (typeof renderObsTrackerModal === "function") renderObsTrackerModal();
@@ -11471,7 +11477,7 @@ function revealAndFocusField(inputId) {
       if (titleEl) titleEl.textContent = trCurve("lblLightCurve") + (activeStar ? ` — ${activeStar}` : "");
       window.renderUserOnlyLightCurveCard(null, fpCanvas, targetW, heightPx);
     } else {
-      if (titleEl) titleEl.textContent = trCurve("lblStarFieldPhoto") + (activeStar ? ` — ${activeStar}` : "");
+      if (titleEl) titleEl.textContent = t("lblStarFieldPhoto") + (activeStar ? ` — ${activeStar}` : "");
       window.renderAavsoAndContributionWidget(activeStar, false, fpCanvas, targetW, heightPx);
     }
   }
@@ -11854,8 +11860,10 @@ function revealAndFocusField(inputId) {
 
   function trM14(key) {
     const lg = getActiveLangCode();
-    const dict = MODULE14_I18N[lg] || MODULE14_I18N.en || MODULE14_I18N.ru;
-    return dict[key] || MODULE14_I18N.ru[key] || key;
+    const dict = MODULE14_I18N[lg] || {};
+    if (dict[key]) return dict[key];
+    if (window.I18N && window.I18N[lg] && window.I18N[lg][key]) return window.I18N[lg][key];
+    return (MODULE14_I18N.en && MODULE14_I18N.en[key]) || MODULE14_I18N.ru[key] || key;
   }
 
   function syncAllModule14Translations() {
@@ -18638,6 +18646,279 @@ function revealAndFocusField(inputId) {
     document.getElementById("langSelect")?.value ||
     document.documentElement.lang
   )) || "en";
+
+  // === AUTO-LOCALIZATION COMPLETENESS PATCH (ALL 8 LANGUAGES: EN, RU, ES, DE, FR, ZH, CS, BER) ===
+  (function ensureAll8LanguagesComplete() {
+    if (!window.I18N) return;
+    const extraPerLang = {
+      en: {
+        optFullWindow: "Full Window",
+        appVersionLabel: "Version 1.2.1"
+      },
+      ru: {
+        optFullWindow: "Во всё окно",
+        appVersionLabel: "Версия 1.2.1"
+      },
+      es: {
+        optFullWindow: "Ventana completa",
+        bentoSyncBadgeText: "En línea • TTL 1h",
+        appVersionLabel: "Versión 1.2.1"
+      },
+      de: {
+        optFullWindow: "Vollbildfenster",
+        bentoSyncBadgeText: "Online • TTL 1 Std.",
+        thUI: "Daten aus SIMBAD-Katalog",
+        appVersionLabel: "Version 1.2.1"
+      },
+      fr: {
+        optFullWindow: "Pleine fenêtre",
+        bentoSyncBadgeText: "En ligne • TTL 1h",
+        appVersionLabel: "Version 1.2.1"
+      },
+      zh: {
+        optFullWindow: "全窗口",
+        bentoSyncBadgeText: "在线 • TTL 1小时",
+        appVersionLabel: "版本 1.2.1"
+      },
+      ber: {
+        optFullWindow: "Asfaylu ummid",
+        bentoSyncBadgeText: "Srad • TTL 1s",
+        btnTryUniverseLuck: "Afran agacuran n yitri i wannay-ik",
+        tipTryUniverseLuck: "Afran agacuran n yitri azwaru i wannayen-ik ass-a",
+        appVersionLabel: "Taseqqult 1.2.1"
+      },
+      cs: {
+        optFullWindow: "Celé okno",
+        appVersionLabel: "Verze 1.2.1",
+        lblThemePickerSplash: "Barevný motiv",
+        brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Fotometrická observatoř",
+        btnDonateBadge: "❤️ Podpořit",
+        btnSupportAavsoHeader: "💙 Podpořit",
+        subtitle: "Načtení dat SIMBAD a AAVSO VSP s automatickým výběrem srovnávací hvězdy",
+        secCatalogStatus: "📡 Stav katalogů",
+        bentoSyncBadgeText: "Online • TTL 1 hod.",
+        catSimbadTap: "Zrcadla CDS SIMBAD TAP",
+        bentoSimbadDefault: "✓ 3 zrcadla (HTTPS:443)",
+        bentoVspDefault: "✓ Aktivní (API v2)",
+        catVizierApass: "Katalogy VizieR / APASS DR9",
+        bentoVizierDefault: "✓ 4 zrcadla (Záloha)",
+        catLocalCache: "Místní mezipaměť dotazů",
+        btnShowNetLog: "▸ Zobrazit technický síťový log",
+        statusExplainDefault: "ℹ️ Záznam síťových dotazů a převodu",
+        btnDiagnose: "🧪 Diagnostika sítě a zrcadel",
+        btnFullResetUserData: "🗑️ Úplný reset uživatelských dat",
+        btnTryUniverseLuck: "Náhodný výběr hvězdy pro vaše pozorování",
+        tipTryUniverseLuck: "Náhodný výběr prioritní hvězdy podle parametrů vašeho dalekohledu",
+        lblToastsToggle: "🔔 Vyskakovací oznámení",
+        lblToastsShort: "🔔 Nastavení oznámení",
+        splashHubTitle: "⚡ Centrum řízení observatoře a rychlé akce",
+        splashMetricTargetsLbl: "Naléhavé cíle",
+        splashMetricObsCountLbl: "Zaznamenané seance",
+        splashMetricDaysIdleLbl: "Stav fotometrie",
+        splashMetricScopeLbl: "Aktivní dalekohled",
+        btnSplashQuickSync: "🛰️ Přejít na synchronizaci katalogu",
+        btnSplashQuickTracker: "📓 Moje pozorování",
+        btnSplashQuickRadar: "🎯 Radar cílů AAVSO",
+        btnSplashQuickLoadCsv: "📂 Vybrat CSV soubor",
+        splashRecentLogTitle: "🕒 Nedávná aktivita:",
+        obsTrackerTitle: "📓 Moje pozorování",
+        obsDaysSinceFmt: "Fotometrii jste neprováděli {days} dní",
+        obsSummaryStatsFmt: "Celkem seancí: {count} • Celková doba: {mins} min • Snímky: {frames}",
+        phObsStar: "Hvězda (např. SZ Lyn)",
+        phObsDur: "Doba (min)",
+        btnObsAdd: "➕ Přidat pozorování",
+        btnObsExport: "💾 Export JSON",
+        btnObsImport: "📂 Import JSON",
+        obsChartTitle: "📊 Graf aktivity pozorování (doba měření v minutách a počet snímků podle data)",
+        thObsStar: "Hvězda (STARID)",
+        thObsDate: "Datum měření",
+        thObsDuration: "Doba (min)",
+        thObsFrames: "Záznamů v souboru / Filtr",
+        thObsScope: "Dalekohled",
+        thObsAction: "Akce",
+        btnObsDeleteAll: "🗑️ Smazat vše",
+        btnObsResetFilters: "↺ Obnovit",
+        phObsFilterStar: "🔍 Hledat podle hvězdy (STARID)...",
+        phObsFilterDate: "DD.MM.RRRR",
+        optObsAllScopes: "🔭 Všechny dalekohledy (S30–S50PRO)",
+        obsEmptyTableMsg: "Zatím žádné záznamy. Převeďte Seestar CSV soubor a vaše seance se zde uloží automaticky.",
+        lblSortBy: "Řadit:",
+        optSortDate: "Datum vydání (nejnovější)",
+        optSortName: "Název hvězdy (A–Z)",
+        optSortPriority: "Priorita (Naléhavé)",
+        btnDonateBadge: "❤️ Podpořit",
+        tipDonateAuthor: "Podpořte autora CosmoBehemothych na Boosty",
+        donateModalTitle: "❤️ Podpořit projekt CosmoBehemothych AstroLab",
+        donateLiteraryText: "Vážení přátelé noční oblohy! Seestar AstroLab vzniká s láskou k observační astronomii, aby každý snímek vašeho dalekohledu přinášel cenná data vědě a databázi AAVSO. Pokud vám program šetří čas u dalekohledu, můžete podpořit jeho vývoj na Boosty. Jasnou oblohu a přesné světelné křivky!",
+        donateScanOrClick: "Naskenujte QR kód telefonem nebo otevřete přímý odkaz:",
+        btnDonateSupportNow: "❤️ Podpořit na Boosty",
+        tipHeaderClock: "Místní čas a datum (UTC)",
+        tipCollapseRadar: "Sbalit / rozbalit radar",
+        tipExpandRadar: "Rozbalit radar",
+        btnRefreshShort: "Obnovit",
+        btnRefreshUrgent: "🔄 Obnovit",
+        lblToggleObjectTypes: "🎯 Typy objektů a sekce AAVSO (skrýt / zobrazit)",
+        phFilterRa: "RA (J2000.0): 19h 24m...",
+        phFilterDec: "Dec (J2000.0): +50° 14'...",
+        filterAC: "🔥 Kampaně (AC)",
+        filterEP: "🪐 Exoplanety (EP)",
+        filterCV: "💥 Erupce (CV)",
+        filterEB: "🌑 Zákrytové (EB)",
+        filterSPP: "⚡ Pulsující (SPP)",
+        filterLPV: "🔴 Dlouhoperiodické (LPV)",
+        filterYSO: "🌱 Mladé hvězdy (YSO)",
+        filterHET: "🌌 Vysoké energie (HET)",
+        filterMisc: "✨ Ostatní (Misc)",
+        btnShowVisibleTonightShort: "👁 Viditelné dnes v noci",
+        btnEditLocation: "⚙ Změnit polohu",
+        btnImportTargetToolCsv: "📥 Import CSV Target Tool",
+        lblHemiOnlyFilter: "🌍 Polokoule:",
+        optHemiAll: "🌐 Severní a jižní",
+        optHemiNorth: "⬆️ Severní polokoule (DEC ≥ 0°)",
+        optHemiSouth: "⬇️ Jižní polokoule (DEC < 0°)",
+        lblHemisphereFilter: "🧭 Azimut:",
+        optVisAll: "🧭 Všechny směry (360°)",
+        optVisNorth: "⬆️ Sever (N • 315°–45°)",
+        optVisSouth: "⬇️ Jih (S • 135°–225°)",
+        optVisEast: "➡️ Východ (E • 45°–135°)",
+        optVisWest: "⬅️ Západ (W • 225°–315°)",
+        optVisNE: "↗️ Severovýchod (NE)",
+        optVisNW: "↖️ Severozápad (NW)",
+        optVisSE: "↘️ Jihovýchod (SE)",
+        optVisSW: "↙️ Jihozápad (SW)",
+        chkVisCity: "📍 Viditelné z mého města",
+        chkVisNow: "🕯️ Právě nad obzorem",
+        lblRadarLimit: "Zobrazit:",
+        optLimitAll: "Vše (bez limitu)",
+        btnCloseModal: "Zavřít",
+        btnGoAavsoObj: "🌐 Otevřít objekt v AAVSO ↗",
+        btnPullStarToConverter: "🎯 Přenést data hvězdy do převodníku",
+        lblObservingSection: "Pozorovací sekce:",
+        subSelectTypesOfStars: "Vyberte kategorie cílových hvězd",
+        chkSecAC: "Naléhavé / Kampaně (AC)",
+        chkSecEP: "Exoplanety (EP)",
+        chkSecCV: "Kataklyzmatické (CV)",
+        chkSecEB: "Zákrytové dvojhvězdy (EB)",
+        chkSecSPP: "Krátkoperiod. pulzátory (SPP)",
+        chkSecLPV: "Dlouhoperiodické (LPV)",
+        chkSecYSO: "Mladé hvězdné objekty (YSO)",
+        chkSecHET: "Vysokoenergetické (HET)",
+        chkSecMisc: "Ostatní (Miscellaneous)",
+        chkSecAll: "Vše (All)",
+        btnApplySectionFilters: "▼ Použít filtry sekcí",
+        lblObservability: "Pozorovatelnost:",
+        btnShowVisibleTonight: "👁 Pouze cíle viditelné dnes v noci",
+        phUrgentSearch: "🔍 Název hvězdy (CH Cyg, AG Dra, T CrB)...",
+        lblPushNotifs: "🔔 Oznámení",
+        aavsoDonateModalTitle: "💙 Podpořit asociaci AAVSO",
+        aavsoDonateParagraph1: "Mezinárodní asociace pozorovatelů proměnných hvězd (AAVSO, založena 1911) je nezisková vědecká organizace provozující databázi AID, katalog VSX a mapy VSP. Pokud vám nástroje AAVSO pomáhají při pozorování, můžete podpořit jejich vědecké programy na oficiální stránce.",
+        aavsoDonateScanOrClick: "Přejděte přímým odkazem na oficiální stránku podpory AAVSO:",
+        btnVisitAavsoPortal: "🌐 Oficiální web aavso.org ↗",
+        luckModalTitle: "🧭 Kolo nebeské loterie — Výběr cíle pozorování",
+        tipToggleLuckSound: "Zapnout / vypnout melodii kola",
+        lblSoundOn: "Melodie ZAP",
+        lblReelConstellation: "Souhvězdí",
+        lblReelTargetStar: "Cílová hvězda AAVSO",
+        lblReelVarType: "Třída / Priorita",
+        luckSecWhatIsIt: "Co je to za hvězdu a její fyzikální podstata",
+        luckSecWhyUrgent: "Proč je aktuální pro pozorování",
+        luckSecWhoRequested: "Kdo požádal o fotometrii (Iniciátor kampaně)",
+        luckSecWhatWeSeek: "Co přesně hledáme na světelné křivce a jak snímat",
+        luckShortWishText: "Přejeme vám mnoho úspěchů a jasnou oblohu.",
+        btnSpinLuckAgain: "Roztočit znovu",
+        btnOpenStarInVsx: "🌐 Karta hvězdy v AAVSO VSX ↗",
+        btnAcceptLuckTarget: "Přejít k pozorování vybrané hvězdy",
+        critModalTitle: "🚨 Kritická neshoda dat",
+        critModalBody: "Byla zjištěna kritická neshoda dat. Převod je zablokován. Zkontrolujte správnost vybrané hvězdy a souboru.",
+        btnCritOpenInputs: "📂 Zkontrolovat hvězdu a soubor",
+        btnCritClose: "Rozumím",
+        fullPageLcSubtitle: "Použijte volbu měřítka a posuvníky pro detailní studium světelné křivky",
+        lblZoomX: "Měřítko X:",
+        lblZoomY: "Výška Y:",
+        lblGoToAavso: "Přejít na stránku nahrání dat AAVSO",
+        lblDiffLogWait: "Čekání na převod",
+        msgDiffLogWaitHint: "ℹ️ Proveďte převod Seestar CSV souboru v kroku 3 výše — poté se tento blok automaticky otevře a zobrazí porovnání řádek po řádku.",
+        lblRows: "Řádků: ",
+        btnPrevPage: "< Zpět",
+        btnNextPage: "Další >",
+        btnOpenStorageFolder: "📁 Složka Converted_Photometry_Storage",
+        lcEmptyTitle: "Světelná křivka se zobrazí po načtení CSV",
+        lcEmptyDesc: "Načtěte Seestar fotometrický CSV soubor (nebo klikněte na «Demo CSV») pro vykreslení světelné křivky.",
+        btnResetZoom: "↺ 100%",
+        btnExpandFullPage: "⛶ Na celou obrazovku",
+        notifGuideTitle: "🔔 Nápověda ke všem oznámením a barevným nápovědám",
+        emptyPreviewTitle: "Načtěte CSV soubor ze Seestar pro porovnání",
+        emptyPreviewDesc: "Tabulka porovnání parametrů s katalogem SIMBAD se zobrazí po výběru zdrojového Seestar CSV souboru.",
+        lblStarFieldPhoto: "📊 Známá světelná křivka AAVSO (AID) a váš příspěvek",
+        btnReloadAavso: "🔄 Obnovit AAVSO",
+        lblAavsoOthers: "Ostatní pozorovatelé AAVSO",
+        lblMyContribution: "Můj příspěvek (aktuální + archiv)",
+        aavsoInitialTitle: "Načtěte data hvězdy a přiložte vlastní soubor Seestar",
+        aavsoInitialDesc: "Zadejte hvězdu v kroku 1 a klikněte na «🔭 Načíst data AAVSO», poté přiložte vlastní Seestar CSV v kroku 2.",
+        secObserver: "Pozorovatel a cílová hvězda",
+        lblObsCode: "OBSCODE (Kód pozorovatele)",
+        phObsCode: "Zadejte váš osobní AAVSO kód",
+        tipObsCodeShort: "Najeďte nebo klepněte na ikonu '?' výše pro doporučení ke kódu AAVSO.",
+        lblStarId: "STARID (Název cílové hvězdy)",
+        phStarId: "např. SZ Lyn",
+        tipStarIdText: "Katalogový název proměnné hvězdy, dvojhvězdy nebo hostitelské hvězdy exoplanety.",
+        btnFetchAll: "🔭 Načíst data AAVSO (VSX + VSP + Světelná křivka)",
+        btnStop: "⏹ Zastavit",
+        secResults: "🔧 Výsledky, souřadnice J2000.0 a kalibrace VSP (CHART / KNAME / KMAG)",
+        vspLoadingTitle: "⏳ Načítání CHART (VSP), KNAME (AUID) a KMAG...",
+        vspLoadingStepDefault: "Souřadnice RA/DEC získány. Dotazování zrcadel katalogů...",
+        tipChartText: "ID fotometrické mapy AAVSO VSP.",
+        tipKnameText: "Jedinečné AAVSO AUID srovnávací hvězdy pro ověření fotometrie.",
+        tipKmagText: "Standardní magnituda srovnávací hvězdy (optimální rozsah 9,5–13,0 mag).",
+        tipRaText: "Rektascenze J2000.0 pro zaměření dalekohledu (hhʰ mmᵐ ssˢ nebo stupně).",
+        tipDecText: "Deklinace J2000.0 pro zaměření dalekohledu (±dd° mm' ss″ nebo stupně).",
+        secFileStart: "Výběr a kontrola fotometrického souboru",
+        lblFile: "CSV soubor ze Seestar:",
+        btnLoadDemo: "✨ Demo CSV (SZ Lyn)",
+        btnSelectCsvFile: "📂 Vybrat CSV soubor ze Seestar",
+        noFileSelected: "Soubor zatím nevybrán (klikněte výše nebo «Demo CSV»)",
+        tipCsvText: "Vyberte zdrojový fotometrický CSV soubor Seestar (zpracují se řádky «Non-reference star»).",
+        lblVerifyDisk: "Kontrola hotového souboru AAVSO:",
+        btnVerifyDisk: "🔍 Zkontrolovat převedený soubor z disku",
+        tipVerifyDiskShort: "Ověří kompatibilitu převedého souboru s požadavky webu AAVSO WebObs.",
+        secConvert: "Převod a odeslání do AAVSO",
+        lblConvertWait: "Čekání na kroky 1 a 2",
+        btnConvert: "Převést data pro nahrání do AAVSO",
+        btnClearAll: "🗑 Vymazat",
+        secLog: "Protokol porovnání «Před / Po»",
+        secPreview: "Výsledky porovnání dat Seestar a katalogu AAVSO (VSX / VSP)",
+        thParam: "Parametr",
+        thFile: "Data ze Seestar",
+        thUI: "Data z katalogu AAVSO",
+        thMatch: "Ověření",
+        notifGuideHtml: "<div>🟢 <strong>Zelená (Shoda):</strong> Souřadnice nebo název hvězdy přesně odpovídají souboru Seestar.</div><div>🟡 <strong>Žlutá (Normální rozdíl):</strong> Drobný posun středu pole Seestar vůči SIMBAD (&lt; 0,05°).</div><div>🔴 <strong>Červená (Kritická neshoda):</strong> Rozdíl větší než 0,05° — převod je zablokován.</div>",
+        dupBannerTitle: "⚠️ V surovém souboru byly nalezeny dříve převedené / staré záznamy",
+        lblAutoFilterDuplicates: "Vyloučit staré / již odeslané záznamy AAVSO z výsledného souboru",
+        btnLoadDemo: "✨ Ukázkový CSV (SZ Lyn)",
+        lblLightCurve: "📈 Světelná křivka (MAG vs JD Mid) — Moje pozorování",
+        lblLayerCurrent: "Aktuální seance (právě načteno)",
+        lblLayerHistory: "Moje minulé převody (složka programu)",
+        secUrgentStars: "🔥 Naléhavé prioritní hvězdy (AAVSO Alert Notices)",
+        guideModalTitle: "📈 Jak číst světelné křivky AAVSO a Seestar",
+        phRadarSearch: "🔍 Název hvězdy / Typ / Souhvězdí (CH Cyg, AG Dra)...",
+        tipSeestarSite: "Oficiální web chytrých dalekohledů ZWO Seestar",
+        tipAavsoDonateBtn: "Podpořit asociaci AAVSO (aavso.org/donate-now)",
+        tipHomeBtn: "Otevřít úvodní obrazovku Seestar AstroLab AAVSO",
+        btnSupportAavsoHeader: "💙 Podpořit",
+        btnUrgentMenu: "Radar cílů AAVSO",
+        btnObsTrackerMenu: "📓 Moje pozorování",
+        btnGraphGuide: "📖 Jak číst grafy",
+        tipWheelZoomChart: "Podržte levé tlačítko myši pro posun grafu; kolečkem myši přiblížíte (dvojklikem obnovíte)",
+        guideModalBodyHtml: `<p style="font-size:13px; color:#dbeafe; margin:0 0 10px 0;">Vizuální průvodce čtením světelných křivek proměnných hvězd, zákrytových dvojhvězd a tranzitů exoplanet ze snímků <strong>ZWO Seestar</strong>.</p><div class="guide-svg-box" style="margin-bottom:12px; padding:12px;"><div style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px;">DIAGRAM SVĚTELNÉ KŘIVKY (UKÁZKA ZÁKRYTOVÉ / PULSUJÍCÍ HVĚZDY)</div><svg viewBox="0 0 600 185" width="100%" height="175" style="display:block; background:#070b14; border-radius:8px; border:1px solid rgba(100,210,255,0.18);"><line x1="55" y1="28" x2="575" y2="28" stroke="#1e293b" stroke-dasharray="4 4" stroke-width="1"/><line x1="55" y1="82" x2="575" y2="82" stroke="#1e293b" stroke-dasharray="4 4" stroke-width="1"/><line x1="55" y1="138" x2="575" y2="138" stroke="#1e293b" stroke-dasharray="4 4" stroke-width="1"/><line x1="55" y1="15" x2="55" y2="155" stroke="#475569" stroke-width="1.5"/><line x1="55" y1="155" x2="575" y2="155" stroke="#475569" stroke-width="1.5"/><text x="8" y="32" fill="#86efac" font-size="11" font-family="monospace" font-weight="bold">11.5m ↑</text><text x="8" y="86" fill="#94a3b8" font-size="11" font-family="monospace">12.0m</text><text x="8" y="142" fill="#fca5a5" font-size="11" font-family="monospace" font-weight="bold">12.5m ↓</text><text x="64" y="22" fill="#38bdf8" font-size="10.5" font-family="sans-serif" font-weight="bold">↑ Jasnější (menší číslo MAG znamená vyšší jas)</text><text x="64" y="150" fill="#f87171" font-size="10.5" font-family="sans-serif" font-weight="bold">↓ Slabší (větší číslo MAG znamená nižší jas)</text><path d="M 70 50 L 185 50 C 225 50, 255 136, 305 136 C 355 136, 385 50, 425 50 L 555 50" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="6 4"/><g stroke="#64d2ff" stroke-width="1.5"><line x1="95" y1="41" x2="95" y2="59"/><circle cx="95" cy="50" r="4" fill="#38bdf8"/><line x1="145" y1="39" x2="145" y2="57"/><circle cx="145" cy="48" r="4" fill="#38bdf8"/><line x1="195" y1="45" x2="195" y2="63"/><circle cx="195" cy="54" r="4" fill="#38bdf8"/><line x1="250" y1="88" x2="250" y2="110"/><circle cx="250" cy="99" r="4" fill="#facc15"/><line x1="305" y1="124" x2="305" y2="148"/><circle cx="305" cy="136" r="5.5" fill="#ef4444" stroke="#fff"/><line x1="360" y1="86" x2="360" y2="108"/><circle cx="360" cy="97" r="4" fill="#facc15"/><line x1="415" y1="43" x2="415" y2="61"/><circle cx="415" cy="52" r="4" fill="#38bdf8"/><line x1="475" y1="40" x2="475" y2="58"/><circle cx="475" cy="49" r="4" fill="#38bdf8"/><line x1="535" y1="42" x2="535" y2="60"/><circle cx="535" cy="51" r="4" fill="#38bdf8"/></g><text x="90" y="35" fill="#e2e8f0" font-size="10.5" font-family="sans-serif">Základní jas (plató)</text><text x="225" y="120" fill="#fde047" font-size="10.5" font-family="sans-serif" font-weight="bold">Hlavní minimum (Zákryt / Tranzit)</text><text x="425" y="75" fill="#94a3b8" font-size="10" font-family="sans-serif">Chybové úsečky (±MERR)</text><text x="200" y="174" fill="#cbd5e1" font-size="11" font-family="monospace">Čas pozorování: Juliánské datum (JD Mid) →</text></svg></div><div class="guide-two-col"><div class="guide-item"><h4>1. Osa Y (Hvězdná velikost / MAG)</h4><p>Astronomická stupnice magnitudy je <strong>obrácená</strong>:<br>• <strong>Menší</strong> číslo <code>MAG</code> (např. <code>9.10m</code> vs <code>9.50m</code>) znamená <strong>jasnější</strong> hvězdu!<br>• Vzestup křivky <strong>nahoru</strong> znamená zjasnění, pokles <strong>dolů</strong> zeslabení (zákryt nebo tranzit).</p></div><div class="guide-item"><h4>2. Osa X (Juliánské datum / JD Mid)</h4><p>Vodorovná osa udává přesný čas středu expozice každého snímku v <strong>JD Mid</strong>, což umožňuje astronomům spojovat měření z celého světa s přesností na sekundy.</p></div></div>`,
+        btnRegisterOldFileDup: "📥 Přidat starý soubor do databáze odeslaných"
+      }
+    };
+    for (const [lng, mp] of Object.entries(extraPerLang)) {
+      window.I18N[lng] = Object.assign(window.I18N[lng] || {}, mp);
+    }
+    if (typeof window.applyTranslations === "function") window.applyTranslations();
+  })();
+
   if (activeStartupLang === "cs") {
     const sel = document.getElementById("langSelect");
     if (sel) sel.value = "cs";
