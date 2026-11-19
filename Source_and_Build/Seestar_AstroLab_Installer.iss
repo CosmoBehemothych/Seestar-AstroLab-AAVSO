@@ -78,6 +78,7 @@ Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "german";  MessagesFile: "compiler:Languages\German.isl"
 Name: "french";  MessagesFile: "compiler:Languages\French.isl"
 Name: "chinese"; MessagesFile: "compiler:Default.isl"
+Name: "czech";   MessagesFile: "compiler:Languages\Czech.isl"
 
 [LangOptions]
 ; [FIX ПУНКТ 1] Уникальные LanguageName и LanguageID для каждого из 6 языков,
@@ -94,6 +95,8 @@ french.LanguageName=Français
 french.LanguageID=$040C
 chinese.LanguageName=<7B80><4F53><4E2D><6587> (Chinese Simplified)
 chinese.LanguageID=$0804
+czech.LanguageName=Čeština
+czech.LanguageID=$0405
 
 [Messages]
 ; Явная локализация системных заголовков задач и кнопок для всех 6 языков
@@ -101,6 +104,8 @@ english.AdditionalIcons=Additional shortcuts:
 english.CreateDesktopIcon=Create a &desktop shortcut
 russian.AdditionalIcons=Дополнительные ярлыки:
 russian.CreateDesktopIcon=Создать ярлык на &Рабочем столе
+czech.AdditionalIcons=Další zástupci:
+czech.CreateDesktopIcon=Vytvořit zástupce na &ploše
 spanish.AdditionalIcons=Iconos adicionales:
 spanish.CreateDesktopIcon=Crear un icono en el &Escritorio
 german.AdditionalIcons=Zusätzliche Symbole:
@@ -248,6 +253,7 @@ begin
   else if L = 'german' then Result := 'de'
   else if L = 'french' then Result := 'fr'
   else if L = 'chinese' then Result := 'zh'
+  else if L = 'czech' then Result := 'cs'
   else Result := 'en';
 end;
 
@@ -257,21 +263,22 @@ var
 begin
   if CurStep = ssPostInstall then
   begin
-    { [REQ 1] Английский язык устанавливается по умолчанию ТОЛЬКО для первого запуска (если пользователь ещё не сохранял свой выбор в настройках) }
-    LangCode := 'en';
+    { Язык, выбранный пользователем на этапе установки, применяется при первом запуске приложения }
+    LangCode := GetAppLangCodeFromSetup();
     AppDataDir := ExpandConstant('{userappdata}\Seestar_AstroLab');
     ForceDirectories(AppDataDir);
     StorePath := AppDataDir + '\user_persistent_store.json';
 
     if not FileExists(StorePath) then
     begin
-      JsonContent := '{"lang": "' + LangCode + '", "seestar_lang": "' + LangCode + '"}';
+      JsonContent := '{"lang": "' + LangCode + '", "seestar_lang": "' + LangCode + '", "installer_lang": "' + LangCode + '"}';
       SaveStringToFile(ExpandConstant('{app}\user_settings.json'), JsonContent, False);
+      SaveStringToFile(AppDataDir + '\installer_lang.txt', LangCode, False);
       SaveStringToFile(AppDataDir + '\user_settings.json', JsonContent, False);
 
       if DirExists(ExpandConstant('{app}\pwa_mobile_and_electron')) then
       begin
-        JsContent := 'window.__SEESTAR_DISK_STORE__ = {"lang": "' + LangCode + '", "seestar_lang": "' + LangCode + '"};' + #13#10;
+        JsContent := 'window.__SEESTAR_DISK_STORE__ = {"lang": "' + LangCode + '", "seestar_lang": "' + LangCode + '", "installer_lang": "' + LangCode + '"};' + #13#10;
         SaveStringToFile(ExpandConstant('{app}\pwa_mobile_and_electron\user_persistent_store.js'), JsContent, False);
       end;
     end;

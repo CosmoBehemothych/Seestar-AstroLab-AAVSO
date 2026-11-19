@@ -192,20 +192,39 @@ class AstroLabDiskBridge:
                     store.update(data)
             except Exception:
                 pass
-                # [REQ 1] Дефолтный язык английский ('en') применяется ТОЛЬКО при первом запуске приложения.
-        # При всех последующих запусках используется язык, который выбрал пользователь в настройках приложения.
+                # Язык, выбранный на этапе установки, применяется при первом запуске (если пользователь ещё не менял язык в настройках).
+        # При всех последующих запусках сохраняется язык, выбранный пользователем в настройках приложения.
+        installer_first_lang = ""
         try:
             inst_flag_p = os.path.join(self.data_dir, "installer_lang.txt")
             if os.path.isfile(inst_flag_p):
+                with open(inst_flag_p, "r", encoding="utf-8") as iff:
+                    installer_first_lang = iff.read().strip().lower()
                 try:
                     os.remove(inst_flag_p)
                 except Exception:
                     pass
+            if not installer_first_lang and not store.get("seestar_user_lang"):
+                base_d = get_base_dir()
+                exe_d = os.path.dirname(os.path.abspath(sys.argv[0])) if sys.argv else base_d
+                for cand_s in [
+                    os.path.join(exe_d, "user_settings.json"),
+                    os.path.join(base_d, "user_settings.json"),
+                    os.path.join(self.data_dir, "user_settings.json"),
+                ]:
+                    if os.path.isfile(cand_s):
+                        with open(cand_s, "r", encoding="utf-8") as sf:
+                            s_obj = json.load(sf)
+                        cand_l = (s_obj.get("installer_lang") or s_obj.get("lang") or "").strip().lower()
+                        if cand_l:
+                            installer_first_lang = cand_l
+                            break
         except Exception:
             pass
 
         user_chosen_lang = (
             store.get("seestar_user_lang")
+            or installer_first_lang
             or store.get("seestar_lang")
             or store.get("lang")
             or ""

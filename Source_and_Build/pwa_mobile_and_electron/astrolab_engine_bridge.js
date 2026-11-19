@@ -3058,6 +3058,15 @@
     I18N.ber = Object.assign({}, I18N.es || I18N.en);
   }
   I18N.be = I18N.ber;
+  if (!I18N.cs) {
+    I18N.cs = Object.assign({}, I18N.en);
+  }
+  if (!I18N.cs) {
+    I18N.cs = Object.assign({}, I18N.en);
+  }
+  if (!I18N.cs) {
+    I18N.cs = Object.assign({}, I18N.en);
+  }
 
   function detectLang() {
     try {
@@ -3084,7 +3093,7 @@
     try {
       const ds = window.__SEESTAR_DISK_STORE__;
       if (ds && typeof ds === "object") {
-        const diskL = window.__normAstroLang(ds.seestar_user_lang || ds.seestar_lang || ds.lang);
+        const diskL = window.__normAstroLang(ds.seestar_user_lang || ds.installer_lang || ds.seestar_lang || ds.lang);
         if (diskL && I18N[diskL]) {
           safeSetStorage("lang", diskL);
           safeSetStorage("seestar_lang", diskL);
@@ -6653,7 +6662,8 @@ function revealAndFocusField(inputId) {
       es: `Estrella Variable (${typeCode})`,
       de: `Veränderlicher Stern (${typeCode})`,
       fr: `Étoile Variable (${typeCode})`,
-      zh: `变星 (${typeCode})`
+      zh: `变星 (${typeCode})`,
+      cs: `Proměnná hvězda (${typeCode})`
     };
     const magClean = (item.magRange || "").split("(")[0].trim();
     const descByLang = {
@@ -6661,14 +6671,16 @@ function revealAndFocusField(inputId) {
       es: `${item.star} (${item.alias}) — objetivo AAVSO (${typeCode}) en ${item.con}, rango ${magClean}, carta VSP ${item.chart}.`,
       de: `${item.star} (${item.alias}) — AAVSO-Ziel (${typeCode}) im Sternbild ${item.con}, Bereich ${magClean}, VSP-Karte ${item.chart}.`,
       fr: `${item.star} (${item.alias}) — cible AAVSO (${typeCode}) dans ${item.con}, magnitude ${magClean}, carte VSP ${item.chart}.`,
-      zh: `${item.star} (${item.alias}) — AAVSO 目标 (${typeCode})，位于 ${item.con}，星等范围 ${magClean}，VSP 星图 ${item.chart}。`
+      zh: `${item.star} (${item.alias}) — AAVSO 目标 (${typeCode})，位于 ${item.con}，星等范围 ${magClean}，VSP 星图 ${item.chart}。`,
+      cs: `${item.star} (${item.alias}) — cíl AAVSO (${typeCode}) v souhvězdí ${item.con}, rozsah jasnosti ${magClean}, mapa VSP ${item.chart}.`
     };
     const commentByLang = {
       en: `AAVSO Campaign: use TG filter series, check star ${item.kname} (${item.kmag} mag) on VSP chart ${item.chart}.`,
       es: `Campaña AAVSO: serie en filtro TG, estrella de control ${item.kname} (${item.kmag} mag) en carta VSP ${item.chart}.`,
       de: `AAVSO-Kampagne: TG-Filterserie nutzen, Vergleichsstern ${item.kname} (${item.kmag} mag) auf VSP-Karte ${item.chart}.`,
       fr: `Campagne AAVSO : série filtre TG, étoile de contrôle ${item.kname} (${item.kmag} mag) sur carte VSP ${item.chart}.`,
-      zh: `AAVSO 观测建议：使用 TG 滤镜序列，核对 VSP 星图 ${item.chart} 上的比较星 ${item.kname} (${item.kmag} mag)。`
+      zh: `AAVSO 观测建议：使用 TG 滤镜序列，核对 VSP 星图 ${item.chart} 上的比较星 ${item.kname} (${item.kmag} mag)。`,
+      cs: `Kampaň AAVSO: použijte sérii s filtrem TG, kontrolní hvězda ${item.kname} (${item.kmag} mag) na mapě VSP ${item.chart}.`
     };
     return Object.assign({}, item, {
       priority: prio,
@@ -6811,9 +6823,9 @@ function revealAndFocusField(inputId) {
     const conColor = isLight ? "var(--ios-text-secondary)" : "#94a3b8";
 
     const _lgUrg = (typeof currentLang !== "undefined") ? currentLang : (document.getElementById("langSelect")?.value || "ru");
-    const _lblReq = { ru: "🏛 Заказчик:", en: "🏛 Requester:", es: "🏛 Solicitante:", de: "🏛 Auftraggeber:", fr: "🏛 Demandeur :", zh: "🏛 观测发起方：" }[_lgUrg] || "🏛 Заказчик:";
-    const _lblRec = { ru: "🔭 Рекомендации:", en: "🔭 Imaging Rec.:", es: "🔭 Recomendación:", de: "🔭 Empfehlung:", fr: "🔭 Recommandation :", zh: "🔭 拍摄建议：" }[_lgUrg] || "🔭 Рекомендации:";
-    const _btnDossierLbl = { ru: "🔎 Досье и параметры звезды", en: "🔎 Star Dossier & Info", es: "🔎 Dossier de la estrella", de: "🔎 Sterndossier & Infos", fr: "🔎 Dossier de l'étoile", zh: "🔎 恒星完整档案与参数" }[_lgUrg] || "🔎 Досье и параметры звезды";
+    const _lblReq = { ru: "🏛 Заказчик:", en: "🏛 Requester:", es: "🏛 Solicitante:", de: "🏛 Auftraggeber:", fr: "🏛 Demandeur :", zh: "🏛 观测发起方：", cs: "🏛 Zadavatel:" }[_lgUrg] || "🏛 Заказчик:";
+    const _lblRec = { ru: "🔭 Рекомендации:", en: "🔭 Imaging Rec.:", es: "🔭 Recomendación:", de: "🔭 Empfehlung:", fr: "🔭 Recommandation :", zh: "🔭 拍摄建议：", cs: "🔭 Doporučení:" }[_lgUrg] || "🔭 Рекомендации:";
+    const _btnDossierLbl = { ru: "🔎 Досье и параметры звезды", en: "🔎 Star Dossier & Info", es: "🔎 Dossier de la estrella", de: "🔎 Sterndossier & Infos", fr: "🔎 Dossier de l'étoile", zh: "🔎 恒星完整档案与参数", cs: "🔎 Karta hvězdy a parametry" }[_lgUrg] || "🔎 Досье и параметры звезды";
 
     container.innerHTML = filtered.map(rawItem => {
       const item = getLocalizedCatalogItem(rawItem);
@@ -6835,7 +6847,7 @@ function revealAndFocusField(inputId) {
               <span>🔭 <strong>RA (J2000.0):</strong> ${formatRaJ2000Hms(rawItem.ra, true)} &nbsp;•&nbsp; <strong>Dec (J2000.0):</strong> ${formatDecJ2000Dms(rawItem.dec)}</span>
               
             </div>
-            <span data-live-status="${escapeHtml(rawItem.star)}" style="color:${vspColor}; font-weight:700;">✓ VSP ${escapeHtml(item.chart)}</span> • AUID: ${escapeHtml(rawItem.auid)} <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高"}[_l]||"max."; const _nw = {ru:"сейчас",en:"now",es:"ahora",de:"jetzt",fr:"maint.",zh:"当前"}[_l]||"now"; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_nw} ${Math.round(_a.currentAltDeg)>=0?"+":""}${Math.round(_a.currentAltDeg)}° (${_a.compassLabel || ""})`; })()) : ""}</span>
+            <span data-live-status="${escapeHtml(rawItem.star)}" style="color:${vspColor}; font-weight:700;">✓ VSP ${escapeHtml(item.chart)}</span> • AUID: ${escapeHtml(rawItem.auid)} <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高",cs:"max."}[_l]||"max."; const _nw = {ru:"сейчас",en:"now",es:"ahora",de:"jetzt",fr:"maint.",zh:"当前",cs:"nyní"}[_l]||"now"; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_nw} ${Math.round(_a.currentAltDeg)>=0?"+":""}${Math.round(_a.currentAltDeg)}° (${_a.compassLabel || ""})`; })()) : ""}</span>
             <div class="urgent-customer-rec-box">
               <div><strong>${escapeHtml(_lblReq)}</strong> ${escapeHtml(reqText)}</div>
               <div><strong>${escapeHtml(_lblRec)}</strong> ${escapeHtml(recText)}</div>
@@ -7553,7 +7565,7 @@ function revealAndFocusField(inputId) {
             <span class="v6-target-name">${escapeHtml(item.star)} <small style="color:${conColor}; font-weight:500;">(${escapeHtml(item.con)})</small></span>
             <span class="v6-target-badge">${escapeHtml(item.priority)}</span>
           </div>
-          <div class="v6-target-meta"><span class="aavso-sec-pill">${escapeHtml(getStarObservingSectionLabel(rawItem))}</span> • ${escapeHtml(item.type)} • AUID: ${escapeHtml(item.auid)} <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高"}[_l]||"max."; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_a.compassLabel || ""}`; })()) : ""}</span></div>
+          <div class="v6-target-meta"><span class="aavso-sec-pill">${escapeHtml(getStarObservingSectionLabel(rawItem))}</span> • ${escapeHtml(item.type)} • AUID: ${escapeHtml(item.auid)} <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高",cs:"max."}[_l]||"max."; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_a.compassLabel || ""}`; })()) : ""}</span></div>
           <div class="v6-target-coords-bar" data-live-coords="${escapeHtml(rawItem.star)}" title="RA / Dec (J2000.0) — Seestar & AAVSO Target Tool (${rawItem.ra.toFixed(4)}°, ${rawItem.dec >= 0 ? '+' : ''}${rawItem.dec.toFixed(4)}°)">
             <span>🔭 <strong>RA:</strong> ${formatRaJ2000Hms(rawItem.ra, true)} • <strong>Dec:</strong> ${formatDecJ2000Dms(rawItem.dec)}</span>
             
@@ -8530,6 +8542,7 @@ function revealAndFocusField(inputId) {
     const localUserChoice = window.__normAstroLang(
       safeGetStorage("seestar_user_lang", null) ||
       storeObj.seestar_user_lang ||
+      storeObj.installer_lang ||
       storeObj.seestar_lang ||
       storeObj.lang ||
       "en"
@@ -9356,6 +9369,12 @@ function revealAndFocusField(inputId) {
       today: "Aujourd'hui",
       yearFirst: false
     },
+    cs: {
+      months: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"],
+        weekdays: ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"],
+        today: "Dnes",
+        clear: "Zrušit"
+      },
     zh: {
       months: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
       weekdays: ["一", "二", "三", "四", "五", "六", "日"],
@@ -14975,6 +14994,17 @@ function revealAndFocusField(inputId) {
         minShort: "10分钟",
         cloudsSubFmt: "📍 {coords} • ☁️ 云量: {cloud}% (低云 {low}% • 中云 {mid}% • 高云 {high}%) • 💧 湿度: {hum}% • 🌡️ {temp}°C"
       },
+      cs: {
+        activeCityPre: "Aktivní město:",
+        moonWarnBadge: "⚠️ Jasný Měsíc",
+        moonSafeBadge: "✓ Neruší fotometrii",
+        altWord: "Výška:",
+        qExc: "Vynikající pro fotometrii",
+        qMid: "Polojasno",
+        qBad: "Zataženo / Nevhodné",
+        minShort: "10 min",
+        cloudsSubFmt: "📍 {coords} • ☁️ Oblačnost: {cloud}% (nízká {low}% • střední {mid}% • vysoká {high}%) • 💧 Vlhkost: {hum}% • 🌡️ {temp}°C"
+      },
       ber: {
         activeCityPre: "Tamdint turmidt (para Ramón):",
         moonWarnBadge: "⚠️ Ayyur yeflali",
@@ -15516,6 +15546,37 @@ function revealAndFocusField(inputId) {
       lblToggleTechBlock: "🔧 Technical Block & Catalog Status",
       btnResetLayout: "✥ Reset Moved Menu Blocks to Default",
       btnResetLayoutShort: "✥ Reset Layout",
+      btnImportTargetToolCsv: "📥 Import Target Tool CSV"
+    },
+    cs: {
+      modalTitleFmt: "🌟 Kompletní karta cíle AAVSO: {star} ({con})",
+      secCoords: "🔭 Souřadnice pro navedení dalekohledu (J2000.0)",
+      lblRaHms: "RA (J2000.0) [HHʰ MMᵐ SSˢ]:",
+      lblDecDms: "Dec (J2000.0) [±DD° MM' SS″]:",
+      lblDecimalDeg: "Desetinné stupně (SIMBAD):",
+      lblCityAlt: "Viditelnost ve městě ({city}):",
+      secPhotometry: "📊 Jasnost, efemeridy a kalibrace VSP",
+      lblMagRange: "Rozsah jasnosti (Max → Min):",
+      lblVarType: "Typ proměnnosti (VSX):",
+      lblAuid: "Jedinečné ID (AUID):",
+      lblVspChart: "Mapa okolí (CHART):",
+      lblCheckStar: "Kontrolní hvězda (KNAME / KMAG):",
+      lblPubDate: "Datum výzvy / Alert Notice:",
+      secCustomer: "🏛 Zadavatel a vědecký cíl (kampaň AAVSO)",
+      lblRequester: "Zadavatel pozorování:",
+      lblObjectNature: "Fyzikální podstata objektu:",
+      lblWhyUrgent: "Proč je objekt urgentní / vědecký cíl:",
+      secRecommendations: "🔭 Doporučení pro snímání dalekohledem ZWO Seestar",
+      lblScopeFit: "Vhodnost a expozice ({scope}):",
+      lblObservingGuide: "Metodika snímání a filtrace:",
+      btnCopyCoords: "📋 Kopírovat J2000.0",
+      btnExportTxt: "📥 Exportovat kartu (.txt)",
+      btnPullStarToConverter: "🎯 Přenést data hvězdy do převodníku (Sekce 1)",
+      btnCloseModal: "Zavřít",
+      lblToggleObjectTypes: "🎯 Typy objektů a sekce AAVSO (Skrýt / Zobrazit)",
+      lblToggleTechBlock: "🔧 Technický blok a stav katalogů",
+      btnResetLayout: "✥ Obnovit výchozí rozložení bloků",
+      btnResetLayoutShort: "✥ Obnovit rozložení",
       btnImportTargetToolCsv: "📥 Import Target Tool CSV"
     },
     es: {
@@ -16860,6 +16921,26 @@ function revealAndFocusField(inputId) {
       btnObsTrackerMenu: "📓 我的观测记录",
       btnUrgentMenu: "AAVSO 目标雷达"
     },
+    cs: {
+      lblSettingsTitle: "Nastavení",
+      splashLangLabel: "Jazyk rozhraní:",
+      lblSplashLang: "Jazyk rozhraní:",
+      lblSettingsCityTitle: "Poloha observatoře:",
+      lblCountrySelect: "1. Země:",
+      lblCitySelect: "2. Země — Město:",
+      btnAutoDetectCity: "🎯 Auto",
+      tipAutoDetectCity: "Automaticky rozpoznat město podle IP / časového pásma",
+      optCustomCity: "🔍 Jiné město (hledat níže)...",
+      phCustomCity: "Země-Město nebo město (např. Česko-Praha, USA-Washington)...",
+      optAllCountries: "🌍 Všechny země světa",
+      lblToastsShort: "🔔 Povolit oznámení",
+      lblToggleTechBlock: "🔧 Technický blok a stav katalogů",
+      btnResetLayoutShort: "✥ Obnovit rozložení",
+      btnBeginnerGuide: "🚀 Začít",
+      btnGraphGuide: "📖 Jak číst grafy",
+      btnObsTrackerMenu: "📓 Moje pozorování",
+      btnUrgentMenu: "Radar cílů AAVSO"
+    },
     ber: {
       lblSettingsTitle: "Iɣewwaren (para Ramón)",
       splashLangLabel: "Tutlayt n ugrudem (Tamaziɣt):",
@@ -17102,6 +17183,16 @@ function revealAndFocusField(inputId) {
         { id: "Tizi Ouzou (Kabylie)", ru: "Тизи-Узу (Кабилия)", lat: 36.7118, lon: 4.0459 },
         { id: "Béjaïa (Bgayet)", ru: "Беджая", lat: 36.7509, lon: 5.0567 },
         { id: "Oran (Wehran)", ru: "Оран", lat: 35.6971, lon: -0.6308 }
+      ]
+    },
+    {
+      code: "CZ",
+      flag: "🇨🇿",
+      names: { en: "Czechia (Česko)", ru: "Чехия (Česko)", es: "Chequia (Česko)", de: "Tschechien (Česko)", fr: "Tchéquie (Česko)", zh: "捷克 (Czechia)", ber: "Čik (Česko)", cs: "Česko" },
+      cities: [
+        { id: "Prague (Praha)", ru: "Прага (Praha)", lat: 50.0755, lon: 14.4378 },
+        { id: "Brno", ru: "Брно", lat: 49.1951, lon: 16.6068 },
+        { id: "Ondřejov Observatory", ru: "Обсерватория Ондржеёв", lat: 49.9103, lon: 14.7836 }
       ]
     },
     {
@@ -18123,6 +18214,30 @@ function revealAndFocusField(inputId) {
         { kicker: "总结与首步", headline: "总结：从 Seestar 到 AAVSO 之旅", callout: "首次任务：选一颗变星，10秒曝光拍 10–20 帧，转换并上传——哪怕 1 个数据点也很宝贵！", steps: ["<strong>1–2.</strong> 注册 <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a>。", "<strong>3–4.</strong> 获取 OBSCODE 与目标。", "<strong>5–6.</strong> 10s EQ 拍摄 → <code>Magnitude_*.csv</code>。", "<strong>7–8.</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>。"], cards: [{ num: "1–2", title: "账号", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "目标雷达" }, { num: "5–6", title: "拍摄", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "入库 AAVSO" }] }
       ]
     },
+    cs: {
+      modalTitle: "🚀 Začít: Občanská fotometrie se Seestarem a databáze AAVSO",
+      btnPrev: "Zpět",
+      btnNext: "Další snímek",
+      tabs: [
+        "1. Titul", "2. Proč věda", "3. Základy AAVSO", "4. Kód OBSCODE",
+        "5. Příprava Seestaru", "6. Výběr cíle", "7. Snímání", "8. Export CSV",
+        "9. Převod", "10. WebObs", "11. Chyby", "12. První krok"
+      ],
+      slides: [
+        { type: "hero", kicker: "OBČANSKÁ FOTOMETRIE • ZWO SEESTAR", headline: "Občanská fotometrie se Seestarem: od hvězdného světla do databáze AAVSO", callout: "Průvodce krok za krokem pro pozorovatele proměnných hvězd • Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO", steps: ["<strong>Pro koho je průvodce:</strong> pro každého majitele ZWO Seestar, který chce získávat skutečná vědecká data.", "<strong>Co se naučíte:</strong> registraci na <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO</a>, snímání v EQ režimu, převod <code>Magnitude_*.csv</code> a nahrání na WebObs."], img: "assets/pptx_slide_1.jpg", caption: "Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO • WebObs" },
+        { kicker: "HODNOTA OBČANSKÉ VĚDY", headline: "Proč by se amatér měl věnovat fotometrii?", callout: "Profesionální dalekohledy nemohou nepřetržitě sledovat všechny proměnné hvězdy — amatéři tuto mezeru zaplňují.", steps: ["<strong>1. Hlídka oblohy:</strong> AAVSO spojuje tisíce pozorování do jedné světelné křivky.", "<strong>2. Výstrahy:</strong> včasné zachycení vzplanutí a zákrytů.", "<strong>3. Publikace:</strong> data AAVSO se používají ve vědeckých článcích."], cards: [{ num: "1", title: "Hlídka oblohy", desc: "Nepřetržitý monitoring" }, { num: "2", title: "Výstrahy", desc: "Včasné varování" }, { num: "3", title: "Publikace", desc: "Skutečný přínos vědě" }] },
+        { kicker: "ZÁKLADY A STANDARDY", headline: "Co je fotometrie a proč právě AAVSO?", callout: "AAVSO (od roku 1911) je světový standard pro data proměnných hvězd.", steps: ["<strong>Fotometrie:</strong> převod světelného toku na hvězdnou velikost (<code>MAG ± MERR</code>).", "<strong>Formát Extended:</strong> surové CSV nelze nahrát přímo — použijte převodník <code>Seestar AstroLab AAVSO</code>."], img: "assets/pptx_slide_3.png", caption: "Světelná křivka (TG / V) a přísný standard #TYPE=EXTENDED" },
+        { kicker: "KROK 1 • ZAČÁTEK", headline: "Registrace v AAVSO a získání kódu OBSCODE", callout: "OBSCODE je váš trvalý identifikátor pozorovatele. Bez něj nelze data nahrát.", steps: ["<strong>1. Účet zdarma:</strong> <a href='https://www.aavso.org/user/register' target='_blank' rel='noopener'>aavso.org/user/register</a>.", "<strong>2. User Profile → Settings:</strong> otevřete nastavení profilu.", "<strong>3. Klikněte «Request an Obscode»:</strong> kód získáte automaticky."], cards: [{ num: "1", title: "aavso.org/user/register", desc: "Registrace zdarma" }, { num: "2", title: "User Profile → Settings", desc: "Nastavení profilu" }, { num: "3", title: "Request an Obscode", desc: "Osobní kód pozorovatele" }] },
+        { kicker: "KROK 2 • PŘÍPRAVA", headline: "Příprava Seestaru na fotometrii", callout: "Zapněte ekvatoriální (EQ) režim, abyste odstranili rotaci pole.", steps: ["<strong>EQ režim:</strong> zvyšuje stabilitu měření.", "<strong>Standardní pole (např. SA20):</strong> ideální pro první trénink.", "<strong>Zelený kanál (TG):</strong> vestavěná fotometrie měří v zeleném kanálu snímače."], img: "assets/pptx_slide_5.png", caption: "Standardní pole AAVSO (SA20) • EQ režim odstraňuje rotaci pole" },
+        { kicker: "KROK 3 • VÝBĚR CÍLE", headline: "Výběr cíle v Radaru cílů Seestar AstroLab", callout: "Filtry viditelnosti, doporučené expozice a souřadnice J2000.0.", steps: ["<strong>Filtry radaru (246 cílů):</strong> vyberte model Seestar, město a azimut.", "<strong>Expozice:</strong> sledujte doporučený čas (např. <code>10s</code>) a riziko přesycení v kartě hvězdy.", "<strong>Souřadnice J2000.0:</strong> zkopírujte RA/Dec, pokud hvězdu nenajdete podle názvu."], img: "assets/pptx_slide_6.png", caption: "Kompletní karta cíle AAVSO: J2000.0, jasnost, VSP a Seestar" },
+        { kicker: "KROK 4 • SNÍMÁNÍ", headline: "Průběh fotometrie na Seestaru", callout: "Záznam se spouští ručně pro každý cíl; optimální expozice je 10 sekund.", steps: ["<strong>1. NAVEDENÍ:</strong> vyberte cíl v aplikaci Seestar.", "<strong>2. START:</strong> spusťte logování ručně.", "<strong>3. SÉRIE 10s:</strong> nasnímejte sérii snímků po <code>10 s</code>.", "<strong>4. STOP:</strong> hlídejte přesycení jasných hvězd."], cards: [{ num: "1", title: "NAVEDENÍ", desc: "Výběr cíle" }, { num: "2", title: "START", desc: "Ruční spuštění" }, { num: "3", title: "SÉRIE 10s", desc: "Série snímků" }, { num: "4", title: "STOP", desc: "Kontrola přesycení" }] },
+        { kicker: "KROK 5 • EXPORT DAT", headline: "Export souboru CSV ze Seestaru", callout: "Nikdy nenahrávejte surové CSV přímo na AAVSO — formát nebude souhlasit!", steps: ["<strong>1. Najděte <code>Magnitude_*.csv</code></strong> v aplikaci / paměti Seestaru.", "<strong>2. Zkopírujte do PC</strong> (přes USB-C nebo Wi-Fi).", "<strong>3. Předejte do AstroLabu</strong> ke konverzi."], cards: [{ num: "📄", title: "Magnitude_*.csv", desc: "Surový soubor Seestar" }, { num: "⚠️", title: "Nenahrávat přímo!", desc: "WebObs ho odmítne" }, { num: "⚡", title: "Seestar AstroLab", desc: "Sekce 1 → Sekce 2" }] },
+        { kicker: "KROK 6 • PŘEVOD", headline: "Převod v Seestar AstroLab (Sekce 1 → 2 → 3)", callout: "Nejprve ověřte OBSCODE a SIMBAD+VSP v Sekci 1, poté načtěte Magnitude_*.csv v Sekci 2!", steps: ["<strong>JD_Mid a filtrace:</strong> automaticky spočítá střed expozice a vyfiltruje <code>Non-reference star</code>.", "<strong>Formát #TYPE=EXTENDED:</strong> vygeneruje <code>*_Seestar.csv</code>.", "<strong>Porovnání křivky:</strong> zobrazí vaši křivku vedle databáze AAVSO (AID)."], img: "assets/pptx_slide_9.png", caption: "Porovnání vašich dat Seestar s mezinárodní křivkou AAVSO" },
+        { kicker: "KROK 7 • PUBLIKACE", headline: "Nahrání na portál AAVSO WebObs", callout: "Během 10 sekund budou vaše body veřejně v databázi AAVSO!", steps: ["<strong>1. Klikněte Převést (.csv):</strong> v Sekci 3 se vytvoří <code>*_Seestar.csv</code>.", "<strong>2. Otevřete WebObs:</strong> <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>apps.aavso.org/v2/data/submit/photometry/</a>.", "<strong>3. Zvolte «Upload a file of observations»:</strong> nahrajte <code>*_Seestar.csv</code>."], cards: [{ num: "1", title: "Soubor .csv", desc: "#TYPE=EXTENDED" }, { num: "2", title: "WebObs", desc: "Oficiální portál" }, { num: "3", title: "Upload", desc: "Do 10 sekund" }, { num: "4", title: "V databázi AID", desc: "Přístupné vědcům" }] },
+        { kicker: "ČASTÉ CHYBY", headline: "Typické chyby a jak se jim vyhnout", callout: "Zkontrolujte tento seznam před každým odesláním.", table: { headers: ["Chyba", "Důsledek", "Řešení"], rows: [["Nahrání surového CSV", "Chyba formátu", "Vždy převádějte přes Seestar AstroLab AAVSO"], ["Chybějící OBSCODE", "Data se nepřiřadí k účtu", "Zkontrolujte OBSCODE v Sekci 1"], ["Přesycená hvězda", "Deformovaná křivka", "Sledujte jasnost a expozici v Radaru cílů"], ["Ignorování check star", "Nelze ověřit kvalitu noci", "Ponechte automatický výběr KNAME/KMAG"]] } },
+        { kicker: "SHRNUTÍ", headline: "Shrnutí: cesta ze Seestaru do AAVSO", callout: "První úkol: vyberte proměnnou hvězdu, nasnímejte 10–20 snímků po 10s, převeďte a nahrajte!", steps: ["<strong>1–2.</strong> Účet na <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a>.", "<strong>3–4.</strong> OBSCODE a výběr cíle v Radaru.", "<strong>5–6.</strong> 10s EQ → <code>Magnitude_*.csv</code>.", "<strong>7–8.</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>."], cards: [{ num: "1–2", title: "Účet", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "Radar cílů" }, { num: "5–6", title: "Snímání", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "Databáze AAVSO" }] }
+      ]
+    },
     ber: {
       modalTitle: "🚀 Tazwara (Guía para Ramón): Afutomitri s Seestar & AAVSO",
       btnPrev: "Ɣer deffir",
@@ -18337,4 +18452,164 @@ function revealAndFocusField(inputId) {
     }
   }, 45);
 
+})();
+
+
+
+
+// === MODULE 18: COMPLETE CZECH (cs / Čeština) LOCALIZATION ===
+(function initModule18CzechLocalization() {
+  "use strict";
+
+  const CZECH_I18N_FULL = {
+    appTitle: "Seestar AstroLab AAVSO",
+    appSubtitle: "Rozlišení SIMBAD & AAVSO VSP s automatickým výběrem kontrolní hvězdy",
+    aavsoBadge: "AAVSO VSX & VSP Aktivní",
+    splashTitle: "Seestar AstroLab AAVSO: Fotometrie",
+    splashDesc: "Profesionální aplikace pro převod vědeckých fotometrických pozorování z dalekohledů ZWO Seestar (S30, S30PRO, S50, S50PRO) do mezinárodního formátu AAVSO Extended, sledování urgentních výzev AAVSO a evidenci vašich pozorování.",
+    btnStartApp: "🚀 Spustit Seestar AstroLab",
+    lblSplashLang: "Jazyk rozhraní:",
+    splashLangLabel: "Jazyk rozhraní:",
+    feat1Title: "Hvězdná fotometrie",
+    feat1Text: "Přesný výpočet středního juliánského dne (JD Mid) a přístrojové magnitudy TG.",
+    feat2Title: "Výzvy AAVSO a pokrok",
+    feat2Text: "Sledování urgentních výzev AAVSO a vlastního archivu pozorování.",
+    feat3Title: "AAVSO VSX, VSP & AID",
+    feat3Text: "Přímá synchronizace souřadnic J2000.0, srovnávacích map a světelných křivek.",
+    lblThemePanel: "Barevný motiv",
+    themeDarkBtn: "Standardní tmavý",
+    themeLightBtn: "Světlý",
+    lblScopeSelect: "Dalekohled:",
+    lblObscode: "OBSCODE (kód observatoře)",
+    lblStarId: "STARID (název / ID hvězdy)",
+    obscodeHint: "Zadejte svůj kód pozorovatele AAVSO (např. ABCD)",
+    staridHint: "Název proměnné, zákrytové nebo exoplanetární hvězdy",
+    btnFetchAll: "🔭 Načíst SIMBAD + VSP",
+    acc1Title: "Pozorovatel a hvězda",
+    acc2Title: "Výběr a kontrola souboru fotometrie",
+    acc3Title: "Převod Seestar CSV na AAVSO Extended",
+    secFileStart: "Výběr a kontrola souboru fotometrie",
+    btnSelectCsvFile: "📂 Vybrat CSV soubor Seestar",
+    btnLoadDemo: "✨ Demo CSV (SZ Lyn)",
+    noFileSelected: "Soubor zatím nevybrán (klikněte výše nebo na «Demo CSV»)",
+    btnConvert: "⚡ Převést a uložit AAVSO Extended (.csv)",
+    btnDownload: "💾 Uložit soubor AAVSO (.csv)",
+    btnCopy: "📋 Kopírovat do schránky",
+    btnOpenWebObs: "🌐 Otevřít AAVSO WebObs ↗",
+    btnClearAll: "🗑 Vyčistit",
+    btnUrgentMenu: "Radar cílů AAVSO",
+    btnObsTrackerMenu: "📓 Moje pozorování",
+    btnGraphGuide: "📖 Jak číst grafy",
+    btnBeginnerGuide: "🚀 Začít",
+    lblSettingsTitle: "Nastavení",
+    lblSettingsCityTitle: "Poloha observatoře:",
+    lblCountrySelect: "1. Země:",
+    lblCitySelect: "2. Země — Město:",
+    btnAutoDetectCity: "🎯 Auto",
+    tipAutoDetectCity: "Automaticky rozpoznat město podle IP / časového pásma",
+    optCustomCity: "🔍 Jiné město (hledat níže)...",
+    phCustomCity: "Země-Město nebo město (např. Česko-Praha, USA-Washington)...",
+    optAllCountries: "🌍 Všechny země světa",
+    lblToastsShort: "🔔 Povolit oznámení",
+    lblToggleTechBlock: "🔧 Technický blok a stav katalogů",
+    btnResetLayoutShort: "✥ Obnovit rozložení",
+    btnResetLayout: "✥ Obnovit výchozí rozložení bloků",
+    lblToggleObjectTypes: "🎯 Typy objektů a sekce AAVSO (Skrýt / Zobrazit)",
+    btnImportTargetToolCsv: "📥 Import Target Tool CSV",
+    v6RadarDockTitle: "Radar cílů AAVSO",
+    btnV6Refresh: "🔄 Obnovit",
+    btnSpinRandomStarOpen: "🎰 Náhodný výběr hvězdy pro vaše pozorování",
+    lblV6Visibility: "Viditelnost:",
+    lblV6Sort: "Řazení:",
+    lblV6Limit: "Limit:",
+    optFullWindow: "Celé okno",
+    btnPrevPage: "< Předchozí",
+    btnNextPage: "Další >",
+    pageInfoText: "Str. {current} z {total} ({rows})",
+    rowWord: "Řádek",
+    msgNoStarId: "Zadejte STARID (název hvězdy)",
+    msgNoStarIdExplain: "Pro vyhledání souřadnic v SIMBAD a VSP zadejte název hvězdy.",
+    errNoObscodeTitle: "Chybí OBSCODE",
+    errNoObscodeMsg: "Zadejte svůj platný kód pozorovatele AAVSO (OBSCODE).",
+    errNoObscodeExplain: "Kód OBSCODE najdete ve svém profilu na aavso.org.",
+    msgNoFile: "Nejprve vyberte CSV soubor Seestar",
+    msgNoFileExplain: "Nahrajte soubor Magnitude_*.csv z dalekohledu Seestar nebo použijte Demo CSV.",
+    fileDownloaded: "Soubor {name} byl uložen.",
+    btnDonateLater: "Připomenout příště",
+    btnDonateNever: "Již nezobrazovat",
+    btnInstallApp: "📲 Nainstalovat aplikaci",
+    btnTriggerNativeInstall: "⚡ Nainstalovat na 1 kliknutí",
+    btnDownloadDesktopShortcut: "💻 Stáhnout zástupce na plochu",
+    installModalTitle: "📲 Instalace Seestar AstroLab",
+    installModalIntro: "Tato aplikace podporuje přímou instalaci jako samostatná desktopová aplikace.",
+    submitModalTitle: "🚀 Odeslání souboru na AAVSO WebObs",
+    lblVerifyDisk: "Kontrola hotového souboru AAVSO:",
+    msgStarImageMissing: "Obrázek hvězdy není k dispozici.",
+    simbadPreloadedFmt: "SIMBAD přednačten: {star}",
+    urgentAutoTimerPrefix: "Aktuální juliánské datum (JD):",
+    btnSpinLuckAgain: "Roztočit znovu",
+    btnOpenStarInVsx: "🌐 Karta hvězdy v AAVSO VSX ↗",
+    btnAcceptLuckTarget: "Přejít k pozorování vybrané hvězdy",
+    wheelSpinningTicker: "🎰 Probíhá výběr prioritního cíle AAVSO...",
+    wheelWinnerTickerFmt: "🏆 Vybraný cíl pro dnešní noc: <strong>{star}</strong>",
+    luckShortWishText: "Přejeme vám úspěšný lov a jasnou oblohu.",
+    lblSoundOn: "Zvuk zapnut",
+    lblSoundOff: "Zvuk vypnut",
+    authorCompany: "CosmoBehemothych",
+    infoCosmoSub: "Fotometrie Seestar & AAVSO Extended",
+    modeMinimal: "Minimální",
+    modeCompact: "Kompaktní",
+    modeFull: "Plné studio",
+    lblRa: "RA (J2000)",
+    lblDec: "Dec (J2000)",
+    lblChart: "Mapa VSP (CHART)",
+    lblKname: "Kontrolní hvězda (KNAME)",
+    lblKmag: "Magnituda kontrolní hvězdy (KMAG)"
+  };
+
+  if (window.I18N) {
+    window.I18N.cs = Object.assign({}, window.I18N.en || {}, CZECH_I18N_FULL);
+  }
+
+  if (window.SKY_MOON_I18N) {
+    window.SKY_MOON_I18N.cs = {
+      skyLoading: "🌌 Jasnost oblohy: načítání...",
+      skyFmt: "🌌 Jasnost oblohy ({city}): {clarity}%",
+      skyTipFmt: "📍 {city} ({lat}°, {lon}°) • Aktuální jasnost oblohy: {clarity}% (Oblačnost: {cloud}% — nízká {low}%, střední {mid}%, vysoká {high}%). Vlhkost: {hum}%, Teplota: {temp}°C. Aktualizováno v {time} (Open-Meteo).",
+      moonFmt: "Měsíc: {illum}% ({phase} • {alt})",
+      moonAboveFmt: "nad obzorem +{deg}°",
+      moonBelowFmt: "pod obzorem {deg}°",
+      moonTipFmt: "🌕 Oblast: {city} ({hemi}) • Fáze: {phase} • Osvětlení: {illum}% • Výška Měsíce: {alt}° ({status}). Zdroj: USNO API v4.0.",
+      hemiNorth: "Severní polokoule",
+      hemiSouth: "Jižní polokoule",
+      moonSafe: "Měsíc neruší fotometrii",
+      moonBrightWarn: "Jasný Měsíc nad obzorem — vybírejte cíle dál od Měsíce",
+      phases: ["Nov", "Dorůstající srpek", "První čtvrť", "Dorůstající Měsíc", "Úplněk", "Couvající Měsíc", "Poslední čtvrť", "Ubývající srpek"],
+      lblHemiOnlyFilter: "🌍 Polokoule:",
+      optHemiAll: "🌐 Severní i Jižní",
+      optHemiNorth: "⬆️ Severní polokoule (DEC ≥ 0°)",
+      optHemiSouth: "⬇️ Jižní polokoule (DEC < 0°)",
+      chkVisCity: "📍 Viditelné v mém městě",
+      chkVisNow: "🕯️ Nyní nad obzorem",
+      lblHemisphereFilter: "🧭 Azimut:",
+      optVisCity: "📍 Viditelné z mého města (DEC ≥ φ−70°)",
+      optVisNow: "🕯️ Nyní nad obzorem (Alt ≥ 15°)",
+      optVisNorth: "⬆️ Sever (N • Azimut 315°–45°)",
+      optVisSouth: "⬇️ Jih (S • Azimut 135°–225°)",
+      optVisEast: "➡️ Východ (E • Azimut 45°–135°)",
+      optVisWest: "⬅️ Západ (W • Azimut 225°–315°)",
+      optVisNE: "↗️ Severovýchod (NE • 22.5°–67.5°)",
+      optVisNW: "↖️ Severozápad (NW • 292.5°–337.5°)",
+      optVisSE: "↘️ Jihovýchod (SE • 112.5°–157.5°)",
+      optVisSW: "↙️ Jihozápad (SW • 202.5°–247.5°)",
+      optVisAll: "🧭 Všechny směry (360°)",
+      optCustomCity: CZECH_I18N_FULL.optCustomCity,
+      dirs: { N: "S", NE: "SV", E: "V", SE: "JV", S: "J", SW: "JZ", W: "Z", NW: "SZ" }
+    };
+  }
+
+  // Doplnění češtiny do lokalizovaných slovníků modulů (pokud jsou vystaveny na window nebo uvnitř I18N)
+  if (window.I18N && window.I18N.cs) {
+    Object.assign(window.I18N.cs, window.SKY_MOON_I18N ? window.SKY_MOON_I18N.cs : {});
+  }
 })();
