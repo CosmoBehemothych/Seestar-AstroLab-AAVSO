@@ -736,7 +736,7 @@
       critLockBanner: "🔒 Обнаружено критическое расхождение данных. Конвертация заблокирована. Проверьте правильность выбранной звезды и файла.",
       phCustomCity: "Введите город...",
       optCustomCity: "🔍 Другой город...",
-      optFullWindow: "Во всё окно",
+      optFullWindow: "Во всё окно", phRa: "122.40188", phDec: "+44.47336",
       btnClearAll: "🗑 Очистить",
       btnConvert: "Сконвертировать данные для загрузки на AAVSO",
       btnPrevPage: "< Назад",
@@ -9852,10 +9852,10 @@ function revealAndFocusField(inputId) {
     ru: {
       lblRa: "RA (J2000.0)",
       lblDec: "Dec (J2000.0)",
-      phRa: "19ʰ 24ᵐ 33ˢ",
-      phDec: "+50° 14' 29″",
-      tipRaText: "Прямое восхождение J2000.0 для наведения телескопа (ччʰ ммᵐ ссˢ, например 19ʰ 24ᵐ 33ˢ).",
-      tipDecText: "Склонение J2000.0 для наведения телескопа (±гг° мм' сс″, например +50° 14' 29″).",
+      phRa: "122.40188",
+      phDec: "+44.47336",
+      tipRaText: "Прямое восхождение J2000.0 в десятичных градусах (например, 122.40188).",
+      tipDecText: "Склонение J2000.0 в десятичных градусах (например, +44.47336).",
       btnCopyRaDecForm: "📋 Скопировать J2000.0",
       btnExportRaDecTxt: "📥 Выгрузить координаты",
       phRadarSearch: "🔍 Имя звезды / Тип / Созвездие (CH Cyg, AG Dra)...",
@@ -9904,10 +9904,10 @@ function revealAndFocusField(inputId) {
     en: {
       lblRa: "RA (J2000.0)",
       lblDec: "Dec (J2000.0)",
-      phRa: "19ʰ 24ᵐ 33ˢ",
-      phDec: "+50° 14' 29″",
-      tipRaText: "Target Right Ascension (J2000.0) in telescope HMS format (19ʰ 24ᵐ 33ˢ or decimal degrees).",
-      tipDecText: "Target Declination (J2000.0) in telescope DMS format (+50° 14' 29″ or decimal degrees).",
+      phRa: "122.40188",
+      phDec: "+44.47336",
+      tipRaText: "Target Right Ascension (J2000.0) in decimal degrees (e.g. 122.40188).",
+      tipDecText: "Target Declination (J2000.0) in decimal degrees (e.g. +44.47336).",
       btnCopyRaDecForm: "📋 Copy J2000.0",
       btnExportRaDecTxt: "📥 Export Coordinates",
       phRadarSearch: "🔍 Star Name / Var. Type / Con (CH Cyg, AG Dra)...",
@@ -9956,10 +9956,10 @@ function revealAndFocusField(inputId) {
     es: {
       lblRa: "RA (J2000.0)",
       lblDec: "Dec (J2000.0)",
-      phRa: "19ʰ 24ᵐ 33ˢ",
-      phDec: "+50° 14' 29″",
-      tipRaText: "Ascensión recta J2000.0 en formato sexagesimal para telescopio (19ʰ 24ᵐ 33ˢ).",
-      tipDecText: "Declinación J2000.0 en formato sexagesimal para telescopio (+50° 14' 29″).",
+      phRa: "122.40188",
+      phDec: "+44.47336",
+      tipRaText: "Ascensión recta J2000.0 en grados decimales (p. ej. 122.40188).",
+      tipDecText: "Declinación J2000.0 en grados decimales (p. ej. +44.47336).",
       btnCopyRaDecForm: "📋 Copiar J2000.0",
       btnExportRaDecTxt: "📥 Exportar coordenadas",
       phRadarSearch: "🔍 Estrella / Tipo / Constelación (CH Cyg, AG Dra)...",
@@ -9998,10 +9998,10 @@ function revealAndFocusField(inputId) {
     de: {
       lblRa: "RA (J2000.0)",
       lblDec: "Dec (J2000.0)",
-      phRa: "19ʰ 24ᵐ 33ˢ",
-      phDec: "+50° 14' 29″",
-      tipRaText: "Rektaszension J2000.0 im Teleskopformat (19ʰ 24ᵐ 33ˢ).",
-      tipDecText: "Deklination J2000.0 im Teleskopformat (+50° 14' 29″).",
+      phRa: "122.40188",
+      phDec: "+44.47336",
+      tipRaText: "Rektaszension J2000.0 in Dezimalgrad (z. B. 122.40188).",
+      tipDecText: "Deklination J2000.0 in Dezimalgrad (z. B. +44.47336).",
       btnCopyRaDecForm: "📋 J2000.0 kopieren",
       btnExportRaDecTxt: "📥 Koordinaten exportieren",
       phRadarSearch: "🔍 Sternname / Typ / Sternbild (CH Cyg, AG Dra)...",
@@ -10040,10 +10040,10 @@ function revealAndFocusField(inputId) {
     fr: {
       lblRa: "RA (J2000.0)",
       lblDec: "Dec (J2000.0)",
-      phRa: "19ʰ 24ᵐ 33ˢ",
-      phDec: "+50° 14' 29″",
-      tipRaText: "Ascension droite J2000.0 au format télescope (19ʰ 24ᵐ 33ˢ).",
-      tipDecText: "Déclinaison J2000.0 au format télescope (+50° 14' 29″).",
+      phRa: "122.40188",
+      phDec: "+44.47336",
+      tipRaText: "Ascension droite J2000.0 en degrés décimaux (ex. 122.40188).",
+      tipDecText: "Déclinaison J2000.0 en degrés décimaux (ex. +44.47336).",
       btnCopyRaDecForm: "📋 Copier J2000.0",
       btnExportRaDecTxt: "📥 Exporter coordonnées",
       phRadarSearch: "🔍 Étoile / Type / Constellation (CH Cyg, AG Dra)...",
@@ -10082,10 +10082,10 @@ function revealAndFocusField(inputId) {
     zh: {
       lblRa: "RA (J2000.0)",
       lblDec: "Dec (J2000.0)",
-      phRa: "19ʰ 24ᵐ 33ˢ",
-      phDec: "+50° 14' 29″",
-      tipRaText: "J2000.0 赤经（望远镜时分秒格式 19ʰ 24ᵐ 33ˢ 或十进制度）。",
-      tipDecText: "J2000.0 赤纬（望远镜度分秒格式 +50° 14' 29″ 或十进制度）。",
+      phRa: "122.40188",
+      phDec: "+44.47336",
+      tipRaText: "J2000.0 赤经（十进制度，例如 122.40188）。",
+      tipDecText: "J2000.0 赤纬（十进制度，例如 +44.47336）。",
       btnCopyRaDecForm: "📋 复制 J2000.0",
       btnExportRaDecTxt: "📥 导出坐标文件",
       phRadarSearch: "🔍 恒星名称 / 变星类型 / 星座 (CH Cyg, AG Dra)...",
@@ -18573,7 +18573,7 @@ function revealAndFocusField(inputId) {
     lblV6Visibility: "Viditelnost:",
     lblV6Sort: "Řazení:",
     lblV6Limit: "Limit:",
-    optFullWindow: "Celé okno",
+    optFullWindow: "Celé okno", phRa: "122.40188", phDec: "+44.47336",
     btnPrevPage: "< Předchozí",
     btnNextPage: "Další >",
     pageInfoText: "Str. {current} z {total} ({rows})",
@@ -18674,43 +18674,43 @@ function revealAndFocusField(inputId) {
     if (!window.I18N) return;
     const extraPerLang = {
       en: {
-        optFullWindow: "Full Window",
+        optFullWindow: "Full Window", phRa: "122.40188", phDec: "+44.47336",
         appVersionLabel: "Version 1.2.2"
       },
       ru: {
-        optFullWindow: "Во всё окно",
+        optFullWindow: "Во всё окно", phRa: "122.40188", phDec: "+44.47336",
         appVersionLabel: "Версия 1.2.2"
       },
       es: {
-        optFullWindow: "Ventana completa",
+        optFullWindow: "Ventana completa", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En línea • TTL 1h",
         appVersionLabel: "Versión 1.2.2"
       },
       de: {
-        optFullWindow: "Vollbildfenster",
+        optFullWindow: "Vollbildfenster", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Online • TTL 1 Std.",
         thUI: "Daten aus SIMBAD-Katalog",
         appVersionLabel: "Version 1.2.2"
       },
       fr: {
-        optFullWindow: "Pleine fenêtre",
+        optFullWindow: "Pleine fenêtre", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En ligne • TTL 1h",
         appVersionLabel: "Version 1.2.2"
       },
       zh: {
-        optFullWindow: "全窗口",
+        optFullWindow: "全窗口", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "在线 • TTL 1小时",
         appVersionLabel: "版本 1.2.2"
       },
       ber: {
-        optFullWindow: "Asfaylu ummid",
+        optFullWindow: "Asfaylu ummid", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Srad • TTL 1s",
         btnTryUniverseLuck: "Afran agacuran n yitri i wannay-ik",
         tipTryUniverseLuck: "Afran agacuran n yitri azwaru i wannayen-ik ass-a",
         appVersionLabel: "Taseqqult 1.2.2"
       },
       cs: {
-        optFullWindow: "Celé okno",
+        optFullWindow: "Celé okno", phRa: "122.40188", phDec: "+44.47336",
         appVersionLabel: "Verze 1.2.2",
         lblThemePickerSplash: "Barevný motiv",
         brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Fotometrická observatoř",
@@ -18892,8 +18892,8 @@ function revealAndFocusField(inputId) {
         tipChartText: "ID fotometrické mapy AAVSO VSP.",
         tipKnameText: "Výchozí «na»: Seestar provádí vnitřní ansámblovou fotometrii a neměří samostatnou kontrolní hvězdu.",
         tipKmagText: "Výchozí «na»: katalogová magnituda se nenahrazuje za skutečné měření ze snímku.",
-        tipRaText: "Rektascenze J2000.0 pro zaměření dalekohledu (hhʰ mmᵐ ssˢ nebo stupně).",
-        tipDecText: "Deklinace J2000.0 pro zaměření dalekohledu (±dd° mm' ss″ nebo stupně).",
+        tipRaText: "Rektascenze J2000.0 v desetinných stupních (např. 122.40188).",
+        tipDecText: "Deklinace J2000.0 v desetinných stupních (např. +44.47336).",
         secFileStart: "Výběr a kontrola fotometrického souboru",
         lblFile: "CSV soubor ze Seestar:",
         btnLoadDemo: "✨ Demo CSV (SZ Lyn)",
@@ -18977,7 +18977,8 @@ function revealAndFocusField(inputId) {
       const oldEl = document.getElementById("githubUpdateBanner");
       if (oldEl) oldEl.remove();
 
-      const lng = (typeof currentLang !== "undefined" && UPDATE_I18N[currentLang]) ? currentLang : "en";
+      const activeLng = (document.getElementById("langSelect")?.value || document.documentElement.lang || (typeof currentLang !== "undefined" ? currentLang : "en")).toLowerCase().slice(0, 3);
+      const lng = UPDATE_I18N[activeLng] ? activeLng : (UPDATE_I18N[activeLng.slice(0, 2)] ? activeLng.slice(0, 2) : "en");
       const pack = UPDATE_I18N[lng] || UPDATE_I18N.en;
       const url = releaseUrl || "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
 
