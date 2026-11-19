@@ -593,7 +593,7 @@
       btnPickedTarget: "✓ В радаре",
       ttDescLabel: "Описание:",
       ttCommentLabel: "Комментарий AAVSO:",
-      ttDefaultComment: "Активируйте серию TG и сверку по KNAME.",
+      ttDefaultComment: "Активируйте серию TG (ансамбль ENSEMBLE, KNAME/KMAG = na).",
       scopeEvalOkFmt: "{id}: Выдержка {exp} • FOV {fov} ({scale}″/px)",
       scopeEvalFaintFmt: "{id}: Тусклее лимита {mag}m (реком. S50/S50PRO)",
       scopeEvalDipFmt: "{id}: В минимуме до {max}m (лимит {mag}m) • Выдержка {exp} с",
@@ -719,8 +719,8 @@
       tipObsCodeShort: "Наведите или нажмите на значок «?» выше для просмотра рекомендации по коду AAVSO.",
       tipStarIdText: "Название переменной, двойной звезды или звезды с транзитом экзопланеты.",
       tipChartText: "Идентификатор карты окрестностей из генератора AAVSO VSP.",
-      tipKnameText: "Уникальный AUID контрольной звезды (Check Star) для верификации ансамбля.",
-      tipKmagText: "Стандартная звездная величина контрольной звезды (рекомендуется 9.5–13.0 mag).",
+      tipKnameText: "По умолчанию «na»: Seestar выполняет внутреннюю ансамблевую фотометрию и не измеряет отдельную проверочную звезду.",
+      tipKmagText: "По умолчанию «na»: каталожный блеск не подставляется вместо реального замера по кадрам.",
       tipRaText: "Прямое восхождение цели (J2000) в десятичных градусах.",
       tipDecText: "Склонение цели (J2000) в десятичных градусах.",
       tipCsvText: "Сырой CSV-файл из Seestar. Отбираются строки 'Non-reference star'.",
@@ -946,7 +946,7 @@
       btnPickedTarget: "✓ In Radar",
       ttDescLabel: "Description:",
       ttCommentLabel: "AAVSO Comment:",
-      ttDefaultComment: "Use TG filter series and verify KNAME calibration.",
+      ttDefaultComment: "Use TG filter series (ENSEMBLE photometry, KNAME/KMAG = na).",
       scopeEvalOkFmt: "{id}: Exposure {exp} • FOV {fov} ({scale}″/px)",
       scopeEvalFaintFmt: "{id}: Fainter than {mag}m limit (rec. S50/S50PRO)",
       scopeEvalDipFmt: "{id}: Minimum down to {max}m (limit {mag}m) • Exp {exp} s",
@@ -1039,7 +1039,7 @@
       feat2Title: "Urgent AAVSO Alerts & Progress",
       feat2Text: "Track urgent AAVSO target requests and monitor your own photometric data collection progress.",
       feat3Title: "SIMBAD & AAVSO VSP",
-      feat3Text: "Parallel SIMBAD mirror queries and automatic optimal Check Star (KNAME/KMAG) selection.",
+      feat3Text: "Parallel SIMBAD/VSX mirror queries, VSP chart lookup (CHART), and strict AAVSO Extended export (KNAME/KMAG = na).",
       btnStartApp: "🚀 Start Scientific Workflow",
       tagPhotometry: "📈 Stellar Photometry",
       tagBinaries: "♊ Eclipsing Binaries",
@@ -1072,8 +1072,8 @@
       tipObsCodeShort: "Hover or tap the '?' icon above to view the AAVSO Observer Code recommendation.",
       tipStarIdText: "Catalogue name of the variable star, binary system, or exoplanet host.",
       tipChartText: "AAVSO Variable Star Plotter (VSP) chart ID.",
-      tipKnameText: "Unique AAVSO AUID of the check star used to verify ensemble photometry.",
-      tipKmagText: "Standard magnitude of the check star (optimal range 9.5–13.0 mag).",
+      tipKnameText: "Defaults to «na»: Seestar performs internal ensemble photometry and does not output a separate check-star measurement.",
+      tipKmagText: "Defaults to «na»: catalog brightness is never substituted for an actual frame measurement.",
       tipRaText: "Right Ascension (J2000) in decimal degrees (0°–360°).",
       tipDecText: "Declination (J2000) in decimal degrees (-90°…+90°).",
       tipCsvText: "Select raw Seestar photometry CSV. Rows marked 'Non-reference star' are extracted.",
@@ -5153,8 +5153,8 @@ function revealAndFocusField(inputId) {
       setVspLoadingState(false);
 
       if (check) {
-        document.getElementById("kname").value = check.auid;
-        document.getElementById("kmag").value = check.mag.toFixed(3);
+        document.getElementById("kname").value = "na";
+        document.getElementById("kmag").value = "na";
         STATE.catalogVspMerr = (check.err != null && !isNaN(check.err)) ? Math.max(0.02, Number(check.err)) : 0.03;
         log(`✓ VSP / Каталог (${source || "OK"}): CHART = ${data.chartid}, KNAME = ${check.auid}, KMAG = ${check.mag.toFixed(3)}`);
         log(t("msgCheckStarWarn"));
@@ -5183,8 +5183,8 @@ function revealAndFocusField(inputId) {
       }
       if (localCat.matched) {
         if (!document.getElementById("chart").value.trim()) document.getElementById("chart").value = localCat.matched.chart;
-        if (!document.getElementById("kname").value.trim()) document.getElementById("kname").value = localCat.matched.kname;
-        if (!document.getElementById("kmag").value.trim()) document.getElementById("kmag").value = localCat.matched.kmag;
+        document.getElementById("kname").value = "na";
+        document.getElementById("kmag").value = "na";
         if (!document.getElementById("ra").value.trim()) document.getElementById("ra").value = Number(localCat.matched.ra).toFixed(5);
         if (!document.getElementById("dec").value.trim()) document.getElementById("dec").value = (Number(localCat.matched.dec) >= 0 ? "+" : "") + Number(localCat.matched.dec).toFixed(5);
         STATE.catalogRa = localCat.matched.ra;
@@ -5399,8 +5399,10 @@ function revealAndFocusField(inputId) {
     const staridEl = document.getElementById("starid");
     const starIdUI = staridEl ? staridEl.value.trim() : "";
     const chart   = document.getElementById("chart").value.trim()  || "na";
-    const kname   = document.getElementById("kname").value.trim()  || "na";
-    const kmag    = document.getElementById("kmag").value.trim()   || "na";
+    // [RU] Строгий стандарт AAVSO: Seestar не измеряет отдельную проверочную звезду, поэтому всегда ставим "na"
+    // [EN] Strict AAVSO standard: Seestar does not measure a separate check star, so KNAME/KMAG are strictly "na"
+    const kname   = "na";
+    const kmag    = "na";
     const raUI    = document.getElementById("ra").value.trim();
     const decUI   = document.getElementById("dec").value.trim();
 
@@ -7431,8 +7433,8 @@ function revealAndFocusField(inputId) {
     document.getElementById("ra").value = Number.isFinite(numRa) ? numRa.toFixed(5) : String(ra);
     document.getElementById("dec").value = Number.isFinite(numDec) ? ((numDec >= 0 ? "+" : "") + numDec.toFixed(5)) : String(dec);
     if (chart) document.getElementById("chart").value = chart;
-    if (kname) document.getElementById("kname").value = kname;
-    if (kmag) document.getElementById("kmag").value = kmag;
+    document.getElementById("kname").value = "na";
+    document.getElementById("kmag").value = "na";
     STATE.catalogStarName = star;
     STATE.catalogRa = Number.isFinite(numRa) ? numRa : parseFloat(ra);
     STATE.catalogDec = Number.isFinite(numDec) ? numDec : parseFloat(dec);
@@ -18868,8 +18870,8 @@ function revealAndFocusField(inputId) {
         vspLoadingTitle: "⏳ Načítání CHART (VSP), KNAME (AUID) a KMAG...",
         vspLoadingStepDefault: "Souřadnice RA/DEC získány. Dotazování zrcadel katalogů...",
         tipChartText: "ID fotometrické mapy AAVSO VSP.",
-        tipKnameText: "Jedinečné AAVSO AUID srovnávací hvězdy pro ověření fotometrie.",
-        tipKmagText: "Standardní magnituda srovnávací hvězdy (optimální rozsah 9,5–13,0 mag).",
+        tipKnameText: "Výchozí «na»: Seestar provádí vnitřní ansámblovou fotometrii a neměří samostatnou kontrolní hvězdu.",
+        tipKmagText: "Výchozí «na»: katalogová magnituda se nenahrazuje za skutečné měření ze snímku.",
         tipRaText: "Rektascenze J2000.0 pro zaměření dalekohledu (hhʰ mmᵐ ssˢ nebo stupně).",
         tipDecText: "Deklinace J2000.0 pro zaměření dalekohledu (±dd° mm' ss″ nebo stupně).",
         secFileStart: "Výběr a kontrola fotometrického souboru",

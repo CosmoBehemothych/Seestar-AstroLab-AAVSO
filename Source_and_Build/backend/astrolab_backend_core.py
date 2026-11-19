@@ -734,8 +734,10 @@ class PhotometryBackendEngine:
                 out_lines.append(",".join([
                     star_final, jd_mid, f"{mag_conv:.4f}", f"{err_conv:.4f}",
                     "TG", "NO", "STD", "ENSEMBLE", "na",
-                    str(kname or "na").strip() or "na",
-                    str(kmag or "na").strip() or "na",
+                    # [RU] Строгий стандарт AAVSO: Seestar не передаёт отдельный замер проверочной звезды
+                    # [EN] Strict AAVSO standard: Seestar does not output a separate check-star measurement
+                    "na",
+                    "na",
                     "na", "na",
                     str(chart or "na").strip() or "na",
                     notes,
@@ -1671,8 +1673,8 @@ class _AstroLabBackendRequestHandler(BaseHTTPRequestHandler):
                 obscode=body.get("obscode", ""),
                 starid_ui=body.get("starid", ""),
                 chart=body.get("chart", "na"),
-                kname=body.get("kname", "na"),
-                kmag=body.get("kmag", "na"),
+                kname="na",  # Strictly na for Seestar ensemble photometry
+                kmag="na",   # Strictly na for Seestar ensemble photometry
                 ra_ui=body.get("ra", ""),
                 dec_ui=body.get("dec", ""),
                 scope_model=body.get("scopeModel", "S50"),

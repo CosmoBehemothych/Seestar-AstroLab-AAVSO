@@ -12,7 +12,7 @@ If you own a **ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`)**, your telescope 
 
 1. **Tells You WHICH Stars Scientists Need Tonight**: Instead of guessing what to shoot, you get a ready list of **246 urgent stars** that astronomers are waiting for. Filter out stars you cannot see from your balcony or backyard in 2 clicks.
 2. **Gives Ready Coordinates for Your Seestar**: Click any star and immediately see the **exact coordinates (`RA` / `Dec`) that you can type straight into your Seestar app** to point the telescope quickly, plus the recommended exposure (`10s` or `10–20s`) so bright stars do not overexpose.
-3. **Turns Your Seestar CSV Into an Accepted AAVSO Report**: If you try to upload Seestar's raw `Magnitude_*.csv` file directly to AAVSO, the website rejects it with an error. This app automatically fixes the format, adds the required reference star data, and saves a ready `.csv` report.
+3. **Turns Your Seestar CSV Into an Accepted AAVSO Report**: If you try to upload Seestar's raw `Magnitude_*.csv` file directly to AAVSO, the website rejects it with an error. This app automatically fixes the format, adds the official AAVSO headers and VSP chart ID, and saves a ready `.csv` report.
 4. **Shows Your Results on a Brightness Graph**: Right after loading your CSV file, you see your star's brightness curve next to measurements from other observers around the world.
 
 ---
@@ -32,12 +32,12 @@ If you own a **ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`)**, your telescope 
 
 1. **Step 1 — Automatic Star & Reference Lookup**:
    - Enter your free [AAVSO](https://www.aavso.org) observer code (`OBSCODE`) and star name (or pick a star from the urgent list).
-   - The app connects to **[CDS SIMBAD](https://simbad.cds.unistra.fr/simbad/)**, **[AAVSO VSX](https://www.aavso.org/vsx/)**, and **[AAVSO VSP](https://app.aavso.org/vsp/)** to verify the star's exact coordinates and automatically fills in the official chart ID (`CHART`) and a stable comparison star (`KNAME` / `KMAG`) that fits inside your Seestar model's field of view.
+   - The app connects to **[CDS SIMBAD](https://simbad.cds.unistra.fr/simbad/)**, **[AAVSO VSX](https://www.aavso.org/vsx/)**, and **[AAVSO VSP](https://app.aavso.org/vsp/)** to verify the star's exact coordinates and automatically fills in the official VSP chart ID (`CHART`). Because Seestar performs internal ensemble photometry and does not output a separate measured check-star magnitude in `Magnitude_*.csv`, the converter strictly sets `CNAME=ENSEMBLE`, `CMAG=na`, `KNAME=na`, and `KMAG=na` so catalog numbers are never substituted for real frame measurements.
 2. **Step 2 — Checking Your Raw Seestar CSV**:
    - Load the `Magnitude_*.csv` file produced by Seestar's built-in Photometry mode (green channel `TG`, `Non-reference star` rows).
    - The app calculates the exact mid-exposure time (`JD_Mid`), removes duplicate timestamps you already converted earlier, and draws your brightness graph alongside **[AAVSO AID](https://www.aavso.org/aavso-international-database-aid)** data.
 3. **Step 3 — Saving the Ready Report**:
-   - Rounds brightness and error numbers to 4 decimals, adds all required AAVSO headers (`#TYPE=EXTENDED`, `#OBSCODE`, telescope model, `TG` filter, `CHART`, `KNAME`/`KMAG`), and saves a clean `*_Seestar.csv` file ready to upload to **[AAVSO WebObs](https://www.aavso.org/webobs)**.
+   - Rounds brightness and error numbers to 4 decimals, adds all required AAVSO headers (`#TYPE=EXTENDED`, `#OBSCODE`, telescope model, `TG` filter, `CHART`, `CNAME=ENSEMBLE`, `KNAME=na`, `KMAG=na`), and saves a clean `*_Seestar.csv` file ready to upload to **[AAVSO WebObs](https://www.aavso.org/webobs)**.
 
 ---
 
@@ -103,9 +103,9 @@ Inspect your newly loaded **Seestar** measurements (orange) plotted directly alo
 4. **Рисует понятный график яркости**: вы сразу видите, как менялся блеск звезды во время вашей съёмки, и можете сравнить свой график с данными других наблюдателей мира.
 
 ### ⚙️ Как программа обрабатывает и обогащает ваш CSV-файл?
-1. **Раздел 1 (Проверка звезды и автоподбор карты)**: по вашему коду наблюдателя `OBSCODE` и названию звезды программа обращается к каталогам **[CDS SIMBAD](https://simbad.cds.unistra.fr/simbad/)**, **[AAVSO VSX](https://www.aavso.org/vsx/)** и **[AAVSO VSP](https://app.aavso.org/vsp/)**, уточняет координаты и сама подбирает номер карты (`CHART`) и проверочную звезду (`KNAME`/`KMAG`), подходящую под поле зрения вашего Seestar.
+1. **Раздел 1 (Проверка звезды и автоподбор карты)**: по вашему коду наблюдателя `OBSCODE` и названию звезды программа обращается к каталогам **[CDS SIMBAD](https://simbad.cds.unistra.fr/simbad/)**, **[AAVSO VSX](https://www.aavso.org/vsx/)** и **[AAVSO VSP](https://app.aavso.org/vsp/)**, уточняет координаты и сама подбирает номер карты окрестностей (`CHART`). Поскольку Seestar выполняет внутреннюю ансамблевую фотометрию и не передаёт отдельный замер проверочной звезды в `Magnitude_*.csv`, программа строго проставляет `CNAME=ENSEMBLE`, `CMAG=na`, `KNAME=na` и `KMAG=na`, чтобы не подменять реальные измерения каталожными значениями.
 2. **Раздел 2 (Чтение сырого CSV из Seestar)**: программа берёт файл `Magnitude_*.csv` (зелёный канал `TG`, строки `Non-reference star`), точно вычисляет середину каждой экспозиции (`JD_Mid`), удаляет дублирующиеся строки измерений, которые вы уже отправляли ранее, и строит график рядом с базой **[AAVSO AID](https://www.aavso.org/aavso-international-database-aid)**.
-3. **Раздел 3 (Сохранение готового отчёта)**: округляет яркость и погрешность до 4 знаков, подставляет ваш `OBSCODE`, модель телескопа, фильтр `TG`, карту `CHART`, проверочную звезду и сохраняет готовый файл `*_Seestar.csv` для загрузки на **[AAVSO WebObs](https://www.aavso.org/webobs)**.
+3. **Раздел 3 (Сохранение готового отчёта)**: округляет яркость и погрешность до 4 знаков, подставляет ваш `OBSCODE`, модель телескопа, фильтр `TG`, карту `CHART`, `KNAME=na`, `KMAG=na` и сохраняет готовый файл `*_Seestar.csv` для загрузки на **[AAVSO WebObs](https://www.aavso.org/webobs)**.
 
 ### 🚀 Встроенная инструкция «С чего начать»
 Если вы никогда не занимались фотометрией, нажмите зелёную кнопку **🚀 С чего начать** вверху окна. Откроется полноэкранная 12-слайдовая инструкция с картинками (на всех 8 языках), которая по шагам проведёт вас от бесплатной регистрации на [aavso.org](https://www.aavso.org/user/register) и съёмки на Seestar до загрузки готового CSV-отчёта на сайт AAVSO.
