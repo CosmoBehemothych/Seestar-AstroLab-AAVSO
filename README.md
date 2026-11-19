@@ -1,4 +1,4 @@
-# 🔭 Seestar AstroLab AAVSO (`v1.2.1`)
+# 🔭 Seestar AstroLab AAVSO (`v1.2.2`)
 
 **What is this program and why do you need it?**  
 If you own a **ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`)**, your telescope can do more than take pretty space photos — it can measure how bright stars are so real astrophysicists can use your numbers in scientific research.  
@@ -21,7 +21,8 @@ If you own a **ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`)**, your telescope 
 
 | Version | Status | Download | What's Inside |
 | :--- | :--- | :--- | :--- |
-| **`v1.2.1`** | ✨ **Latest Release** | [GitHub Releases (`v1.2.1`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.2.1) | Full-page green **Getting Started** 12-slide guide (8 languages), installer-matched first-launch language, **Czech (`cs`)** localization, 246-target urgent star monitor & Portable fix |
+| **`v1.2.2`** | ✨ **Latest Release** | [GitHub Releases (`v1.2.2`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.2.2) | One-time startup update check via GitHub Releases (no background polling, no auto-download), strict `KNAME=na`/`KMAG=na` AAVSO Extended compliance, scrollable Settings popover fix across all DPI scales, and 100% verified 8-language UI |
+| **`v1.2.1`** | 📦 **Previous Release** | [GitHub Releases (`v1.2.1`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.2.1) | Full-page green **Getting Started** 12-slide guide (8 languages), installer-matched first-launch language, **Czech (`cs`)** localization, 246-target urgent star monitor & Portable fix |
 | **`v1.1.2 beta`** | 🧪 **Previous Beta** | [GitHub Releases (`v1.1.2-beta`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.2-beta) | Hemisphere & balcony direction filters, Sky Clarity & Moon indicator, 246-target list |
 
 > **Why earlier versions were removed:** Releases prior to `v1.1.2 beta` were removed due to a critical startup defect — on clean Windows PCs they failed to launch (`Fatal Error in Launcher` / missing `pythonw.exe` and external `pywebview`/`pythonnet` libraries, as well as `ERR_FILE_NOT_FOUND` URI issues). Starting with **`v1.2.1`**, all dependencies are bundled directly inside a standalone self-contained executable that runs out of the box with no Python installation required.
@@ -64,7 +65,7 @@ All source code is open and built via GitHub Actions: simply click **More info �
 
 ---
 
-## 📸 Screenshots (`v1.2.1`)
+## 📸 Screenshots (`v1.2.2`)
 
 ### 1. Main Workspace & Converter (Main Menu)
 The primary dashboard brings together your telescope selector (`S30`–`S50PRO`), local **Sky Clarity & Moon** conditions, the **Target Radar** dock on the left, the **4-step CSV converter** in the center, and live **Light Curve** & **SIMBAD/AAVSO verification** on the right.  
@@ -119,7 +120,7 @@ Inspect your newly loaded **Seestar** measurements (orange) plotted directly alo
 При запуске установщика Windows может показать уведомление (*«Система Windows защитила ваш компьютер»*), поскольку у данного приложения пока нет платной лицензии (сертификата подписи кода). Бесплатную лицензию для open-source проекта можно получить, только если программа станет более популярной — так что ждём и надеемся 🙂  
 Весь исходный код открыт и собирается через GitHub Actions: нажмите **«Подробнее» → «Выполнить в любом случае»**.
 
-### 📸 Скриншоты интерфейса (`v1.2.1`)
+### 📸 Скриншоты интерфейса (`v1.2.2`)
 
 1. **Основное меню и рабочий стол конвертера** — единый экран с выбором модели Seestar, погодой и фазой Луны, боковым радаром целей, пошаговым конвертером и графиком блеска ([скриншот](screenshots/01_main_dashboard_and_converter.png)).
 2. **Звёзды с пометкой «Срочно» (Приоритетные цели AAVSO)** — 246 актуальных целей с автообновлением каждые 10 минут, фильтрами по вашему городу, полушарию, стороне света (балкону) и готовыми координатами для наведения ([скриншот](screenshots/02_urgent_stars_priority_targets.png)).

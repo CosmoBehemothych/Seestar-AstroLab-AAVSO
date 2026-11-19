@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""
 ==============================================================================
-Seestar AstroLab by CosmoBehemothych – Native Desktop Runner (v1.2.1)
+Seestar AstroLab by CosmoBehemothych – Native Desktop Runner (v1.2.2)
 ==============================================================================
 """
 
@@ -38,8 +38,8 @@ except ImportError:
         start_background_rpc_server = None
 
 
-APP_VERSION = "1.2.1"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych – Фотометрия и Радар целей (v1.2.1)"
+APP_VERSION = "1.2.2"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych – Фотометрия и Радар целей (v1.2.2)"
 APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
 
 
@@ -364,6 +364,10 @@ class AstroLabDiskBridge:
                 api_token=payload.get("apiToken", ""),
             )
         return {"ok": False, "error": "Backend AAVSO resolver unavailable"}
+
+    def backend_check_github_latest_release(self, payload=None):
+        p = payload if isinstance(payload, dict) else {}
+        return AavsoNativeAndStorageService.check_github_latest_release(p.get("currentVersion") or APP_VERSION)
 
     def backend_fetch_aavso_light_curve(self, payload):
         if AavsoNativeAndStorageService and isinstance(payload, dict):

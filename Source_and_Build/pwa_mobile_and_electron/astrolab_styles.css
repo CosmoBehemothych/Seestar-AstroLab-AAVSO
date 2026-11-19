@@ -7434,3 +7434,47 @@ body[data-theme="light"] #beginnerGuidePresentationModal .pitfalls-table th {
   background: #d1fae5;
   color: #065f46;
 }
+
+
+/* === v1.2.2 FIX: Settings Popover Viewport Clamping & Scrollability across all DPI scales === */
+#settingsPopoverMenu {
+  max-height: calc(100vh - 110px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+  padding-bottom: 20px !important;
+  box-sizing: border-box !important;
+}
+#settingsPopoverMenu > *,
+#settingsTechCollapsible,
+#settingsTechCollapsible button {
+  flex-shrink: 0 !important;
+}
+
+/* === v1.2.2: Non-blocking GitHub Release Update Banner === */
+.github-update-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 0 10px 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(14, 165, 233, 0.18) 100%);
+  border: 1px solid rgba(52, 211, 153, 0.55);
+  color: #ecfdf5;
+  font-size: 12.5px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+body[data-theme="light"] .github-update-banner {
+  background: linear-gradient(135deg, #ecfdf5 0%, #e0f2fe 100%);
+  border-color: #10b981;
+  color: #0f172a;
+}
+.github-update-banner-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ================================================================================
-Seestar AstroLab AAVSO v1.2.1 — Unified Python Backend Core (Single Source of Truth)
+Seestar AstroLab AAVSO v1.2.2 — Unified Python Backend Core (Single Source of Truth)
 Author: CosmoBehemothych (https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO)
 ================================================================================
 Централизованное серверное/бэкенд-ядро бизнес-логики приложения:
@@ -42,7 +42,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-APP_VERSION = "1.2.1"
+APP_VERSION = "1.2.2"
 CRITICAL_COORD_DIFF_DEG = 0.05
 EXACT_COORD_MATCH_DEG = 0.00001
 DSS2_SURVEY_FOV_DEG = 2.40
@@ -1622,6 +1622,66 @@ class AavsoNativeAndStorageService:
 # ==============================================================================
 # 4. ЛОКАЛЬНЫЙ REST JSON-RPC СЕРВЕР БЭКЕНДА (ДЛЯ WEBVIEW2 / ELECTRON / БРАУЗЕРА)
 # ==============================================================================
+
+    @staticmethod
+    def _parse_semver_tuple(ver_str: str):
+        m = re.search(r"(\d+)\.(\d+)(?:\.(\d+))?", str(ver_str or ""))
+        if not m:
+            return (0, 0, 0)
+        return (int(m.group(1)), int(m.group(2)), int(m.group(3) or 0))
+
+    @classmethod
+    def check_github_latest_release(cls, current_version: str = APP_VERSION) -> Dict[str, Any]:
+        """
+        Лёгкая однократная проверка новой версии на GitHub Releases.
+        Не скачивает бинарные файлы, не запускает установщики, молча завершается при отсутствии сети.
+        Сравнение строго remote > local (semver), чтобы локальные сборки не предлагали откат.
+        """
+        repo_releases_url = "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest"
+        api_url = "https://api.github.com/repos/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest"
+        latest_tag = ""
+        release_url = repo_releases_url
+        headers = {"User-Agent": f"SeestarAstroLab/{current_version}", "Accept": "application/vnd.github+json"}
+
+        # Канал 1: лёгкий редирект github.com/.../releases/latest (без жёсткого лимита 60 req/hr API)
+        try:
+            req = urllib.request.Request(repo_releases_url, headers={"User-Agent": f"SeestarAstroLab/{current_version}"})
+            with urllib.request.urlopen(req, timeout=4.0) as resp:
+                final_url = resp.geturl() or ""
+                m = re.search(r"/releases/tag/([^/?#]+)", final_url)
+                if m:
+                    latest_tag = m.group(1).strip()
+                    release_url = final_url
+        except Exception:
+            pass
+
+        # Канал 2: fallback на GitHub REST API (если редирект не дал тег)
+        if not latest_tag:
+            try:
+                req = urllib.request.Request(api_url, headers=headers)
+                with urllib.request.urlopen(req, timeout=4.0) as resp:
+                    payload = json.loads(resp.read().decode("utf-8", errors="replace"))
+                    latest_tag = str(payload.get("tag_name") or "").strip()
+                    release_url = str(payload.get("html_url") or repo_releases_url).strip()
+            except Exception:
+                return {"ok": False, "updateAvailable": False, "currentVersion": current_version}
+
+        if not latest_tag:
+            return {"ok": False, "updateAvailable": False, "currentVersion": current_version}
+
+        local_t = cls._parse_semver_tuple(current_version)
+        remote_t = cls._parse_semver_tuple(latest_tag)
+        update_avail = remote_t > local_t
+        return {
+            "ok": True,
+            "updateAvailable": update_avail,
+            "currentVersion": current_version,
+            "latestVersion": latest_tag.lstrip("vV"),
+            "latestTag": latest_tag,
+            "releaseUrl": release_url,
+        }
+
+
 class _AstroLabBackendRequestHandler(BaseHTTPRequestHandler):
     def log_message(self, format: str, *args: Any) -> None:
         return
@@ -1719,6 +1779,9 @@ class _AstroLabBackendRequestHandler(BaseHTTPRequestHandler):
                 scope_model=body.get("scopeModel", "S50"),
                 api_token=body.get("apiToken", ""),
             )
+            self._send_json(res)
+        elif action == "check_github_latest_release":
+            res = AavsoNativeAndStorageService.check_github_latest_release(body.get("currentVersion") or APP_VERSION)
             self._send_json(res)
         elif action == "fetch_live_aavso_notices":
             res = AavsoNativeAndStorageService.fetch_live_aavso_notices()
