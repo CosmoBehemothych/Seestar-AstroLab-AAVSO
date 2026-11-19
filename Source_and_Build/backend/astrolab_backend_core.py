@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ================================================================================
-Seestar AstroLab AAVSO v1.1.1 beta — Unified Python Backend Core (Single Source of Truth)
+Seestar AstroLab AAVSO v1.2.1 — Unified Python Backend Core (Single Source of Truth)
 Author: CosmoBehemothych (https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO)
 ================================================================================
 Централизованное серверное/бэкенд-ядро бизнес-логики приложения:
@@ -42,7 +42,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-APP_VERSION = "1.1.1 beta"
+APP_VERSION = "1.2.1"
 CRITICAL_COORD_DIFF_DEG = 0.05
 EXACT_COORD_MATCH_DEG = 0.00001
 DSS2_SURVEY_FOV_DEG = 2.40
@@ -1394,6 +1394,42 @@ class AavsoNativeAndStorageService:
             "errors": errors,
         }
 
+
+    @classmethod
+    def fetch_live_aavso_notices(cls) -> Dict[str, Any]:
+        """Запрашивает актуальные Alert Notices с сервера AAVSO (без выдумывания данных)."""
+        notices = []
+        err = ""
+        for url in (
+            "https://apps.aavso.org/v2/api/notices/?page_size=10",
+            "https://www.aavso.org/aavso-alert-notices-for-observing-campaigns",
+        ):
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
+                with urllib.request.urlopen(req, timeout=6.0) as resp:
+                    raw = resp.read().decode("utf-8", errors="replace")
+                if url.endswith("page_size=10"):
+                    j = json.loads(raw)
+                    for r in (j.get("results") or [])[:10]:
+                        notices.append({
+                            "number": str(r.get("number") or r.get("id") or ""),
+                            "title": str(r.get("title") or "").strip(),
+                            "published": str(r.get("published") or r.get("created") or "")[:10],
+                        })
+                    if notices:
+                        return {"ok": True, "source": "AAVSO API v2 /notices/", "notices": notices}
+                else:
+                    import re as _re
+                    for m in _re.finditer(r"AAVSO Alert Notice\s+(\d+)[:\s]+([^<\n]{4,120})", raw, _re.I):
+                        notices.append({"number": m.group(1), "title": m.group(2).strip(), "published": ""})
+                        if len(notices) >= 10:
+                            break
+                    if notices:
+                        return {"ok": True, "source": "AAVSO Alert Notices Web", "notices": notices}
+            except Exception as e:
+                err = str(e)
+        return {"ok": False, "source": "", "notices": [], "error": err or "No live notices returned"}
+
     @classmethod
     def fetch_aavso_light_curve(
         cls,
@@ -1443,41 +1479,42 @@ class AavsoNativeAndStorageService:
         source_used = ""
         network_errors: List[str] = []
 
-        # Канал 1: AAVSO REST API v2 (/v2/api/observations/photometry/)
-        if tok:
-            try:
-                q = urllib.parse.urlencode({"target": clean_star})
-                url = f"https://apps.aavso.org/v2/api/observations/photometry/?{q}"
-                req = urllib.request.Request(
-                    url,
-                    headers={"Authorization": f"Token {tok}", "User-Agent": f"SeestarAstroLab/{APP_VERSION}"},
-                )
-                with urllib.request.urlopen(req, timeout=9.0) as resp:
-                    data = json.loads(resp.read().decode("utf-8", errors="replace"))
-                for item in (data.get("results") or [])[:max_points]:
-                    if item.get("fainterthan"):
-                        continue
-                    jd_v = float(item["jd_dbl"])
-                    mag_v = float(str(item["magnitude"]).lstrip("<"))
-                    if jd_v < from_jd:
-                        continue
-                    err_v = float(item.get("uncertainty") or 0.02)
-                    b_raw = str(item.get("band") or "V")
-                    raw_points.append({
-                        "jd": round(jd_v, 6),
-                        "mag": round(mag_v, 4),
-                        "merr": round(err_v, 4),
-                        "band": band_map.get(b_raw, b_raw),
-                        "obscode": str(item.get("obscode") or "").strip().upper(),
-                        "source": "AAVSO_API_V2",
-                        "utc": cls.jd_to_utc_str(jd_v),
-                    })
-                if raw_points:
-                    source_used = "AAVSO API v2 (/v2/api/observations/photometry/)"
-            except Exception as e:
-                network_errors.append(f"AAVSO API v2: {e}")
+        # Канал 1: AAVSO REST API v2 (/v2/api/observations/photometry/) — с токеном или публичный запрос
+        try:
+            q = urllib.parse.urlencode({"target": clean_star, "page_size": str(min(200, max_points))})
+            url = f"https://apps.aavso.org/v2/api/observations/photometry/?{q}"
+            req_headers = {"User-Agent": f"SeestarAstroLab/{APP_VERSION}", "Accept": "application/json"}
+            if tok:
+                req_headers["Authorization"] = f"Token {tok}"
+            req = urllib.request.Request(url, headers=req_headers)
+            with urllib.request.urlopen(req, timeout=9.0) as resp:
+                data = json.loads(resp.read().decode("utf-8", errors="replace"))
+            for item in (data.get("results") or [])[:max_points]:
+                if item.get("fainterthan"):
+                    continue
+                jd_v = float(item["jd_dbl"])
+                mag_v = float(str(item["magnitude"]).lstrip("<"))
+                if jd_v < from_jd:
+                    continue
+                err_v = float(item.get("uncertainty") or 0.02)
+                b_raw = str(item.get("band") or "V")
+                raw_points.append({
+                    "jd": round(jd_v, 6),
+                    "mag": round(mag_v, 4),
+                    "merr": round(err_v, 4),
+                    "band": band_map.get(b_raw, b_raw),
+                    "obscode": str(item.get("obscode") or "").strip().upper(),
+                    "source": "AAVSO_API_V2",
+                    "utc": cls.jd_to_utc_str(jd_v),
+                })
+            if raw_points:
+                source_used = "AAVSO API v2 (/v2/api/observations/photometry/)"
+        except Exception as e:
+            network_errors.append(f"AAVSO API v2: {e}")
 
-        # Канал 2: Официальный эндпоинт выгрузки кривой блеска AAVSO (api.delim)
+        
+
+# Канал 2: Официальный эндпоинт выгрузки кривой блеска AAVSO (api.delim)
         if not raw_points:
             try:
                 q_params = {
@@ -1489,7 +1526,7 @@ class AavsoNativeAndStorageService:
                     "tojd": f"{now_jd:.4f}",
                     "delimiter": ",",
                 }
-                url = f"https://www.aavso.org/LCGv2/index.htm?{urllib.parse.urlencode(q_params)}"
+                url = f"https://www.aavso.org/vsx/index.php?{urllib.parse.urlencode(q_params)}"
                 req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
                 with urllib.request.urlopen(req, timeout=9.0) as resp:
                     csv_text = resp.read().decode("utf-8", errors="replace")
@@ -1680,6 +1717,9 @@ class _AstroLabBackendRequestHandler(BaseHTTPRequestHandler):
                 scope_model=body.get("scopeModel", "S50"),
                 api_token=body.get("apiToken", ""),
             )
+            self._send_json(res)
+        elif action == "fetch_live_aavso_notices":
+            res = AavsoNativeAndStorageService.fetch_live_aavso_notices()
             self._send_json(res)
         elif action == "fetch_aavso_light_curve":
             res = AavsoNativeAndStorageService.fetch_aavso_light_curve(

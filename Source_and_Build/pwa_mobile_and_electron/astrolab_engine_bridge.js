@@ -4121,8 +4121,8 @@
   function checkCoordDiff(uiVal, fileVal) {
     if (isNaN(uiVal) || isNaN(fileVal)) return { status: null, msg: t("matchMissing") };
     const diff = Math.abs(uiVal - fileVal);
-    if (diff < 1e-5) return { status: "ok", msg: t("matchOk") };
-    if (diff < 0.05) return { status: "warn", msg: `${t("matchWarn")} (${t("thFile")}: ${fileVal})` };
+    if (diff < 0.017) return { status: "ok", msg: t("matchOk") };
+    if (diff < 0.08) return { status: "warn", msg: `${t("matchWarn")} (${t("thFile")}: ${fileVal})` };
     return { status: "bad", msg: `${t("matchBad")} (${t("thFile")}: ${fileVal})` };
   }
 
@@ -5088,11 +5088,11 @@ function revealAndFocusField(inputId) {
     try {
       simbadObj = await querySimbad(rawStarInput, log);
       if (simbadObj.ra != null) {
-        document.getElementById("ra").value = formatRaJ2000Hms(Number(simbadObj.ra), true);
+        document.getElementById("ra").value = Number(simbadObj.ra).toFixed(5);
         STATE.catalogRa = Number(simbadObj.ra);
       }
       if (simbadObj.dec != null) {
-        document.getElementById("dec").value = formatDecJ2000Dms(Number(simbadObj.dec));
+        document.getElementById("dec").value = (Number(simbadObj.dec) >= 0 ? "+" : "") + Number(simbadObj.dec).toFixed(5);
         STATE.catalogDec = Number(simbadObj.dec);
       }
 
@@ -5185,8 +5185,8 @@ function revealAndFocusField(inputId) {
         if (!document.getElementById("chart").value.trim()) document.getElementById("chart").value = localCat.matched.chart;
         if (!document.getElementById("kname").value.trim()) document.getElementById("kname").value = localCat.matched.kname;
         if (!document.getElementById("kmag").value.trim()) document.getElementById("kmag").value = localCat.matched.kmag;
-        if (!document.getElementById("ra").value.trim()) document.getElementById("ra").value = formatRaJ2000Hms(localCat.matched.ra, true);
-        if (!document.getElementById("dec").value.trim()) document.getElementById("dec").value = formatDecJ2000Dms(localCat.matched.dec);
+        if (!document.getElementById("ra").value.trim()) document.getElementById("ra").value = Number(localCat.matched.ra).toFixed(5);
+        if (!document.getElementById("dec").value.trim()) document.getElementById("dec").value = (Number(localCat.matched.dec) >= 0 ? "+" : "") + Number(localCat.matched.dec).toFixed(5);
         STATE.catalogRa = localCat.matched.ra;
         STATE.catalogDec = localCat.matched.dec;
       }
@@ -6986,6 +6986,22 @@ function revealAndFocusField(inputId) {
         const simbadPill = document.getElementById("bentoSimbadPill");
         if (simbadPill) simbadPill.textContent = `✓ ${mirrorName.split(" ")[0] || "CDS"} (Online)`;
       }
+      try {
+        const nResp = await fetch("http://127.0.0.1:18765/api/rpc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "fetch_live_aavso_notices" }),
+          signal: AbortSignal.timeout(4500)
+        });
+        if (nResp.ok) {
+          const nData = await nResp.json();
+          if (nData && nData.ok && Array.isArray(nData.notices) && nData.notices.length > 0) {
+            window._latestAavsoLiveNotices = nData.notices;
+            const vspPill = document.getElementById("bentoVspPill");
+            if (vspPill) vspPill.textContent = `✓ AAVSO Live (${nData.notices[0].number || "OK"})`;
+          }
+        }
+      } catch (_) {}
     } catch (_) {}
 
     const nowStr = new Date().toLocaleTimeString(currentLang === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
@@ -7406,8 +7422,8 @@ function revealAndFocusField(inputId) {
     const raHmsSup = Number.isFinite(numRa) ? formatRaJ2000Hms(numRa, true) : String(ra);
     const raHmsPlain = Number.isFinite(numRa) ? formatRaJ2000Hms(numRa, false) : String(ra);
     const decDmsStr = Number.isFinite(numDec) ? formatDecJ2000Dms(numDec) : String(dec);
-    document.getElementById("ra").value = raHmsSup;
-    document.getElementById("dec").value = decDmsStr;
+    document.getElementById("ra").value = Number.isFinite(numRa) ? numRa.toFixed(5) : String(ra);
+    document.getElementById("dec").value = Number.isFinite(numDec) ? ((numDec >= 0 ? "+" : "") + numDec.toFixed(5)) : String(dec);
     if (chart) document.getElementById("chart").value = chart;
     if (kname) document.getElementById("kname").value = kname;
     if (kmag) document.getElementById("kmag").value = kmag;
@@ -10899,6 +10915,7 @@ function revealAndFocusField(inputId) {
     }
 
     let rawAavsoPts = [];
+    let aavsoError = "";
 
     try {
       let rpcRes = null;
@@ -10919,6 +10936,8 @@ function revealAndFocusField(inputId) {
       }
       if (rpcRes && Array.isArray(rpcRes.otherObserversPoints) && rpcRes.otherObserversPoints.length > 0) {
         rawAavsoPts = rpcRes.otherObserversPoints;
+      } else if (rpcRes && rpcRes.aavsoError) {
+        aavsoError = String(rpcRes.aavsoError);
       }
     } catch (_) {}
 
@@ -10927,6 +10946,7 @@ function revealAndFocusField(inputId) {
       const nowJd = Date.now() / 86400000 + 2440587.5;
       const fromJd = (nowJd - 240).toFixed(2);
       const urls = [
+        `https://www.aavso.org/vsx/index.php?view=api.delim&ident=${encStar}&fromjd=${fromJd}&tojd=${nowJd.toFixed(2)}&delimiter=,`,
         `https://www.aavso.org/LCGv2/index.htm?DateFormat=Julian&RequestedBands=&view=api.delim&ident=${encStar}&fromjd=${fromJd}&tojd=${nowJd.toFixed(2)}&delimiter=,`
       ];
       for (const u of urls) {
@@ -11002,7 +11022,7 @@ function revealAndFocusField(inputId) {
 
     rawAavsoPts.sort((a, b) => a.jd - b.jd);
     if (rawAavsoPts.length < 5) {
-      return { ok: false, hasEnoughData: false, points: [] };
+      return { ok: false, hasEnoughData: false, points: [], errorMsg: aavsoError };
     }
 
     const runs = [];
@@ -12495,6 +12515,7 @@ function revealAndFocusField(inputId) {
         // [RU] НИКОГДА не выдумываем синтетические точки, если AAVSO AID не вернула реальных данных
         STATE_CURVES.aavsoHasEnoughData = false;
         STATE_CURVES.aavsoOtherPoints = [];
+        STATE_CURVES.aavsoErrorMsg = (aavsoRes && aavsoRes.errorMsg) ? String(aavsoRes.errorMsg) : "";
       }
     } else if (!activeStar) {
       STATE_CURVES.aavsoHasEnoughData = false;
@@ -18608,8 +18629,26 @@ function revealAndFocusField(inputId) {
     };
   }
 
-  // Doplnění češtiny do lokalizovaných slovníků modulů (pokud jsou vystaveny na window nebo uvnitř I18N)
+  // Doplnění češtiny do lokalizovaných slovníků modulů a okamžité překreslení UI při prvním spuštění v češtině
   if (window.I18N && window.I18N.cs) {
     Object.assign(window.I18N.cs, window.SKY_MOON_I18N ? window.SKY_MOON_I18N.cs : {});
+  }
+  const activeStartupLang = (window.__normAstroLang && window.__normAstroLang(
+    (window.__SEESTAR_DISK_STORE__ && (window.__SEESTAR_DISK_STORE__.seestar_user_lang || window.__SEESTAR_DISK_STORE__.installer_lang || window.__SEESTAR_DISK_STORE__.lang)) ||
+    document.getElementById("langSelect")?.value ||
+    document.documentElement.lang
+  )) || "en";
+  if (activeStartupLang === "cs") {
+    const sel = document.getElementById("langSelect");
+    if (sel) sel.value = "cs";
+    const spSel = document.getElementById("splashLangSelect");
+    if (spSel) spSel.value = "cs";
+    if (typeof window.applyTranslations === "function") window.applyTranslations();
+    if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
+    if (typeof window.__populateCountryAndCitySelectors === "function") window.__populateCountryAndCitySelectors(false);
+    if (typeof window.renderSkyClarityAndMoonHeader === "function") window.renderSkyClarityAndMoonHeader();
+    if (typeof window.renderV6RadarDock === "function") window.renderV6RadarDock();
+    if (typeof window.renderUrgentStarsCards === "function") window.renderUrgentStarsCards();
+    if (typeof window.renderBeginnerGuideSlide === "function") window.renderBeginnerGuideSlide(0);
   }
 })();

@@ -53,7 +53,7 @@ Never done photometry before? Click the green **🚀 Getting Started** button in
 Available in **8 languages**: **English**, **Russian (`Русский`)**, **Spanish (`Español`)**, **German (`Deutsch`)**, **French (`Français`)**, **Chinese (`中文`)**, **Czech (`Čeština`)**, and **Berber (`Tamaziɣt / Берберский (para Ramón)`)**.  
 The language you pick during installation is used on the first launch, and any change you make in Settings is saved for future launches.
 
-> ✉️ **Feedback & New Languages**: I am happy to add more languages and would greatly appreciate constructive criticism and suggestions. If you want a language that is not yet in Settings, please write to **[CosmoBehemothych@yandex.ru](mailto:CosmoBehemothych@yandex.ru)** — I will do my best to take all constructive feedback into account.
+> ✉️ **Feedback & New Languages**: I am happy to add more languages and would greatly appreciate constructive criticism and suggestions. If you want a language that is not yet in Settings, please write to **[CosmoBehemothych@gmail.com](mailto:CosmoBehemothych@gmail.com)** — I will do my best to take all constructive feedback into account.
 
 ---
 
@@ -100,7 +100,7 @@ All source code is open and built via GitHub Actions: simply click **More info �
 ### 🌐 Языки и обратная связь
 Программа переведена на **8 языков**: английский, русский, испанский, немецкий, французский, китайский, **чешский (`Čeština`)** и берберский (`Tamaziɣt / Берберский (para Ramón)`). Язык, выбранный в установщике, включается при первом запуске, а далее запоминается выбор из Настроек.
 
-> ✉️ **Обратная связь и новые языки**: я готов расширять перечень языков для локализации и буду очень благодарен за конструктивную критику и предложения. Если вы хотите видеть в настройках язык, которого ещё нет в программе — напишите на почту **[CosmoBehemothych@yandex.ru](mailto:CosmoBehemothych@yandex.ru)**, постараюсь учесть все конструктивные пожелания.
+> ✉️ **Обратная связь и новые языки**: я готов расширять перечень языков для локализации и буду очень благодарен за конструктивную критику и предложения. Если вы хотите видеть в настройках язык, которого ещё нет в программе — напишите на почту **[CosmoBehemothych@gmail.com](mailto:CosmoBehemothych@gmail.com)**, постараюсь учесть все конструктивные пожелания.
 
 ### 🛡️ Предупреждение Windows SmartScreen при запуске
 При запуске установщика Windows может показать уведомление (*«Система Windows защитила ваш компьютер»*), поскольку у данного приложения пока нет платной лицензии (сертификата подписи кода). Бесплатную лицензию для open-source проекта можно получить, только если программа станет более популярной — так что ждём и надеемся 🙂  
