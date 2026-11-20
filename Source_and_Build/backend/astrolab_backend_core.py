@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ================================================================================
-Seestar AstroLab AAVSO v1.3.2 — Unified Python Backend Core (Single Source of Truth)
+Seestar AstroLab AAVSO v1.3.3 — Unified Python Backend Core (Single Source of Truth)
 Author: CosmoBehemothych (https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO)
 ================================================================================
 Централизованное серверное/бэкенд-ядро бизнес-логики приложения:
@@ -42,7 +42,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-APP_VERSION = "1.3.2"
+APP_VERSION = "1.3.3"
 CRITICAL_COORD_DIFF_DEG = 0.05
 EXACT_COORD_MATCH_DEG = 0.00001
 DSS2_SURVEY_FOV_DEG = 2.40
@@ -1432,6 +1432,425 @@ class AavsoNativeAndStorageService:
                 err = str(e)
         return {"ok": False, "source": "", "notices": [], "error": err or "No live notices returned"}
 
+    _IAU_CONSTELLATIONS = {
+        "And", "Ant", "Aps", "Aqr", "Aql", "Ara", "Ari", "Aur", "Boo", "Cae",
+        "Cam", "Cnc", "CVn", "CMa", "CMi", "Cap", "Car", "Cas", "Cen", "Cep",
+        "Cet", "Cha", "Cir", "Col", "Com", "CrA", "CrB", "Crv", "Crt", "Cru",
+        "Cyg", "Del", "Dor", "Dra", "Equ", "Eri", "For", "Gem", "Gru", "Her",
+        "Hor", "Hya", "Hyi", "Ind", "Lac", "Leo", "LMi", "Lep", "Lib", "Lup",
+        "Lyn", "Lyr", "Men", "Mic", "Mon", "Mus", "Nor", "Oct", "Oph", "Ori",
+        "Pav", "Peg", "Per", "Phe", "Pic", "Psc", "PsA", "Pup", "Pyx", "Ret",
+        "Sge", "Sgr", "Sco", "Scl", "Sct", "Ser", "Sex", "Tau", "Tel", "Tri",
+        "TrA", "Tuc", "UMa", "UMi", "Vel", "Vir", "Vol", "Vul",
+    }
+
+    @staticmethod
+    def _build_ssl_context():
+        try:
+            import ssl
+            try:
+                import certifi
+                return ssl.create_default_context(cafile=certifi.where())
+            except Exception:
+                return ssl.create_default_context()
+        except Exception:
+            return None
+
+    @staticmethod
+    def _parse_ra_dec_to_deg(val: Any, is_ra: bool = True) -> Optional[float]:
+        """Преобразует RA/Dec из десятичных градусов или строкового формата HH:MM:SS / ±DD:MM:SS в градусы."""
+        if val is None:
+            return None
+        if isinstance(val, (int, float)):
+            fval = float(val)
+            if is_ra and 0.0 <= fval <= 360.0:
+                return fval
+            if (not is_ra) and -90.0 <= fval <= 90.0:
+                return fval
+            return None
+        s = str(val).strip()
+        if not s:
+            return None
+        try:
+            fval = float(s)
+            if is_ra and 0.0 <= fval <= 360.0:
+                return fval
+            if (not is_ra) and -90.0 <= fval <= 90.0:
+                return fval
+            return None
+        except ValueError:
+            pass
+        parts = re.split(r"[:\s°'\"hmsHMS]+", s.strip())
+        parts = [p for p in parts if p]
+        if len(parts) < 2:
+            return None
+        try:
+            sign = -1.0 if s.strip().startswith("-") else 1.0
+            d0 = abs(float(parts[0]))
+            m0 = float(parts[1]) if len(parts) > 1 else 0.0
+            s0 = float(parts[2]) if len(parts) > 2 else 0.0
+            val_deg = d0 + m0 / 60.0 + s0 / 3600.0
+            if is_ra:
+                return (val_deg * 15.0) % 360.0
+            return sign * val_deg
+        except Exception:
+            return None
+
+    @classmethod
+    def _extract_stars_from_notice_title(cls, title: str) -> List[str]:
+        """Извлекает обозначения переменных звёзд (GCVS/Nova/AT/SN/NSV) из заголовка AAVSO Alert Notice."""
+        if not title:
+            return []
+        found: List[str] = []
+        seen = set()
+
+        def _add(name: str):
+            clean = re.sub(r"\s+", " ", name.strip())
+            key = clean.lower()
+            if clean and key not in seen:
+                seen.add(key)
+                found.append(clean)
+
+        # 1) GCVS-style: V1405 Cas, T CrB, SS Cyg, alpha Ori, chi Cyg, Nova Cas 2024
+        gcvs_re = re.compile(
+            r"\b(V\d{3,5}|[R-Z]|[A-Z]{2}|Nova|SN|AT)\s+([A-Za-z]{2,3})(?:\s+(20\d{2}))?\b"
+        )
+        for m in gcvs_re.finditer(title):
+            prefix, con, yr = m.group(1), m.group(2), m.group(3)
+            if con in cls._IAU_CONSTELLATIONS:
+                if prefix in ("Nova", "SN", "AT") and yr:
+                    _add(f"{prefix} {con} {yr}")
+                elif prefix not in ("SN", "AT"):
+                    _add(f"{prefix} {con}")
+
+        # 2) Catalog designations: NSV 12345, AT 2025abc, SN 2025xyz, ASASSN-24ab, ZTF24...
+        cat_re = re.compile(
+            r"\b((?:NSV|HD|HIP|BD|TYC|TOI|TIC)\s*\d{3,7}|(?:AT|SN)\s*20\d{2}[a-z]{1,4}|ASASSN-\d{2}[a-z]{2,4})\b"
+        )
+        for m in cat_re.finditer(title):
+            _add(m.group(1))
+
+        return found
+
+    @classmethod
+    def _resolve_stars_via_simbad_batch(cls, star_names: List[str]) -> Dict[str, Dict[str, Any]]:
+        """Пакетно разрешает J2000.0 RA/Dec и тип звёзд через SIMBAD TAP (ADQL)."""
+        if not star_names:
+            return {}
+        safe_names = [s.replace("'", "''") for s in star_names[:30]]
+        in_clause = ",".join(f"'{s}'" for s in safe_names)
+        adql = (
+            "SELECT ident.id, basic.main_id, basic.ra, basic.dec, basic.otype_txt, allfluxes.V "
+            "FROM ident "
+            "JOIN basic ON ident.oidref = basic.oid "
+            "LEFT JOIN allfluxes ON allfluxes.oidref = basic.oid "
+            f"WHERE ident.id IN ({in_clause})"
+        )
+        params = urllib.parse.urlencode({
+            "request": "doQuery",
+            "lang": "ADQL",
+            "format": "json",
+            "query": adql,
+        })
+        ssl_ctx = cls._build_ssl_context()
+        resolved: Dict[str, Dict[str, Any]] = {}
+        for endpoint in (
+            "https://simbad.cds.unistra.fr/simbad/sim-tap/sync",
+            "https://simbad.cfa.harvard.edu/simbad/sim-tap/sync",
+        ):
+            try:
+                req = urllib.request.Request(
+                    f"{endpoint}?{params}",
+                    headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"},
+                )
+                with urllib.request.urlopen(req, timeout=7.0, context=ssl_ctx) as resp:
+                    j = json.loads(resp.read().decode("utf-8", errors="replace"))
+                meta = [c.get("name") for c in (j.get("metadata") or [])]
+                for row in (j.get("data") or []):
+                    rec = dict(zip(meta, row))
+                    ra_v = cls._parse_ra_dec_to_deg(rec.get("ra"), is_ra=True)
+                    dec_v = cls._parse_ra_dec_to_deg(rec.get("dec"), is_ra=False)
+                    if ra_v is None or dec_v is None:
+                        continue
+                    ident_id = str(rec.get("id") or rec.get("main_id") or "").strip()
+                    if not ident_id:
+                        continue
+                    v_mag = rec.get("V")
+                    mag_str = f"{float(v_mag):.1f} V (SIMBAD)" if isinstance(v_mag, (int, float)) else "Campaign Live"
+                    info = {
+                        "ra": round(ra_v, 6),
+                        "dec": round(dec_v, 6),
+                        "otype": str(rec.get("otype_txt") or "Var*").strip(),
+                        "magRange": mag_str,
+                        "mainId": str(rec.get("main_id") or ident_id).strip(),
+                    }
+                    resolved[ident_id.lower()] = info
+                    norm = PhotometryBackendEngine.normalize_star_for_vsp(ident_id).lower()
+                    if norm:
+                        resolved[norm] = info
+                if resolved:
+                    return resolved
+            except Exception:
+                continue
+        return resolved
+
+    @classmethod
+    def fetch_live_aavso_campaign_targets(cls, max_stars: int = 25) -> Dict[str, Any]:
+        """
+        Вариант 1 (без API-ключа): загружает свежие публичные AAVSO Alert Notices,
+        извлекает звёзды актуальных кампаний и разрешает их J2000.0 RA/Dec через SIMBAD TAP.
+        """
+        ssl_ctx = cls._build_ssl_context()
+        notices: List[Dict[str, Any]] = []
+        err = ""
+        for url in (
+            "https://apps.aavso.org/v2/api/notices/?page_size=20",
+            "https://www.aavso.org/aavso-alert-notices-for-observing-campaigns",
+        ):
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
+                with urllib.request.urlopen(req, timeout=7.0, context=ssl_ctx) as resp:
+                    raw = resp.read().decode("utf-8", errors="replace")
+                if "page_size=" in url:
+                    j = json.loads(raw)
+                    for r in (j.get("results") or [])[:20]:
+                        notices.append({
+                            "number": str(r.get("number") or r.get("id") or ""),
+                            "title": str(r.get("title") or "").strip(),
+                            "published": str(r.get("published") or r.get("created") or "")[:10],
+                        })
+                    if notices:
+                        break
+                else:
+                    for m in re.finditer(r"AAVSO Alert Notice\s+(\d+)[:\s]+([^<\n]{4,140})", raw, re.I):
+                        notices.append({"number": m.group(1), "title": m.group(2).strip(), "published": ""})
+                        if len(notices) >= 20:
+                            break
+                    if notices:
+                        break
+            except Exception as e:
+                err = str(e)
+
+        if not notices:
+            return {
+                "ok": False,
+                "source": "",
+                "notices": [],
+                "targets": [],
+                "error": err or "Could not fetch public AAVSO Alert Notices",
+            }
+
+        star_to_notice: Dict[str, Dict[str, Any]] = {}
+        ordered_stars: List[str] = []
+        for n in notices:
+            for star in cls._extract_stars_from_notice_title(n.get("title", "")):
+                key = star.lower()
+                if key not in star_to_notice:
+                    star_to_notice[key] = n
+                    ordered_stars.append(star)
+                if len(ordered_stars) >= max_stars:
+                    break
+            if len(ordered_stars) >= max_stars:
+                break
+
+        resolved_map = cls._resolve_stars_via_simbad_batch(ordered_stars) if ordered_stars else {}
+        targets: List[Dict[str, Any]] = []
+        for star in ordered_stars:
+            rec = resolved_map.get(star.lower()) or resolved_map.get(
+                PhotometryBackendEngine.normalize_star_for_vsp(star).lower()
+            )
+            if not rec:
+                continue
+            n = star_to_notice[star.lower()]
+            num = n.get("number", "")
+            pub = n.get("published", "")
+            parts = star.split()
+            con = parts[-1] if (len(parts) >= 2 and parts[-1] in cls._IAU_CONSTELLATIONS) else "AAVSO"
+            targets.append({
+                "star": star,
+                "alias": f"Alert Notice #{num}" if num else "AAVSO Alert Notice",
+                "type": rec.get("otype") or "AAVSO Alert",
+                "auid": "",
+                "con": con,
+                "ra": rec["ra"],
+                "dec": rec["dec"],
+                "magRange": rec.get("magRange") or "Campaign Live",
+                "chart": "",
+                "kname": "",
+                "kmag": "",
+                "priority": f"🔴 LIVE Notice #{num}" if num else "🔴 LIVE Campaign",
+                "desc": n.get("title", ""),
+                "comment": f"Live AAVSO Alert Notice #{num} ({pub})" if pub else f"Live AAVSO Alert Notice #{num}",
+                "isLiveCampaign": True,
+                "noticeNumber": num,
+                "published": pub,
+            })
+
+        return {
+            "ok": True,
+            "source": "AAVSO Alert Notices + SIMBAD TAP",
+            "noticesCount": len(notices),
+            "notices": notices[:15],
+            "targets": targets,
+            "error": "",
+        }
+
+    @classmethod
+    def fetch_aavso_target_tool_targets(cls, api_key: str, obs_section: str = "all") -> Dict[str, Any]:
+        """
+        Вариант 2 (официальный AAVSO Target Tool API v1.0.0):
+        GET https://targettool.aavso.org/TargetTool/api/v1/targets?obs_section=all
+        HTTP Basic Auth: username = personal API key, password = 'api_token'.
+        """
+        clean_key = str(api_key or "").strip()
+        if not clean_key:
+            return {
+                "ok": False,
+                "errorCode": "missing_key",
+                "error": "AAVSO Target Tool API key is empty.",
+                "targets": [],
+                "count": 0,
+            }
+
+        sec_param = urllib.parse.quote(str(obs_section or "all").strip() or "all")
+        url = f"https://targettool.aavso.org/TargetTool/api/v1/targets?obs_section={sec_param}"
+        auth_token = base64.b64encode(f"{clean_key}:api_token".encode("utf-8")).decode("ascii")
+        req = urllib.request.Request(
+            url,
+            headers={
+                "Authorization": f"Basic {auth_token}",
+                "Accept": "application/json",
+                "User-Agent": f"SeestarAstroLab/{APP_VERSION}",
+            },
+        )
+        ssl_ctx = cls._build_ssl_context()
+
+        try:
+            with urllib.request.urlopen(req, timeout=12.0, context=ssl_ctx) as resp:
+                raw = resp.read().decode("utf-8", errors="replace")
+                rate_rem = resp.headers.get("X-Rate-Limit-Remaining", "")
+        except urllib.error.HTTPError as he:
+            code = getattr(he, "code", 0)
+            if code in (401, 403):
+                return {
+                    "ok": False,
+                    "errorCode": "invalid_key",
+                    "error": f"HTTP {code}: Invalid or unauthorized AAVSO Target Tool API key.",
+                    "targets": [],
+                    "count": 0,
+                }
+            if code == 429:
+                return {
+                    "ok": False,
+                    "errorCode": "rate_limited",
+                    "error": "HTTP 429: AAVSO Target Tool API rate limit (1000 req/hr) exceeded.",
+                    "targets": [],
+                    "count": 0,
+                }
+            return {
+                "ok": False,
+                "errorCode": f"http_{code}",
+                "error": f"HTTP {code}: {he.reason}",
+                "targets": [],
+                "count": 0,
+            }
+        except Exception as e:
+            return {
+                "ok": False,
+                "errorCode": "network_error",
+                "error": f"Network error connecting to targettool.aavso.org: {e}",
+                "targets": [],
+                "count": 0,
+            }
+
+        try:
+            payload = json.loads(raw)
+        except Exception as e:
+            return {
+                "ok": False,
+                "errorCode": "parse_error",
+                "error": f"Invalid JSON from AAVSO Target Tool API: {e}",
+                "targets": [],
+                "count": 0,
+            }
+
+        if isinstance(payload, list):
+            rows = payload
+        elif isinstance(payload, dict):
+            rows = payload.get("targets") or payload.get("results") or payload.get("data") or []
+        else:
+            rows = []
+
+        targets: List[Dict[str, Any]] = []
+        for rec in rows:
+            if not isinstance(rec, dict):
+                continue
+            star_name = str(rec.get("star_name") or rec.get("name") or rec.get("star") or "").strip()
+            if not star_name:
+                continue
+            ra_deg = cls._parse_ra_dec_to_deg(rec.get("ra"), is_ra=True)
+            dec_deg = cls._parse_ra_dec_to_deg(rec.get("dec"), is_ra=False)
+            if ra_deg is None or dec_deg is None:
+                continue
+            con = str(rec.get("constellation") or rec.get("con") or "").strip()
+            if not con:
+                parts = star_name.split()
+                con = parts[-1] if (len(parts) >= 2 and parts[-1] in cls._IAU_CONSTELLATIONS) else "AAVSO"
+            is_prio = bool(rec.get("priority"))
+            solar_conj = bool(rec.get("solar_conjunction"))
+            last_dp = str(rec.get("last_data_point") or "").strip()
+            obs_sec = str(rec.get("obs_section") or rec.get("observing_section") or rec.get("section") or "").strip()
+            var_type = str(rec.get("var_type") or rec.get("type") or obs_sec or "AAVSO Target Tool").strip()
+            auid = str(rec.get("auid") or "").strip()
+            min_m = rec.get("min_mag")
+            max_m = rec.get("max_mag")
+            if min_m is not None and max_m is not None:
+                mag_range = f"{max_m}–{min_m} mag"
+            elif rec.get("mag_range"):
+                mag_range = str(rec.get("mag_range"))
+            else:
+                mag_range = "Target Tool Live"
+
+            desc_bits = []
+            if obs_sec:
+                desc_bits.append(f"Section: {obs_sec}")
+            if last_dp:
+                desc_bits.append(f"Last obs: {last_dp[:16]} UTC")
+            if solar_conj:
+                desc_bits.append("Solar conjunction")
+            desc_str = " • ".join(desc_bits) if desc_bits else "Live AAVSO Target Tool observing target"
+
+            targets.append({
+                "star": star_name,
+                "alias": obs_sec or "AAVSO Target Tool",
+                "type": var_type,
+                "auid": auid,
+                "con": con,
+                "ra": round(ra_deg, 6),
+                "dec": round(dec_deg, 6),
+                "magRange": mag_range,
+                "chart": "",
+                "kname": "",
+                "kmag": "",
+                "priority": "🔴 LIVE PRIORITY" if is_prio else "🟢 LIVE Target Tool",
+                "desc": desc_str,
+                "comment": desc_str,
+                "isLiveTargetTool": True,
+                "isHighPriority": is_prio,
+                "lastDataPoint": last_dp,
+                "solarConjunction": solar_conj,
+                "obsSection": obs_sec,
+            })
+
+        return {
+            "ok": True,
+            "source": "AAVSO Target Tool API v1.0.0",
+            "count": len(targets),
+            "rateLimitRemaining": rate_rem,
+            "targets": targets,
+            "error": "",
+        }
+
     @classmethod
     def fetch_aavso_light_curve(
         cls,
@@ -1796,6 +2215,17 @@ class _AstroLabBackendRequestHandler(BaseHTTPRequestHandler):
             self._send_json(res)
         elif action == "fetch_live_aavso_notices":
             res = AavsoNativeAndStorageService.fetch_live_aavso_notices()
+            self._send_json(res)
+        elif action == "fetch_live_aavso_campaign_targets":
+            res = AavsoNativeAndStorageService.fetch_live_aavso_campaign_targets(
+                max_stars=int(body.get("maxStars", 25) or 25)
+            )
+            self._send_json(res)
+        elif action == "fetch_aavso_target_tool_targets":
+            res = AavsoNativeAndStorageService.fetch_aavso_target_tool_targets(
+                api_key=body.get("apiKey", ""),
+                obs_section=body.get("obsSection", "all"),
+            )
             self._send_json(res)
         elif action == "fetch_aavso_light_curve":
             res = AavsoNativeAndStorageService.fetch_aavso_light_curve(

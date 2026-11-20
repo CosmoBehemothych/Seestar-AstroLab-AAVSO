@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""
 ==============================================================================
-Seestar AstroLab by CosmoBehemothych – Native Desktop Runner (v1.3.2)
+Seestar AstroLab by CosmoBehemothych – Native Desktop Runner (v1.3.3)
 ==============================================================================
 """
 
@@ -38,8 +38,8 @@ except ImportError:
         start_background_rpc_server = None
 
 
-APP_VERSION = "1.3.2"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych – Фотометрия и Радар целей (v1.3.2)"
+APP_VERSION = "1.3.3"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych – Фотометрия и Радар целей (v1.3.3)"
 APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
 
 
@@ -368,6 +368,23 @@ class AstroLabDiskBridge:
     def backend_check_github_latest_release(self, payload=None):
         p = payload if isinstance(payload, dict) else {}
         return AavsoNativeAndStorageService.check_github_latest_release(p.get("currentVersion") or APP_VERSION)
+
+    def backend_fetch_live_aavso_campaign_targets(self, payload=None):
+        if AavsoNativeAndStorageService:
+            p = payload if isinstance(payload, dict) else {}
+            return AavsoNativeAndStorageService.fetch_live_aavso_campaign_targets(
+                max_stars=int(p.get("maxStars", 25) or 25)
+            )
+        return {"ok": False, "notices": [], "targets": [], "error": "Backend unavailable"}
+
+    def backend_fetch_aavso_target_tool_targets(self, payload=None):
+        if AavsoNativeAndStorageService:
+            p = payload if isinstance(payload, dict) else {}
+            return AavsoNativeAndStorageService.fetch_aavso_target_tool_targets(
+                api_key=p.get("apiKey", ""),
+                obs_section=p.get("obsSection", "all"),
+            )
+        return {"ok": False, "targets": [], "count": 0, "error": "Backend unavailable"}
 
     def backend_fetch_aavso_light_curve(self, payload):
         if AavsoNativeAndStorageService and isinstance(payload, dict):

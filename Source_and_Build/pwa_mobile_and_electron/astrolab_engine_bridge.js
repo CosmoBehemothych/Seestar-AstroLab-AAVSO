@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.3.2) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.3.3) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.3.2.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.3.3.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -528,7 +528,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.3.2",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.3.3",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -538,7 +538,7 @@
       errNoObscodeMsg: "Укажите ваш личный код наблюдателя AAVSO (OBSCODE) перед конвертацией данных для загрузки на AAVSO.",
       errNoObscodeExplain: "Стандарт AAVSO Extended требует обязательного указания персонального кода наблюдателя в заголовке #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Версия 1.3.2",
+      appVersionLabel: "Версия 1.3.3",
       starIdFromCatalogHint: "✓ Каталожный идентификатор звезды (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -881,7 +881,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.3.2 session",
+      actAppStarted: "Started Seestar AstroLab v1.3.3 session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -891,7 +891,7 @@
       errNoObscodeMsg: "Please enter your personal AAVSO Observer Code (OBSCODE) before converting data for AAVSO upload.",
       errNoObscodeExplain: "The AAVSO Extended format strictly requires a valid personal observer code in the #OBSCODE header.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.2",
+      appVersionLabel: "Version 1.3.3",
       starIdFromCatalogHint: "✓ Canonical Catalog Star ID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometry Observatory",
       
@@ -1229,7 +1229,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.3.2",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.3.3",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1239,7 +1239,7 @@
       errNoObscodeMsg: "Ingrese su código personal de observador AAVSO (OBSCODE) antes de convertir los datos.",
       errNoObscodeExplain: "El formato AAVSO Extended requiere un código de observador válido en el encabezado #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Versión 1.3.2",
+      appVersionLabel: "Versión 1.3.3",
       starIdFromCatalogHint: "✓ Identificador de catálogo (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatorio Fotométrico Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -1553,7 +1553,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.3.2",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.3.3",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1563,7 +1563,7 @@
       errNoObscodeMsg: "Bitte geben Sie Ihren persönlichen AAVSO-Beobachtercode (OBSCODE) vor der Konvertierung ein.",
       errNoObscodeExplain: "Das AAVSO-Extended-Format erfordert zwingend einen gültigen Beobachtercode im Header #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.2",
+      appVersionLabel: "Version 1.3.3",
       starIdFromCatalogHint: "✓ Kanonische Katalog-STARID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometrie-Observatorium",
       
@@ -1866,7 +1866,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.3.2",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.3.3",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -1876,7 +1876,7 @@
       errNoObscodeMsg: "Veuillez saisir votre code observateur AAVSO (OBSCODE) avant de convertir les données.",
       errNoObscodeExplain: "Le standard AAVSO Extended exige un code observateur personnel valide dans l'en-tête #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.2",
+      appVersionLabel: "Version 1.3.3",
       starIdFromCatalogHint: "✓ Identifiant catalogue canonique (SIMBAD / AAVSO VSX) : {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -2178,7 +2178,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.3.2 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.3.3 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -2188,7 +2188,7 @@
       errNoObscodeMsg: "请在转换上传至 AAVSO 的数据前填写您的 AAVSO 观测者代码 (OBSCODE)。",
       errNoObscodeExplain: "AAVSO Extended 格式要求在 #OBSCODE 标头中提供有效的个人观测者代码。",
       radarSubTag: "",
-      appVersionLabel: "版本 1.3.2",
+      appVersionLabel: "版本 1.3.3",
       starIdFromCatalogHint: "✓ 星表标准目标名称 (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO 测光天文台",
       
@@ -7030,19 +7030,8 @@ function revealAndFocusField(inputId) {
         if (simbadPill) simbadPill.textContent = `✓ ${mirrorName.split(" ")[0] || "CDS"} (Online)`;
       }
       try {
-        const nResp = await fetch("http://127.0.0.1:18765/api/rpc", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "fetch_live_aavso_notices" }),
-          signal: AbortSignal.timeout(4500)
-        });
-        if (nResp.ok) {
-          const nData = await nResp.json();
-          if (nData && nData.ok && Array.isArray(nData.notices) && nData.notices.length > 0) {
-            window._latestAavsoLiveNotices = nData.notices;
-            const vspPill = document.getElementById("bentoVspPill");
-            if (vspPill) vspPill.textContent = `✓ AAVSO Live (${nData.notices[0].number || "OK"})`;
-          }
+        if (typeof window._syncLiveAavsoOnlineTargets === "function") {
+          await window._syncLiveAavsoOnlineTargets();
         }
       } catch (_) {}
     } catch (_) {}
@@ -7625,7 +7614,7 @@ function revealAndFocusField(inputId) {
              data-v6-kname="${escapeHtml(rawItem.kname)}"
              data-v6-kmag="${escapeHtml(rawItem.kmag)}">
           <div class="v6-target-top">
-            <span class="v6-target-name">${escapeHtml(item.star)} <small style="color:${conColor}; font-weight:500;">(${escapeHtml(item.con)})</small></span>
+            <span class="v6-target-name">${escapeHtml(item.star)} <small style="color:${conColor}; font-weight:500;">(${escapeHtml(item.con)})</small>${rawItem.isLiveTargetTool ? '<span class="v6-live-badge target-tool">LIVE API</span>' : (rawItem.isLiveCampaign ? '<span class="v6-live-badge">LIVE</span>' : '')}</span>
             <span class="v6-target-badge">${escapeHtml(item.priority)}</span>
           </div>
           <div class="v6-target-meta"><span class="aavso-sec-pill">${escapeHtml(getStarObservingSectionLabel(rawItem))}</span> • ${escapeHtml(item.type)} • AUID: ${escapeHtml(item.auid)} <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高",cs:"max."}[_l]||"max."; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_a.compassLabel || ""}`; })()) : ""}</span></div>
@@ -8717,7 +8706,7 @@ function revealAndFocusField(inputId) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.3.2",
+      application: "Seestar AstroLab AAVSO v1.3.3",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8768,7 +8757,7 @@ function revealAndFocusField(inputId) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.3.2 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.3.3 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -11734,7 +11723,7 @@ function revealAndFocusField(inputId) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.3.2 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.3.3 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -18787,43 +18776,43 @@ function revealAndFocusField(inputId) {
     const extraPerLang = {
       en: {
         optFullWindow: "Full Window", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Version 1.3.2"
+        appVersionLabel: "Version 1.3.3"
       },
       ru: {
         optFullWindow: "Во всё окно", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Версия 1.3.2"
+        appVersionLabel: "Версия 1.3.3"
       },
       es: {
         optFullWindow: "Ventana completa", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En línea • TTL 1h",
-        appVersionLabel: "Versión 1.3.2"
+        appVersionLabel: "Versión 1.3.3"
       },
       de: {
         optFullWindow: "Vollbildfenster", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Online • TTL 1 Std.",
         thUI: "Daten aus SIMBAD-Katalog",
-        appVersionLabel: "Version 1.3.2"
+        appVersionLabel: "Version 1.3.3"
       },
       fr: {
         optFullWindow: "Pleine fenêtre", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En ligne • TTL 1h",
-        appVersionLabel: "Version 1.3.2"
+        appVersionLabel: "Version 1.3.3"
       },
       zh: {
         optFullWindow: "全窗口", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "在线 • TTL 1小时",
-        appVersionLabel: "版本 1.3.2"
+        appVersionLabel: "版本 1.3.3"
       },
       ber: {
         optFullWindow: "Asfaylu ummid", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Srad • TTL 1s",
         btnTryUniverseLuck: "Afran agacuran n yitri i wannay-ik",
         tipTryUniverseLuck: "Afran agacuran n yitri azwaru i wannayen-ik ass-a",
-        appVersionLabel: "Taseqqult 1.3.2"
+        appVersionLabel: "Taseqqult 1.3.3"
       },
       cs: {
         optFullWindow: "Celé okno", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Verze 1.3.2",
+        appVersionLabel: "Verze 1.3.3",
         lblThemePickerSplash: "Barevný motiv",
         brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Fotometrická observatoř",
         btnDonateBadge: "❤️ Podpořit",
@@ -19055,16 +19044,16 @@ function revealAndFocusField(inputId) {
     // Sync all Module 14 & curve labels on initial load for EVERY language (prevents RU leaks in EN mode)
     if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
 
-    // === v1.3.2: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
+    // === v1.3.3: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
     const UPDATE_I18N = {
-      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.3.2. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
-      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.3.2. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
-      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.3.2. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
-      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.3.2. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
-      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.3.2. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
-      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.3.2，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
-      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.3.2. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
-      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.3.2. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
+      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.3.3. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
+      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.3.3. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
+      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.3.3. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
+      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.3.3. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
+      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.3.3. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
+      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.3.3，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
+      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.3.3. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
+      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.3.3. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
     };
 
     window.parseAstroSemver = function(v) {
@@ -19124,7 +19113,7 @@ function revealAndFocusField(inputId) {
     window.checkGithubReleaseOnceOnStartup = async function(forceCheck = false) {
       if (window._githubUpdateCheckedThisSession && !forceCheck) return;
       window._githubUpdateCheckedThisSession = true;
-      const LOCAL_VER = "1.3.2";
+      const LOCAL_VER = "1.3.3";
       const REPO_API = "https://api.github.com/repos/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
       const REPO_RELEASES = "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
 
@@ -19731,7 +19720,7 @@ function revealAndFocusField(inputId) {
 
 
 // ============================================================================
-// v1.3.2: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
+// v1.3.3: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
 // Designer full-canvas layout: high-res real-data visuals, KPI cards, pro tips,
 // reference tables, and verified official AAVSO / JAAVSO self-study links.
 // ============================================================================
@@ -20334,4 +20323,550 @@ function revealAndFocusField(inputId) {
     else if (e.key === "ArrowLeft") window.stepGraphGuideSlide(-1);
     else if (e.key === "Escape") window.closeGraphGuideModal();
   });
+  // ============================================================================
+  // v1.3.3: LIVE ONLINE AAVSO RADAR (PUBLIC CAMPAIGNS + TARGET TOOL API v1.0.0)
+  //         + SETTINGS API KEY CONTROLS + 8-LANGUAGE API KEY GUIDE MODAL
+  // ============================================================================
+  const V133_I18N_PATCH = {
+    en: {
+      lblAavsoApiKeyTitle: "AAVSO Target Tool API Key",
+      badgeApiKeyPublic: "Public Live",
+      badgeApiKeyActive: "API Live",
+      phAavsoApiKey: "Paste personal AAVSO API key...",
+      btnSaveApiKey: "💾 Save & Sync",
+      btnClearApiKey: "🗑 Clear",
+      btnApiKeyGuide: "❓ How to get an API key & what it unlocks",
+      apiKeyStatusPublic: "Automatic public mode: 246 base targets + live AAVSO Alert Notices.",
+      apiKeyStatusActiveFmt: "AAVSO Target Tool API active: +{added} new stars ({total} total in Radar).",
+      apiKeyStatusCampaignFmt: "Public Live mode: +{added} fresh Alert Notice stars ({total} total in Radar).",
+      apiKeyStatusErrorFmt: "API sync note: {err}",
+      apiKeyStatusSavedEmpty: "Key cleared — switched back to automatic Public Live mode.",
+      apiKeyModalTitle: "AAVSO Target Tool API Key — Guide & Benefits",
+      apiKeyModalSub: "Official free AAVSO API v1.0.0 for full live Target Radar synchronization",
+      apiKeyHowToTitle: "🧭 Where to get your free API key",
+      apiKeyStep1: "Log in to your free AAVSO observer account at aavso.org (or register a new account in 2 minutes).",
+      apiKeyStep2: "Open the official AAVSO Target Tool API page (targettool.aavso.org/TargetTool/api) and copy your personal API key from your profile.",
+      apiKeyStep3: "Paste the key into Settings → AAVSO Target Tool API Key and click «Save & Sync».",
+      apiKeyStep4: "Your key is stored strictly locally on your PC and sent only over HTTPS to targettool.aavso.org.",
+      btnOpenAavsoApiPage: "🌐 Open AAVSO Target Tool API ↗",
+      btnRegisterAavso: "📝 Free AAVSO Account ↗",
+      apiKeyBenefitsTitle: "🚀 What capabilities it unlocks",
+      apiKeyBen1Title: "📡 Full Live AAVSO Target List",
+      apiKeyBen1Desc: "Downloads all active targets across every AAVSO Observing Section directly into the Radar — no longer limited to the 246 offline stars.",
+      apiKeyBen2Title: "🔴 Priority & Campaign Alerts",
+      apiKeyBen2Desc: "Highlights high-priority outburst targets and active campaigns right at the top of the Radar with LIVE badges.",
+      apiKeyBen3Title: "🕒 Last Observation & Solar Conjunction",
+      apiKeyBen3Desc: "Displays exact UTC timestamp of the last AAVSO data point and flags stars near solar conjunction.",
+      apiKeyBen4Title: "🛡 Free Quota (1,000 req/hr) & Privacy",
+      apiKeyBen4Desc: "Completely free for AAVSO members. Without a key, Public Live Mode still merges fresh AAVSO Alert Notices automatically.",
+      btnGotIt: "Got it"
+    },
+    ru: {
+      lblAavsoApiKeyTitle: "API-ключ AAVSO Target Tool",
+      badgeApiKeyPublic: "Публичный Live",
+      badgeApiKeyActive: "API Live",
+      phAavsoApiKey: "Вставьте личный API-ключ AAVSO...",
+      btnSaveApiKey: "💾 Сохранить и обновить",
+      btnClearApiKey: "🗑 Очистить",
+      btnApiKeyGuide: "❓ Откуда взять API-ключ и что он даёт",
+      apiKeyStatusPublic: "Публичный режим: 246 базовых целей + живые кампании AAVSO Alert Notices.",
+      apiKeyStatusActiveFmt: "AAVSO Target Tool API активен: +{added} новых звёзд (всего {total} в Радаре).",
+      apiKeyStatusCampaignFmt: "Публичный Live-режим: +{added} свежих звёзд из Alert Notices (всего {total} в Радаре).",
+      apiKeyStatusErrorFmt: "Статус API: {err}",
+      apiKeyStatusSavedEmpty: "Ключ удалён — включён автоматический публичный Live-режим.",
+      apiKeyModalTitle: "API-ключ AAVSO Target Tool — где взять и зачем нужен",
+      apiKeyModalSub: "Официальный бесплатный AAVSO API v1.0.0 для полной живой синхронизации Радара целей",
+      apiKeyHowToTitle: "🧭 Откуда взять бесплатный API-ключ",
+      apiKeyStep1: "Войдите в свой бесплатный аккаунт наблюдателя на сайте aavso.org (или зарегистрируйтесь за 2 минуты).",
+      apiKeyStep2: "Откройте официальную страницу AAVSO Target Tool API (targettool.aavso.org/TargetTool/api) и скопируйте личный ключ API в профиле.",
+      apiKeyStep3: "Вставьте ключ в «Настройки → API-ключ AAVSO Target Tool» и нажмите «Сохранить и обновить».",
+      apiKeyStep4: "Ключ хранится строго локально на вашем ПК и передаётся только по HTTPS напрямую на targettool.aavso.org.",
+      btnOpenAavsoApiPage: "🌐 Открыть AAVSO Target Tool API ↗",
+      btnRegisterAavso: "📝 Регистрация в AAVSO ↗",
+      apiKeyBenefitsTitle: "🚀 Какие возможности открывает API-ключ",
+      apiKeyBen1Title: "📡 Полный живой каталог целей AAVSO",
+      apiKeyBen1Desc: "Загружает в Радар все актуальные цели из всех наблюдательных секций AAVSO — список больше не ограничен базовыми 246 звёздами.",
+      apiKeyBen2Title: "🔴 Приоритетные вспышки и кампании",
+      apiKeyBen2Desc: "Выводит срочные цели и активные кампании в самый верх Радара с наглядными бейджами LIVE / LIVE API.",
+      apiKeyBen3Title: "🕒 Время последнего наблюдения и соединение с Солнцем",
+      apiKeyBen3Desc: "Показывает точную UTC-метку последнего наблюдения в базе AAVSO и предупреждает о близости звезды к Солнцу.",
+      apiKeyBen4Title: "🛡 Бесплатно (1 000 запросов/час) и приватно",
+      apiKeyBen4Desc: "Полностью бесплатно для участников AAVSO. Даже без ключа программа автоматически подгружает свежие звёзды из Alert Notices.",
+      btnGotIt: "Понятно"
+    },
+    es: {
+      lblAavsoApiKeyTitle: "Clave API de AAVSO Target Tool",
+      badgeApiKeyPublic: "Live Público",
+      badgeApiKeyActive: "API Live",
+      phAavsoApiKey: "Pega tu clave API personal de AAVSO...",
+      btnSaveApiKey: "💾 Guardar y sincronizar",
+      btnClearApiKey: "🗑 Borrar",
+      btnApiKeyGuide: "❓ Cómo obtener la clave API y qué desbloquea",
+      apiKeyStatusPublic: "Modo público automático: 246 objetivos base + Alert Notices en vivo.",
+      apiKeyStatusActiveFmt: "API Target Tool activa: +{added} estrellas nuevas ({total} en el Radar).",
+      apiKeyStatusCampaignFmt: "Modo Live público: +{added} estrellas de Alert Notices ({total} en el Radar).",
+      apiKeyStatusErrorFmt: "Nota de sincronización API: {err}",
+      apiKeyStatusSavedEmpty: "Clave borrada: modo Live público automático restaurado.",
+      apiKeyModalTitle: "Clave API de AAVSO Target Tool — Guía y ventajas",
+      apiKeyModalSub: "API oficial gratuita AAVSO v1.0.0 para sincronización completa del Radar",
+      apiKeyHowToTitle: "🧭 Dónde obtener tu clave API gratuita",
+      apiKeyStep1: "Inicia sesión en tu cuenta gratuita de observador en aavso.org (o regístrate en 2 minutos).",
+      apiKeyStep2: "Abre la página oficial AAVSO Target Tool API (targettool.aavso.org/TargetTool/api) y copia tu clave personal.",
+      apiKeyStep3: "Pega la clave en Ajustes → Clave API de AAVSO Target Tool y pulsa «Guardar y sincronizar».",
+      apiKeyStep4: "Tu clave se guarda solo localmente en tu PC y se envía únicamente por HTTPS a targettool.aavso.org.",
+      btnOpenAavsoApiPage: "🌐 Abrir AAVSO Target Tool API ↗",
+      btnRegisterAavso: "📝 Cuenta gratuita AAVSO ↗",
+      apiKeyBenefitsTitle: "🚀 Qué capacidades desbloquea",
+      apiKeyBen1Title: "📡 Lista completa en vivo de AAVSO",
+      apiKeyBen1Desc: "Descarga todos los objetivos activos de todas las secciones de AAVSO en el Radar, más allá de las 246 estrellas base.",
+      apiKeyBen2Title: "🔴 Alertas de prioridad y campañas",
+      apiKeyBen2Desc: "Destaca los objetivos urgentes y campañas activas arriba del Radar con etiquetas LIVE.",
+      apiKeyBen3Title: "🕒 Última observación y conjunción solar",
+      apiKeyBen3Desc: "Muestra la marca UTC exacta del último dato en AAVSO y avisa sobre conjunción solar.",
+      apiKeyBen4Title: "🛡 Cuota gratuita (1000 req/h) y privacidad",
+      apiKeyBen4Desc: "Totalmente gratuita para miembros de AAVSO. Sin clave, el modo público sigue añadiendo Alert Notices.",
+      btnGotIt: "Entendido"
+    },
+    de: {
+      lblAavsoApiKeyTitle: "AAVSO Target Tool API-Schlüssel",
+      badgeApiKeyPublic: "Öffentlich Live",
+      badgeApiKeyActive: "API Live",
+      phAavsoApiKey: "Persönlichen AAVSO API-Schlüssel einfügen...",
+      btnSaveApiKey: "💾 Speichern & Sync",
+      btnClearApiKey: "🗑 Löschen",
+      btnApiKeyGuide: "❓ Woher bekomme ich den API-Schlüssel & Vorteile",
+      apiKeyStatusPublic: "Öffentlicher Modus: 246 Basisziele + Live-AAVSO Alert Notices.",
+      apiKeyStatusActiveFmt: "AAVSO Target Tool API aktiv: +{added} neue Sterne ({total} im Radar).",
+      apiKeyStatusCampaignFmt: "Öffentlicher Live-Modus: +{added} neue Alert-Notice-Sterne ({total} im Radar).",
+      apiKeyStatusErrorFmt: "API-Hinweis: {err}",
+      apiKeyStatusSavedEmpty: "Schlüssel gelöscht — zurück im öffentlichen Live-Modus.",
+      apiKeyModalTitle: "AAVSO Target Tool API-Schlüssel — Anleitung & Vorteile",
+      apiKeyModalSub: "Offizielle kostenlose AAVSO API v1.0.0 für vollständige Live-Radar-Synchronisation",
+      apiKeyHowToTitle: "🧭 Wo Sie den kostenlosen API-Schlüssel erhalten",
+      apiKeyStep1: "Melden Sie sich mit Ihrem kostenlosen AAVSO-Konto auf aavso.org an (oder registrieren Sie sich in 2 Minuten).",
+      apiKeyStep2: "Öffnen Sie die offizielle AAVSO Target Tool API-Seite (targettool.aavso.org/TargetTool/api) und kopieren Sie Ihren persönlichen Schlüssel.",
+      apiKeyStep3: "Fügen Sie den Schlüssel unter Einstellungen → AAVSO Target Tool API-Schlüssel ein und klicken Sie auf «Speichern & Sync».",
+      apiKeyStep4: "Ihr Schlüssel wird nur lokal auf Ihrem PC gespeichert und ausschließlich per HTTPS an targettool.aavso.org gesendet.",
+      btnOpenAavsoApiPage: "🌐 AAVSO Target Tool API öffnen ↗",
+      btnRegisterAavso: "📝 Kostenloses AAVSO-Konto ↗",
+      apiKeyBenefitsTitle: "🚀 Welche Funktionen freigeschaltet werden",
+      apiKeyBen1Title: "📡 Vollständige Live-Zielliste der AAVSO",
+      apiKeyBen1Desc: "Lädt alle aktiven Ziele aller AAVSO-Beobachtungssektionen direkt ins Radar — nicht mehr auf 246 Basissterne beschränkt.",
+      apiKeyBen2Title: "🔴 Prioritäts- & Kampagnen-Warnungen",
+      apiKeyBen2Desc: "Hebt dringende Ausbruchsziele und aktive Kampagnen ganz oben im Radar mit LIVE-Badges hervor.",
+      apiKeyBen3Title: "🕒 Letzte Beobachtung & Sonnenkonjunktion",
+      apiKeyBen3Desc: "Zeigt den genauen UTC-Zeitstempel des letzten AAVSO-Datenpunkts und markiert Sonnenkonjunktion.",
+      apiKeyBen4Title: "🛡 Kostenlos (1.000 Anfr./Std.) & Datenschutz",
+      apiKeyBen4Desc: "Komplett kostenlos für AAVSO-Mitglieder. Auch ohne Schlüssel werden frische Alert Notices automatisch geladen.",
+      btnGotIt: "Verstanden"
+    },
+    fr: {
+      lblAavsoApiKeyTitle: "Clé API AAVSO Target Tool",
+      badgeApiKeyPublic: "Live Public",
+      badgeApiKeyActive: "API Live",
+      phAavsoApiKey: "Collez votre clé API AAVSO personnelle...",
+      btnSaveApiKey: "💾 Enregistrer & Sync",
+      btnClearApiKey: "🗑 Effacer",
+      btnApiKeyGuide: "❓ Où obtenir la clé API et ses avantages",
+      apiKeyStatusPublic: "Mode public automatique : 246 cibles de base + Alert Notices en direct.",
+      apiKeyStatusActiveFmt: "API Target Tool active : +{added} nouvelles étoiles ({total} dans le Radar).",
+      apiKeyStatusCampaignFmt: "Mode Live public : +{added} étoiles d'Alert Notices ({total} dans le Radar).",
+      apiKeyStatusErrorFmt: "Statut API : {err}",
+      apiKeyStatusSavedEmpty: "Clé effacée — retour au mode Live public automatique.",
+      apiKeyModalTitle: "Clé API AAVSO Target Tool — Guide et avantages",
+      apiKeyModalSub: "API officielle gratuite AAVSO v1.0.0 pour la synchronisation complète du Radar",
+      apiKeyHowToTitle: "🧭 Où obtenir votre clé API gratuite",
+      apiKeyStep1: "Connectez-vous à votre compte observateur gratuit sur aavso.org (ou créez-en un en 2 minutes).",
+      apiKeyStep2: "Ouvrez la page officielle AAVSO Target Tool API (targettool.aavso.org/TargetTool/api) et copiez votre clé personnelle.",
+      apiKeyStep3: "Collez la clé dans Paramètres → Clé API AAVSO Target Tool puis cliquez sur « Enregistrer & Sync ».",
+      apiKeyStep4: "Votre clé reste stockée localement sur votre PC et n'est envoyée qu'en HTTPS vers targettool.aavso.org.",
+      btnOpenAavsoApiPage: "🌐 Ouvrir AAVSO Target Tool API ↗",
+      btnRegisterAavso: "📝 Compte AAVSO gratuit ↗",
+      apiKeyBenefitsTitle: "🚀 Fonctionnalités débloquées",
+      apiKeyBen1Title: "📡 Liste complète en direct AAVSO",
+      apiKeyBen1Desc: "Télécharge toutes les cibles actives de chaque section AAVSO dans le Radar au-delà des 246 étoiles de base.",
+      apiKeyBen2Title: "🔴 Alertes de priorité et campagnes",
+      apiKeyBen2Desc: "Met en avant les cibles prioritaires et campagnes actives en haut du Radar avec badges LIVE.",
+      apiKeyBen3Title: "🕒 Dernière observation et conjonction solaire",
+      apiKeyBen3Desc: "Affiche l'horodatage UTC exact du dernier point AAVSO et signale les étoiles proches du Soleil.",
+      apiKeyBen4Title: "🛡 Gratuit (1 000 req/h) et confidentiel",
+      apiKeyBen4Desc: "Entièrement gratuit pour les membres AAVSO. Sans clé, le mode public continue d'intégrer les Alert Notices.",
+      btnGotIt: "Compris"
+    },
+    zh: {
+      lblAavsoApiKeyTitle: "AAVSO Target Tool API 密钥",
+      badgeApiKeyPublic: "公共实时",
+      badgeApiKeyActive: "API 实时",
+      phAavsoApiKey: "粘贴您的个人 AAVSO API 密钥...",
+      btnSaveApiKey: "💾 保存并同步",
+      btnClearApiKey: "🗑 清除",
+      btnApiKeyGuide: "❓ 如何获取 API 密钥及其解锁功能",
+      apiKeyStatusPublic: "自动公共模式：246 颗基础目标 + 实时 AAVSO 警报通告。",
+      apiKeyStatusActiveFmt: "AAVSO Target Tool API 已启用：新增 +{added} 颗恒星（雷达共 {total} 颗）。",
+      apiKeyStatusCampaignFmt: "公共实时模式：新增 +{added} 颗警报通告目标（雷达共 {total} 颗）。",
+      apiKeyStatusErrorFmt: "API 同步提示：{err}",
+      apiKeyStatusSavedEmpty: "已清除密钥 — 已切回自动公共实时模式。",
+      apiKeyModalTitle: "AAVSO Target Tool API 密钥 — 获取指南与优势",
+      apiKeyModalSub: "官方免费 AAVSO API v1.0.0，实现目标雷达全量实时同步",
+      apiKeyHowToTitle: "🧭 如何免费获取 API 密钥",
+      apiKeyStep1: "登录您的免费 aavso.org 观测者账号（2 分钟即可完成免费注册）。",
+      apiKeyStep2: "打开官方 AAVSO Target Tool API 页面（targettool.aavso.org/TargetTool/api），在个人资料中复制 API 密钥。",
+      apiKeyStep3: "将密钥粘贴到「设置 → AAVSO Target Tool API 密钥」并点击「保存并同步」。",
+      apiKeyStep4: "密钥仅保存在本地电脑，仅通过 HTTPS 直接发送至 targettool.aavso.org。",
+      btnOpenAavsoApiPage: "🌐 打开 AAVSO Target Tool API ↗",
+      btnRegisterAavso: "📝 免费注册 AAVSO ↗",
+      apiKeyBenefitsTitle: "🚀 输入密钥后解锁的能力",
+      apiKeyBen1Title: "📡 全量实时 AAVSO 目标库",
+      apiKeyBen1Desc: "直接同步所有 AAVSO 观测分区的活跃目标，不再局限于内置的 246 颗离线恒星。",
+      apiKeyBen2Title: "🔴 优先爆发与联测活动置顶",
+      apiKeyBen2Desc: "将高优先级目标和最新联测活动置顶显示，并附带醒目的 LIVE 徽章。",
+      apiKeyBen3Title: "🕒 最新观测 UTC 时间与合日提醒",
+      apiKeyBen3Desc: "显示 AAVSO 数据库最近一次观测的精确 UTC 时间，并标记接近太阳合相的目标。",
+      apiKeyBen4Title: "🛡 免费额度（1000 次/小时）与隐私",
+      apiKeyBen4Desc: "对 AAVSO 成员完全免费。即使不填密钥，公共实时模式也会自动拉取最新 Alert Notices。",
+      btnGotIt: "知道了"
+    },
+    cs: {
+      lblAavsoApiKeyTitle: "API klíč AAVSO Target Tool",
+      badgeApiKeyPublic: "Veřejný Live",
+      badgeApiKeyActive: "API Live",
+      phAavsoApiKey: "Vložte osobní API klíč AAVSO...",
+      btnSaveApiKey: "💾 Uložit a synchronizovat",
+      btnClearApiKey: "🗑 Smazat",
+      btnApiKeyGuide: "❓ Kde získat API klíč a co odemkne",
+      apiKeyStatusPublic: "Veřejný režim: 246 základních cílů + živé AAVSO Alert Notices.",
+      apiKeyStatusActiveFmt: "AAVSO Target Tool API aktivní: +{added} nových hvězd (celkem {total} v Radaru).",
+      apiKeyStatusCampaignFmt: "Veřejný Live režim: +{added} nových cílů z Alert Notices (celkem {total}).",
+      apiKeyStatusErrorFmt: "Poznámka API: {err}",
+      apiKeyStatusSavedEmpty: "Klíč smazán — obnoven automatický veřejný Live režim.",
+      apiKeyModalTitle: "API klíč AAVSO Target Tool — návod a výhody",
+      apiKeyModalSub: "Oficiální bezplatné AAVSO API v1.0.0 pro plnou živou synchronizaci Radaru",
+      apiKeyHowToTitle: "🧭 Kde získat bezplatný API klíč",
+      apiKeyStep1: "Přihlaste se ke svému bezplatnému účtu pozorovatele na aavso.org (nebo se zaregistrujte za 2 minuty).",
+      apiKeyStep2: "Otevřete oficiální stránku AAVSO Target Tool API (targettool.aavso.org/TargetTool/api) a zkopírujte svůj osobní klíč.",
+      apiKeyStep3: "Vložte klíč v Nastavení → API klíč AAVSO Target Tool a klikněte na «Uložit a synchronizovat».",
+      apiKeyStep4: "Klíč je uložen čistě lokálně ve vašem PC a posílá se pouze přes HTTPS na targettool.aavso.org.",
+      btnOpenAavsoApiPage: "🌐 Otevřít AAVSO Target Tool API ↗",
+      btnRegisterAavso: "📝 Bezplatný účet AAVSO ↗",
+      apiKeyBenefitsTitle: "🚀 Jaké možnosti klíč odemyká",
+      apiKeyBen1Title: "📡 Kompletní živý seznam cílů AAVSO",
+      apiKeyBen1Desc: "Stahuje všechny aktivní cíle ze všech sekcí AAVSO přímo do Radaru — bez omezení na 246 základních hvězd.",
+      apiKeyBen2Title: "🔴 Prioritní vzplanutí a kampaně",
+      apiKeyBen2Desc: "Zobrazuje urgentní cíle a aktivní kampaně v horní části Radaru s odznaky LIVE.",
+      apiKeyBen3Title: "🕒 Poslední pozorování a konjunkce se Sluncem",
+      apiKeyBen3Desc: "Ukazuje přesný čas UTC posledního měření v AAVSO a upozorňuje na konjunkci se Sluncem.",
+      apiKeyBen4Title: "🛡 Zdarma (1 000 požadavků/hod) a soukromí",
+      apiKeyBen4Desc: "Zcela zdarma pro členy AAVSO. I bez klíče veřejný režim automaticky doplňuje čerstvé Alert Notices.",
+      btnGotIt: "Rozumím"
+    },
+    ber: {
+      lblAavsoApiKeyTitle: "Tasarut API n AAVSO Target Tool",
+      badgeApiKeyPublic: "Live Azayez",
+      badgeApiKeyActive: "API Live",
+      phAavsoApiKey: "Senteḍ tasarut-ik API n AAVSO...",
+      btnSaveApiKey: "💾 Sekles & Sdukkel",
+      btnClearApiKey: "🗑 Sfeḍ",
+      btnApiKeyGuide: "❓ Ansi ara d-tawiḍ tasarut API d wayen i tettak",
+      apiKeyStatusPublic: "Askar azayez: 246 n yitran + AAVSO Alert Notices srid.",
+      apiKeyStatusActiveFmt: "AAVSO Target Tool API yermed: +{added} n yitran imaynuten ({total} deg Radar).",
+      apiKeyStatusCampaignFmt: "Askar Live azayez: +{added} n yitran n Alert Notices ({total} deg Radar).",
+      apiKeyStatusErrorFmt: "Tazmilt n API: {err}",
+      apiKeyStatusSavedEmpty: "Tasarut tettwasfeḍ — tuɣaled ɣer uskar Live azayez.",
+      apiKeyModalTitle: "Tasarut API n AAVSO Target Tool — Amnir d lfayda",
+      apiKeyModalSub: "API unṣib n baṭel AAVSO v1.0.0 i usdukkel ummid n Radar n yitran",
+      apiKeyHowToTitle: "🧭 Ansi ara d-tawiḍ tasarut API n baṭel",
+      apiKeyStep1: "Kcəm ɣer umiḍan-ik n baṭel deg aavso.org (neɣ jerred deg 2 n tedqiqin).",
+      apiKeyStep2: "Ldi asebter unṣib AAVSO Target Tool API (targettool.aavso.org/TargetTool/api) sakin nɣel tasarut-ik.",
+      apiKeyStep3: "Senteḍ tasarut deg Iɣewwaren → Tasarut API n AAVSO Target Tool sakin sit ɣef «Sekles & Sdukkel».",
+      apiKeyStep4: "Tasarut-ik tettwasekles kan deg uselkim-ik yerna tettuceyyeɛ kan s HTTPS ɣer targettool.aavso.org.",
+      btnOpenAavsoApiPage: "🌐 Ldi AAVSO Target Tool API ↗",
+      btnRegisterAavso: "📝 Amiḍan AAVSO n baṭel ↗",
+      apiKeyBenefitsTitle: "🚀 Ayen i d-tettak tsarut API",
+      apiKeyBen1Title: "📡 Tabdart tummidt srid n AAVSO",
+      apiKeyBen1Desc: "Tettader-d akk itran irmden n AAVSO ɣer Radar, ur teḥbis ara deg 246 n yitran n tazwara.",
+      apiKeyBen2Title: "🔴 Itran izwaren d tḥemliwin",
+      apiKeyBen2Desc: "Tesskan-d itran imenza d tḥemliwin srid deg ufella n Radar s tɣuri LIVE.",
+      apiKeyBen3Title: "🕒 Tizrawin tineggura d umyagar d yiṭij",
+      apiKeyBen3Desc: "Tesskan-d akud UTC aneggaru deg AAVSO yerna tettɛeyyin ɣef yitran iqerben ɣer yiṭij.",
+      apiKeyBen4Title: "🛡 Baṭel (1 000 req/h) d tudert tusligt",
+      apiKeyBen4Desc: "S baṭel i yiɛeggalen n AAVSO. Ula war tasarut, askar azayez yessidif-d Alert Notices imaynuten.",
+      btnGotIt: "Fehmeɣ"
+    }
+  };
+
+  Object.keys(V133_I18N_PATCH).forEach((langCode) => {
+    if (I18N[langCode]) {
+      Object.assign(I18N[langCode], V133_I18N_PATCH[langCode]);
+    }
+  });
+
+  const AAVSO_API_KEY_STORAGE_KEY = "aavso_target_tool_api_key";
+  const _BASELINE_CATALOGUE_SNAPSHOT = AAVSO_URGENT_CATALOGUE.map(item => Object.assign({}, item));
+
+  function _getStoredAavsoApiKey() {
+    try {
+      return String(localStorage.getItem(AAVSO_API_KEY_STORAGE_KEY) || "").trim();
+    } catch (_) {
+      return "";
+    }
+  }
+
+  function _setStoredAavsoApiKey(val) {
+    try {
+      const clean = String(val || "").trim();
+      if (clean) localStorage.setItem(AAVSO_API_KEY_STORAGE_KEY, clean);
+      else localStorage.removeItem(AAVSO_API_KEY_STORAGE_KEY);
+    } catch (_) {}
+  }
+
+  async function _callBackendLiveAction(pyMethodName, rpcAction, payload = {}) {
+    try {
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api[pyMethodName] === "function") {
+        return await window.pywebview.api[pyMethodName](payload);
+      }
+    } catch (_) {}
+    const resp = await fetch("http://127.0.0.1:18765/api/rpc", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(Object.assign({ action: rpcAction }, payload)),
+      signal: AbortSignal.timeout(12000)
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    return await resp.json();
+  }
+
+  window.mergeLiveAavsoTargetsIntoCatalog = function(liveTargets, sourceTag = "live") {
+    if (!Array.isArray(liveTargets) || liveTargets.length === 0) {
+      return { added: 0, updated: 0, total: AAVSO_URGENT_CATALOGUE.length };
+    }
+    const byKey = new Map();
+    AAVSO_URGENT_CATALOGUE.forEach((item, idx) => {
+      const k1 = String(item.star || "").trim().toLowerCase();
+      const k2 = String(item.star || "").trim().replace(/\s+/g, " ").toLowerCase();
+      if (k1) byKey.set(k1, idx);
+      if (k2) byKey.set(k2, idx);
+    });
+
+    let added = 0;
+    let updated = 0;
+    const toPrepend = [];
+
+    liveTargets.forEach((raw) => {
+      if (!raw || !raw.star) return;
+      const ra = Number(raw.ra);
+      const dec = Number(raw.dec);
+      if (!Number.isFinite(ra) || !Number.isFinite(dec)) return;
+
+      const starName = String(raw.star).trim();
+      const k1 = starName.toLowerCase();
+      const k2 = starName.replace(/\s+/g, " ").toLowerCase();
+      const existingIdx = byKey.has(k1) ? byKey.get(k1) : (byKey.has(k2) ? byKey.get(k2) : -1);
+
+      if (existingIdx >= 0) {
+        const cur = AAVSO_URGENT_CATALOGUE[existingIdx];
+        cur.ra = ra;
+        cur.dec = dec;
+        if (raw.isLiveTargetTool) cur.isLiveTargetTool = true;
+        if (raw.isLiveCampaign) cur.isLiveCampaign = true;
+        if (raw.lastDataPoint) cur.lastDataPoint = raw.lastDataPoint;
+        if (raw.solarConjunction != null) cur.solarConjunction = Boolean(raw.solarConjunction);
+        if (raw.obsSection) cur.obsSection = raw.obsSection;
+        if (raw.isHighPriority && raw.priority) cur.priority = raw.priority;
+        if (raw.desc && !cur.desc) cur.desc = raw.desc;
+        updated += 1;
+      } else {
+        const entry = {
+          star: starName,
+          alias: String(raw.alias || (sourceTag === "target_tool" ? "AAVSO Target Tool" : "AAVSO Live Notice")),
+          type: String(raw.type || "AAVSO Live"),
+          auid: String(raw.auid || ""),
+          con: String(raw.con || "AAVSO"),
+          ra: ra,
+          dec: dec,
+          magRange: String(raw.magRange || "Live"),
+          chart: String(raw.chart || ""),
+          kname: String(raw.kname || ""),
+          kmag: String(raw.kmag || ""),
+          priority: String(raw.priority || (sourceTag === "target_tool" ? "🟢 LIVE Target Tool" : "🔴 LIVE Campaign")),
+          desc: String(raw.desc || ""),
+          comment: String(raw.comment || raw.desc || ""),
+          isLiveTargetTool: Boolean(raw.isLiveTargetTool || sourceTag === "target_tool"),
+          isLiveCampaign: Boolean(raw.isLiveCampaign || sourceTag === "campaign"),
+          isHighPriority: Boolean(raw.isHighPriority),
+          lastDataPoint: String(raw.lastDataPoint || ""),
+          solarConjunction: Boolean(raw.solarConjunction),
+          obsSection: String(raw.obsSection || "")
+        };
+        toPrepend.push(entry);
+        byKey.set(k1, -2);
+        if (k2) byKey.set(k2, -2);
+        added += 1;
+      }
+    });
+
+    if (toPrepend.length > 0) {
+      toPrepend.sort((a, b) => Number(Boolean(b.isHighPriority || b.isLiveCampaign)) - Number(Boolean(a.isHighPriority || a.isLiveCampaign)));
+      AAVSO_URGENT_CATALOGUE.unshift(...toPrepend);
+    }
+
+    if (typeof renderV6RadarDock === "function") renderV6RadarDock();
+    if (typeof renderUrgentStarsCards === "function") {
+      renderUrgentStarsCards(document.getElementById("urgentSearchField")?.value || "");
+    }
+    return { added, updated, total: AAVSO_URGENT_CATALOGUE.length };
+  };
+
+  window.resetLiveAavsoTargetsToBaseline = function() {
+    AAVSO_URGENT_CATALOGUE.length = 0;
+    _BASELINE_CATALOGUE_SNAPSHOT.forEach(item => AAVSO_URGENT_CATALOGUE.push(Object.assign({}, item)));
+    if (typeof renderV6RadarDock === "function") renderV6RadarDock();
+    if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
+  };
+
+  function _updateApiKeySettingsUi(statusText = "", isActiveOverride = null) {
+    const badgeEl = document.getElementById("settingsApiKeyBadge");
+    const statusEl = document.getElementById("settingsApiKeyStatus");
+    const hasKey = isActiveOverride !== null ? isActiveOverride : Boolean(_getStoredAavsoApiKey());
+    if (badgeEl) {
+      badgeEl.classList.toggle("active-key", hasKey);
+      badgeEl.textContent = hasKey ? t("badgeApiKeyActive") : t("badgeApiKeyPublic");
+    }
+    if (statusEl && statusText) {
+      statusEl.textContent = statusText;
+    } else if (statusEl && !statusText && !hasKey) {
+      statusEl.textContent = t("apiKeyStatusPublic");
+    }
+  }
+
+  window._syncLiveAavsoOnlineTargets = async function() {
+    let totalAdded = 0;
+    const vspPill = document.getElementById("bentoVspPill");
+    const apiKey = _getStoredAavsoApiKey();
+
+    // Option 1: Always fetch public live AAVSO Alert Notices + campaign stars (no API key needed)
+    try {
+      const campRes = await _callBackendLiveAction(
+        "backend_fetch_live_aavso_campaign_targets",
+        "fetch_live_aavso_campaign_targets",
+        { maxStars: 25 }
+      );
+      if (campRes && campRes.ok) {
+        if (Array.isArray(campRes.notices) && campRes.notices.length > 0) {
+          window._latestAavsoLiveNotices = campRes.notices;
+        }
+        if (Array.isArray(campRes.targets) && campRes.targets.length > 0) {
+          const m1 = window.mergeLiveAavsoTargetsIntoCatalog(campRes.targets, "campaign");
+          totalAdded += m1.added;
+          if (!apiKey) {
+            _updateApiKeySettingsUi(
+              t("apiKeyStatusCampaignFmt").replace("{added}", m1.added).replace("{total}", m1.total),
+              false
+            );
+          }
+        }
+        if (vspPill && Array.isArray(campRes.notices) && campRes.notices[0]) {
+          vspPill.textContent = `✓ AAVSO Live (${campRes.notices[0].number || "OK"})`;
+        }
+      }
+    } catch (_) {}
+
+    // Option 2: If personal AAVSO Target Tool API key is configured, fetch full live catalog
+    if (apiKey) {
+      try {
+        const ttRes = await _callBackendLiveAction(
+          "backend_fetch_aavso_target_tool_targets",
+          "fetch_aavso_target_tool_targets",
+          { apiKey, obsSection: "all" }
+        );
+        if (ttRes && ttRes.ok && Array.isArray(ttRes.targets)) {
+          const m2 = window.mergeLiveAavsoTargetsIntoCatalog(ttRes.targets, "target_tool");
+          totalAdded += m2.added;
+          _updateApiKeySettingsUi(
+            t("apiKeyStatusActiveFmt").replace("{added}", m2.added).replace("{total}", m2.total),
+            true
+          );
+          if (vspPill) {
+            vspPill.textContent = `✓ Target Tool API (${m2.total})`;
+          }
+        } else if (ttRes && ttRes.error) {
+          _updateApiKeySettingsUi(
+            t("apiKeyStatusErrorFmt").replace("{err}", ttRes.error),
+            false
+          );
+        }
+      } catch (err) {
+        _updateApiKeySettingsUi(
+          t("apiKeyStatusErrorFmt").replace("{err}", String(err && err.message || err || "offline")),
+          false
+        );
+      }
+    }
+    return { totalAdded, total: AAVSO_URGENT_CATALOGUE.length };
+  };
+
+  window.openAavsoApiKeyGuideModal = function() {
+    const gearMenu = document.getElementById("settingsPopoverMenu");
+    if (gearMenu && gearMenu.classList.contains("open") && typeof window.closeSettingsPopover === "function") {
+      window.closeSettingsPopover();
+    }
+    const modal = document.getElementById("aavsoApiKeyGuideModal");
+    if (!modal) return;
+    if (typeof applyTranslations === "function") applyTranslations();
+    modal.classList.add("open");
+    if (typeof syncModalBodyLock === "function") syncModalBodyLock();
+  };
+
+  window.closeAavsoApiKeyGuideModal = function() {
+    const modal = document.getElementById("aavsoApiKeyGuideModal");
+    if (!modal) return;
+    modal.classList.remove("open");
+    if (typeof syncModalBodyLock === "function") syncModalBodyLock();
+  };
+
+  function _initAavsoApiKeyControls() {
+    const inputEl = document.getElementById("settingsAavsoApiKeyInput");
+    const toggleBtn = document.getElementById("btnToggleApiKeyVis");
+    const saveBtn = document.getElementById("btnSaveAavsoApiKey");
+    const clearBtn = document.getElementById("btnClearAavsoApiKey");
+    const stored = _getStoredAavsoApiKey();
+    if (inputEl && stored) {
+      inputEl.value = stored;
+    }
+    _updateApiKeySettingsUi("", Boolean(stored));
+
+    if (toggleBtn && inputEl) {
+      toggleBtn.addEventListener("click", () => {
+        inputEl.type = (inputEl.type === "password") ? "text" : "password";
+      });
+    }
+    if (saveBtn && inputEl) {
+      saveBtn.addEventListener("click", async () => {
+        const val = inputEl.value.trim();
+        _setStoredAavsoApiKey(val);
+        _updateApiKeySettingsUi(val ? "" : t("apiKeyStatusSavedEmpty"), Boolean(val));
+        if (typeof refreshUrgentStarsData === "function") {
+          await refreshUrgentStarsData(true);
+        }
+      });
+    }
+    if (clearBtn && inputEl) {
+      clearBtn.addEventListener("click", () => {
+        inputEl.value = "";
+        _setStoredAavsoApiKey("");
+        window.resetLiveAavsoTargetsToBaseline();
+        _updateApiKeySettingsUi(t("apiKeyStatusSavedEmpty"), false);
+      });
+    }
+  }
+
+  _initAavsoApiKeyControls();
+  if (typeof applyTranslations === "function") applyTranslations();
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const m = document.getElementById("aavsoApiKeyGuideModal");
+      if (m && m.classList.contains("open")) window.closeAavsoApiKeyGuideModal();
+    }
+  });
+
 })();
