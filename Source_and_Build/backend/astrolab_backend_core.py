@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ================================================================================
-Seestar AstroLab AAVSO v1.3.0 — Unified Python Backend Core (Single Source of Truth)
+Seestar AstroLab AAVSO v1.3.1 — Unified Python Backend Core (Single Source of Truth)
 Author: CosmoBehemothych (https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO)
 ================================================================================
 Централизованное серверное/бэкенд-ядро бизнес-логики приложения:
@@ -42,7 +42,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-APP_VERSION = "1.3.0"
+APP_VERSION = "1.3.1"
 CRITICAL_COORD_DIFF_DEG = 0.05
 EXACT_COORD_MATCH_DEG = 0.00001
 DSS2_SURVEY_FOV_DEG = 2.40

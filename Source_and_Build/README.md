@@ -1,4 +1,4 @@
-# 🔭 Seestar AstroLab AAVSO (`v1.3.0`)
+# 🔭 Seestar AstroLab AAVSO (`v1.3.1`)
 
 [![GitHub release](https://img.shields.io/github/v/release/CosmoBehemothych/Seestar-AstroLab-AAVSO?color=38bdf8&style=flat-square)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
@@ -8,9 +8,8 @@
 > **Turn your ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`) into a scientific photometry instrument: convert raw `Magnitude_*.csv` files into verified, upload-ready [AAVSO WebObs](https://www.aavso.org/webobs) reports in 15 seconds.**  
 > **Important:** We **do NOT send photos or telescope images** — only brightness measurements (small CSV numbers) are submitted to the [AAVSO International Database (AID)](https://www.aavso.org/aavso-international-database-aid).
 
-**[⬇️ Download Latest Release (`v1.3.0` — Installer & Portable)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.3.0)** • **[🇷🇺 Русская версия ниже](#-русская-версия-russian)**
+**[⬇️ Download Latest Release (`v1.3.1` — Installer & Portable)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.3.1)** • **[🇷🇺 Русская версия ниже](#-русская-версия-russian)**
 
-![Seestar AstroLab AAVSO Main Workspace](screenshots/01_main_dashboard_and_converter.png)
 
 ---
 
@@ -22,7 +21,7 @@
 
 ## 🚀 Getting Started in 3 Simple Steps
 
-1. **⬇️ Download** **`Seestar_AstroLab_Setup_v1.3.0.exe`** (Windows Installer) or **`Seestar_AstroLab_Portable_v1.3.0.exe`** (no installation needed) from [GitHub Releases](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.3.0).
+1. **⬇️ Download** **`Seestar_AstroLab_Setup_v1.3.1.exe`** (Windows Installer) or **`Seestar_AstroLab_Portable_v1.3.1.exe`** (no installation needed) from [GitHub Releases](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.3.1).
 2. **▶️ Launch** the app (no Python installation required; all libraries are bundled inside).
 3. **🟢 Click the green `🚀 Getting Started` button** in the top bar — a built-in **12-slide visual guide** (available in all **8 languages**) walks you step by step from registering a free [AAVSO `OBSCODE`](https://www.aavso.org/user/register) and shooting `EQ Mode` photometry on your Seestar to uploading your finished CSV report to [AAVSO WebObs](https://www.aavso.org/webobs).
 
@@ -34,7 +33,7 @@
 
 | Version | Status | Download Link | Highlights |
 | :--- | :--- | :--- | :--- |
-| **`v1.3.0`** | ✨ **Latest Release** | [GitHub Releases (`v1.3.0`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.3.0) | Per-row `Mag Error (MERR)` quality control (auto-reject `≥ 1.00m` per AAVSO rules + optional `> 0.25m` checkbox), horizon altitude check (`< 20°` / `Airmass > 2.9`) with automatic city-timezone verification, symmetric Northern & Southern Hemisphere declination filtering (`\|lat - dec\| ≤ 70°`), one-time startup update checker, and 100% verified 8-language UI |
+| **`v1.3.1`** | ✨ **Latest Release** | [GitHub Releases (`v1.3.1`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.3.1) | Per-row `Mag Error (MERR)` quality control (auto-reject `≥ 1.00m` per AAVSO rules + optional `> 0.25m` checkbox), horizon altitude check (`< 20°` / `Airmass > 2.9`) with automatic city-timezone verification, symmetric Northern & Southern Hemisphere declination filtering (`\|lat - dec\| ≤ 70°`), one-time startup update checker, and 100% verified 8-language UI |
 | **`v1.2.2`** | 📦 **Previous Release** | [GitHub Releases (`v1.2.2`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.2.2) | One-time startup GitHub Releases update check, strict `KNAME=na`/`KMAG=na` AAVSO Extended compliance, scrollable Settings popover fix across DPI scales |
 | **`v1.2.1`** | 📦 **Previous Release** | [GitHub Releases (`v1.2.1`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.2.1) | Standalone `.exe` (zero Python needed), Czech (`Čeština`) localization, built-in 12-slide Getting Started guide, strict AAVSO AID light-curve verification |
 | **`v1.1.2 beta`** | 🧪 **Legacy Beta** | [GitHub Releases (`v1.1.2-beta`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.1.2-beta) | Hemisphere & balcony direction filters, Sky Clarity & Moon indicator, 246-target list |
@@ -52,7 +51,7 @@ Uploading raw `Magnitude_*.csv` files from Seestar directly to AAVSO WebObs fail
 2. **Canonical `STARID` Normalization (`IAU` / `AAVSO VSX`)**:
    - Seestar often exports full Latin constellation names (e.g., `SZ Lyncis`) or non-standard aliases that AAVSO WebObs rejects. The converter queries **[CDS SIMBAD](https://simbad.cds.unistra.fr/simbad/)** and **[AAVSO VSX](https://www.aavso.org/vsx/)**, reduces constellation names to official IAU abbreviations (`SZ Lyncis` → `SZ Lyn`), and inserts the exact catalog `STARID`.
 3. **Wrong-Star & Coordinate Mismatch Lock (`RA` / `Dec` J2000.0)**:
-   - Cross-checks the coordinates inside your Seestar CSV against `SIMBAD` / `AAVSO VSX`: **green** (`< 0.0001°`), **yellow** (`≤ 0.017°` normal frame offset), and **red conversion lock** (`> 0.017°`), making it impossible to accidentally upload data from Star A labeled as Star B.
+   - Cross-checks the coordinates inside your Seestar CSV against `SIMBAD` / `AAVSO VSX`: **green** (`< 0.00001°`), **yellow** (`≤ 0.05°` normal frame offset), and **red conversion lock** (`> 0.05°`), making it impossible to accidentally upload data from Star A labeled as Star B.
 4. **Low-Altitude & High-Airmass Protection (`Alt < 20°` / `Airmass > 2.9`) with Anti-False-Alarm Verification**:
    - For every frame, computes exact target elevation (`Alt`) and **Kasten–Young (1989) Airmass** from `RA`, `Dec`, `JD_Mid`, and your observatory coordinates.
    - **Built-in protection against a wrong city in Settings**: before warning you, the algorithm compares the CSV's timezone (`EXP start` local vs `JD` UTC) and checks physical visibility (`Alt > 2°`). If your Settings city doesn't match the file, it skips the check calmly without false warnings. When verified and frames fall below `20°`, it shows the exact count and offers an optional checkbox **«Exclude frames below 20° (`Airmass > 2.9`)»** (unchecked by default; `AIRMASS` stays `na` in the output file).
@@ -88,7 +87,7 @@ Translated into **8 languages**: English, Russian, Spanish, German, French, Chin
 
 > ✉️ **Feedback & New Languages**: I'm happy to expand the list of supported languages and welcome constructive feedback or feature suggestions. Email **[CosmoBehemothych@gmail.com](mailto:CosmoBehemothych@gmail.com)**.
 
-## 📸 Interface Gallery (`v1.3.0`)
+## 📸 Interface Gallery (`v1.3.1`)
 
 ### 1. Urgent Stars (246 AAVSO Priority Targets)
 ![Urgent Stars - AAVSO Priority Targets](screenshots/02_urgent_stars_priority_targets.png)
@@ -107,7 +106,7 @@ Translated into **8 languages**: English, Russian, Spanish, German, French, Chin
 > **Важно:** мы **НЕ отправляем фотографии или кадры** с телескопа — в международную базу [AAVSO](https://www.aavso.org) отправляются **только цифры яркости (данные фотометрии) в виде небольшого CSV-файла**.
 
 ### 🚀 Быстрый старт за 3 шага
-1. **⬇️ Скачайте** **`Seestar_AstroLab_Setup_v1.3.0.exe`** (установщик Windows) или **`Seestar_AstroLab_Portable_v1.3.0.exe`** (портативная версия) со страницы [GitHub Releases (`v1.3.0`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.3.0).
+1. **⬇️ Скачайте** **`Seestar_AstroLab_Setup_v1.3.1.exe`** (установщик Windows) или **`Seestar_AstroLab_Portable_v1.3.1.exe`** (портативная версия) со страницы [GitHub Releases (`v1.3.1`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.3.1).
 2. **▶️ Запустите** программу (Python не требуется — все библиотеки встроены внутрь `.exe`).
 3. **🟢 Нажмите зелёную кнопку `🚀 С чего начать`** в верхней панели — откроется встроенная **12-слайдовая инструкция с картинками** (на всех 8 языках), которая по шагам проведёт от бесплатной регистрации на [aavso.org](https://www.aavso.org/user/register) и съёмки на Seestar до загрузки готового CSV-отчёта в AAVSO WebObs.
 
@@ -119,7 +118,7 @@ Translated into **8 languages**: English, Russian, Spanish, German, French, Chin
 2. **Корректный `STARID` по стандарту IAU / AAVSO VSX**:
    - Seestar записывает полные латинские названия созвездий (например, `SZ Lyncis` вместо `SZ Lyn`), которые сайт AAVSO может отклонить. Конвертер сверяет звезду по **[CDS SIMBAD](https://simbad.cds.unistra.fr/simbad/)** и **[AAVSO VSX](https://www.aavso.org/vsx/)** и автоматически подставляет канонический идентификатор `STARID`.
 3. **Защита от загрузки «чужой» звезды по координатам `RA` / `Dec`**:
-   - Сравнивает координаты J2000.0 из файла Seestar с каталогом: **зелёный** (`< 0.0001°`), **жёлтый** (`≤ 0.017°` допустимый сдвиг центра кадра) и **красная блокировка конвертации** (`> 0.017°`) — невозможно случайно отправить замеры одной звезды под именем другой.
+   - Сравнивает координаты J2000.0 из файла Seestar с каталогом: **зелёный** (`< 0.00001°`), **жёлтый** (`≤ 0.05°` допустимый сдвиг центра кадра) и **красная блокировка конвертации** (`> 0.05°`) — невозможно случайно отправить замеры одной звезды под именем другой.
 4. **Проверка угла (высоты над горизонтом) и Airmass (`Alt < 20°` / `X > 2.9`) с защитой от «чужого города»**:
    - Для каждого кадра по `RA`, `Dec`, `JD_Mid` и координатам вашего города вычисляет высоту над горизонтом `Alt` и воздушную массу (**Kasten–Young, 1989**).
    - **Защита от ложных срабатываний**: сначала сверяет часовой пояс из файла (`EXP start` vs `JD` UTC) и физическую видимость (`Alt > 2°`) с городом из Настроек. Если город не совпадает — проверка спокойно пропускается без ложных тревог. Если город совпал и найдены кадры ниже `20°`, выводится предупреждение с их количеством и опциональная галочка **«Исключить кадры ниже 20° (`Airmass > 2.9`)»** (по умолчанию выключена; в файле `AIRMASS=na`).

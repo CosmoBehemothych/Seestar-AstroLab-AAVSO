@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.3.0) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.3.1) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.3.0.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.3.1.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -528,7 +528,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.3.0",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.3.1",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -538,7 +538,7 @@
       errNoObscodeMsg: "Укажите ваш личный код наблюдателя AAVSO (OBSCODE) перед конвертацией данных для загрузки на AAVSO.",
       errNoObscodeExplain: "Стандарт AAVSO Extended требует обязательного указания персонального кода наблюдателя в заголовке #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Версия 1.3.0",
+      appVersionLabel: "Версия 1.3.1",
       starIdFromCatalogHint: "✓ Каталожный идентификатор звезды (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -881,7 +881,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.3.0 session",
+      actAppStarted: "Started Seestar AstroLab v1.3.1 session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -891,7 +891,7 @@
       errNoObscodeMsg: "Please enter your personal AAVSO Observer Code (OBSCODE) before converting data for AAVSO upload.",
       errNoObscodeExplain: "The AAVSO Extended format strictly requires a valid personal observer code in the #OBSCODE header.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.0",
+      appVersionLabel: "Version 1.3.1",
       starIdFromCatalogHint: "✓ Canonical Catalog Star ID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometry Observatory",
       
@@ -1229,7 +1229,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.3.0",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.3.1",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1239,7 +1239,7 @@
       errNoObscodeMsg: "Ingrese su código personal de observador AAVSO (OBSCODE) antes de convertir los datos.",
       errNoObscodeExplain: "El formato AAVSO Extended requiere un código de observador válido en el encabezado #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Versión 1.3.0",
+      appVersionLabel: "Versión 1.3.1",
       starIdFromCatalogHint: "✓ Identificador de catálogo (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatorio Fotométrico Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -1553,7 +1553,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.3.0",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.3.1",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1563,7 +1563,7 @@
       errNoObscodeMsg: "Bitte geben Sie Ihren persönlichen AAVSO-Beobachtercode (OBSCODE) vor der Konvertierung ein.",
       errNoObscodeExplain: "Das AAVSO-Extended-Format erfordert zwingend einen gültigen Beobachtercode im Header #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.0",
+      appVersionLabel: "Version 1.3.1",
       starIdFromCatalogHint: "✓ Kanonische Katalog-STARID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometrie-Observatorium",
       
@@ -1866,7 +1866,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.3.0",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.3.1",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -1876,7 +1876,7 @@
       errNoObscodeMsg: "Veuillez saisir votre code observateur AAVSO (OBSCODE) avant de convertir les données.",
       errNoObscodeExplain: "Le standard AAVSO Extended exige un code observateur personnel valide dans l'en-tête #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.0",
+      appVersionLabel: "Version 1.3.1",
       starIdFromCatalogHint: "✓ Identifiant catalogue canonique (SIMBAD / AAVSO VSX) : {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -2178,7 +2178,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.3.0 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.3.1 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -2188,7 +2188,7 @@
       errNoObscodeMsg: "请在转换上传至 AAVSO 的数据前填写您的 AAVSO 观测者代码 (OBSCODE)。",
       errNoObscodeExplain: "AAVSO Extended 格式要求在 #OBSCODE 标头中提供有效的个人观测者代码。",
       radarSubTag: "",
-      appVersionLabel: "版本 1.3.0",
+      appVersionLabel: "版本 1.3.1",
       starIdFromCatalogHint: "✓ 星表标准目标名称 (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO 测光天文台",
       
@@ -4121,8 +4121,8 @@
   function checkCoordDiff(uiVal, fileVal) {
     if (isNaN(uiVal) || isNaN(fileVal)) return { status: null, msg: t("matchMissing") };
     const diff = Math.abs(uiVal - fileVal);
-    if (diff < 0.017) return { status: "ok", msg: t("matchOk") };
-    if (diff < 0.08) return { status: "warn", msg: `${t("matchWarn")} (${t("thFile")}: ${fileVal})` };
+    if (diff < 0.00001) return { status: "ok", msg: t("matchOk") };
+    if (diff <= 0.05) return { status: "warn", msg: `${t("matchWarn")} (${t("thFile")}: ${fileVal})` };
     return { status: "bad", msg: `${t("matchBad")} (${t("thFile")}: ${fileVal})` };
   }
 
@@ -4728,7 +4728,8 @@ function revealAndFocusField(inputId) {
     }
     if (typeof window.updateLowAltWarningBannerUI === "function") {
       try {
-        window.updateLowAltWarningBannerUI(lines);
+        const shouldOpenLowAltPopup = Boolean(!(options && options.isTypingInput));
+        window.updateLowAltWarningBannerUI(lines, shouldOpenLowAltPopup);
       } catch (_altErr) {}
     }
     if (typeof window.updateMerrQualityBannerUI === "function") {
@@ -5171,8 +5172,8 @@ function revealAndFocusField(inputId) {
       setVspLoadingState(false);
 
       if (check) {
-        document.getElementById("kname").value = "na";
-        document.getElementById("kmag").value = "na";
+        document.getElementById("kname").value = check.auid || "";
+        document.getElementById("kmag").value = Number.isFinite(Number(check.mag)) ? Number(check.mag).toFixed(3) : "";
         STATE.catalogVspMerr = (check.err != null && !isNaN(check.err)) ? Math.max(0.02, Number(check.err)) : 0.03;
         log(`✓ VSP / Каталог (${source || "OK"}): CHART = ${data.chartid}, KNAME = ${check.auid}, KMAG = ${check.mag.toFixed(3)}`);
         log(t("msgCheckStarWarn"));
@@ -5201,8 +5202,8 @@ function revealAndFocusField(inputId) {
       }
       if (localCat.matched) {
         if (!document.getElementById("chart").value.trim()) document.getElementById("chart").value = localCat.matched.chart;
-        document.getElementById("kname").value = "na";
-        document.getElementById("kmag").value = "na";
+        if (localCat.matched.kname) document.getElementById("kname").value = localCat.matched.kname;
+        if (localCat.matched.kmag != null && !isNaN(Number(localCat.matched.kmag))) document.getElementById("kmag").value = Number(localCat.matched.kmag).toFixed(3);
         if (!document.getElementById("ra").value.trim()) document.getElementById("ra").value = Number(localCat.matched.ra).toFixed(5);
         if (!document.getElementById("dec").value.trim()) document.getElementById("dec").value = (Number(localCat.matched.dec) >= 0 ? "+" : "") + Number(localCat.matched.dec).toFixed(5);
         STATE.catalogRa = localCat.matched.ra;
@@ -7467,8 +7468,12 @@ function revealAndFocusField(inputId) {
     document.getElementById("ra").value = Number.isFinite(numRa) ? numRa.toFixed(5) : String(ra);
     document.getElementById("dec").value = Number.isFinite(numDec) ? ((numDec >= 0 ? "+" : "") + numDec.toFixed(5)) : String(dec);
     if (chart) document.getElementById("chart").value = chart;
-    document.getElementById("kname").value = "na";
-    document.getElementById("kmag").value = "na";
+    if (kname && String(kname).trim() && String(kname).trim().toLowerCase() !== "na") {
+      document.getElementById("kname").value = String(kname).trim();
+    }
+    if (kmag != null && String(kmag).trim() !== "" && !isNaN(Number(kmag))) {
+      document.getElementById("kmag").value = Number(kmag).toFixed(3);
+    }
     STATE.catalogStarName = star;
     STATE.catalogRa = Number.isFinite(numRa) ? numRa : parseFloat(ra);
     STATE.catalogDec = Number.isFinite(numDec) ? numDec : parseFloat(dec);
@@ -8686,7 +8691,7 @@ function revealAndFocusField(inputId) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.3.0",
+      application: "Seestar AstroLab AAVSO v1.3.1",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8737,7 +8742,7 @@ function revealAndFocusField(inputId) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.3.0 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.3.1 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -11655,7 +11660,7 @@ function revealAndFocusField(inputId) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.3.0 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.3.1 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -18708,43 +18713,43 @@ function revealAndFocusField(inputId) {
     const extraPerLang = {
       en: {
         optFullWindow: "Full Window", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Version 1.3.0"
+        appVersionLabel: "Version 1.3.1"
       },
       ru: {
         optFullWindow: "Во всё окно", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Версия 1.3.0"
+        appVersionLabel: "Версия 1.3.1"
       },
       es: {
         optFullWindow: "Ventana completa", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En línea • TTL 1h",
-        appVersionLabel: "Versión 1.3.0"
+        appVersionLabel: "Versión 1.3.1"
       },
       de: {
         optFullWindow: "Vollbildfenster", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Online • TTL 1 Std.",
         thUI: "Daten aus SIMBAD-Katalog",
-        appVersionLabel: "Version 1.3.0"
+        appVersionLabel: "Version 1.3.1"
       },
       fr: {
         optFullWindow: "Pleine fenêtre", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En ligne • TTL 1h",
-        appVersionLabel: "Version 1.3.0"
+        appVersionLabel: "Version 1.3.1"
       },
       zh: {
         optFullWindow: "全窗口", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "在线 • TTL 1小时",
-        appVersionLabel: "版本 1.3.0"
+        appVersionLabel: "版本 1.3.1"
       },
       ber: {
         optFullWindow: "Asfaylu ummid", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Srad • TTL 1s",
         btnTryUniverseLuck: "Afran agacuran n yitri i wannay-ik",
         tipTryUniverseLuck: "Afran agacuran n yitri azwaru i wannayen-ik ass-a",
-        appVersionLabel: "Taseqqult 1.3.0"
+        appVersionLabel: "Taseqqult 1.3.1"
       },
       cs: {
         optFullWindow: "Celé okno", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Verze 1.3.0",
+        appVersionLabel: "Verze 1.3.1",
         lblThemePickerSplash: "Barevný motiv",
         brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Fotometrická observatoř",
         btnDonateBadge: "❤️ Podpořit",
@@ -18976,16 +18981,16 @@ function revealAndFocusField(inputId) {
     // Sync all Module 14 & curve labels on initial load for EVERY language (prevents RU leaks in EN mode)
     if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
 
-    // === v1.3.0: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
+    // === v1.3.1: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
     const UPDATE_I18N = {
-      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.3.0. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
-      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.3.0. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
-      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.3.0. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
-      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.3.0. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
-      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.3.0. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
-      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.3.0，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
-      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.3.0. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
-      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.3.0. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
+      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.3.1. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
+      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.3.1. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
+      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.3.1. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
+      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.3.1. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
+      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.3.1. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
+      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.3.1，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
+      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.3.1. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
+      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.3.1. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
     };
 
     window.parseAstroSemver = function(v) {
@@ -19045,7 +19050,7 @@ function revealAndFocusField(inputId) {
     window.checkGithubReleaseOnceOnStartup = async function(forceCheck = false) {
       if (window._githubUpdateCheckedThisSession && !forceCheck) return;
       window._githubUpdateCheckedThisSession = true;
-      const LOCAL_VER = "1.3.0";
+      const LOCAL_VER = "1.3.1";
       const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
       const lastTs = parseInt((typeof safeGetStorage === "function" ? safeGetStorage("seestar_last_update_check_ts", "0") : "0") || "0", 10);
       if (!forceCheck && lastTs > 0 && (Date.now() - lastTs) < SIX_HOURS_MS) {
@@ -19293,7 +19298,41 @@ function revealAndFocusField(inputId) {
       return result;
     };
 
-    window.updateLowAltWarningBannerUI = function updateLowAltWarningBannerUI(lines) {
+    let _lastLowAltModalSig = "";
+    window.closeLowAltWarningModal = function closeLowAltWarningModal() {
+      const m = document.getElementById("lowAltWarningModal");
+      if (m) {
+        m.style.display = "none";
+        m.classList.remove("open", "visible", "active");
+      }
+    };
+    window.openLowAltWarningModal = function openLowAltWarningModal(titleText, badgeText, detailsHtml, showCheckbox) {
+      const m = document.getElementById("lowAltWarningModal");
+      if (!m) return;
+      const tEl = document.getElementById("lowAltModalTitle");
+      const bEl = document.getElementById("lowAltModalBadge");
+      const dEl = document.getElementById("lowAltModalDetailsText");
+      const cWrap = document.getElementById("lowAltModalCheckboxWrap");
+      const cModal = document.getElementById("chkExcludeLowAltFramesModal");
+      const cInline = document.getElementById("chkExcludeLowAltFrames");
+      if (tEl) tEl.textContent = titleText;
+      if (bEl) bEl.textContent = badgeText;
+      if (dEl) dEl.innerHTML = detailsHtml;
+      if (cWrap) cWrap.style.display = showCheckbox ? "block" : "none";
+      if (cModal && cInline) cModal.checked = cInline.checked;
+      m.style.display = "flex";
+      m.classList.add("open");
+    };
+    (function bindLowAltCheckboxSync() {
+      const cModal = document.getElementById("chkExcludeLowAltFramesModal");
+      const cInline = document.getElementById("chkExcludeLowAltFrames");
+      if (cModal && cInline) {
+        cModal.addEventListener("change", () => { cInline.checked = cModal.checked; });
+        cInline.addEventListener("change", () => { cModal.checked = cInline.checked; });
+      }
+    })();
+
+    window.updateLowAltWarningBannerUI = function updateLowAltWarningBannerUI(lines, openModalOnNewFile = false) {
       const banner = document.getElementById("lowAltWarningBanner");
       const titleEl = document.getElementById("lowAltBannerTitle");
       const badgeEl = document.getElementById("lowAltBannerBadge");
@@ -19305,6 +19344,8 @@ function revealAndFocusField(inputId) {
       if (!Array.isArray(lines) || !lines.length) {
         banner.style.display = "none";
         if (chkEl) chkEl.checked = false;
+        _lastLowAltModalSig = "";
+        window.closeLowAltWarningModal();
         return;
       }
 
@@ -19334,6 +19375,16 @@ function revealAndFocusField(inputId) {
         }
         if (chkWrap) chkWrap.style.display = "none";
         if (chkEl) chkEl.checked = false;
+        const sig = `mismatch|${res.totalFrames}|${res.city}|${lines[1] || ""}`;
+        if (openModalOnNewFile && sig !== _lastLowAltModalSig) {
+          _lastLowAltModalSig = sig;
+          window.openLowAltWarningModal(
+            trLowAlt("lowAltMismatchTitle"),
+            trLowAlt("lowAltMismatchBadge"),
+            trLowAlt("lowAltMismatchDetailsFmt").replace("{city}", escapeHtml(cityLoc)),
+            false
+          );
+        }
         return;
       }
 
@@ -19357,6 +19408,24 @@ function revealAndFocusField(inputId) {
             .replace("{city}", escapeHtml(cityLoc));
         }
         if (chkWrap) chkWrap.style.display = "flex";
+        const detailsHtml = trLowAlt("lowAltWarnDetailsFmt")
+          .replace("{total}", String(res.totalFrames))
+          .replace("{low}", String(res.lowAltCount))
+          .replace("{minAlt}", res.minAltDeg.toFixed(1))
+          .replace("{maxAlt}", res.maxAltDeg.toFixed(1))
+          .replace("{maxX}", Number.isFinite(res.maxAirmass) ? res.maxAirmass.toFixed(2) : "—")
+          .replace("{minX}", Number.isFinite(res.minAirmass) ? res.minAirmass.toFixed(2) : "—")
+          .replace("{city}", escapeHtml(cityLoc));
+        const sig = `lowalt|${res.totalFrames}|${res.lowAltCount}|${res.city}|${lines[1] || ""}`;
+        if (openModalOnNewFile && sig !== _lastLowAltModalSig) {
+          _lastLowAltModalSig = sig;
+          window.openLowAltWarningModal(
+            trLowAlt("lowAltBannerTitle"),
+            trLowAlt("lowAltBannerBadge"),
+            detailsHtml,
+            true
+          );
+        }
         return;
       }
 
