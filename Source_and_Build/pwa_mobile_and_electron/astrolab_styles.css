@@ -7616,3 +7616,167 @@ body.theme-light .graph-guide-svg-card {
   flex-direction: column !important;
   justify-content: center !important;
 }
+
+
+/* === v1.3.2 DESIGNER UPGRADE: #graphGuideModal rich typography, zero wasted space, KPIs & AAVSO article links === */
+#graphGuideModal .beginner-guide-body {
+  padding: 20px 30px 24px !important;
+  justify-content: flex-start !important;
+}
+#graphGuideModal .beginner-slide-stage {
+  width: 100%;
+  max-width: 1560px;
+  margin: 0 auto;
+}
+#graphGuideModal .beginner-slide-grid {
+  display: grid !important;
+  grid-template-columns: 1.0fr 1.18fr !important;
+  gap: 24px !important;
+  align-items: start !important;
+}
+@media (max-width: 1060px) {
+  #graphGuideModal .beginner-slide-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+#graphGuideModal .graph-guide-kicker {
+  font-size: 12px !important;
+  letter-spacing: 1.1px !important;
+  margin-bottom: 4px;
+}
+#graphGuideModal .beginner-slide-headline {
+  font-size: 24px !important;
+  line-height: 1.24 !important;
+  margin: 2px 0 10px 0 !important;
+}
+#graphGuideModal .beginner-slide-BannerCallout {
+  font-size: 15px !important;
+  line-height: 1.52 !important;
+  padding: 13px 16px !important;
+  margin-bottom: 12px !important;
+}
+#graphGuideModal .graph-guide-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+#graphGuideModal .graph-guide-kpi-card {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: 10px;
+  padding: 9px 11px;
+  text-align: center;
+}
+body.theme-light #graphGuideModal .graph-guide-kpi-card {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+#graphGuideModal .graph-guide-kpi-val {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: #38bdf8;
+  font-family: var(--font-mono, monospace);
+}
+body.theme-light #graphGuideModal .graph-guide-kpi-val {
+  color: #0284c7;
+}
+#graphGuideModal .graph-guide-kpi-lbl {
+  font-size: 11.5px;
+  color: #94a3b8;
+  margin-top: 2px;
+  line-height: 1.25;
+}
+body.theme-light #graphGuideModal .graph-guide-kpi-lbl {
+  color: #475569;
+}
+#graphGuideModal .beginner-step-card {
+  padding: 12px 14px !important;
+  gap: 12px !important;
+}
+#graphGuideModal .beginner-step-text {
+  font-size: 14.5px !important;
+  line-height: 1.55 !important;
+}
+#graphGuideModal .graph-guide-pro-tip {
+  margin-top: 12px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.11);
+  border: 1px solid rgba(16, 185, 129, 0.38);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #d1fae5;
+}
+body.theme-light #graphGuideModal .graph-guide-pro-tip {
+  background: #ecfdf5;
+  border-color: #6ee7b7;
+  color: #065f46;
+}
+#graphGuideModal .graph-guide-links-bar {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(148, 163, 184, 0.22);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+#graphGuideModal .graph-guide-links-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-right: 4px;
+}
+#graphGuideModal .graph-guide-article-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(14, 165, 233, 0.14);
+  border: 1px solid rgba(56, 189, 248, 0.42);
+  color: #7dd3fc !important;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none !important;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+#graphGuideModal .graph-guide-article-link:hover {
+  background: rgba(14, 165, 233, 0.28);
+  transform: translateY(-1px);
+}
+body.theme-light #graphGuideModal .graph-guide-article-link {
+  background: #e0f2fe;
+  border-color: #38bdf8;
+  color: #0369a1 !important;
+}
+#graphGuideModal .graph-guide-visual-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+#graphGuideModal .graph-guide-visual-caption {
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  font-size: 13px;
+  line-height: 1.45;
+  color: #e0f2fe;
+  font-weight: 600;
+}
+body.theme-light #graphGuideModal .graph-guide-visual-caption {
+  background: #f0f9ff;
+  color: #0c4a6e;
+}
+#graphGuideModal .pitfalls-table {
+  margin-top: 10px;
+  font-size: 13px !important;
+}
+#graphGuideModal .pitfalls-table th,
+#graphGuideModal .pitfalls-table td {
+  padding: 8px 10px !important;
+}

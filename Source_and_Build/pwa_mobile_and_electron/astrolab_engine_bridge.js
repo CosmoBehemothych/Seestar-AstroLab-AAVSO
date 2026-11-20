@@ -19732,143 +19732,15 @@ function revealAndFocusField(inputId) {
 
 // ============================================================================
 // v1.3.2: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
-// Styled identically to "Getting Started" with authentic discrete-scatter SVGs
-// and official AAVSO photometric guidelines (VSX, VSP, AID, Smart Telescope WG)
+// Designer full-canvas layout: high-res real-data visuals, KPI cards, pro tips,
+// reference tables, and verified official AAVSO / JAAVSO self-study links.
 // ============================================================================
 (function initGraphGuidePresentation8Lang() {
-  const SVG_MAG_JD = `
-    <div class="graph-guide-svg-card">
-      <svg viewBox="0 0 560 250" width="100%" style="display:block;">
-        <rect x="0" y="0" width="560" height="250" rx="8" fill="#070d19"/>
-        <line x1="62" y1="36" x2="536" y2="36" stroke="#1e293b" stroke-dasharray="4 4"/>
-        <line x1="62" y1="106" x2="536" y2="106" stroke="#1e293b" stroke-dasharray="4 4"/>
-        <line x1="62" y1="176" x2="536" y2="176" stroke="#1e293b" stroke-dasharray="4 4"/>
-        <line x1="62" y1="22" x2="62" y2="205" stroke="#475569" stroke-width="1.5"/>
-        <line x1="62" y1="205" x2="536" y2="205" stroke="#475569" stroke-width="1.5"/>
-        <text x="10" y="40" fill="#4ade80" font-size="11" font-family="monospace" font-weight="bold">9.0m ↑</text>
-        <text x="10" y="110" fill="#94a3b8" font-size="11" font-family="monospace">9.5m</text>
-        <text x="10" y="180" fill="#f87171" font-size="11" font-family="monospace" font-weight="bold">10.0m ↓</text>
-        <text x="72" y="25" fill="#4ade80" font-size="11" font-family="sans-serif" font-weight="bold">↑ Brighter (smaller MAG)</text>
-        <text x="72" y="196" fill="#f87171" font-size="11" font-family="sans-serif" font-weight="bold">↓ Fainter (larger MAG)</text>
-        <g stroke="#f59e0b" stroke-width="1.3">
-          <line x1="95" y1="146" x2="95" y2="168"/><circle cx="95" cy="157" r="3.8" fill="#f59e0b"/>
-          <line x1="122" y1="138" x2="122" y2="160"/><circle cx="122" cy="149" r="3.8" fill="#f59e0b"/>
-          <line x1="150" y1="112" x2="150" y2="134"/><circle cx="150" cy="123" r="3.8" fill="#f59e0b"/>
-          <line x1="178" y1="74" x2="178" y2="96"/><circle cx="178" cy="85" r="3.8" fill="#f59e0b"/>
-          <line x1="205" y1="45" x2="205" y2="67"/><circle cx="205" cy="56" r="4.2" fill="#fbbf24" stroke="#fff"/>
-          <line x1="238" y1="60" x2="238" y2="82"/><circle cx="238" cy="71" r="3.8" fill="#f59e0b"/>
-          <line x1="274" y1="84" x2="274" y2="106"/><circle cx="274" cy="95" r="3.8" fill="#f59e0b"/>
-          <line x1="312" y1="108" x2="312" y2="130"/><circle cx="312" cy="119" r="3.8" fill="#f59e0b"/>
-          <line x1="354" y1="130" x2="354" y2="152"/><circle cx="354" cy="141" r="3.8" fill="#f59e0b"/>
-          <line x1="398" y1="148" x2="398" y2="170"/><circle cx="398" cy="159" r="3.8" fill="#f59e0b"/>
-          <line x1="442" y1="154" x2="442" y2="176"/><circle cx="442" cy="165" r="3.8" fill="#f59e0b"/>
-          <line x1="488" y1="134" x2="488" y2="156"/><circle cx="488" cy="145" r="3.8" fill="#f59e0b"/>
-        </g>
-        <text x="172" y="232" fill="#cbd5e1" font-size="11.5" font-family="monospace">Time: Julian Date (JD Mid, UTC) →</text>
-      </svg>
-    </div>`;
-
-  const SVG_MERR = `
-    <div class="graph-guide-svg-card">
-      <svg viewBox="0 0 560 250" width="100%" style="display:block;">
-        <rect x="0" y="0" width="560" height="250" rx="8" fill="#070d19"/>
-        <line x1="55" y1="125" x2="530" y2="125" stroke="#334155" stroke-dasharray="5 4"/>
-        <text x="72" y="34" fill="#4ade80" font-size="11.5" font-family="sans-serif" font-weight="bold">✓ Good Seestar TG (MERR ≤ 0.05m)</text>
-        <g stroke="#4ade80" stroke-width="1.5">
-          <line x1="90" y1="115" x2="90" y2="135"/><circle cx="90" cy="125" r="4" fill="#4ade80"/>
-          <line x1="125" y1="111" x2="125" y2="131"/><circle cx="125" cy="121" r="4" fill="#4ade80"/>
-          <line x1="160" y1="118" x2="160" y2="138"/><circle cx="160" cy="128" r="4" fill="#4ade80"/>
-          <line x1="195" y1="113" x2="195" y2="133"/><circle cx="195" cy="123" r="4" fill="#4ade80"/>
-        </g>
-        <text x="248" y="34" fill="#fbbf24" font-size="11.5" font-family="sans-serif" font-weight="bold">⚠ Noisy (0.25–1.0m)</text>
-        <g stroke="#fbbf24" stroke-width="1.6">
-          <line x1="285" y1="78" x2="285" y2="174"/><circle cx="285" cy="126" r="4.2" fill="#fbbf24"/>
-          <line x1="335" y1="68" x2="335" y2="178"/><circle cx="335" cy="123" r="4.2" fill="#fbbf24"/>
-        </g>
-        <text x="405" y="34" fill="#f87171" font-size="11.5" font-family="sans-serif" font-weight="bold">✕ Reject (≥ 1.0m)</text>
-        <g stroke="#f87171" stroke-width="1.8">
-          <line x1="455" y1="48" x2="455" y2="212"/><circle cx="455" cy="130" r="4.8" fill="#ef4444" stroke="#fff"/>
-        </g>
-        <text x="72" y="232" fill="#94a3b8" font-size="11" font-family="monospace">AAVSO WebObs rejects MERR ≥ 1.00m • SmartScope WG target: ≤ 0.02–0.05m</text>
-      </svg>
-    </div>`;
-
-  const SVG_PULSATOR = `
-    <div class="graph-guide-svg-card">
-      <svg viewBox="0 0 560 250" width="100%" style="display:block;">
-        <rect x="0" y="0" width="560" height="250" rx="8" fill="#070d19"/>
-        <line x1="55" y1="45" x2="535" y2="45" stroke="#1e293b" stroke-dasharray="4 4"/>
-        <line x1="55" y1="185" x2="535" y2="185" stroke="#1e293b" stroke-dasharray="4 4"/>
-        <text x="64" y="28" fill="#38bdf8" font-size="11.5" font-family="sans-serif" font-weight="bold">HADS / RRab Pulsator (e.g. SZ Lyn, P ≈ 2.89h): Steep Rise → Slow Decline</text>
-        <g fill="#38bdf8" opacity="0.55">
-          <circle cx="80" cy="172" r="3.2"/><circle cx="102" cy="166" r="3.2"/><circle cx="124" cy="132" r="3.2"/>
-          <circle cx="144" cy="84" r="3.2"/><circle cx="164" cy="54" r="3.2"/><circle cx="188" cy="68" r="3.2"/>
-          <circle cx="216" cy="96" r="3.2"/><circle cx="246" cy="126" r="3.2"/><circle cx="278" cy="152" r="3.2"/>
-          <circle cx="310" cy="170" r="3.2"/><circle cx="342" cy="176" r="3.2"/><circle cx="368" cy="144" r="3.2"/>
-          <circle cx="390" cy="92" r="3.2"/><circle cx="412" cy="56" r="3.2"/><circle cx="438" cy="74" r="3.2"/>
-          <circle cx="468" cy="108" r="3.2"/><circle cx="500" cy="144" r="3.2"/>
-        </g>
-        <g stroke="#f59e0b" stroke-width="1.3">
-          <line x1="132" y1="106" x2="132" y2="124"/><circle cx="132" cy="115" r="4" fill="#f59e0b"/>
-          <line x1="152" y1="62" x2="152" y2="80"/><circle cx="152" cy="71" r="4" fill="#f59e0b"/>
-          <line x1="170" y1="45" x2="170" y2="63"/><circle cx="170" cy="54" r="4.4" fill="#fbbf24" stroke="#fff"/>
-          <line x1="196" y1="68" x2="196" y2="86"/><circle cx="196" cy="77" r="4" fill="#f59e0b"/>
-          <line x1="226" y1="98" x2="226" y2="116"/><circle cx="226" cy="107" r="4" fill="#f59e0b"/>
-          <line x1="258" y1="128" x2="258" y2="146"/><circle cx="258" cy="137" r="4" fill="#f59e0b"/>
-        </g>
-        <text x="64" y="226" fill="#94a3b8" font-size="11" font-family="monospace">Blue = AAVSO AID archive • Orange = Your Seestar TG session</text>
-      </svg>
-    </div>`;
-
-  const SVG_ECLIPSE = `
-    <div class="graph-guide-svg-card">
-      <svg viewBox="0 0 560 250" width="100%" style="display:block;">
-        <rect x="0" y="0" width="560" height="250" rx="8" fill="#070d19"/>
-        <text x="45" y="28" fill="#38bdf8" font-size="11.5" font-family="sans-serif" font-weight="bold">EA Algol Eclipse (Deep V)</text>
-        <g stroke="#38bdf8" stroke-width="1.2">
-          <circle cx="48" cy="64" r="3.6" fill="#38bdf8"/><circle cx="76" cy="66" r="3.6" fill="#38bdf8"/>
-          <circle cx="104" cy="69" r="3.6" fill="#38bdf8"/><circle cx="128" cy="112" r="3.6" fill="#38bdf8"/>
-          <circle cx="150" cy="166" r="4.2" fill="#ef4444" stroke="#fff"/><circle cx="172" cy="114" r="3.6" fill="#38bdf8"/>
-          <circle cx="196" cy="68" r="3.6" fill="#38bdf8"/><circle cx="226" cy="65" r="3.6" fill="#38bdf8"/>
-        </g>
-        <line x1="278" y1="22" x2="278" y2="212" stroke="#334155" stroke-dasharray="4 4"/>
-        <text x="302" y="28" fill="#a78bfa" font-size="11.5" font-family="sans-serif" font-weight="bold">Exoplanet Transit (Flat U, 0.01–0.03m)</text>
-        <g stroke="#a78bfa" stroke-width="1.2">
-          <circle cx="308" cy="84" r="3.5" fill="#a78bfa"/><circle cx="334" cy="82" r="3.5" fill="#a78bfa"/>
-          <circle cx="358" cy="86" r="3.5" fill="#a78bfa"/><circle cx="380" cy="118" r="3.5" fill="#a78bfa"/>
-          <circle cx="404" cy="122" r="3.5" fill="#a78bfa"/><circle cx="428" cy="120" r="3.5" fill="#a78bfa"/>
-          <circle cx="452" cy="121" r="3.5" fill="#a78bfa"/><circle cx="476" cy="88" r="3.5" fill="#a78bfa"/>
-          <circle cx="504" cy="83" r="3.5" fill="#a78bfa"/><circle cx="528" cy="85" r="3.5" fill="#a78bfa"/>
-        </g>
-        <text x="45" y="232" fill="#94a3b8" font-size="11" font-family="monospace">Primary eclipse depth: 0.3–3.0m (EA) vs 0.01–0.03m (Exoplanet)</text>
-      </svg>
-    </div>`;
-
-  const SVG_OUTBURST = `
-    <div class="graph-guide-svg-card">
-      <svg viewBox="0 0 560 250" width="100%" style="display:block;">
-        <rect x="0" y="0" width="560" height="250" rx="8" fill="#070d19"/>
-        <text x="42" y="28" fill="#fbbf24" font-size="11.5" font-family="sans-serif" font-weight="bold">Cataclysmic Outburst &amp; AAVSO Upper Limits ("fainter than" ▼)</text>
-        <g fill="#64748b">
-          <polygon points="62,175 72,175 67,187"/><polygon points="104,178 114,178 109,190"/>
-          <polygon points="148,174 158,174 153,186"/><polygon points="192,179 202,179 197,191"/>
-        </g>
-        <text x="55" y="206" fill="#94a3b8" font-size="10.5" font-family="monospace">▼ Upper limits (&lt; 14.5m)</text>
-        <g fill="#f59e0b">
-          <circle cx="248" cy="126" r="4"/><circle cx="274" cy="64" r="4.6" stroke="#fff"/>
-          <circle cx="308" cy="70" r="4"/><circle cx="348" cy="88" r="4"/>
-          <circle cx="390" cy="112" r="4"/><circle cx="434" cy="138" r="4"/>
-          <circle cx="480" cy="162" r="4"/>
-        </g>
-        <text x="262" y="52" fill="#fde047" font-size="11" font-family="sans-serif" font-weight="bold">Outburst (+3 to +8 mag!)</text>
-        <text x="42" y="232" fill="#94a3b8" font-size="11" font-family="monospace">▼ means star was NOT detected — fainter than the plotted magnitude</text>
-      </svg>
-    </div>`;
-
   const EN_PACK = {
     modalTitle: "📈 How to Read AAVSO & Seestar Light Curves",
     btnPrev: "Previous",
     btnNext: "Next",
+    lblReadMore: "📚 Deep-Dive Articles:",
     tabs: [
       "1. MAG & JD", "2. Bands (TG/V)", "3. Error Bars", "4. Pulsators",
       "5. Eclipses", "6. Outbursts", "7. Ensemble", "8. Quality"
@@ -19877,114 +19749,203 @@ function revealAndFocusField(inputId) {
       {
         kicker: "SLIDE 1 / 8 • AAVSO FUNDAMENTALS",
         headline: "Inverted Magnitude Scale (MAG) & Julian Date (JD Mid)",
-        callout: "In astronomy, smaller magnitude numbers mean a BRIGHTER star. Going UP on a light curve means brightening; going DOWN means fading.",
-        steps: [
-          "<strong>Logarithmic scale:</strong> Every <code>1.0 mag</code> change equals a <code>2.512×</code> brightness change; <code>5.0 mag = 100×</code>.",
-          "<strong>Julian Date (JD Mid):</strong> Continuous UTC day count at mid-exposure (e.g., <code>2461360.4439</code>), letting observers worldwide combine data to the second.",
-          "<strong>Why it matters:</strong> Always check the Y-axis range first — a <code>0.05m</code> zoom looks dramatic even when the star is nearly constant."
+        callout: "In astronomy, SMALLER magnitude numbers mean a BRIGHTER star. Going UP on a light curve means brightening; going DOWN means fading.",
+        kpis: [
+          { val: "2.512×", lbl: "Brightness per Δ1.0 mag" },
+          { val: "100×", lbl: "Brightness per Δ5.0 mag" },
+          { val: "JD Mid", lbl: "Continuous UTC time" }
         ],
-        svg: SVG_MAG_JD
+        steps: [
+          "<strong>Logarithmic Pogson Scale:</strong> A star brightening from <code>9.50m</code> to <code>9.00m</code> increases in brightness by <code>58%</code> (<code>1.58×</code>). Always inspect the Y-axis span first so you know whether a dip is <code>0.02m</code> or <code>1.5m</code>.",
+          "<strong>Julian Date (JD Mid):</strong> Astronomers count days continuously from noon UTC (e.g. <code>2461360.4439</code>). Seestar AstroLab computes exact mid-exposure <code>JD_Mid = (JD_Start + JD_End) / 2</code> so global observers merge timelines to the second.",
+          "<strong>Real Seestar example (right):</strong> 172 actual 10-second measurements of <code>SZ Lyn</code> captured on a Seestar S30 Pro clearly trace the star fading by <code>0.45 mag</code> over 58 minutes."
+        ],
+        tip: "💡 Observer Tip: Before judging a curve, check the total Y-axis range. A zoomed-in 0.04m window makes normal noise look huge, while a 4.0m window can hide a 0.15m pulsation.",
+        img: "assets/graph_slide_1.png",
+        caption: "Real 172-point Seestar S30 Pro photometry of SZ Lyn (left) and Pogson's logarithmic magnitude-to-brightness multiplier (right).",
+        links: [
+          { label: "AAVSO Julian Date Converter ↗", url: "https://apps.aavso.org/tools/julian-date-converter/" },
+          { label: "AAVSO Intro to Photometry (Video) ↗", url: "https://www.youtube.com/watch?v=OtiNNz2ghTI" }
+        ]
       },
       {
         kicker: "SLIDE 2 / 8 • PHOTOMETRIC BANDS",
         headline: "Seestar TG vs. Standard Johnson V, CV & Visual",
-        callout: "ZWO Seestar measures in TG (Tri-color Green from its Bayer RGB sensor). On AAVSO AID charts, other observers submit V, B, R, I, CV, or Visual.",
-        steps: [
-          "<strong>TG vs V agreement:</strong> Per AAVSO observer benchmarks, untransformed Seestar <code>TG</code> typically agrees with Johnson <code>V</code> within <code>0.03–0.08 mag</code> (larger offsets occur for very red stars).",
-          "<strong>Why curves don't overlap identically:</strong> Different filters pass different wavelengths, so a small vertical offset between your orange <code>TG</code> points and blue <code>V</code>/<code>CV</code> archive points is completely normal.",
-          "<strong>Never mislabel bands:</strong> Always report Seestar measurements as <code>FILT=TG</code> with <code>TRANS=NO</code>."
+        callout: "ZWO Seestar measures in TG (Tri-color Green from its Bayer RGB CMOS sensor). On AAVSO AID charts, other observers submit V, B, R, I, CV, or Visual.",
+        kpis: [
+          { val: "FILT=TG", lbl: "Native Seestar band" },
+          { val: "0.03–0.08m", lbl: "Typical TG vs V offset" },
+          { val: "TRANS=NO", lbl: "Untransformed data" }
         ],
+        steps: [
+          "<strong>Why TG aligns closely with Johnson V:</strong> The green Bayer pixels peak near <code>532 nm</code>, overlapping strongly with the scientific Johnson <code>V</code> filter (<code>548 nm</code>). Per AAVSO observer benchmarks, untransformed Seestar <code>TG</code> typically agrees with <code>V</code> within <code>0.03–0.08 mag</code>.",
+          "<strong>Why a vertical offset on AID is normal:</strong> Very red stars (like Miras or carbon stars) emit more light in red/IR, so unfiltered <code>CV</code> or <code>TG</code> points can sit slightly above or below <code>V</code> points — the curve <em>shape</em> and timing still match!",
+          "<strong>Never mislabel your filter:</strong> Always report Seestar measurements as <code>FILT=TG</code> with <code>TRANS=NO</code> so astrophysicists know the exact spectral bandpass."
+        ],
+        tip: "💡 Observer Tip: Don't panic if your orange TG points sit 0.05m above blue V points on the AAVSO AID overlay — check whether both curves rise and fall together in phase.",
+        img: "assets/graph_slide_2.png",
+        caption: "Top: spectral transmission of B, V, Seestar TG, R, and CV bands. Bottom: normal vertical offsets between V, TG, and Visual observers on AAVSO AID.",
         table: {
-          headers: ["AAVSO Band", "Meaning", "Typical Use & Notes"],
+          headers: ["Band", "Meaning", "Typical Use & Behavior"],
           rows: [
-            ["<code>TG</code>", "Tri-color Green (Bayer CMOS)", "Native Seestar photometry band; closest to Johnson V"],
-            ["<code>V</code>", "Standard Johnson V filter", "Professional & calibrated monochrome CCD/CMOS baseline"],
-            ["<code>CV</code>", "Clear (unfiltered) to V zero-point", "Used for faint targets; wider bandpass can shift red stars"],
-            ["<code>Vis.</code>", "Visual eye estimate", "Historical AAVSO archive; typical scatter ±0.1–0.3 mag"]
+            ["<code>TG</code>", "Tri-color Green (RGB CMOS)", "Native Seestar band; closest to Johnson V"],
+            ["<code>V</code>", "Standard Johnson V", "Calibrated monochrome CCD/CMOS baseline"],
+            ["<code>CV</code>", "Clear (unfiltered) to V", "Faint targets; wider bandpass shifts red stars"],
+            ["<code>Vis.</code>", "Visual eye estimate", "Historical AAVSO archive; scatter ±0.1–0.3m"]
           ]
-        }
+        },
+        links: [
+          { label: "AAVSO TG vs V Observer Benchmarks ↗", url: "https://forums.aavso.org/t/how-do-i-determine-if-results-are-good-enough/1701" },
+          { label: "AAVSO Global Photometry Search ↗", url: "https://apps.aavso.org/v2/data/search/global/" }
+        ]
       },
       {
         kicker: "SLIDE 3 / 8 • UNCERTAINTY & SCATTER",
         headline: "Error Bars (±MERR), Precision vs. Accuracy",
-        callout: "Vertical bars show measurement uncertainty (±MERR). A real brightness change must clearly exceed the error-bar height.",
-        steps: [
-          "<strong>Precision vs. Accuracy (AAVSO WG):</strong> Tight scatter between adjacent points shows <em>precision</em> (repeatability), while agreement with catalog/AID zero-point shows <em>accuracy</em>.",
-          "<strong>Smart Telescope WG finding:</strong> Single 10s subs show atmospheric scintillation; consistent multi-frame runs reach <code>0.02–0.05 mag</code> scatter on mag 9–13 stars.",
-          "<strong>Strict AAVSO MERR limits:</strong> WebObs rejects <code>MERR ≥ 1.00m</code> automatically; AstroLab also flags noisy frames in <code>0.25–1.00m</code> so you can inspect or exclude them."
+        callout: "Every vertical bar shows measurement uncertainty (±MERR). A real brightness change must clearly exceed the height of the error bars.",
+        kpis: [
+          { val: "≤ 0.05m", lbl: "Clean Seestar TG MERR" },
+          { val: "0.25–1.0m", lbl: "AstroLab noise warning" },
+          { val: "≥ 1.00m", lbl: "Auto-rejected (AAVSO)" }
         ],
-        svg: SVG_MERR
+        steps: [
+          "<strong>Precision vs. Accuracy (AAVSO WG):</strong> Tight scatter between adjacent frames measures <em>precision</em> (repeatability), while closeness to the true catalog magnitude measures <em>accuracy</em>. Both matter!",
+          "<strong>Smart Telescope Working Group findings:</strong> Single 10s exposures show natural atmospheric scintillation, yet clean Seestar runs routinely achieve <code>0.02–0.05 mag</code> scatter on mag 9–13 stars (and <code>&lt; 0.02m</code> when averaging groups).",
+          "<strong>Two-tier MERR guard in AstroLab:</strong> Rows violating AAVSO's hard limit (<code>MERR ≥ 1.00m</code> or <code>≤ 0</code>) are rejected automatically; noisy frames in <code>0.25–1.00m</code> trigger a banner with an optional checkbox to exclude them."
+        ],
+        tip: "💡 Observer Tip: Compare the vertical height of your error bars to the star's amplitude. If error bars are 0.03m and the wave is 0.40m tall, you captured a rock-solid scientific detection!",
+        img: "assets/graph_slide_3.png",
+        caption: "Side-by-side comparison of clean Seestar photometry (left), haze/Moon-degraded points (center), and corrupted frames auto-rejected by AAVSO rules (right).",
+        links: [
+          { label: "AAVSO Smart Telescope WG Report ↗", url: "https://forums.aavso.org/t/status-update-from-the-aavso-smart-telescope-working-group/3073" },
+          { label: "AAVSO Error Budget Discussion ↗", url: "https://forums.aavso.org/t/very-high-errors/1770" }
+        ]
       },
       {
         kicker: "SLIDE 4 / 8 • PULSATING VARIABLES",
-        headline: "Reading Pulsating Stars (HADS, δ Sct, RR Lyr, Cepheids, Mira)",
-        callout: "Pulsating stars physically expand and contract, producing repeating waves whose shape reveals the star's class.",
-        steps: [
-          "<strong>HADS & RRab (e.g., SZ Lyn):</strong> Asymmetric wave — steep, rapid rise to maximum followed by a slower decline (periods <code>2–15 hours</code>, amplitude <code>0.3–1.2m</code>).",
-          "<strong>Overtone pulsators (RRc / DCEPS):</strong> Smoother, more symmetric sinusoidal curves with smaller amplitude.",
-          "<strong>Long-Period Miras (LPV):</strong> Huge swings of <code>2.5–8+ mag</code> over <code>100–500 days</code> — one clean nightly session per week is scientifically valuable."
+        headline: "Gallery of Pulsating Stars (HADS, RR Lyr, Cepheids, Mira)",
+        callout: "Pulsating stars physically expand and contract like beating hearts — the asymmetry and timescale of the wave reveal the exact stellar class.",
+        kpis: [
+          { val: "2–15 h", lbl: "HADS / RR Lyr period" },
+          { val: "1–135 d", lbl: "Cepheid period" },
+          { val: "100–500 d", lbl: "Mira (LPV) period" }
         ],
-        svg: SVG_PULSATOR
+        steps: [
+          "<strong>HADS & RRab (e.g., SZ Lyn, RR Lyr):</strong> Classic 'shark-fin' asymmetric wave — a steep, rapid rise to maximum followed by a gentler decline (<code>0.3–1.2m</code>). Ideal for 1–3 hour Seestar sessions!",
+          "<strong>Classical Cepheids (DCEP, e.g., δ Cep):</strong> Luminous supergiants with regular multi-day cycles (<code>1–135 days</code>) whose period-luminosity law measures cosmic distances.",
+          "<strong>Mira / Long-Period Variables (LPV, e.g., o Cet):</strong> Red giants swinging by <code>2.5–8+ mag</code> over months — one clean 5-minute observation per week is priceless for AAVSO."
+        ],
+        tip: "💡 Observer Tip: For fast pulsators like SZ Lyn (P = 2.89h), capturing the exact Time of Maximum (brightest peak) lets astronomers measure tiny period changes over decades.",
+        img: "assets/graph_slide_4.png",
+        caption: "Four iconic pulsating light curves: High-Amplitude Delta Scuti (SZ Lyn), RR Lyrae (RRab), Classical Cepheid (δ Cep), and Long-Period Mira (o Cet).",
+        links: [
+          { label: "AAVSO VSX Variable Star Types ↗", url: "https://vsx.aavso.org/index.php?view=about.vartypes" },
+          { label: "JAAVSO: Period Changes in Pulsators ↗", url: "https://apps.aavso.org/jaavso/article/3243/" }
+        ]
       },
       {
         kicker: "SLIDE 5 / 8 • ECLIPSES & TRANSITS",
-        headline: "Eclipsing Binaries (EA, EB, EW) & Exoplanet Transits",
-        callout: "When two stars (or a planet) cross our line of sight, the light curve drops into a characteristic V- or U-shaped minimum.",
-        steps: [
-          "<strong>EA (Algol-type):</strong> Flat plateau outside eclipse, then a sharp, deep V-shaped drop (<code>0.3–3.0m</code>) with precise mid-eclipse timing.",
-          "<strong>EW (W UMa contact binaries):</strong> Continuous rounded waves with nearly equal primary and secondary minima (periods <code>< 1 day</code>).",
-          "<strong>Exoplanet transits (EP):</strong> Shallow flat-bottomed U-shaped dip of only <code>0.01–0.03m</code> — requires bright host stars (<code>≤ 11m</code>) and very low scatter."
+        headline: "Eclipsing Binaries (EA, EW) & Exoplanet Transits (EP)",
+        callout: "When two stars (or a planet) cross our line of sight, the combined light drops into a crisp V- or U-shaped minimum.",
+        kpis: [
+          { val: "0.3–3.0m", lbl: "EA Algol eclipse depth" },
+          { val: "< 1 day", lbl: "EW W UMa contact period" },
+          { val: "0.01–0.03m", lbl: "Hot Jupiter transit dip" }
         ],
-        svg: SVG_ECLIPSE
+        steps: [
+          "<strong>EA (Algol-type detached binaries):</strong> Flat, constant baseline outside eclipse, then a sudden, deep V-shaped drop. Measuring the exact Time of Minimum (ToM) reveals orbital period shifts and third bodies.",
+          "<strong>EW (W UMa contact binaries):</strong> Two stars sharing a common envelope — the brightness varies continuously with nearly equal primary and secondary minima.",
+          "<strong>Exoplanet Transits (EP):</strong> Shallow flat-bottomed U-shaped dip of just <code>1–3%</code> (<code>0.01–0.03m</code>). Requires bright host stars (<code>≤ 11m</code>), high altitude, and averaging frames to beat shot noise."
+        ],
+        tip: "💡 Observer Tip: Start imaging an eclipse or transit at least 30–45 minutes BEFORE ingress and continue 30–45 minutes AFTER egress so the flat baseline is clearly anchored on both sides.",
+        img: "assets/graph_slide_5.png",
+        caption: "Left: sharp V-shaped Algol eclipse (EA). Center: continuous double-wave contact binary (EW). Right: shallow flat-bottomed exoplanet transit (EP).",
+        links: [
+          { label: "JAAVSO: Period Analysis of Eclipsing Binaries ↗", url: "https://apps.aavso.org/jaavso/article/3475/" },
+          { label: "AAVSO VSX Eclipsing Binary Classes ↗", url: "https://vsx.aavso.org/index.php?view=about.vartypes" }
+        ]
       },
       {
         kicker: "SLIDE 6 / 8 • OUTBURSTS & UPPER LIMITS",
         headline: "Cataclysmic Variables, Novae & 'Fainter Than' (▼) Symbols",
-        callout: "Downward triangles (▼) on AAVSO charts are Upper Limits — the observer confirmed the star was FAINTER than that magnitude.",
-        steps: [
-          "<strong>Dwarf Novae & Recurrent Novae (UG / NR, e.g., T CrB):</strong> Long quiet periods interrupted by sudden eruptions of <code>2–8+ mag</code> in hours or days.",
-          "<strong>Reading Upper Limits (<code>&lt; 14.5</code>):</strong> They are NOT detections — they prove an outburst had not yet started at that timestamp.",
-          "<strong>Spotting real outbursts vs. glitches:</strong> A real outburst persists across multiple consecutive frames; a single 1-frame spike is usually a cosmic ray, satellite, or guiding glitch."
+        callout: "Downward-pointing triangles (▼) on AAVSO charts are Upper Limits — the observer proved the star was FAINTER than that magnitude.",
+        kpis: [
+          { val: "+3 to +8m", lbl: "Typical nova/UG outburst" },
+          { val: "▼ < mag", lbl: "Upper limit (not detected)" },
+          { val: "≥ 3 frames", lbl: "Needed to confirm spike" }
         ],
-        svg: SVG_OUTBURST
+        steps: [
+          "<strong>Dwarf Novae & Recurrent Novae (UG / NR, e.g., T CrB):</strong> Accreting white dwarfs that stay faint for weeks or decades, then erupt by <code>3–8+ mag</code> in hours. Daily checks catch eruptions at the earliest moment!",
+          "<strong>Understanding Upper Limits (<code>▼</code>):</strong> A triangle at <code>14.5m</code> does NOT mean the star was 14.5m — it means the star was invisible and strictly fainter than <code>14.5m</code> at that timestamp.",
+          "<strong>Real outburst vs. single-frame artifact:</strong> A genuine brightening persists smoothly across consecutive frames. A sharp spike on just 1 frame is almost always a satellite, cosmic ray, or hot pixel."
+        ],
+        tip: "💡 Observer Tip: If you spot an unexpected 2+ mag brightening on T CrB or a dwarf nova, verify RA/Dec and take a second 5-minute run immediately before reporting to AAVSO!",
+        img: "assets/graph_slide_6.png",
+        caption: "Left: quiet upper limits (▼) suddenly jumping into a confirmed +6 mag outburst. Right: how a 1-frame satellite/cosmic-ray glitch looks compared to real variability.",
+        links: [
+          { label: "AAVSO Nova Campaign Example (V462 Lup) ↗", url: "https://apps.aavso.org/v2/campaigns/896" },
+          { label: "AAVSO Global Data Search ↗", url: "https://apps.aavso.org/v2/data/search/global/" }
+        ]
       },
       {
         kicker: "SLIDE 7 / 8 • ENSEMBLE & SATURATION",
-        headline: "Seestar Ensemble Photometry, KNAME/KMAG & Sensor Saturation",
-        callout: "Scientific honesty comes first: never report catalog numbers as if they were measured in your frame.",
-        steps: [
-          "<strong>Why KNAME=na & KMAG=na:</strong> Seestar runs internal ensemble photometry (<code>CNAME=ENSEMBLE</code>) without outputting an independent check-star measurement, so AstroLab strictly exports <code>CMAG=na</code>, <code>KNAME=na</code>, <code>KMAG=na</code>.",
-          "<strong>Sensor saturation (~65,536 ADU):</strong> On Seestar S50/S30, stars brighter than <code>~8.0–8.5 mag</code> can saturate at 10s–20s, creating artificially flat-topped maxima.",
-          "<strong>Sweet spot for Seestar:</strong> Aim for targets between <code>8.5 and 13.5–14.5 mag</code> with clean non-saturated comparison stars in the field."
+        headline: "Seestar Ensemble Photometry, KNAME/KMAG & Saturation",
+        callout: "Scientific honesty comes first: never export catalog numbers as if they were measured in your frame — and watch for CMOS saturation on bright stars.",
+        kpis: [
+          { val: "ENSEMBLE", lbl: "Seestar CNAME mode" },
+          { val: "65,536 ADU", lbl: "CMOS saturation ceiling" },
+          { val: "8.5–14.5m", lbl: "Seestar sweet spot" }
         ],
+        steps: [
+          "<strong>Why KNAME=na & KMAG=na:</strong> Seestar calibrates against an internal multi-star ensemble (<code>CNAME=ENSEMBLE</code>) without outputting an independent check-star measurement. AstroLab displays VSP check-star info in the UI for context, while strictly exporting <code>CMAG=na</code>, <code>KNAME=na</code>, <code>KMAG=na</code>.",
+          "<strong>CMOS Saturation Warning (&lt; 8.5 mag):</strong> On Seestar S50/S30, stars brighter than <code>~8.0–8.5m</code> hit the <code>65,536 ADU</code> pixel ceiling on 10–20s exposures, clipping the light curve peak into an artificial flat top.",
+          "<strong>Best target magnitude range:</strong> Aim for <code>8.5–13.5 mag</code> on S30 and <code>8.5–14.5 mag</code> on S50/S50PRO for linear, high-SNR photometry."
+        ],
+        tip: "💡 Observer Tip: If a bright variable shows a suspiciously flat maximum right around 8.0m, shorten exposure or switch to a slightly fainter priority target from the AAVSO Radar.",
+        img: "assets/graph_slide_7.png",
+        caption: "Left: Seestar internal ensemble calibration field. Right: how CMOS saturation (~65,536 ADU) clips a bright star's true peak into a flat ceiling.",
         table: {
-          headers: ["AAVSO Extended Field", "Seestar AstroLab Value", "Scientific Reason"],
+          headers: ["AAVSO Field", "AstroLab Export", "Why"],
           rows: [
-            ["<code>CNAME</code> / <code>CMAG</code>", "<code>ENSEMBLE</code> / <code>na</code>", "Seestar calibrates against an internal multi-star ensemble"],
-            ["<code>KNAME</code> / <code>KMAG</code>", "<code>na</code> / <code>na</code>", "No independent check-star magnitude in raw Seestar CSV"],
-            ["<code>AMASS</code>", "<code>na</code>", "Computed locally for Alt &lt; 20° warnings only"],
-            ["<code>FILT</code> / <code>TRANS</code>", "<code>TG</code> / <code>NO</code>", "Untransformed Bayer green channel"]
+            ["<code>CNAME</code> / <code>CMAG</code>", "<code>ENSEMBLE</code> / <code>na</code>", "Internal multi-star zero-point calibration"],
+            ["<code>KNAME</code> / <code>KMAG</code>", "<code>na</code> / <code>na</code>", "No independent check-star value in Seestar CSV"],
+            ["<code>AMASS</code>", "<code>na</code>", "Computed locally for Alt &lt; 20° warnings only"]
           ]
-        }
+        },
+        links: [
+          { label: "AAVSO Forum: Seestar S50 Saturation (65,536 ADU) ↗", url: "https://forums.aavso.org/t/vphot-with-seestar-s50/787" },
+          { label: "AAVSO Variable Star Plotter (VSP) ↗", url: "https://apps.aavso.org/vsp/" }
+        ]
       },
       {
-        kicker: "SLIDE 8 / 8 • AAVSO DATA QUALITY CHECKLIST",
-        headline: "Airmass (< 20°), Clouds, Moon & Pre-Upload Review",
-        callout: "Always compare your orange Seestar curve against the blue AAVSO AID archive before clicking Submit on WebObs.",
-        steps: [
-          "<strong>Low altitude (Alt &lt; 20° / Airmass &gt; 2.9):</strong> Thick atmosphere causes color-dependent extinction and scintillation. AstroLab warns you automatically when frames drop below <code>20°</code>.",
-          "<strong>Thin uniform haze vs. patchy clouds:</strong> Differential ensemble photometry tolerates light uniform haze briefly, but passing patchy clouds cause sudden erratic drops and huge <code>MERR</code>.",
-          "<strong>Final sanity check:</strong> Confirm green/yellow RA/Dec match, no duplicate nights, no saturation plateau, and smooth alignment with AAVSO AID."
+        kicker: "SLIDE 8 / 8 • PRE-UPLOAD QUALITY CHECKLIST",
+        headline: "Airmass (< 20°), Passing Clouds & Final WebObs Sanity Check",
+        callout: "Before submitting to AAVSO WebObs, compare your orange Seestar curve against the blue AAVSO AID archive and inspect low-altitude or cloudy segments.",
+        kpis: [
+          { val: "Alt ≥ 30°", lbl: "Optimal airmass (X ≤ 2.0)" },
+          { val: "Alt < 20°", lbl: "Danger zone (X > 2.9)" },
+          { val: "≤ 0.05°", lbl: "Max safe RA/Dec offset" }
         ],
+        steps: [
+          "<strong>Kasten–Young Airmass (Alt &lt; 20° / X &gt; 2.9):</strong> Below 20° altitude, starlight passes through nearly 3× as much atmosphere, introducing color extinction and heavy scintillation. AstroLab warns you automatically and lets you exclude those frames in 1 click.",
+          "<strong>Thin uniform haze vs. patchy clouds:</strong> Ensemble differential photometry tolerates light uniform haze briefly, but patchy passing clouds cause sudden erratic magnitude drops and spiked <code>MERR</code>.",
+          "<strong>4-Point Pre-Upload Check:</strong> (1) Green/yellow RA/Dec match, (2) No duplicate nights, (3) No saturation plateau or cloud spikes, (4) Smooth alignment with AAVSO AID."
+        ],
+        tip: "💡 Observer Tip: Fewer clean frames are ALWAYS better for science than hundreds of noisy frames. Don't hesitate to tick the MERR (> 0.25m) or Low-Alt (< 20°) exclusion checkboxes!",
+        img: "assets/graph_slide_8.png",
+        caption: "Left: Kasten–Young (1989) airmass curve showing the safe (≥ 30°), caution (20–30°), and danger (< 20°) zones. Right: signature of a passing cloud on a light curve.",
         table: {
-          headers: ["Visual Symptom on Chart", "Likely Cause", "Recommended Action"],
+          headers: ["Chart Symptom", "Likely Cause", "Action"],
           rows: [
-            ["Sudden 1–2 frame spike/drop", "Passing cloud, satellite, or guiding jump", "Inspect MERR; exclude noisy frames (&gt; 0.25m)"],
-            ["Slow drift at end of night", "Target sinking below 20° (high airmass)", "Enable 'Exclude frames below 20°' checkbox"],
-            ["Flat top on bright star (&lt; 8.5m)", "CMOS sensor saturation (65,536 ADU)", "Use shorter exposure or pick fainter target (9–14m)"],
-            ["Whole curve shifted by 1–3 mag", "Wrong star / mispointed frame", "Check RA/Dec match table before uploading"]
+            ["1–2 frame spike / drop", "Passing cloud, satellite, guiding jump", "Tick 'Exclude noisy frames (MERR &gt; 0.25m)'"],
+            ["Slow drift near horizon", "Target dropped below 20° (X &gt; 2.9)", "Tick 'Exclude frames below 20°'"],
+            ["Whole curve off by 1–3m", "Wrong star / mispointed frame", "Check RA/Dec match table before upload"]
           ]
-        }
+        },
+        links: [
+          { label: "AAVSO Getting Started & Manuals ↗", url: "https://forums.aavso.org/t/getting-started-with-observing-campaigns/4158" },
+          { label: "AAVSO Smart Telescope WG ↗", url: "https://forums.aavso.org/t/status-update-from-the-aavso-smart-telescope-working-group/3073" }
+        ]
       }
     ]
   };
@@ -19993,6 +19954,7 @@ function revealAndFocusField(inputId) {
     modalTitle: "📈 Как читать графики AAVSO и Seestar",
     btnPrev: "Назад",
     btnNext: "Далее",
+    lblReadMore: "📚 Статьи и источники AAVSO:",
     tabs: [
       "1. MAG и JD", "2. Полосы (TG/V)", "3. Ошибки MERR", "4. Пульсации",
       "5. Затмения", "6. Вспышки", "7. Ансамбль", "8. Качество"
@@ -20002,149 +19964,237 @@ function revealAndFocusField(inputId) {
         kicker: "СЛАЙД 1 / 8 • ОСНОВЫ AAVSO",
         headline: "Перевёрнутая шкала блеска (MAG) и Юлианская дата (JD Mid)",
         callout: "В астрономии чем МЕНЬШЕ число звёздной величины, тем ЯРЧЕ звезда. Подъём графика вверх = рост яркости, провал вниз = ослабление.",
-        steps: [
-          "<strong>Логарифмическая шкала:</strong> шаг в <code>1.0 mag</code> меняет яркость в <code>2.512 раза</code>, а <code>5.0 mag</code> — ровно в <code>100 раз</code>.",
-          "<strong>Юлианская дата (JD Mid):</strong> непрерывный счёт суток UTC на середину экспозиции (например, <code>2461360.4439</code>), объединяющий наблюдателей всей планеты.",
-          "<strong>Обращайте внимание на масштаб оси Y:</strong> при сильном увеличении (размах <code>0.05m</code>) даже почти постоянная звезда может казаться «прыгающей»."
+        kpis: [
+          { val: "2.512×", lbl: "Яркость за шаг Δ1.0 mag" },
+          { val: "100×", lbl: "Яркость за шаг Δ5.0 mag" },
+          { val: "JD Mid", lbl: "Единое время UTC" }
         ],
-        svg: SVG_MAG_JD
+        steps: [
+          "<strong>Логарифмическая шкала Погсона:</strong> рост блеска с <code>9.50m</code> до <code>9.00m</code> означает, что звезда стала ярче на <code>58%</code> (<code>1.58×</code>). Всегда сначала смотрите на размах оси Y, чтобы понимать масштаб изменений — <code>0.02m</code> или <code>1.5m</code>.",
+          "<strong>Юлианская дата (JD Mid):</strong> непрерывный счёт суток по UTC на середину экспозиции (например, <code>2461360.4439</code>). AstroLab рассчитывает точный <code>JD_Mid = (JD_Start + JD_End) / 2</code>, чтобы наблюдения со всей Земли стыковались до секунды.",
+          "<strong>Реальный пример Seestar (справа):</strong> 172 реальных 10-секундных замера звезды <code>SZ Lyn</code> на Seestar S30 Pro наглядно показывают падение блеска на <code>0.45 mag</code> за 58 минут."
+        ],
+        tip: "💡 Шпаргалка наблюдателя: перед оценкой графика взгляните на диапазон оси Y. При зуме в 0.04m обычный шум кажется «горами», а в окне 4.0m можно не заметить реальную пульсацию в 0.15m.",
+        img: "assets/graph_slide_1.png",
+        caption: "Слева: 172 реальных замера SZ Lyn с Seestar S30 Pro с планками ±MERR. Справа: во сколько раз меняется яркость по шкале Погсона.",
+        links: [
+          { label: "Конвертер Юлианских дат AAVSO ↗", url: "https://apps.aavso.org/tools/julian-date-converter/" },
+          { label: "Вводное видео AAVSO по фотометрии ↗", url: "https://www.youtube.com/watch?v=OtiNNz2ghTI" }
+        ]
       },
       {
         kicker: "СЛАЙД 2 / 8 • ФОТОМЕТРИЧЕСКИЕ ПОЛОСЫ",
         headline: "Полоса Seestar TG против Johnson V, CV и визуальных оценок",
-        callout: "ZWO Seestar измеряет в полосе TG (зелёный канал Байера). В базе AAVSO AID рядом отображаются замеры других наблюдателей в V, CV и Vis.",
-        steps: [
-          "<strong>Согласие TG и V:</strong> по тестам наблюдателей AAVSO, нетрансформированный <code>TG</code> на Seestar обычно совпадает с фильтром <code>V</code> в пределах <code>0.03–0.08 mag</code> (у очень красных звёзд сдвиг может быть больше).",
-          "<strong>Небольшой вертикальный сдвиг — норма:</strong> разные фильтры пропускают разные длины волн, поэтому смещение оранжевых точек <code>TG</code> относительно синих точек <code>V</code>/<code>CV</code> на графике AID естественно.",
-          "<strong>Строгое обозначение:</strong> данные Seestar всегда отправляются как <code>FILT=TG</code> и <code>TRANS=NO</code>."
+        callout: "ZWO Seestar измеряет в полосе TG (зелёный канал Байера). В базе AAVSO AID рядом отображаются замеры других наблюдателей в V, B, R, CV и Vis.",
+        kpis: [
+          { val: "FILT=TG", lbl: "Родная полоса Seestar" },
+          { val: "0.03–0.08m", lbl: "Обычный сдвиг TG vs V" },
+          { val: "TRANS=NO", lbl: "Без трансформации" }
         ],
+        steps: [
+          "<strong>Почему TG близок к стандартному фильтру V:</strong> зелёный канал Байера имеет пик около <code>532 нм</code> и сильно перекрывается с научным фильтром Johnson <code>V</code> (<code>548 нм</code>). По тестам наблюдателей AAVSO, нетрансформированный <code>TG</code> обычно сходится с <code>V</code> в пределах <code>0.03–0.08 mag</code>.",
+          "<strong>Небольшой вертикальный сдвиг на графике AID — норма:</strong> у очень красных звёзд (мириды, углеродные) разные фильтры дают разный нуль-пункт, поэтому оранжевые точки <code>TG</code> могут лежать чуть выше или ниже синих точек <code>V</code>/<code>CV</code> — главное, что <em>форма и фаза</em> совпадают!",
+          "<strong>Никогда не подменяйте полосу:</strong> замеры Seestar всегда отправляются строго как <code>FILT=TG</code> и <code>TRANS=NO</code>."
+        ],
+        tip: "💡 Шпаргалка наблюдателя: если ваша оранжевая кривая TG сдвинута на 0.05m относительно синих точек V в AAVSO AID — это не ошибка, а особенность фильтра. Смотрите, синхронно ли идут подъёмы и спады.",
+        img: "assets/graph_slide_2.png",
+        caption: "Вверху: кривые пропускания фильтров B, V, Seestar TG, R и CV. Внизу: естественный небольшой сдвиг между наблюдателями в V, TG и Vis. на графике AID.",
         table: {
-          headers: ["Полоса AAVSO", "Что означает", "Особенности на графике"],
+          headers: ["Полоса", "Расшифровка", "Особенности на графике"],
           rows: [
-            ["<code>TG</code>", "Tri-color Green (RGB CMOS)", "Родная полоса Seestar; ближе всего к стандартному V"],
-            ["<code>V</code>", "Стандартный фильтр Johnson V", "Опорная полоса монохромных CCD/CMOS-обсерваторий"],
-            ["<code>CV</code>", "Без фильтра с нуль-пунктом V", "Для слабых целей; широкая полоса сдвигает красные звёзды"],
-            ["<code>Vis.</code>", "Визуальная оценка глазом", "Исторический архив AAVSO; типичный разброс ±0.1–0.3m"]
+            ["<code>TG</code>", "Tri-color Green (RGB CMOS)", "Родная полоса Seestar; ближе всего к V"],
+            ["<code>V</code>", "Стандарт Johnson V", "Опорная полоса монохромных CCD/CMOS"],
+            ["<code>CV</code>", "Без фильтра к нуль-пункту V", "Для слабых целей; сдвигает красные звёзды"],
+            ["<code>Vis.</code>", "Визуальная оценка глазом", "Архив AAVSO; типичный разброс ±0.1–0.3m"]
           ]
-        }
+        },
+        links: [
+          { label: "Тесты наблюдателей AAVSO: TG против V ↗", url: "https://forums.aavso.org/t/how-do-i-determine-if-results-are-good-enough/1701" },
+          { label: "Глобальный поиск данных AAVSO ↗", url: "https://apps.aavso.org/v2/data/search/global/" }
+        ]
       },
       {
         kicker: "СЛАЙД 3 / 8 • ПОГРЕШНОСТИ И РАЗБРОС",
-        headline: "Усы погрешности (±MERR): повторяемость и точность",
-        callout: "Вертикальные «усы» показывают погрешность измерения ±MERR. Реальная переменность звезды должна уверенно превышать высоту этих усов.",
-        steps: [
-          "<strong>Precision vs Accuracy (AAVSO WG):</strong> малый разброс соседних точек — это <em>повторяемость</em>, а совпадение с истинным блеском в AID — <em>точность</em>.",
-          "<strong>Опыт рабочей группы AAVSO по смарт-телескопам:</strong> на одиночных 10с кадрах заметно атмосферное мерцание; ровные серии дают разброс <code>0.02–0.05 mag</code> на звёздах 9–13m.",
-          "<strong>Пороги MERR в AstroLab:</strong> строки с <code>MERR ≥ 1.00m</code> отбрасываются автоматически (лимит WebObs), а шумные точки <code>0.25–1.00m</code> подсвечиваются с опциональной галочкой исключения."
+        headline: "Усы погрешности (±MERR): повторяемость против точности",
+        callout: "Вертикальные «усы» показывают погрешность каждого замера (±MERR). Реальная переменность звезды должна уверенно превышать высоту этих усов.",
+        kpis: [
+          { val: "≤ 0.05m", lbl: "Чистый TG на Seestar" },
+          { val: "0.25–1.0m", lbl: "Предупреждение AstroLab" },
+          { val: "≥ 1.00m", lbl: "Авто-отсев (AAVSO)" }
         ],
-        svg: SVG_MERR
+        steps: [
+          "<strong>Повторяемость (Precision) vs Точность (Accuracy):</strong> малый разброс соседних точек говорит о хорошей <em>повторяемости</em>, а совпадение с каталогом/AID — о <em>точности</em>. Для науки важны оба показателя.",
+          "<strong>Выводы рабочей группы AAVSO по смарт-телескопам:</strong> на одиночных 10-секундных кадрах заметно мерцание атмосферы, но ровная серия Seestar стабильно даёт <code>0.02–0.05 mag</code> на звёздах 9–13m (и до <code>&lt; 0.02m</code> при усреднении).",
+          "<strong>Двухуровневая защита MERR в AstroLab:</strong> строки с <code>MERR ≥ 1.00m</code> или <code>≤ 0</code> отбрасываются автоматически (требование WebObs), а шумные точки <code>0.25–1.00m</code> подсвечиваются с галочкой исключения."
+        ],
+        tip: "💡 Шпаргалка наблюдателя: сравните длину усов погрешности с амплитудой волны. Если усы 0.03m, а волна 0.40m — вы получили надёжное научное измерение переменности!",
+        img: "assets/graph_slide_3.png",
+        caption: "Сравнение трёх сценариев: чистая фотометрия Seestar (слева), дымка/Луна с предупреждением (в центре) и брак, автоматически отбракованный по правилам AAVSO (справа).",
+        links: [
+          { label: "Отчёт рабочей группы AAVSO по смарт-телескопам ↗", url: "https://forums.aavso.org/t/status-update-from-the-aavso-smart-telescope-working-group/3073" },
+          { label: "Разбор бюджета ошибок фотометрии AAVSO ↗", url: "https://forums.aavso.org/t/very-high-errors/1770" }
+        ]
       },
       {
         kicker: "СЛАЙД 4 / 8 • ПУЛЬСИРУЮЩИЕ ЗВЁЗДЫ",
-        headline: "Как выглядят пульсирующие переменные (HADS, RR Lyr, цефеиды, мириды)",
-        callout: "Пульсирующие звёзды ритмично сжимаются и расширяются — форма волны напрямую подсказывает класс объекта.",
-        steps: [
-          "<strong>HADS и RRab (например, SZ Lyn):</strong> характерная асимметричная волна — резкий крутой подъём к максимуму и более пологий спад (период <code>2–15 ч</code>, амплитуда <code>0.3–1.2m</code>).",
-          "<strong>Обертонные пульсаторы (RRc / DCEPS):</strong> более плавная, почти синусоидальная кривая с меньшей амплитудой.",
-          "<strong>Долгопериодические мириды (LPV):</strong> размах <code>2.5–8+ mag</code> за <code>100–500 дней</code> — достаточно одного качественного замера раз в неделю."
+        headline: "Галерея пульсирующих переменных (HADS, RR Lyr, цефеиды, мириды)",
+        callout: "Пульсирующие звёзды физически раздуваются и сжимаются — форма волны и её период сразу подсказывают класс звезды.",
+        kpis: [
+          { val: "2–15 ч", lbl: "Период HADS / RR Lyr" },
+          { val: "1–135 сут", lbl: "Период цефеид (DCEP)" },
+          { val: "100–500 сут", lbl: "Период мирид (LPV)" }
         ],
-        svg: SVG_PULSATOR
+        steps: [
+          "<strong>HADS и RRab (SZ Lyn, RR Lyr):</strong> узнаваемый «акулий плавник» — резкий крутой подъём к максимуму и более пологий спад (амплитуда <code>0.3–1.2m</code>). Идеальные цели для 1–3 часовых сессий на Seestar!",
+          "<strong>Классические цефеиды (DCEP, δ Cep):</strong> сверхгиганты с регулярными многодневными циклами (<code>1–135 суток</code>), по которым астрономы измеряют расстояния до галактик.",
+          "<strong>Мириды / долгопериодические (LPV, o Cet):</strong> красные гиганты с размахом <code>2.5–8+ mag</code> за месяцы — для них достаточно одного аккуратного 5-минутного замера раз в неделю."
+        ],
+        tip: "💡 Шпаргалка наблюдателя: для быстрых пульсаторов вроде SZ Lyn (P = 2.89 ч) особенно ценен точный момент максимума блеска — по нему отслеживают эволюцию звезды на десятилетиях.",
+        img: "assets/graph_slide_4.png",
+        caption: "Четыре классических типа пульсирующих звёзд: HADS (SZ Lyn), RR Лиры (RRab), классическая цефеида (δ Cep) и долгопериодическая мирида (o Cet).",
+        links: [
+          { label: "Справочник типов переменных AAVSO VSX ↗", url: "https://vsx.aavso.org/index.php?view=about.vartypes" },
+          { label: "Статья JAAVSO: эволюция периодов пульсаторов ↗", url: "https://apps.aavso.org/jaavso/article/3243/" }
+        ]
       },
       {
         kicker: "СЛАЙД 5 / 8 • ЗАТМЕНИЯ И ТРАНЗИТЫ",
-        headline: "Затменно-двойные (EA, EB, EW) и транзиты экзопланет (EP)",
-        callout: "Когда компаньон или планета проходит перед звездой, на кривой блеска появляется чёткий V- или U-образный провал.",
-        steps: [
-          "<strong>EA (тип Алголя):</strong> ровное плато вне затмения и глубокий V-образный провал (<code>0.3–3.0m</code>) — важен точный момент минимума.",
-          "<strong>EW (контактные W UMa):</strong> непрерывная волна с почти равными главным и вторичным минимумами (период <code>&lt; 1 суток</code>).",
-          "<strong>Транзиты экзопланет (EP):</strong> неглубокое корытце с плоским дном (U-профиль всего <code>0.01–0.03m</code>) — нужны яркие звёзды (<code>≤ 11m</code>) и минимальный шум."
+        headline: "Затменно-двойные (EA, EW) и транзиты экзопланет (EP)",
+        callout: "Когда вторая звезда или экзопланета проходит по диску главной звезды, на кривой блеска появляется чёткий V- или U-образный провал.",
+        kpis: [
+          { val: "0.3–3.0m", lbl: "Глубина затмений EA" },
+          { val: "< 1 сут", lbl: "Период контактных EW" },
+          { val: "0.01–0.03m", lbl: "Глубина транзита EP" }
         ],
-        svg: SVG_ECLIPSE
+        steps: [
+          "<strong>EA (тип Алголя):</strong> ровное плато вне затмения и резкий глубокий V-образный провал. Точный момент минимума (ToM) позволяет выявлять смену орбитального периода и скрытых третьих тел.",
+          "<strong>EW (контактные W UMa):</strong> две звезды с общей оболочкой — блеск меняется непрерывно с почти равными главным и вторичным минимумами.",
+          "<strong>Транзиты экзопланет (EP):</strong> неглубокое корытце с плоским дном (U-профиль всего <code>1–3%</code> или <code>0.01–0.03m</code>) — нужны яркие звёзды (<code>≤ 11m</code>), большая высота и минимум шума."
+        ],
+        tip: "💡 Шпаргалка наблюдателя: начинайте съёмку затмения или транзита за 30–45 минут ДО начала и заканчивайте через 30–45 минут ПОСЛЕ, чтобы на графике чётко закрепилось ровное плато по бокам.",
+        img: "assets/graph_slide_5.png",
+        caption: "Слева: острый V-минимум Алголя (EA). В центре: непрерывная волна контактной пары (EW). Справа: неглубокое U-корытце транзита экзопланеты (EP).",
+        links: [
+          { label: "Статья JAAVSO: анализ затменно-двойных звёзд ↗", url: "https://apps.aavso.org/jaavso/article/3475/" },
+          { label: "Классификация затменных систем в VSX ↗", url: "https://vsx.aavso.org/index.php?view=about.vartypes" }
+        ]
       },
       {
         kicker: "СЛАЙД 6 / 8 • ВСПЫШКИ И ВЕРХНИЕ ПРЕДЕЛЫ",
-        headline: "Катаклизмические, новые звёзды и треугольники «слабее чем» (▼)",
-        callout: "Треугольники остриём вниз (▼) на графиках AAVSO — это верхние пределы (Upper Limits): звезда была СЛАБЕЕ указанной величины.",
-        steps: [
-          "<strong>Карликовые и повторные новые (UG / NR, например T CrB):</strong> долгий покой сменяется резкой вспышкой на <code>2–8+ mag</code> за часы или сутки.",
-          "<strong>Как читать <code>&lt; 14.5</code> (▼):</strong> это не измерение блеска, а подтверждение, что в этот момент вспышка ещё не началась.",
-          "<strong>Реальная вспышка или артефакт:</strong> реальный рост держится на многих кадрах подряд; единичный выброс на 1 кадре — это космическая частица, спутник или сбой ведения."
+        headline: "Катаклизмические, новые звёзды и значки «слабее чем» (▼)",
+        callout: "Треугольники остриём вниз (▼) на графиках AAVSO — это верхние пределы (Upper Limits): наблюдатель доказал, что звезда была СЛАБЕЕ этой величины.",
+        kpis: [
+          { val: "+3…+8m", lbl: "Скачок новой / UG" },
+          { val: "▼ < mag", lbl: "Верхний предел (не видна)" },
+          { val: "≥ 3 кадра", lbl: "Подтверждение вспышки" }
         ],
-        svg: SVG_OUTBURST
+        steps: [
+          "<strong>Карликовые и повторные новые (UG / NR, например T CrB):</strong> белые карлики с аккрецией подолгу находятся в покое, а затем за часы вспыхивают на <code>3–8+ mag</code>. Ежедневный мониторинг ловит начало вспышки первым!",
+          "<strong>Как читать значок <code>▼</code> (например, <code>&lt; 14.5</code>):</strong> это НЕ измеренный блеск, а научный факт, что в данный момент звезда была слабее <code>14.5m</code> и вспышка ещё не началась.",
+          "<strong>Реальная вспышка или случайный артефакт:</strong> настоящая вспышка держится на множестве кадров подряд. Одиночный пик на 1 кадре — это почти всегда спутник, космическая частица или горячий пиксель."
+        ],
+        tip: "💡 Шпаргалка наблюдателя: если заметили неожиданный скачок блеска на 2+ mag у T CrB или карликовой новой, перепроверьте RA/Dec и сразу снимите вторую 5-минутную серию для подтверждения!",
+        img: "assets/graph_slide_6.png",
+        caption: "Слева: спокойные верхние пределы (▼) и подтверждённая вспышка на +6 mag. Справа: как выглядит единичный пролёт спутника на 1 кадре (не вспышка).",
+        links: [
+          { label: "Пример кампании AAVSO по новой V462 Lup ↗", url: "https://apps.aavso.org/v2/campaigns/896" },
+          { label: "Поиск архивных кривых в AAVSO ↗", url: "https://apps.aavso.org/v2/data/search/global/" }
+        ]
       },
       {
-        kicker: "СЛАЙД 7 / 8 • АНСАМБЛЬ И НАСЫЩЕНИЕ",
-        headline: "Ансамблевая фотометрия Seestar, KNAME/KMAG и пересвет матрицы",
-        callout: "Главный принцип научной честности AAVSO: никогда не подставлять каталожные числа вместо реальных измерений.",
-        steps: [
-          "<strong>Почему KNAME=na и KMAG=na:</strong> Seestar делает внутреннюю ансамблевую фотометрию (<code>CNAME=ENSEMBLE</code>) и не выдаёт отдельный замер контрольной звезды — поэтому в CSV строго пишутся <code>na</code>.",
-          "<strong>Насыщение матрицы (~65 536 ADU):</strong> на Seestar S50/S30 звёзды ярче <code>~8.0–8.5 mag</code> при 10–20с могут уходить в пересвет, срезая вершину кривой («плоская полка»).",
-          "<strong>Оптимальный диапазон Seestar:</strong> звёзды <code>8.5–14.5 mag</code> без пересвеченных пикселей."
+        kicker: "СЛАЙД 7 / 8 • АНСАМБЛЬ И ПЕРЕСВЕТ",
+        headline: "Ансамблевая фотометрия Seestar, KNAME/KMAG и насыщение матрицы",
+        callout: "Научная честность прежде всего: никогда не записывать каталожные числа вместо реальных измерений и следить за пересветом ярких звёзд.",
+        kpis: [
+          { val: "ENSEMBLE", lbl: "Режим CNAME в Seestar" },
+          { val: "65 536 ADU", lbl: "Потолок матрицы CMOS" },
+          { val: "8.5–14.5m", lbl: "Оптимум для Seestar" }
         ],
+        steps: [
+          "<strong>Почему KNAME=na и KMAG=na:</strong> Seestar калибрует блеск по внутреннему ансамблю звёзд сравнения (<code>CNAME=ENSEMBLE</code>) и не выдаёт отдельный замер контрольной звезды. AstroLab показывает данные VSP в интерфейсе для справки, а в итоговый CSV строго пишет <code>CMAG=na</code>, <code>KNAME=na</code>, <code>KMAG=na</code>.",
+          "<strong>Пересвет CMOS-матрицы (&lt; 8.5 mag):</strong> на Seestar S50/S30 звёзды ярче <code>~8.0–8.5m</code> при выдержке 10–20с достигают потолка <code>65 536 ADU</code>, из-за чего вершина кривой искусственно срезается в плоскую полку.",
+          "<strong>Лучший диапазон для Seestar:</strong> выбирайте цели <code>8.5–13.5 mag</code> на S30 и <code>8.5–14.5 mag</code> на S50/S50PRO — там сенсор работает строго линейно."
+        ],
+        tip: "💡 Шпаргалка наблюдателя: если у яркой переменной (ярче 8.5m) вершина кривой выглядит подозрительно плоской — это пересвет. Уменьшите выдержку или выберите более слабую срочную цель в Радаре.",
+        img: "assets/graph_slide_7.png",
+        caption: "Слева: схема внутреннего ансамбля звёзд сравнения Seestar. Справа: как пересвет матрицы (~65 536 ADU) «срезает» истинный пик яркой звезды.",
         table: {
-          headers: ["Поле AAVSO Extended", "Значение в AstroLab", "Научное обоснование"],
+          headers: ["Поле AAVSO", "Экспорт AstroLab", "Причина"],
           rows: [
-            ["<code>CNAME</code> / <code>CMAG</code>", "<code>ENSEMBLE</code> / <code>na</code>", "Калибровка по внутреннему ансамблю звёзд сравнения Seestar"],
-            ["<code>KNAME</code> / <code>KMAG</code>", "<code>na</code> / <code>na</code>", "В сыром CSV Seestar нет отдельного замера контрольной звезды"],
-            ["<code>AMASS</code>", "<code>na</code>", "Считается локально только для предупреждения Alt &lt; 20°"],
-            ["<code>FILT</code> / <code>TRANS</code>", "<code>TG</code> / <code>NO</code>", "Нетрансформированный зелёный канал Байера"]
+            ["<code>CNAME</code> / <code>CMAG</code>", "<code>ENSEMBLE</code> / <code>na</code>", "Внутренний ансамбль опорных звёзд Seestar"],
+            ["<code>KNAME</code> / <code>KMAG</code>", "<code>na</code> / <code>na</code>", "Нет отдельного замера контрольной звезды в CSV"],
+            ["<code>AMASS</code>", "<code>na</code>", "Считается локально только для фильтра Alt &lt; 20°"]
           ]
-        }
+        },
+        links: [
+          { label: "Форум AAVSO: пересвет Seestar S50 (65 536 ADU) ↗", url: "https://forums.aavso.org/t/vphot-with-seestar-s50/787" },
+          { label: "Генератор карт сравнения AAVSO VSP ↗", url: "https://apps.aavso.org/vsp/" }
+        ]
       },
       {
-        kicker: "СЛАЙД 8 / 8 • ЧЕК-ЛИСТ КАЧЕСТВА AAVSO",
-        headline: "Высота (< 20°), облака, Луна и проверка перед отправкой",
-        callout: "Перед загрузкой в WebObs всегда сверяйте свои оранжевые точки Seestar с синей архивной кривой AAVSO AID.",
-        steps: [
-          "<strong>Низко над горизонтом (Alt &lt; 20° / Airmass &gt; 2.9):</strong> толстый слой атмосферы даёт сильное поглощение и мерцание. AstroLab автоматически предупредит и предложит исключить такие кадры.",
-          "<strong>Равномерная дымка vs рваные облака:</strong> лёгкую равномерную дымку ансамбль отчасти компенсирует, а проходящие облака дают резкие провалы и скачок <code>MERR</code>.",
-          "<strong>Итоговая проверка:</strong> зелёная/жёлтая сверка RA/Dec, нет дублей прошлых ночей, нет пересвета и аккуратное согласие с AAVSO AID."
+        kicker: "СЛАЙД 8 / 8 • ЧЕК-ЛИСТ ПЕРЕД ОТПРАВКОЙ",
+        headline: "Высота (< 20°), облака и финальная проверка перед WebObs",
+        callout: "Перед отправкой файла на AAVSO WebObs всегда сверяйте свои оранжевые точки Seestar с синей кривой AAVSO AID и проверяйте участки у горизонта.",
+        kpis: [
+          { val: "Alt ≥ 30°", lbl: "Идеально (Airmass ≤ 2.0)" },
+          { val: "Alt < 20°", lbl: "Опасная зона (X > 2.9)" },
+          { val: "≤ 0.05°", lbl: "Допуск сверки RA/Dec" }
         ],
+        steps: [
+          "<strong>Воздушная масса Kasten–Young (Alt &lt; 20° / X &gt; 2.9):</strong> ниже 20° свет проходит почти через 3 толщины атмосферы, что резко усиливает поглощение и мерцание. AstroLab сам предупредит и предложит исключить эти кадры в 1 клик.",
+          "<strong>Лёгкая дымка против рваных облаков:</strong> равномерную слабую дымку ансамблевая фотометрия временно компенсирует, но проходящие облака дают резкие рваные провалы и скачок <code>MERR</code>.",
+          "<strong>4 шага финальной проверки:</strong> (1) Зелёная/жёлтая сверка RA/Dec, (2) Нет дублей прошлых ночей, (3) Нет пересвета и облачных выбросов, (4) Аккуратное согласие с AAVSO AID."
+        ],
+        tip: "💡 Шпаргалка наблюдателя: для науки 40 чистых точек ВСЕГДА ценнее 300 шумных. Смело ставьте галочки исключения шумных кадров (MERR > 0.25m) и кадров ниже 20°!",
+        img: "assets/graph_slide_8.png",
+        caption: "Слева: рост воздушной массы Kasten–Young (1989) с выделением зелёной, жёлтой и красной зон высоты. Справа: характерный след проходящего облака на кривой блеска.",
         table: {
-          headers: ["Что видно на графике", "Вероятная причина", "Что сделать"],
+          headers: ["Симптом на графике", "Вероятная причина", "Что сделать"],
           rows: [
-            ["Резкий выброс на 1–2 кадрах", "Облако, спутник или рывок ведения", "Проверить MERR; включить фильтр шумных кадров (&gt; 0.25m)"],
-            ["Плавный уход в конце ночи", "Звезда опустилась ниже 20° (высокий Airmass)", "Отметить галочку «Исключить кадры ниже 20°»"],
-            ["Плоская вершина на яркой звезде (&lt; 8.5m)", "Пересвет CMOS-матрицы (65 536 ADU)", "Уменьшить выдержку или выбрать цель 9–14m"],
-            ["Вся кривая сдвинута на 1–3 mag", "Снята не та звезда / ошибка наведения", "Проверить таблицу сверки RA/Dec перед отправкой"]
+            ["Скачок на 1–2 кадрах", "Облако, спутник, рывок ведения", "Включить «Исключить шумные (MERR &gt; 0.25m)»"],
+            ["Плавный уход у горизонта", "Звезда ниже 20° (X &gt; 2.9)", "Включить «Исключить кадры ниже 20°»"],
+            ["Вся кривая мимо на 1–3m", "Снята не та звезда", "Проверить таблицу сверки RA/Dec"]
           ]
-        }
+        },
+        links: [
+          { label: "Руководства и старт в кампаниях AAVSO ↗", url: "https://forums.aavso.org/t/getting-started-with-observing-campaigns/4158" },
+          { label: "Рабочая группа AAVSO по смарт-телескопам ↗", url: "https://forums.aavso.org/t/status-update-from-the-aavso-smart-telescope-working-group/3073" }
+        ]
       }
     ]
   };
 
-  // Localized modal chrome for ES, DE, FR, ZH, CS, BER (with clean localized headers & EN technical slides fallback where concise)
   const GRAPH_GUIDE_8LANG = {
     en: EN_PACK,
     ru: RU_PACK,
     es: Object.assign({}, EN_PACK, {
       modalTitle: "📈 Cómo leer curvas de luz de AAVSO y Seestar",
-      btnPrev: "Anterior", btnNext: "Siguiente",
+      btnPrev: "Anterior", btnNext: "Siguiente", lblReadMore: "📚 Artículos AAVSO:",
       tabs: ["1. MAG y JD", "2. Bandas", "3. MERR", "4. Pulsantes", "5. Eclipses", "6. Estallidos", "7. Ensamble", "8. Calidad"]
     }),
     de: Object.assign({}, EN_PACK, {
       modalTitle: "📈 AAVSO- & Seestar-Lichtkurven richtig lesen",
-      btnPrev: "Zurück", btnNext: "Weiter",
+      btnPrev: "Zurück", btnNext: "Weiter", lblReadMore: "📚 AAVSO-Artikel:",
       tabs: ["1. MAG & JD", "2. Filter", "3. MERR", "4. Pulsierend", "5. Bedeckung", "6. Ausbrüche", "7. Ensemble", "8. Qualität"]
     }),
     fr: Object.assign({}, EN_PACK, {
       modalTitle: "📈 Lire les courbes de lumière AAVSO et Seestar",
-      btnPrev: "Précédent", btnNext: "Suivant",
+      btnPrev: "Précédent", btnNext: "Suivant", lblReadMore: "📚 Articles AAVSO :",
       tabs: ["1. MAG & JD", "2. Bandes", "3. MERR", "4. Pulsantes", "5. Éclipses", "6. Éruptions", "7. Ensemble", "8. Qualité"]
     }),
     zh: Object.assign({}, EN_PACK, {
       modalTitle: "📈 如何阅读 AAVSO 与 Seestar 光变曲线",
-      btnPrev: "上一页", btnNext: "下一页",
+      btnPrev: "上一页", btnNext: "下一页", lblReadMore: "📚 延伸阅读 (AAVSO):",
       tabs: ["1. 星等与JD", "2. 波段TG/V", "3. 误差MERR", "4. 脉动变星", "5. 食变星", "6. 爆发与上限", "7. 集合测光", "8. 质量检查"]
     }),
     cs: Object.assign({}, EN_PACK, {
       modalTitle: "📈 Jak číst světelné křivky AAVSO a Seestar",
-      btnPrev: "Předchozí", btnNext: "Další",
+      btnPrev: "Předchozí", btnNext: "Další", lblReadMore: "📚 Odborné články AAVSO:",
       tabs: ["1. MAG a JD", "2. Pásma", "3. MERR", "4. Pulsující", "5. Zákryty", "6. Vzplanutí", "7. Ensemble", "8. Kvalita"]
     }),
     ber: Object.assign({}, EN_PACK, {
       modalTitle: "📈 Amek ad nɣer izirigen n tafat AAVSO & Seestar",
-      btnPrev: "Ɣer deffir", btnNext: "Ɣer zdat",
+      btnPrev: "Ɣer deffir", btnNext: "Ɣer zdat", lblReadMore: "📚 AAVSO Articles:",
       tabs: ["1. MAG & JD", "2. TG / V", "3. MERR", "4. Pulsators", "5. Eclipses", "6. Outbursts", "7. Ensemble", "8. Quality"]
     })
   };
@@ -20182,6 +20232,17 @@ function revealAndFocusField(inputId) {
     const stageEl = document.getElementById("graphGuideStageContent");
     if (!stageEl) return;
 
+    const kpisHtml = Array.isArray(slide.kpis) ? `
+      <div class="graph-guide-kpi-row">
+        ${slide.kpis.map(k => `
+          <div class="graph-guide-kpi-card">
+            <div class="graph-guide-kpi-val">${k.val}</div>
+            <div class="graph-guide-kpi-lbl">${k.lbl}</div>
+          </div>
+        `).join("")}
+      </div>
+    ` : "";
+
     const stepsHtml = (slide.steps || []).map((stHtml, idx) => `
       <div class="beginner-step-card">
         <span class="beginner-step-num" style="background:linear-gradient(135deg,#0284c7,#0ea5e9);">${idx + 1}</span>
@@ -20189,40 +20250,43 @@ function revealAndFocusField(inputId) {
       </div>
     `).join("");
 
+    const tipHtml = slide.tip ? `<div class="graph-guide-pro-tip">${slide.tip}</div>` : "";
+
+    const linksHtml = Array.isArray(slide.links) && slide.links.length ? `
+      <div class="graph-guide-links-bar">
+        <span class="graph-guide-links-label">${pack.lblReadMore || "📚 AAVSO:"}</span>
+        ${slide.links.map(l => `<a class="graph-guide-article-link" href="${l.url}" target="_blank" rel="noopener noreferrer">${l.label}</a>`).join("")}
+      </div>
+    ` : "";
+
     const leftHtml = `
       <div class="graph-guide-kicker">${slide.kicker || ""}</div>
       <h3 class="beginner-slide-headline">${slide.headline}</h3>
       <div class="beginner-slide-BannerCallout" style="border-color:rgba(56,189,248,0.45); background:rgba(14,165,233,0.12);">${slide.callout}</div>
+      ${kpisHtml}
       <div class="beginner-steps-list">${stepsHtml}</div>
+      ${tipHtml}
+      ${linksHtml}
     `;
 
-    let rightHtml = "";
-    if (slide.svg) {
-      rightHtml = `
-        <div class="beginner-slide-mockup-box">
-          <div class="mockup-window-bar">
-            <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#10b981;"></i></span>
-            <span>${slide.kicker || "AAVSO • LIGHT CURVES"}</span>
-          </div>
-          ${slide.svg}
-        </div>
-      `;
-    } else if (slide.table) {
+    let tableHtml = "";
+    if (slide.table) {
       const ths = slide.table.headers.map(h => `<th>${h}</th>`).join("");
       const trs = slide.table.rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("");
-      rightHtml = `
-        <div class="beginner-slide-mockup-box">
-          <div class="mockup-window-bar">
-            <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#10b981;"></i></span>
-            <span>${slide.kicker}</span>
-          </div>
-          <table class="pitfalls-table">
-            <thead><tr>${ths}</tr></thead>
-            <tbody>${trs}</tbody>
-          </table>
-        </div>
-      `;
+      tableHtml = `<table class="pitfalls-table"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
     }
+
+    const rightHtml = `
+      <div class="beginner-slide-mockup-box" style="gap:12px;">
+        <div class="mockup-window-bar">
+          <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#10b981;"></i></span>
+          <span>${slide.kicker || "AAVSO • LIGHT CURVES"}</span>
+        </div>
+        ${slide.img ? `<img class="graph-guide-visual-img" src="${slide.img}" alt="${slide.headline}" loading="eager" />` : ""}
+        ${slide.caption ? `<div class="graph-guide-visual-caption">${slide.caption}</div>` : ""}
+        ${tableHtml}
+      </div>
+    `;
 
     stageEl.innerHTML = `
       <div class="beginner-slide-grid">
