@@ -2239,8 +2239,15 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      flex: 0 0 22px;
+      flex-shrink: 0;
       width: 22px;
       height: 22px;
+      min-width: 22px;
+      max-width: 22px;
+      min-height: 22px;
+      max-height: 22px;
+      aspect-ratio: 1 / 1;
       border-radius: 50%;
       background: linear-gradient(135deg, #0d9488, #0284c7);
       color: #ffffff;

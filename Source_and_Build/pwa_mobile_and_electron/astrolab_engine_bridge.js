@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.2.2) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.3.0) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.2.2.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.3.0.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -528,7 +528,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.2.2",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.3.0",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -538,7 +538,7 @@
       errNoObscodeMsg: "Укажите ваш личный код наблюдателя AAVSO (OBSCODE) перед конвертацией данных для загрузки на AAVSO.",
       errNoObscodeExplain: "Стандарт AAVSO Extended требует обязательного указания персонального кода наблюдателя в заголовке #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Версия 1.2.2",
+      appVersionLabel: "Версия 1.3.0",
       starIdFromCatalogHint: "✓ Каталожный идентификатор звезды (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -881,7 +881,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.2.2 session",
+      actAppStarted: "Started Seestar AstroLab v1.3.0 session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -891,7 +891,7 @@
       errNoObscodeMsg: "Please enter your personal AAVSO Observer Code (OBSCODE) before converting data for AAVSO upload.",
       errNoObscodeExplain: "The AAVSO Extended format strictly requires a valid personal observer code in the #OBSCODE header.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.2.2",
+      appVersionLabel: "Version 1.3.0",
       starIdFromCatalogHint: "✓ Canonical Catalog Star ID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometry Observatory",
       
@@ -1229,7 +1229,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.2.2",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.3.0",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1239,7 +1239,7 @@
       errNoObscodeMsg: "Ingrese su código personal de observador AAVSO (OBSCODE) antes de convertir los datos.",
       errNoObscodeExplain: "El formato AAVSO Extended requiere un código de observador válido en el encabezado #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Versión 1.2.2",
+      appVersionLabel: "Versión 1.3.0",
       starIdFromCatalogHint: "✓ Identificador de catálogo (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatorio Fotométrico Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -1553,7 +1553,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.2.2",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.3.0",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1563,7 +1563,7 @@
       errNoObscodeMsg: "Bitte geben Sie Ihren persönlichen AAVSO-Beobachtercode (OBSCODE) vor der Konvertierung ein.",
       errNoObscodeExplain: "Das AAVSO-Extended-Format erfordert zwingend einen gültigen Beobachtercode im Header #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.2.2",
+      appVersionLabel: "Version 1.3.0",
       starIdFromCatalogHint: "✓ Kanonische Katalog-STARID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometrie-Observatorium",
       
@@ -1866,7 +1866,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.2.2",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.3.0",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -1876,7 +1876,7 @@
       errNoObscodeMsg: "Veuillez saisir votre code observateur AAVSO (OBSCODE) avant de convertir les données.",
       errNoObscodeExplain: "Le standard AAVSO Extended exige un code observateur personnel valide dans l'en-tête #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.2.2",
+      appVersionLabel: "Version 1.3.0",
       starIdFromCatalogHint: "✓ Identifiant catalogue canonique (SIMBAD / AAVSO VSX) : {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -2178,7 +2178,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.2.2 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.3.0 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -2188,7 +2188,7 @@
       errNoObscodeMsg: "请在转换上传至 AAVSO 的数据前填写您的 AAVSO 观测者代码 (OBSCODE)。",
       errNoObscodeExplain: "AAVSO Extended 格式要求在 #OBSCODE 标头中提供有效的个人观测者代码。",
       radarSubTag: "",
-      appVersionLabel: "版本 1.2.2",
+      appVersionLabel: "版本 1.3.0",
       starIdFromCatalogHint: "✓ 星表标准目标名称 (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO 测光天文台",
       
@@ -4645,6 +4645,14 @@ function revealAndFocusField(inputId) {
       if (alertBanner) { alertBanner.style.display = "none"; alertBanner.textContent = ""; }
       const dupBanner = document.getElementById("duplicateFilterWarningBanner");
       if (dupBanner) { dupBanner.style.display = "none"; }
+      const lowAltBanner = document.getElementById("lowAltWarningBanner");
+      if (lowAltBanner) { lowAltBanner.style.display = "none"; }
+      const lowAltChkClear = document.getElementById("chkExcludeLowAltFrames");
+      if (lowAltChkClear) { lowAltChkClear.checked = false; }
+      const merrBanner = document.getElementById("merrQualityWarningBanner");
+      if (merrBanner) { merrBanner.style.display = "none"; }
+      const merrChkClear = document.getElementById("chkExcludeNoisyMerrFrames");
+      if (merrChkClear) { merrChkClear.checked = false; }
       updateEmptyStateSimbadPill();
       applyCriticalMismatchState(false, [], false);
       if (typeof window.renderUserOnlyLightCurveCard === "function") {
@@ -4717,6 +4725,16 @@ function revealAndFocusField(inputId) {
       try {
         window.updateDuplicateFilterBannerUI(lines, row ? row.starId : "", Boolean(options && options.isTypingInput));
       } catch (_dupErr) {}
+    }
+    if (typeof window.updateLowAltWarningBannerUI === "function") {
+      try {
+        window.updateLowAltWarningBannerUI(lines);
+      } catch (_altErr) {}
+    }
+    if (typeof window.updateMerrQualityBannerUI === "function") {
+      try {
+        window.updateMerrQualityBannerUI(lines);
+      } catch (_merrErr) {}
     }
 
     // ПУНКТ 8: КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО подставлять данные из CSV-файла Seestar
@@ -5456,12 +5474,26 @@ function revealAndFocusField(inputId) {
       ? dupAnalysis.excludedLineIndices
       : new Set();
 
+    const excludeLowAltCheckbox = document.getElementById("chkExcludeLowAltFrames");
+    const lowAltAnalysis = (excludeLowAltCheckbox && excludeLowAltCheckbox.checked && typeof window.analyzeCsvLowAltitudeFrames === "function")
+      ? window.analyzeCsvLowAltitudeFrames(lines)
+      : null;
+    const excludedLowAltIdxSet = (lowAltAnalysis && lowAltAnalysis.locationVerified && lowAltAnalysis.lowAltLineIndices)
+      ? lowAltAnalysis.lowAltLineIndices
+      : new Set();
+    let lowAltRemovedCount = 0;
+
     allDiffs = [];
     currentPage = 1;
 
     for (let i = 0; i < lines.length; i++) {
       if (excludedLineIdxSet.has(i)) {
         dupRemovedCount++;
+        skipped++;
+        continue;
+      }
+      if (excludedLowAltIdxSet.has(i)) {
+        lowAltRemovedCount++;
         skipped++;
         continue;
       }
@@ -5474,7 +5506,9 @@ function revealAndFocusField(inputId) {
       try {
         const magOrig = parseFloat(c[6]);
         const errOrig = parseFloat(c[7]);
-        if (!Number.isFinite(magOrig) || !Number.isFinite(errOrig)) { bad++; continue; }
+        if (!Number.isFinite(magOrig) || !Number.isFinite(errOrig) || errOrig <= 0 || errOrig >= 1.0) { bad++; continue; }
+        const excludeNoisyMerrChk = document.getElementById("chkExcludeNoisyMerrFrames");
+        if (excludeNoisyMerrChk && excludeNoisyMerrChk.checked && errOrig > 0.25) { skipped++; continue; }
 
         const magConv = parseFloat(magOrig.toFixed(4));
         const errConv = parseFloat(errOrig.toFixed(4));
@@ -8652,7 +8686,7 @@ function revealAndFocusField(inputId) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.2.2",
+      application: "Seestar AstroLab AAVSO v1.3.0",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8703,7 +8737,7 @@ function revealAndFocusField(inputId) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.2.2 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.3.0 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -11621,7 +11655,7 @@ function revealAndFocusField(inputId) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.2.2 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.3.0 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -14550,7 +14584,7 @@ function revealAndFocusField(inputId) {
       chkVisCity: "📍 Видимые в моём городе",
       chkVisNow: "🕯️ Над горизонтом сейчас",
       lblHemisphereFilter: "🧭 Азимут:",
-      optVisCity: "📍 Видимые в моём городе (DEC ≥ φ−70°)",
+      optVisCity: "📍 Видимые в моём городе (|φ − DEC| ≤ 70°)",
       optVisNow: "🕯️ Над горизонтом сейчас (Alt ≥ 15°)",
       optVisNorth: "⬆️ Север (N • Азимут 315°–45°)",
       optVisSouth: "⬇️ Юг (S • Азимут 135°–225°)",
@@ -14583,7 +14617,7 @@ function revealAndFocusField(inputId) {
       chkVisCity: "📍 Visible in My City",
       chkVisNow: "🕯️ Above Horizon Right Now",
       lblHemisphereFilter: "🧭 Azimuth:",
-      optVisCity: "📍 Observable from My City (DEC ≥ φ−70°)",
+      optVisCity: "📍 Observable from My City (|φ − DEC| ≤ 70°)",
       optVisNow: "🕯️ Above Horizon Right Now (Alt ≥ 15°)",
       optVisNorth: "⬆️ North (N • Azimuth 315°–45°)",
       optVisSouth: "⬇️ South (S • Azimuth 135°–225°)",
@@ -14616,7 +14650,7 @@ function revealAndFocusField(inputId) {
       chkVisCity: "📍 Visibles en mi ciudad",
       chkVisNow: "🕯️ Sobre el horizonte ahora",
       lblHemisphereFilter: "🧭 Acimut:",
-      optVisCity: "📍 Visibles en mi ciudad (DEC ≥ φ−70°)",
+      optVisCity: "📍 Visibles en mi ciudad (|φ − DEC| ≤ 70°)",
       optVisNow: "🕯️ Sobre el horizonte ahora (Alt ≥ 15°)",
       optVisNorth: "⬆️ Norte (N • Acimut 315°–45°)",
       optVisSouth: "⬇️ Sur (S • Acimut 135°–225°)",
@@ -14649,7 +14683,7 @@ function revealAndFocusField(inputId) {
       chkVisCity: "📍 In meiner Stadt sichtbar",
       chkVisNow: "🕯️ Jetzt über dem Horizont",
       lblHemisphereFilter: "🧭 Azimut:",
-      optVisCity: "📍 In meiner Stadt sichtbar (DEC ≥ φ−70°)",
+      optVisCity: "📍 In meiner Stadt sichtbar (|φ − DEC| ≤ 70°)",
       optVisNow: "🕯️ Jetzt über dem Horizont (Alt ≥ 15°)",
       optVisNorth: "⬆️ Norden (N • Azimut 315°–45°)",
       optVisSouth: "⬇️ Süden (S • Azimut 135°–225°)",
@@ -14682,7 +14716,7 @@ function revealAndFocusField(inputId) {
       chkVisCity: "📍 Visibles dans ma ville",
       chkVisNow: "🕯️ Au-dessus de l'horizon",
       lblHemisphereFilter: "🧭 Azimut :",
-      optVisCity: "📍 Visibles depuis ma ville (DEC ≥ φ−70°)",
+      optVisCity: "📍 Visibles depuis ma ville (|φ − DEC| ≤ 70°)",
       optVisNow: "🕯️ Au-dessus de l'horizon (Alt ≥ 15°)",
       optVisNorth: "⬆️ Nord (N • Azimut 315°–45°)",
       optVisSouth: "⬇️ Sud (S • Azimut 135°–225°)",
@@ -14715,7 +14749,7 @@ function revealAndFocusField(inputId) {
       chkVisCity: "📍 本市可见目标",
       chkVisNow: "🕯️ 当前位于地平线上",
       lblHemisphereFilter: "🧭 方位角：",
-      optVisCity: "📍 本市可见目标 (DEC ≥ φ−70°)",
+      optVisCity: "📍 本市可见目标 (|φ − DEC| ≤ 70°)",
       optVisNow: "🕯️ 当前位于地平线上 (Alt ≥ 15°)",
       optVisNorth: "⬆️ 正北 (N • 方位角 315°–45°)",
       optVisSouth: "⬇️ 正南 (S • 方位角 135°–225°)",
@@ -14835,11 +14869,10 @@ function revealAndFocusField(inputId) {
     const lon = OBSERVER_GEO_STATE.lon;
     const { currentAltDeg, maxCulmAltDeg, azimuthDeg } = computeStarAltitudeForCity(ra, dec, lat, lon);
 
-    const isObserverNorth = (lat >= 0.0);
+    // Симметричная формула видимости для Северного и Южного полушарий: |lat - dec| <= 70° (maxCulmAltDeg >= 20°)
     const matchesCityVisibility = (
-      (isObserverNorth ? (dec >= 0.0) : (dec < 0.0)) &&
-      maxCulmAltDeg >= 25.0 &&
-      Math.abs(lat - dec) <= 48.0
+      Math.abs(lat - dec) <= 70.0 &&
+      maxCulmAltDeg >= 20.0
     );
 
     if (!ignoreDomCheckboxes) {
@@ -14854,7 +14887,7 @@ function revealAndFocusField(inputId) {
 
       // [ПУНКТ 11] Отдельный чекбокс «Над горизонтом сейчас» (строго над горизонтом в данный момент в полушарии города)
       const chkNowEl = document.getElementById("v6ChkVisNow");
-      if (chkNowEl && chkNowEl.checked && !((isObserverNorth ? (dec >= 0.0) : (dec < 0.0)) && currentAltDeg >= 15.0)) return false;
+      if (chkNowEl && chkNowEl.checked && !(currentAltDeg >= 15.0)) return false;
     }
 
     // [ТРЕБОВАНИЕ 3] Фильтр Азимута (направление обзора, например с балкона: Все направления, Север N, Юг S, Восток E, Запад W, NE, NW, SE, SW)
@@ -14863,7 +14896,7 @@ function revealAndFocusField(inputId) {
       return matchesCityVisibility;
     }
     if (mode === "now") {
-      return (isObserverNorth ? (dec >= 0.0) : (dec < 0.0)) && currentAltDeg >= 15.0;
+      return currentAltDeg >= 15.0;
     }
     if (mode === "north") {
       return maxCulmAltDeg >= 15.0 && (azimuthDeg >= 315.0 || azimuthDeg <= 45.0);
@@ -18643,7 +18676,7 @@ function revealAndFocusField(inputId) {
       chkVisCity: "📍 Viditelné v mém městě",
       chkVisNow: "🕯️ Nyní nad obzorem",
       lblHemisphereFilter: "🧭 Azimut:",
-      optVisCity: "📍 Viditelné z mého města (DEC ≥ φ−70°)",
+      optVisCity: "📍 Viditelné z mého města (|φ − DEC| ≤ 70°)",
       optVisNow: "🕯️ Nyní nad obzorem (Alt ≥ 15°)",
       optVisNorth: "⬆️ Sever (N • Azimut 315°–45°)",
       optVisSouth: "⬇️ Jih (S • Azimut 135°–225°)",
@@ -18675,43 +18708,43 @@ function revealAndFocusField(inputId) {
     const extraPerLang = {
       en: {
         optFullWindow: "Full Window", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Version 1.2.2"
+        appVersionLabel: "Version 1.3.0"
       },
       ru: {
         optFullWindow: "Во всё окно", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Версия 1.2.2"
+        appVersionLabel: "Версия 1.3.0"
       },
       es: {
         optFullWindow: "Ventana completa", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En línea • TTL 1h",
-        appVersionLabel: "Versión 1.2.2"
+        appVersionLabel: "Versión 1.3.0"
       },
       de: {
         optFullWindow: "Vollbildfenster", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Online • TTL 1 Std.",
         thUI: "Daten aus SIMBAD-Katalog",
-        appVersionLabel: "Version 1.2.2"
+        appVersionLabel: "Version 1.3.0"
       },
       fr: {
         optFullWindow: "Pleine fenêtre", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En ligne • TTL 1h",
-        appVersionLabel: "Version 1.2.2"
+        appVersionLabel: "Version 1.3.0"
       },
       zh: {
         optFullWindow: "全窗口", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "在线 • TTL 1小时",
-        appVersionLabel: "版本 1.2.2"
+        appVersionLabel: "版本 1.3.0"
       },
       ber: {
         optFullWindow: "Asfaylu ummid", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Srad • TTL 1s",
         btnTryUniverseLuck: "Afran agacuran n yitri i wannay-ik",
         tipTryUniverseLuck: "Afran agacuran n yitri azwaru i wannayen-ik ass-a",
-        appVersionLabel: "Taseqqult 1.2.2"
+        appVersionLabel: "Taseqqult 1.3.0"
       },
       cs: {
         optFullWindow: "Celé okno", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Verze 1.2.2",
+        appVersionLabel: "Verze 1.3.0",
         lblThemePickerSplash: "Barevný motiv",
         brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Fotometrická observatoř",
         btnDonateBadge: "❤️ Podpořit",
@@ -18943,16 +18976,16 @@ function revealAndFocusField(inputId) {
     // Sync all Module 14 & curve labels on initial load for EVERY language (prevents RU leaks in EN mode)
     if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
 
-    // === v1.2.2: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
+    // === v1.3.0: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
     const UPDATE_I18N = {
-      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.2.2. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
-      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.2.2. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
-      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.2.2. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
-      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.2.2. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
-      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.2.2. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
-      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.2.2，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
-      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.2.2. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
-      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.2.2. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
+      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.3.0. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
+      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.3.0. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
+      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.3.0. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
+      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.3.0. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
+      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.3.0. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
+      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.3.0，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
+      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.3.0. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
+      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.3.0. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
     };
 
     window.parseAstroSemver = function(v) {
@@ -19012,7 +19045,7 @@ function revealAndFocusField(inputId) {
     window.checkGithubReleaseOnceOnStartup = async function(forceCheck = false) {
       if (window._githubUpdateCheckedThisSession && !forceCheck) return;
       window._githubUpdateCheckedThisSession = true;
-      const LOCAL_VER = "1.2.2";
+      const LOCAL_VER = "1.3.0";
       const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
       const lastTs = parseInt((typeof safeGetStorage === "function" ? safeGetStorage("seestar_last_update_check_ts", "0") : "0") || "0", 10);
       if (!forceCheck && lastTs > 0 && (Date.now() - lastTs) < SIX_HOURS_MS) {
@@ -19052,6 +19085,473 @@ function revealAndFocusField(inputId) {
     };
     setTimeout(() => { window.checkGithubReleaseOnceOnStartup(false); }, 3500);
 
+  })();
+
+
+  // ============================================================================
+  // [RU] МОДУЛЬ ПРОВЕРКИ ВЫСОТЫ НАД ГОРИЗОНТОМ (Alt < 20° / Airmass > 2.9)
+  //      С ЗАЩИТОЙ ОТ НЕСОВПАДЕНИЯ ГОРОДА В НАСТРОЙКАХ (8 ЯЗЫКОВ)
+  // [EN] LOW-ALTITUDE FRAME CHECK MODULE (Alt < 20° / Airmass > 2.9)
+  //      WITH AUTOMATIC LOCATION VERIFICATION (8 LANGUAGES)
+  // ============================================================================
+  (function initLowAltitudeCheckModule() {
+    const LOW_ALT_I18N = {
+      ru: {
+        lowAltBannerTitle: "⚠️ Обнаружены кадры на низкой высоте над горизонтом (< 20°)",
+        lowAltBannerBadge: "Высота < 20° • X > 2.9",
+        lblExcludeLowAltFrames: "Исключить кадры ниже 20° (Airmass > 2.9) из итогового файла",
+        lowAltMismatchTitle: "ℹ️ Проверка высоты над горизонтом пропущена",
+        lowAltMismatchBadge: "Город не совпал",
+        lowAltWarnDetailsFmt: "Из {total} кадров в файле <strong>{low}</strong> сняты ниже <strong>20°</strong> (высота: <code>{minAlt}° – {maxAlt}°</code>, Airmass: <code>{maxX} – {minX}</code>, город: {city}). У горизонта точность фотометрии снижается из-за толщины атмосферы. Вы можете оставить все кадры или исключить низкие галочкой ниже.",
+        lowAltMismatchDetailsFmt: "Выбранный в Настройках город (<strong>{city}</strong>) не совпадает с часовым поясом/видимостью съёмки в этом файле — кадры не отбраковываются. Чтобы включить проверку высоты, выберите реальный город съёмки в ⚙️ Настройках."
+      },
+      en: {
+        lowAltBannerTitle: "⚠️ Low-altitude frames detected (< 20°)",
+        lowAltBannerBadge: "Alt < 20° • X > 2.9",
+        lblExcludeLowAltFrames: "Exclude frames below 20° (Airmass > 2.9) from output file",
+        lowAltMismatchTitle: "ℹ️ Horizon altitude check skipped",
+        lowAltMismatchBadge: "City mismatch",
+        lowAltWarnDetailsFmt: "Out of {total} frames, <strong>{low}</strong> were captured below <strong>20°</strong> (Alt: <code>{minAlt}° – {maxAlt}°</code>, Airmass: <code>{maxX} – {minX}</code>, city: {city}). Low-altitude measurements suffer stronger atmospheric extinction. You may keep all frames or exclude those below 20° using the checkbox below.",
+        lowAltMismatchDetailsFmt: "The city selected in Settings (<strong>{city}</strong>) does not match this file's timezone/horizon visibility — no frames are excluded. Select your actual observing city in ⚙️ Settings to enable the altitude check."
+      },
+      es: {
+        lowAltBannerTitle: "⚠️ Se detectaron tomas a baja altura sobre el horizonte (< 20°)",
+        lowAltBannerBadge: "Altura < 20° • X > 2.9",
+        lblExcludeLowAltFrames: "Excluir tomas por debajo de 20° (Airmass > 2.9) del archivo final",
+        lowAltMismatchTitle: "ℹ️ Comprobación de altura omitida",
+        lowAltMismatchBadge: "Ciudad distinta",
+        lowAltWarnDetailsFmt: "De {total} tomas, <strong>{low}</strong> se capturaron por debajo de <strong>20°</strong> (Alt: <code>{minAlt}° – {maxAlt}°</code>, Airmass: <code>{maxX} – {minX}</code>, ciudad: {city}). Cerca del horizonte la precisión disminuye por la atmósfera. Puedes conservar todas o excluirlas abajo.",
+        lowAltMismatchDetailsFmt: "La ciudad elegida en Ajustes (<strong>{city}</strong>) no coincide con la zona horaria/visibilidad de este archivo; no se excluye ninguna toma. Selecciona la ciudad real de observación en ⚙️ Ajustes."
+      },
+      de: {
+        lowAltBannerTitle: "⚠️ Aufnahmen in geringer Horizont-Höhe erkannt (< 20°)",
+        lowAltBannerBadge: "Höhe < 20° • X > 2.9",
+        lblExcludeLowAltFrames: "Aufnahmen unter 20° (Airmass > 2.9) aus der Zieldatei ausschließen",
+        lowAltMismatchTitle: "ℹ️ Höhenprüfung übersprungen",
+        lowAltMismatchBadge: "Ort abweichend",
+        lowAltWarnDetailsFmt: "Von {total} Aufnahmen wurden <strong>{low}</strong> unter <strong>20°</strong> aufgenommen (Höhe: <code>{minAlt}° – {maxAlt}°</code>, Airmass: <code>{maxX} – {minX}</code>, Ort: {city}). In Horizontnähe sinkt die Genauigkeit. Sie können alle behalten oder sie unten ausschließen.",
+        lowAltMismatchDetailsFmt: "Der in den Einstellungen gewählte Ort (<strong>{city}</strong>) passt nicht zur Zeitzone/Sichtbarkeit dieser Datei — es werden keine Aufnahmen entfernt. Wählen Sie Ihren Beobachtungsort in ⚙️ Einstellungen."
+      },
+      fr: {
+        lowAltBannerTitle: "⚠️ Images détectées à faible hauteur sur l'horizon (< 20°)",
+        lowAltBannerBadge: "Hauteur < 20° • X > 2.9",
+        lblExcludeLowAltFrames: "Exclure les images sous 20° (Airmass > 2.9) du fichier final",
+        lowAltMismatchTitle: "ℹ️ Vérification de la hauteur ignorée",
+        lowAltMismatchBadge: "Ville différente",
+        lowAltWarnDetailsFmt: "Sur {total} images, <strong>{low}</strong> ont été prises sous <strong>20°</strong> (Hauteur : <code>{minAlt}° – {maxAlt}°</code>, Airmass : <code>{maxX} – {minX}</code>, ville : {city}). Près de l'horizon, la précision baisse. Vous pouvez tout garder ou exclure ces images ci-dessous.",
+        lowAltMismatchDetailsFmt: "La ville choisie dans Paramètres (<strong>{city}</strong>) ne correspond pas au fuseau horaire/horizon de ce fichier — aucune image n'est exclue. Choisissez votre ville d'observation dans ⚙️ Paramètres."
+      },
+      zh: {
+        lowAltBannerTitle: "⚠️ 检测到低仰角观测帧（< 20°）",
+        lowAltBannerBadge: "仰角 < 20° • X > 2.9",
+        lblExcludeLowAltFrames: "从输出文件中排除低于 20°（Airmass > 2.9）的帧",
+        lowAltMismatchTitle: "ℹ️ 已跳过地平高度检查",
+        lowAltMismatchBadge: "城市不匹配",
+        lowAltWarnDetailsFmt: "在全部 {total} 帧中，有 <strong>{low}</strong> 帧的观测仰角低于 <strong>20°</strong>（仰角：<code>{minAlt}° – {maxAlt}°</code>，大气质量：<code>{maxX} – {minX}</code>，城市：{city}）。低仰角会降低测光精度，您可在下方选择是否剔除。",
+        lowAltMismatchDetailsFmt: "设置中选择的城市（<strong>{city}</strong>）与该文件的时区/地平可见性不符，因此未剔除任何数据。请在 ⚙️ 设置中选择实际观测城市。"
+      },
+      cs: {
+        lowAltBannerTitle: "⚠️ Zjištěny snímky nízko nad obzorem (< 20°)",
+        lowAltBannerBadge: "Výška < 20° • X > 2.9",
+        lblExcludeLowAltFrames: "Vyloučit snímky pod 20° (Airmass > 2.9) z výsledného souboru",
+        lowAltMismatchTitle: "ℹ️ Kontrola výšky nad obzorem přeskočena",
+        lowAltMismatchBadge: "Jiné město",
+        lowAltWarnDetailsFmt: "Z {total} snímků bylo <strong>{low}</strong> pořízeno pod <strong>20°</strong> (výška: <code>{minAlt}° – {maxAlt}°</code>, Airmass: <code>{maxX} – {minX}</code>, město: {city}). Nízko nad obzorem klesá přesnost fotometrie. Můžete je ponechat, nebo níže vyloučit.",
+        lowAltMismatchDetailsFmt: "Město zvolené v Nastavení (<strong>{city}</strong>) neodpovídá časovému pásmu/viditelnosti v tomto souboru — žádné snímky nebyly vyřazeny. Vyberte skutečné město pozorování v ⚙️ Nastavení."
+      },
+      ber: {
+        lowAltBannerTitle: "⚠️ Ttwafent tugniwin s teɣzi tameẓyant (< 20°)",
+        lowAltBannerBadge: "Teɣzi < 20° • X > 2.9",
+        lblExcludeLowAltFrames: "Kkes tugniwin ddaw 20° (Airmass > 2.9) seg ufaylu aneggaru",
+        lowAltMismatchTitle: "ℹ️ Asenqed n teɣzi yettwazgel",
+        lowAltMismatchBadge: "Tamdint ur temsadaɣ ara",
+        lowAltWarnDetailsFmt: "Seg {total} n tugniwin, <strong>{low}</strong> ttwaṭṭfent ddaw <strong>20°</strong> (Alt: <code>{minAlt}° – {maxAlt}°</code>, Airmass: <code>{maxX} – {minX}</code>, tamdint: {city}). Tzemreḍ ad ten-teǧǧeḍ neɣ ad ten-tekseḍ s wadda.",
+        lowAltMismatchDetailsFmt: "Tamdint yettwafernen deg Iɣewwaren (<strong>{city}</strong>) ur temsadaɣ ara d wakud n ufaylu-a — ulac tugna yettwaksen."
+      }
+    };
+
+    if (window.I18N) {
+      for (const lg of ["ru", "en", "es", "de", "fr", "zh", "cs", "ber"]) {
+        if (window.I18N[lg] && LOW_ALT_I18N[lg]) {
+          Object.assign(window.I18N[lg], LOW_ALT_I18N[lg]);
+        }
+      }
+    }
+
+    function trLowAlt(key) {
+      let lg = document.getElementById("langSelect")?.value || "";
+      if (!lg) {
+        try { lg = window.localStorage ? (localStorage.getItem("lang") || "") : ""; } catch (_) {}
+      }
+      lg = (typeof window.__normAstroLang === "function" ? window.__normAstroLang(lg || "en") : (lg || "en")) || "en";
+      const pack = LOW_ALT_I18N[lg] || LOW_ALT_I18N.en;
+      return pack[key] || LOW_ALT_I18N.en[key] || key;
+    }
+
+    function parseSeestarLocalDateAsUtcMs(str) {
+      if (!str) return NaN;
+      const m = String(str).trim().match(/^(\d{4})[.\-/](\d{2})[.\-/](\d{2})\s+(\d{2}):(\d{2}):(\d{2})/);
+      if (!m) return NaN;
+      return Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]), Number(m[4]), Number(m[5]), Number(m[6]));
+    }
+
+    function computeKastenYoungAirmass(altDeg) {
+      if (!Number.isFinite(altDeg) || altDeg <= 0) return Infinity;
+      const sinAlt = Math.sin((altDeg * Math.PI) / 180);
+      return 1.0 / (sinAlt + 0.50572 * Math.pow(altDeg + 6.07995, -1.6364));
+    }
+
+    window.analyzeCsvLowAltitudeFrames = function analyzeCsvLowAltitudeFrames(lines) {
+      const _geo = window._OBSERVER_GEO_STATE || {};
+      const lat = Number(_geo.lat);
+      const lon = Number(_geo.lon);
+      const city = _geo.city ? String(_geo.city) : "—";
+      const result = {
+        totalFrames: 0,
+        lowAltCount: 0,
+        lowAltLineIndices: new Set(),
+        locationVerified: false,
+        mismatchReason: "",
+        minAltDeg: Infinity,
+        maxAltDeg: -Infinity,
+        minAirmass: Infinity,
+        maxAirmass: 0,
+        city
+      };
+      if (!Array.isArray(lines) || !lines.length || !Number.isFinite(lat) || !Number.isFinite(lon)) {
+        return result;
+      }
+
+      const tzSamples = [];
+      for (let i = 0; i < lines.length; i++) {
+        const raw = String(lines[i] || "").trim();
+        if (!raw) continue;
+        const c = splitSeestarCsvRow(raw);
+        if (!c.length || (i === 0 && c[0].toLowerCase() === "name")) continue;
+        if (c.length < 19) continue;
+        if (String(c[1] || "").toLowerCase() !== "non-reference star") continue;
+
+        const ra = parseFloat(c[2]);
+        const dec = parseFloat(c[3]);
+        const jdStart = parseFloat(c[12]);
+        const jdEnd = parseFloat(c[15]);
+        if (!Number.isFinite(ra) || !Number.isFinite(dec)) continue;
+        if (!Number.isFinite(jdStart) && !Number.isFinite(jdEnd)) continue;
+
+        const jdMid = (Number.isFinite(jdStart) && Number.isFinite(jdEnd))
+          ? (jdStart + jdEnd) / 2.0
+          : (Number.isFinite(jdStart) ? jdStart : jdEnd);
+
+        if (tzSamples.length < 5 && Number.isFinite(jdStart) && c[11]) {
+          const localAsUtcMs = parseSeestarLocalDateAsUtcMs(c[11]);
+          const utcMs = (jdStart - 2440587.5) * 86400000;
+          if (Number.isFinite(localAsUtcMs) && Number.isFinite(utcMs)) {
+            tzSamples.push((localAsUtcMs - utcMs) / 3600000);
+          }
+        }
+
+        const dt = new Date((jdMid - 2440587.5) * 86400000);
+        const altInfo = (typeof window.computeStarAltitudeForCity === "function")
+          ? window.computeStarAltitudeForCity(ra, dec, lat, lon, dt)
+          : null;
+        if (!altInfo || !Number.isFinite(altInfo.currentAltDeg)) continue;
+
+        const altDeg = altInfo.currentAltDeg;
+        const airmass = computeKastenYoungAirmass(altDeg);
+        result.totalFrames++;
+        if (altDeg < result.minAltDeg) result.minAltDeg = altDeg;
+        if (altDeg > result.maxAltDeg) result.maxAltDeg = altDeg;
+        if (Number.isFinite(airmass)) {
+          if (airmass < result.minAirmass) result.minAirmass = airmass;
+          if (airmass > result.maxAirmass) result.maxAirmass = airmass;
+        }
+        if (altDeg < 20.0) {
+          result.lowAltCount++;
+          result.lowAltLineIndices.add(i);
+        }
+      }
+
+      if (result.totalFrames === 0) return result;
+
+      // Верификация локации: проверяем физическую реальность (Alt > 2°) и совпадение часового пояса (±3 ч)
+      let tzOk = true;
+      if (tzSamples.length > 0) {
+        const avgTz = tzSamples.reduce((a, b) => a + b, 0) / tzSamples.length;
+        const tzCsv = Math.round(avgTz * 2) / 2;
+        const expectedSolarTz = lon / 15.0;
+        if (Math.abs(tzCsv - expectedSolarTz) > 3.0) {
+          tzOk = false;
+          result.mismatchReason = "timezone";
+        }
+      }
+      const horizonOk = result.minAltDeg > 2.0;
+      if (!horizonOk && !result.mismatchReason) {
+        result.mismatchReason = "below_horizon";
+      }
+
+      result.locationVerified = tzOk && horizonOk;
+      return result;
+    };
+
+    window.updateLowAltWarningBannerUI = function updateLowAltWarningBannerUI(lines) {
+      const banner = document.getElementById("lowAltWarningBanner");
+      const titleEl = document.getElementById("lowAltBannerTitle");
+      const badgeEl = document.getElementById("lowAltBannerBadge");
+      const detailsEl = document.getElementById("lowAltBannerDetailsText");
+      const chkWrap = document.getElementById("lowAltCheckboxWrap");
+      const chkEl = document.getElementById("chkExcludeLowAltFrames");
+      if (!banner) return;
+
+      if (!Array.isArray(lines) || !lines.length) {
+        banner.style.display = "none";
+        if (chkEl) chkEl.checked = false;
+        return;
+      }
+
+      const res = window.analyzeCsvLowAltitudeFrames(lines);
+      if (res.totalFrames === 0) {
+        banner.style.display = "none";
+        if (chkEl) chkEl.checked = false;
+        return;
+      }
+
+      const cityLoc = (typeof getLocalizedCityName === "function")
+        ? getLocalizedCityName(res.city)
+        : res.city;
+
+      if (!res.locationVerified) {
+        banner.style.display = "block";
+        banner.style.background = "rgba(56, 189, 248, 0.10)";
+        banner.style.borderColor = "rgba(56, 189, 248, 0.45)";
+        if (titleEl) {
+          titleEl.style.color = "#7dd3fc";
+          titleEl.textContent = trLowAlt("lowAltMismatchTitle");
+        }
+        if (badgeEl) badgeEl.textContent = trLowAlt("lowAltMismatchBadge");
+        if (detailsEl) {
+          detailsEl.innerHTML = trLowAlt("lowAltMismatchDetailsFmt")
+            .replace("{city}", escapeHtml(cityLoc));
+        }
+        if (chkWrap) chkWrap.style.display = "none";
+        if (chkEl) chkEl.checked = false;
+        return;
+      }
+
+      if (res.lowAltCount > 0) {
+        banner.style.display = "block";
+        banner.style.background = "rgba(245, 158, 11, 0.14)";
+        banner.style.borderColor = "rgba(245, 158, 11, 0.55)";
+        if (titleEl) {
+          titleEl.style.color = "#fde68a";
+          titleEl.textContent = trLowAlt("lowAltBannerTitle");
+        }
+        if (badgeEl) badgeEl.textContent = trLowAlt("lowAltBannerBadge");
+        if (detailsEl) {
+          detailsEl.innerHTML = trLowAlt("lowAltWarnDetailsFmt")
+            .replace("{total}", String(res.totalFrames))
+            .replace("{low}", String(res.lowAltCount))
+            .replace("{minAlt}", res.minAltDeg.toFixed(1))
+            .replace("{maxAlt}", res.maxAltDeg.toFixed(1))
+            .replace("{maxX}", Number.isFinite(res.maxAirmass) ? res.maxAirmass.toFixed(2) : "—")
+            .replace("{minX}", Number.isFinite(res.minAirmass) ? res.minAirmass.toFixed(2) : "—")
+            .replace("{city}", escapeHtml(cityLoc));
+        }
+        if (chkWrap) chkWrap.style.display = "flex";
+        return;
+      }
+
+      // Все кадры >= 20° и локация подтверждена — скрываем предупреждение
+      banner.style.display = "none";
+      if (chkEl) chkEl.checked = false;
+    };
+
+    ["headerCitySelect", "langSelect", "splashLangSelect"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener("change", () => {
+          setTimeout(() => {
+            if (typeof currentCsvText === "string" && currentCsvText.trim()) {
+              window.updateLowAltWarningBannerUI(currentCsvText.split(/\r?\n/));
+            }
+          }, 50);
+        });
+      }
+    });
+  })();
+
+
+  // ============================================================================
+  // [RU] МОДУЛЬ ПОСТРОЧНОГО КОНТРОЛЯ ОШИБКИ ИЗМЕРЕНИЯ Mag(err) (MERR)
+  //      Жёсткий порог AAVSO (>= 1.0m / <= 0) + мягкий опциональный фильтр (> 0.25m)
+  // [EN] PER-ROW MEASUREMENT ERROR (MERR) QUALITY MODULE (8 LANGUAGES)
+  // ============================================================================
+  (function initMerrQualityCheckModule() {
+    const MERR_I18N = {
+      ru: {
+        merrBannerTitle: "⚠️ Обнаружены кадры с высокой ошибкой измерения (MERR)",
+        merrBannerBadge: "Контроль MERR",
+        lblExcludeNoisyMerrFrames: "Исключить шумные кадры (MERR > 0.25m) из итогового файла",
+        merrHardOnlyFmt: "Из {total} кадров <strong>{hard}</strong> имеют недопустимую ошибку (<code>MERR ≥ 1.00m</code> или <code>≤ 0</code>) и будут автоматически исключены, так как AAVSO WebObs их не принимает.",
+        merrSoftOnlyFmt: "Из {total} кадров <strong>{noisy}</strong> имеют повышенную ошибку (<code>0.25m &lt; MERR &lt; 1.00m</code>, макс. <code>{maxErr}m</code>). Вы можете оставить их или исключить галочкой ниже.",
+        merrBothFmt: "Из {total} кадров: <strong>{hard}</strong> с ошибкой <code>≥ 1.00m</code> будут автоматически исключены (требование AAVSO), а <strong>{noisy}</strong> имеют повышенную ошибку <code>0.25–1.00m</code> (макс. <code>{maxErr}m</code>) — их можно исключить галочкой ниже."
+      },
+      en: {
+        merrBannerTitle: "⚠️ High measurement error (MERR) frames detected",
+        merrBannerBadge: "MERR Check",
+        lblExcludeNoisyMerrFrames: "Exclude noisy frames (MERR > 0.25m) from output file",
+        merrHardOnlyFmt: "Out of {total} frames, <strong>{hard}</strong> have invalid uncertainty (<code>MERR ≥ 1.00m</code> or <code>≤ 0</code>) and will be automatically rejected because AAVSO WebObs does not accept them.",
+        merrSoftOnlyFmt: "Out of {total} frames, <strong>{noisy}</strong> have elevated uncertainty (<code>0.25m &lt; MERR &lt; 1.00m</code>, max <code>{maxErr}m</code>). You may keep them or exclude them using the checkbox below.",
+        merrBothFmt: "Out of {total} frames: <strong>{hard}</strong> with <code>MERR ≥ 1.00m</code> will be auto-rejected (AAVSO requirement), and <strong>{noisy}</strong> have elevated error <code>0.25–1.00m</code> (max <code>{maxErr}m</code>) — optionally exclude them below."
+      },
+      es: {
+        merrBannerTitle: "⚠️ Se detectaron tomas con error de medición alto (MERR)",
+        merrBannerBadge: "Control MERR",
+        lblExcludeNoisyMerrFrames: "Excluir tomas ruidosas (MERR > 0.25m) del archivo final",
+        merrHardOnlyFmt: "De {total} tomas, <strong>{hard}</strong> tienen error no válido (<code>MERR ≥ 1.00m</code> o <code>≤ 0</code>) y se descartarán automáticamente porque AAVSO WebObs no las acepta.",
+        merrSoftOnlyFmt: "De {total} tomas, <strong>{noisy}</strong> tienen error elevado (<code>0.25m &lt; MERR &lt; 1.00m</code>, máx. <code>{maxErr}m</code>). Puedes conservarlas o excluirlas abajo.",
+        merrBothFmt: "De {total} tomas: <strong>{hard}</strong> con <code>MERR ≥ 1.00m</code> se descartarán automáticamente (regla AAVSO) y <strong>{noisy}</strong> tienen error <code>0.25–1.00m</code> (máx. <code>{maxErr}m</code>) — puedes excluirlas abajo."
+      },
+      de: {
+        merrBannerTitle: "⚠️ Aufnahmen mit hohem Messfehler (MERR) erkannt",
+        merrBannerBadge: "MERR-Prüfung",
+        lblExcludeNoisyMerrFrames: "Verrauschte Aufnahmen (MERR > 0.25m) aus der Zieldatei ausschließen",
+        merrHardOnlyFmt: "Von {total} Aufnahmen haben <strong>{hard}</strong> einen unzulässigen Fehler (<code>MERR ≥ 1.00m</code> oder <code>≤ 0</code>) und werden automatisch verworfen (AAVSO-Regel).",
+        merrSoftOnlyFmt: "Von {total} Aufnahmen haben <strong>{noisy}</strong> einen erhöhten Fehler (<code>0.25m &lt; MERR &lt; 1.00m</code>, max. <code>{maxErr}m</code>). Sie können diese unten ausschließen.",
+        merrBothFmt: "Von {total} Aufnahmen werden <strong>{hard}</strong> (<code>MERR ≥ 1.00m</code>) automatisch verworfen (AAVSO-Regel) und <strong>{noisy}</strong> haben <code>0.25–1.00m</code> (max. <code>{maxErr}m</code>) — optional unten ausschließen."
+      },
+      fr: {
+        merrBannerTitle: "⚠️ Images à erreur de mesure élevée (MERR) détectées",
+        merrBannerBadge: "Contrôle MERR",
+        lblExcludeNoisyMerrFrames: "Exclure les images bruitées (MERR > 0.25m) du fichier final",
+        merrHardOnlyFmt: "Sur {total} images, <strong>{hard}</strong> ont une erreur invalide (<code>MERR ≥ 1.00m</code> ou <code>≤ 0</code>) et seront rejetées automatiquement (règle AAVSO WebObs).",
+        merrSoftOnlyFmt: "Sur {total} images, <strong>{noisy}</strong> ont une erreur élevée (<code>0.25m &lt; MERR &lt; 1.00m</code>, max <code>{maxErr}m</code>). Vous pouvez les exclure ci-dessous.",
+        merrBothFmt: "Sur {total} images : <strong>{hard}</strong> (<code>MERR ≥ 1.00m</code>) seront rejetées automatiquement (AAVSO) et <strong>{noisy}</strong> ont une erreur de <code>0.25–1.00m</code> (max <code>{maxErr}m</code>) — exclusion optionnelle ci-dessous."
+      },
+      zh: {
+        merrBannerTitle: "⚠️ 检测到测量误差较高（MERR）的帧",
+        merrBannerBadge: "MERR 校验",
+        lblExcludeNoisyMerrFrames: "从输出文件中排除高噪声帧（MERR > 0.25m）",
+        merrHardOnlyFmt: "在全部 {total} 帧中，有 <strong>{hard}</strong> 帧的误差无效（<code>MERR ≥ 1.00m</code> 或 <code>≤ 0</code>），将按 AAVSO WebObs 规范自动剔除。",
+        merrSoftOnlyFmt: "在全部 {total} 帧中，有 <strong>{noisy}</strong> 帧的误差偏高（<code>0.25m &lt; MERR &lt; 1.00m</code>，最大 <code>{maxErr}m</code>），您可在下方选择是否剔除。",
+        merrBothFmt: "在全部 {total} 帧中：<strong>{hard}</strong> 帧（<code>MERR ≥ 1.00m</code>）将自动剔除（AAVSO 要求），另有 <strong>{noisy}</strong> 帧误差在 <code>0.25–1.00m</code>（最大 <code>{maxErr}m</code>），可在下方勾选剔除。"
+      },
+      cs: {
+        merrBannerTitle: "⚠️ Zjištěny snímky s vysokou chybou měření (MERR)",
+        merrBannerBadge: "Kontrola MERR",
+        lblExcludeNoisyMerrFrames: "Vyloučit zašuměné snímky (MERR > 0.25m) z výsledného souboru",
+        merrHardOnlyFmt: "Z {total} snímků má <strong>{hard}</strong> neplatnou chybu (<code>MERR ≥ 1.00m</code> nebo <code>≤ 0</code>) a budou automaticky vyřazeny (požadavek AAVSO WebObs).",
+        merrSoftOnlyFmt: "Z {total} snímků má <strong>{noisy}</strong> zvýšenou chybu (<code>0.25m &lt; MERR &lt; 1.00m</code>, max. <code>{maxErr}m</code>). Můžete je níže vyloučit.",
+        merrBothFmt: "Z {total} snímků bude <strong>{hard}</strong> (<code>MERR ≥ 1.00m</code>) automaticky vyřazeno (AAVSO) a <strong>{noisy}</strong> má chybu <code>0.25–1.00m</code> (max. <code>{maxErr}m</code>) — lze je níže vyloučit."
+      },
+      ber: {
+        merrBannerTitle: "⚠️ Ttwafent tugniwin s tuccḍa tameqqrant (MERR)",
+        merrBannerBadge: "Asenqed MERR",
+        lblExcludeNoisyMerrFrames: "Kkes tugniwin s tuccḍa (MERR > 0.25m) seg ufaylu aneggaru",
+        merrHardOnlyFmt: "Seg {total} n tugniwin, <strong>{hard}</strong> sεant tuccḍa ur nseḥḥa ara (<code>MERR ≥ 1.00m</code>) ad ttwaɣsent s wudem awurman (AAVSO).",
+        merrSoftOnlyFmt: "Seg {total} n tugniwin, <strong>{noisy}</strong> sεant tuccḍa <code>0.25–1.00m</code> (afellay <code>{maxErr}m</code>). Tzemreḍ ad ten-tekseḍ s wadda.",
+        merrBothFmt: "Seg {total} n tugniwin: <strong>{hard}</strong> (<code>MERR ≥ 1.00m</code>) ad ttwaɣsent s wudem awurman, yerna <strong>{noisy}</strong> sεant <code>0.25–1.00m</code> (afellay <code>{maxErr}m</code>)."
+      }
+    };
+
+    if (window.I18N) {
+      for (const lg of ["ru", "en", "es", "de", "fr", "zh", "cs", "ber"]) {
+        if (window.I18N[lg] && MERR_I18N[lg]) {
+          Object.assign(window.I18N[lg], MERR_I18N[lg]);
+        }
+      }
+    }
+
+    function trMerr(key) {
+      let lg = document.getElementById("langSelect")?.value || "";
+      if (!lg) {
+        try { lg = window.localStorage ? (localStorage.getItem("lang") || "") : ""; } catch (_) {}
+      }
+      lg = (typeof window.__normAstroLang === "function" ? window.__normAstroLang(lg || "en") : (lg || "en")) || "en";
+      const pack = MERR_I18N[lg] || MERR_I18N.en;
+      return pack[key] || MERR_I18N.en[key] || key;
+    }
+
+    window.analyzeCsvMerrQuality = function analyzeCsvMerrQuality(lines) {
+      const res = {
+        totalFrames: 0,
+        hardRejectedCount: 0,
+        noisyCount: 0,
+        maxNoisyErr: 0
+      };
+      if (!Array.isArray(lines) || !lines.length) return res;
+      for (let i = 0; i < lines.length; i++) {
+        const raw = String(lines[i] || "").trim();
+        if (!raw) continue;
+        const c = splitSeestarCsvRow(raw);
+        if (!c.length || (i === 0 && c[0].toLowerCase() === "name")) continue;
+        if (c.length < 19) continue;
+        if (String(c[1] || "").toLowerCase() !== "non-reference star") continue;
+
+        res.totalFrames++;
+        const err = parseFloat(c[7]);
+        if (!Number.isFinite(err) || err <= 0 || err >= 1.0) {
+          res.hardRejectedCount++;
+        } else if (err > 0.25) {
+          res.noisyCount++;
+          if (err > res.maxNoisyErr) res.maxNoisyErr = err;
+        }
+      }
+      return res;
+    };
+
+    window.updateMerrQualityBannerUI = function updateMerrQualityBannerUI(lines) {
+      const banner = document.getElementById("merrQualityWarningBanner");
+      const titleEl = document.getElementById("merrBannerTitle");
+      const badgeEl = document.getElementById("merrBannerBadge");
+      const detailsEl = document.getElementById("merrBannerDetailsText");
+      const chkWrap = document.getElementById("merrCheckboxWrap");
+      const chkEl = document.getElementById("chkExcludeNoisyMerrFrames");
+      if (!banner) return;
+
+      if (!Array.isArray(lines) || !lines.length) {
+        banner.style.display = "none";
+        if (chkEl) chkEl.checked = false;
+        return;
+      }
+
+      const st = window.analyzeCsvMerrQuality(lines);
+      if (st.totalFrames === 0 || (st.hardRejectedCount === 0 && st.noisyCount === 0)) {
+        banner.style.display = "none";
+        if (chkEl) chkEl.checked = false;
+        return;
+      }
+
+      banner.style.display = "block";
+      if (titleEl) titleEl.textContent = trMerr("merrBannerTitle");
+      if (badgeEl) badgeEl.textContent = trMerr("merrBannerBadge");
+
+      let fmtKey = "merrSoftOnlyFmt";
+      if (st.hardRejectedCount > 0 && st.noisyCount > 0) fmtKey = "merrBothFmt";
+      else if (st.hardRejectedCount > 0) fmtKey = "merrHardOnlyFmt";
+
+      if (detailsEl) {
+        detailsEl.innerHTML = trMerr(fmtKey)
+          .replace("{total}", String(st.totalFrames))
+          .replace("{hard}", String(st.hardRejectedCount))
+          .replace("{noisy}", String(st.noisyCount))
+          .replace("{maxErr}", st.maxNoisyErr.toFixed(3));
+      }
+      if (chkWrap) chkWrap.style.display = st.noisyCount > 0 ? "flex" : "none";
+      if (st.noisyCount === 0 && chkEl) chkEl.checked = false;
+    };
+
+    ["langSelect", "splashLangSelect"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener("change", () => {
+          setTimeout(() => {
+            if (typeof currentCsvText === "string" && currentCsvText.trim()) {
+              window.updateMerrQualityBannerUI(currentCsvText.split(/\r?\n/));
+            }
+          }, 50);
+        });
+      }
+    });
   })();
 
   if (activeStartupLang === "cs") {

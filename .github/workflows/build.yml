@@ -91,7 +91,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path "dist_installer" | Out-Null
-          Copy-Item "dist/Seestar AstroLab.exe" "dist_installer/Seestar_AstroLab_Portable_v1.2.2.exe" -Force
+          Copy-Item "dist/Seestar AstroLab.exe" "dist_installer/Seestar_AstroLab_Portable_v1.3.0.exe" -Force
 
       - name: Build Standalone Windows Installer (Inno Setup 6)
         working-directory: Source_and_Build
@@ -112,7 +112,7 @@ jobs:
         run: |
           if (-not $env:CERT_THUMBPRINT) { Write-Host "Skipping: no certificate."; exit 0 }
           $signtool = Get-ChildItem -Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Filter "signtool.exe" -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1 -ExpandProperty FullName
-          $setupExe = "$PWD\dist_installer\Seestar_AstroLab_Setup_v1.2.2.exe"
+          $setupExe = "$PWD\dist_installer\Seestar_AstroLab_Setup_v1.3.0.exe"
           if ($signtool -and (Test-Path $setupExe)) {
             & $signtool sign /fd SHA256 /sha1 $env:CERT_THUMBPRINT /tr "http://timestamp.digicert.com" /td SHA256 /d "Seestar AstroLab AAVSO Setup" $setupExe
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -133,11 +133,11 @@ jobs:
         shell: pwsh
         run: |
           $tag = "${{ github.ref_name }}"
-          if (-not $tag) { $tag = "v1.2.2" } 
+          if (-not ($tag -match "^v\d")) { $tag = "v1.3.0" } 
           
           $files = @(
-            "Source_and_Build/dist_installer/Seestar_AstroLab_Setup_v1.2.2.exe",
-            "Source_and_Build/dist_installer/Seestar_AstroLab_Portable_v1.2.2.exe"
+            "Source_and_Build/dist_installer/Seestar_AstroLab_Setup_v1.3.0.exe",
+            "Source_and_Build/dist_installer/Seestar_AstroLab_Portable_v1.3.0.exe"
           )
           
           gh release delete $tag --yes 2>$null

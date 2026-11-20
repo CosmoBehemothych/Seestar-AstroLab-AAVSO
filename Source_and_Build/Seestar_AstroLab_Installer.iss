@@ -4,8 +4,8 @@
 ; ============================================================================
 #define MyAppName "Seestar AstroLab AAVSO"
 #define MyAppFullTitle "Seestar AstroLab AAVSO — Радар целей и фотометрия"
-#define MyAppVersion "1.2.2"
-#define MyAppNumericVersion "1.2.2.0"
+#define MyAppVersion "1.3.0"
+#define MyAppNumericVersion "1.3.0.0"
 #define MyAppPublisher "CosmoBehemothych AstroLab"
 #define MyAppCopyright "Copyright (C) 2026 CosmoBehemothych. MIT License."
 #define MyAppRepoURL "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO"
