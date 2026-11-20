@@ -82,13 +82,13 @@ def test_frontend():
     user_dir = tempfile.mkdtemp(prefix="astrolab_upd_")
     browser_bin = loc.find_chromium_binary()
     chrome = subprocess.Popen(
-        [browser_bin, "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage",
+        [browser_bin, "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage", "--no-first-run", "--no-default-browser-check", "--disable-extensions", "--remote-allow-origins=*",
          f"--user-data-dir={user_dir}", "--window-size=1280,800", f"--remote-debugging-port={port}", "about:blank"],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
     try:
         ws_url = None
-        for _ in range(40):
+        for _ in range(125):
             try:
                 tabs = json.loads(urllib.request.urlopen(f"http://127.0.0.1:{port}/json", timeout=1).read().decode())
                 for t in tabs:

@@ -106,12 +106,12 @@ def main():
     user_dir = tempfile.mkdtemp(prefix="astrolab_loc_")
     browser_bin = find_chromium_binary()
     proc = subprocess.Popen(
-        [browser_bin, "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage", f"--user-data-dir={user_dir}", "--remote-debugging-port=9235", "about:blank"],
+        [browser_bin, "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage", "--no-first-run", "--no-default-browser-check", "--disable-extensions", "--remote-allow-origins=*", f"--user-data-dir={user_dir}", "--remote-debugging-port=9235", "about:blank"],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
     try:
         ws_url = None
-        for _ in range(30):
+        for _ in range(125):
             try:
                 with urllib.request.urlopen("http://127.0.0.1:9235/json", timeout=1) as r:
                     pages = json.loads(r.read().decode())
