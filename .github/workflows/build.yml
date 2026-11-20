@@ -28,14 +28,30 @@ jobs:
         working-directory: Source_and_Build
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller pywebview pythonnet clr-loader pillow
+          pip install pyinstaller pywebview pythonnet clr-loader pillow certifi
           python -c "import os; from PIL import Image, ImageDraw; os.makedirs('assets', exist_ok=True); ico='assets/Seestar_AstroLab.ico'; bmp='assets/installer_header_fullwidth.bmp'; (lambda: (img:=Image.new('RGBA',(256,256),(11,18,32,255)), d:=ImageDraw.Draw(img), d.ellipse((16,16,240,240),outline=(56,189,248,255),width=10), d.ellipse((44,44,212,212),outline=(129,140,248,230),width=6), d.ellipse((86,86,170,170),fill=(15,23,42,255),outline=(186,230,253,255),width=5), d.ellipse((114,114,142,142),fill=(56,189,248,255)), img.save(ico,format='ICO',sizes=[(256,256),(128,128),(64,64),(48,48),(32,32),(16,16)])))() if not os.path.isfile(ico) else None; (lambda: (b:=Image.new('RGB',(500,160),(11,18,32)), bd:=ImageDraw.Draw(b), [bd.line([(x,0),(x,160)],fill=(int(11+(x/500)*18),int(18+(x/500)*28),int(32+(x/500)*48))) for x in range(500)], bd.ellipse((370,20,490,140),outline=(56,189,248),width=4), b.save(bmp,format='BMP')))() if not os.path.isfile(bmp) else None"
+
+      - name: Run mandatory pre-build regression autotests
+        shell: pwsh
+        run: |
+          if (Test-Path "tests/run_localization_autotest.py") {
+            python tests/run_localization_autotest.py
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          if (Test-Path "tests/run_coord_reconciliation_autotest.py") {
+            python tests/run_coord_reconciliation_autotest.py
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          if (Test-Path "tests/run_update_checker_autotest.py") {
+            python tests/run_update_checker_autotest.py
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
 
       - name: Build standalone application binary with PyInstaller
         working-directory: Source_and_Build
         shell: pwsh
         run: |
-          # ВАЖНО: Используется --console вместо --windowed для исправления ошибки pythonw.exe
+          # Uses --console instead of --windowed to prevent pythonw.exe launcher failures
           $argsList = @(
             "--noconfirm", "--clean", "--onefile", "--console", "--noupx",
             "--name", "Seestar AstroLab",
@@ -43,6 +59,7 @@ jobs:
             "--collect-all", "webview",
             "--collect-all", "pythonnet",
             "--collect-all", "clr_loader",
+            "--collect-all", "certifi",
             "--hidden-import", "webview.platforms.edgechromium"
           )
           if (Test-Path "pwa_mobile_and_electron") { $argsList += @("--add-data", "pwa_mobile_and_electron;pwa_mobile_and_electron") }
@@ -86,13 +103,6 @@ jobs:
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
 
-      - name: Package Portable Windows Executable
-        working-directory: Source_and_Build
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path "dist_installer" | Out-Null
-          Copy-Item "dist/Seestar AstroLab.exe" "dist_installer/Seestar_AstroLab_Portable_v1.3.1.exe" -Force
-
       - name: Build Standalone Windows Installer (Inno Setup 6)
         working-directory: Source_and_Build
         shell: pwsh
@@ -119,10 +129,24 @@ jobs:
           }
           Remove-Item -Path "$PWD\dist_installer\CosmoBehemothych_CodeSign.pfx" -Force -ErrorAction SilentlyContinue
 
+      - name: Generate SHA-256 Checksums & Bundle VERIFY.txt
+        working-directory: Source_and_Build
+        shell: pwsh
+        run: |
+          $setupFile = "dist_installer/Seestar_AstroLab_Setup_v1.3.1.exe"
+          $hash = (Get-FileHash -Path $setupFile -Algorithm SHA256).Hash.ToLower()
+          "$hash  Seestar_AstroLab_Setup_v1.3.1.exe" | Out-File -FilePath "dist_installer/SHA256SUMS.txt" -Encoding ascii -NoNewline
+          "`n" | Out-File -FilePath "dist_installer/SHA256SUMS.txt" -Encoding ascii -Append -NoNewline
+          if (Test-Path "../VERIFY.txt") {
+            Copy-Item "../VERIFY.txt" "dist_installer/VERIFY.txt" -Force
+          }
+          "SETUP_SHA256=$hash" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          Write-Host "SHA256(Seestar_AstroLab_Setup_v1.3.1.exe) = $hash"
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Seestar_AstroLab_Windows_Build
+          name: Seestar_AstroLab_Windows_Installer
           path: Source_and_Build/dist_installer/*
           if-no-files-found: error
 
@@ -133,13 +157,30 @@ jobs:
         shell: pwsh
         run: |
           $tag = "${{ github.ref_name }}"
-          if (-not ($tag -match "^v\d")) { $tag = "v1.3.1" } 
-          
+          if (-not ($tag -match "^v\d")) { $tag = "v1.3.1" }
+
           $files = @(
             "Source_and_Build/dist_installer/Seestar_AstroLab_Setup_v1.3.1.exe",
-            "Source_and_Build/dist_installer/Seestar_AstroLab_Portable_v1.3.1.exe"
+            "Source_and_Build/dist_installer/SHA256SUMS.txt",
+            "Source_and_Build/dist_installer/VERIFY.txt"
           )
-          
+
+          $notes = @"
+          ### Windows Installer Only
+          Starting with ``$tag``, Seestar AstroLab AAVSO is distributed exclusively as a standalone Windows Installer (``Seestar_AstroLab_Setup_v1.3.1.exe``). Portable builds are discontinued.
+
+          ### Release Integrity (SHA-256)
+          ``````text
+          $($env:SETUP_SHA256)  Seestar_AstroLab_Setup_v1.3.1.exe
+          ``````
+
+          Verify on Windows PowerShell before running:
+          ``````powershell
+          Get-FileHash .\Seestar_AstroLab_Setup_v1.3.1.exe -Algorithm SHA256
+          ``````
+          See ``VERIFY.txt``, [SECURITY.md](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/blob/main/SECURITY.md), and [BUILD.md](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/blob/main/BUILD.md) for independent verification and reproducible build steps.
+          "@
+
           gh release delete $tag --yes 2>$null
-          gh release create $tag $files --draft --generate-notes
+          gh release create $tag $files --draft --title "Seestar AstroLab AAVSO $tag" --notes $notes --generate-notes
           gh release edit $tag --draft=false

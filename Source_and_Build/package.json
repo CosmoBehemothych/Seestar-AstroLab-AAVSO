@@ -6,7 +6,6 @@
   "main": "pwa_mobile_and_electron/electron_main.js",
   "scripts": {
     "start": "electron .",
-    "pack:portable": "electron-builder --win portable",
     "pack:installer": "electron-builder --win nsis",
     "dist": "electron-builder --win"
   },

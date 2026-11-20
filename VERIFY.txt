@@ -1,0 +1,41 @@
+===============================================================================
+Seestar AstroLab AAVSO — Release Integrity & Verification Guide
+Repository: https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO
+Security Policy: https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/blob/main/SECURITY.md
+Build from Source: https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/blob/main/BUILD.md
+===============================================================================
+
+1. VERIFY SHA-256 CHECKSUM (WINDOWS)
+------------------------------------
+Before running the installer, verify that the downloaded file matches the
+official SHA-256 hash published in SHA256SUMS.txt on GitHub Releases.
+
+PowerShell:
+  Get-FileHash .\Seestar_AstroLab_Setup_v1.3.1.exe -Algorithm SHA256
+
+Command Prompt (CMD):
+  certutil -hashfile Seestar_AstroLab_Setup_v1.3.1.exe SHA256
+
+Compare the printed 64-character hex string with SHA256SUMS.txt.
+If the hashes do not match, DO NOT run the file and re-download it from:
+  https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases
+
+2. WHY WINDOWS SMARTSCREEN MAY APPEAR
+-------------------------------------
+This is a free, MIT-licensed open-source project built automatically on
+GitHub-hosted Windows runners (.github/workflows/build.yml). Until free
+open-source code signing (SignPath.io) is enabled on release binaries,
+Windows Defender SmartScreen may display "Windows protected your PC"
+simply because the installer does not carry a paid commercial certificate.
+
+If the SHA-256 hash matches SHA256SUMS.txt:
+  Click "More info" -> "Run anyway".
+
+3. INDEPENDENT AUDIT
+--------------------
+- You can upload the installer to https://www.virustotal.com/ to inspect
+  multi-engine scan results.
+- You can review every line of source code and rebuild the installer
+  yourself by following BUILD.md.
+- To report any security concern, see SECURITY.md or email:
+  CosmoBehemothych@gmail.com

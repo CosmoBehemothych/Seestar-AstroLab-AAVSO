@@ -1,0 +1,24 @@
+{
+  "title": "Seestar AstroLab AAVSO: ZWO Seestar to AAVSO Extended Photometry Converter & Urgent Target Radar",
+  "description": "Open-source Windows desktop application for ZWO Seestar (S30, S30PRO, S50, S50PRO) citizen-science variable-star photometry. Converts raw Seestar Magnitude_*.csv files into verified AAVSO Extended WebObs reports with J2000.0 SIMBAD/VSX coordinate cross-checking, canonical STARID normalization, per-row MERR and low-altitude/airmass (Kasten-Young) quality guards, automatic deduplication, dual interactive AAVSO AID light curves, and a 246-target urgent AAVSO radar.",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Pisarev, Andrey",
+      "affiliation": "Independent Citizen Scientist (GitHub: CosmoBehemothych)"
+    }
+  ],
+  "keywords": [
+    "astronomy",
+    "photometry",
+    "variable stars",
+    "AAVSO",
+    "ZWO Seestar",
+    "smart telescope",
+    "citizen science",
+    "SIMBAD",
+    "light curve"
+  ]
+}
