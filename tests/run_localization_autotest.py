@@ -3,8 +3,31 @@
 Automated 8-Language Localization & Regression Test for Seestar AstroLab AAVSO.
 Must pass with exit code 0 before every build/release.
 """
-import os, sys, json, time, socket, struct, base64, subprocess, urllib.request
+import os, sys, json, time, socket, struct, base64, shutil, tempfile, subprocess, urllib.request
 from pathlib import Path
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
+def find_chromium_binary():
+    for name in ("chromium", "chromium-browser", "google-chrome", "chrome", "msedge"):
+        p = shutil.which(name)
+        if p:
+            return p
+    win_candidates = [
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+        os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe"),
+    ]
+    for p in win_candidates:
+        if p and os.path.isfile(p):
+            return p
+    raise FileNotFoundError("No Chromium/Chrome/Edge browser found for headless regression test")
 
 ROOT = Path(__file__).resolve().parent.parent
 PWA = ROOT / "Source_and_Build" / "pwa_mobile_and_electron"
@@ -80,8 +103,10 @@ def main():
 <script>window.__SEESTAR_DISK_STORE__={{installer_lang:"en",lang:"en"}};</script>
 <script>{bridge}</script></body></html>"""
 
+    user_dir = tempfile.mkdtemp(prefix="astrolab_loc_")
+    browser_bin = find_chromium_binary()
     proc = subprocess.Popen(
-        ["chromium", "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage", "--remote-debugging-port=9235", "about:blank"],
+        [browser_bin, "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage", f"--user-data-dir={user_dir}", "--remote-debugging-port=9235", "about:blank"],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
     try:
@@ -166,7 +191,11 @@ def main():
         sys.exit(0 if all_ok else 1)
     finally:
         proc.terminate()
-        proc.wait(timeout=3)
+        try:
+            proc.wait(timeout=5)
+        except Exception:
+            proc.kill()
+        shutil.rmtree(user_dir, ignore_errors=True)
 
 if __name__ == "__main__":
     main()

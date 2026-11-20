@@ -8,7 +8,7 @@ Mandatory Pre-Build Regression Autotest for Seestar AstroLab AAVSO:
 2. UI KNAME/KMAG display real VSP values (not pre-filled "na") while CSV export strictly writes "na".
 3. Centered #lowAltWarningModal opens on raw CSV load when city mismatches or Alt < 20 deg.
 """
-import json, pathlib, re, subprocess, sys, time, urllib.request
+import json, pathlib, re, shutil, subprocess, sys, tempfile, time, urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tests"))
@@ -29,9 +29,11 @@ def main():
     bundled = re.sub(r'<script[^>]+astrolab_engine_bridge\.js[^>]*></script>', lambda m: f'<script>{eng}</script>', bundled)
 
     port = 9281
+    user_dir = tempfile.mkdtemp(prefix="astrolab_coord_")
+    browser_bin = loc.find_chromium_binary()
     chrome = subprocess.Popen(
-        ["chromium", "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage",
-         f"--remote-debugging-port={port}", "about:blank"],
+        [browser_bin, "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage",
+         f"--user-data-dir={user_dir}", f"--remote-debugging-port={port}", "about:blank"],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
     try:
@@ -140,7 +142,8 @@ def main():
         if (rBad.status !== "bad") throw new Error("Critical mismatch MUST be bad, got: " + JSON.stringify(rBad));
         console.log("COORD_DIFF_UNIT_PASS", JSON.stringify({{ exact: rExact.status, raOff: rRaOff.status, decOff: rDecOff.status, bad: rBad.status }}));
         """
-        nres = subprocess.run(["node", "-e", node_test], capture_output=True, text=True)
+        node_bin = shutil.which("node") or "node"
+        nres = subprocess.run([node_bin, "-e", node_test], capture_output=True, text=True, encoding="utf-8", errors="replace")
         assert nres.returncode == 0, nres.stderr
         print(nres.stdout.strip())
 
@@ -152,7 +155,11 @@ def main():
         print("=== COORD RECONCILIATION & V1.3.1 REGRESSION AUTOTEST: ALL PASS ===")
     finally:
         chrome.terminate()
-        chrome.wait()
+        try:
+            chrome.wait(timeout=5)
+        except Exception:
+            chrome.kill()
+        shutil.rmtree(user_dir, ignore_errors=True)
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ Mandatory Pre-Build Autotest for GitHub Release Update Checker:
    - Strictly ONE check per app launch (second call with forceCheck=false makes 0 network calls).
    - Skip button hides banner and persists skipped version.
 """
-import io, json, pathlib, re, subprocess, sys, time, urllib.request
+import io, json, pathlib, re, shutil, subprocess, sys, tempfile, time, urllib.request
 from unittest.mock import patch
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -79,9 +79,11 @@ def test_frontend():
     bundled = re.sub(r'<script[^>]+astrolab_engine_bridge\.js[^>]*></script>', lambda m: f'<script>{eng}</script>', bundled)
 
     port = 9284
+    user_dir = tempfile.mkdtemp(prefix="astrolab_upd_")
+    browser_bin = loc.find_chromium_binary()
     chrome = subprocess.Popen(
-        ["chromium", "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage",
-         "--window-size=1280,800", f"--remote-debugging-port={port}", "about:blank"],
+        [browser_bin, "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage",
+         f"--user-data-dir={user_dir}", "--window-size=1280,800", f"--remote-debugging-port={port}", "about:blank"],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
     try:
@@ -179,7 +181,11 @@ def test_frontend():
         print("FRONTEND_UPDATE_CHECKER_PASS (semver + WebView2 fallback + banner + once-per-launch + skip)")
     finally:
         chrome.terminate()
-        chrome.wait()
+        try:
+            chrome.wait(timeout=5)
+        except Exception:
+            chrome.kill()
+        shutil.rmtree(user_dir, ignore_errors=True)
 
 
 if __name__ == "__main__":
