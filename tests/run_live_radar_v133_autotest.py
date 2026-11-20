@@ -303,6 +303,32 @@ def test_version_and_policy_consistency():
     assert "signpath" not in readme.lower(), "SignPath mention must not appear in README.md"
     assert "portable.zip" not in readme.lower(), "Portable ZIP download must not appear in README.md"
 
+
+    # Permanent YAML, JSON, PyInstaller & Inno Setup pre-flight validation
+    import py_compile as _pyc
+    import yaml as _yaml
+    for _yf in (".github/workflows/build.yml", ".github/dependabot.yml"):
+        _yp = os.path.join(REPO_ROOT, _yf)
+        _parsed_y = _yaml.safe_load(open(_yp, "r", encoding="utf-8"))
+        assert isinstance(_parsed_y, dict), f"Invalid YAML in {_yf}"
+    _wf_obj = _yaml.safe_load(open(os.path.join(REPO_ROOT, ".github/workflows/build.yml"), "r", encoding="utf-8"))
+    assert "regression-tests" in _wf_obj["jobs"] and "build-windows" in _wf_obj["jobs"]
+    assert _wf_obj["jobs"]["build-windows"]["needs"] == "regression-tests"
+    for _jf in (".zenodo.json", "Source_and_Build/package.json"):
+        json.load(open(os.path.join(REPO_ROOT, _jf), "r", encoding="utf-8"))
+    for _pyf in ("Source_and_Build/desktop_launcher.py", "Source_and_Build/backend/astrolab_backend_core.py"):
+        _pyc.compile(os.path.join(REPO_ROOT, _pyf), doraise=True)
+    for _req in (
+        "Source_and_Build/Seestar_AstroLab_Installer.iss",
+        "Source_and_Build/version_info.txt",
+        "Source_and_Build/assets/Seestar_AstroLab.ico",
+        "Source_and_Build/assets/installer_header_fullwidth.bmp",
+        "Converted_Photometry_Storage/README_STORAGE.txt",
+        "Converted_Photometry_Storage/user_converted_photometry_db.json",
+        "VERIFY.txt",
+    ):
+        assert os.path.isfile(os.path.join(REPO_ROOT, _req)), f"Missing required build/installer file: {_req}"
+
     # Permanent CI-to-Repo test script parity check: every tests/*.py invoked by build.yml MUST exist
     import re as _re_ci
     wf_txt = open(os.path.join(REPO_ROOT, ".github/workflows/build.yml"), "r", encoding="utf-8").read()

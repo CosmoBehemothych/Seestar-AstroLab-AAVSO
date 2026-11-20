@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   regression-tests:
-    name: Mandatory Pre-Build Autotests (5 Suites: 8-Lang, Coords, Updater, UI, Live Radar)
+    name: "Mandatory Pre-Build Autotests (8-Lang, Coords, Updater, UI, Live Radar)"
     runs-on: ubuntu-latest
 
     steps:
@@ -32,7 +32,7 @@ jobs:
       - name: Install Playwright Chromium & test dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install certifi playwright
+          pip install certifi playwright pyyaml
           python -m playwright install chromium
 
       - name: Run all 5 mandatory pre-build regression autotests
