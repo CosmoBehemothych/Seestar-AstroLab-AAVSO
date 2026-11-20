@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.3.1) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.3.2) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.3.1.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.3.2.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -528,7 +528,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.3.1",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.3.2",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -538,7 +538,7 @@
       errNoObscodeMsg: "Укажите ваш личный код наблюдателя AAVSO (OBSCODE) перед конвертацией данных для загрузки на AAVSO.",
       errNoObscodeExplain: "Стандарт AAVSO Extended требует обязательного указания персонального кода наблюдателя в заголовке #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Версия 1.3.1",
+      appVersionLabel: "Версия 1.3.2",
       starIdFromCatalogHint: "✓ Каталожный идентификатор звезды (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -881,7 +881,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.3.1 session",
+      actAppStarted: "Started Seestar AstroLab v1.3.2 session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -891,7 +891,7 @@
       errNoObscodeMsg: "Please enter your personal AAVSO Observer Code (OBSCODE) before converting data for AAVSO upload.",
       errNoObscodeExplain: "The AAVSO Extended format strictly requires a valid personal observer code in the #OBSCODE header.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.1",
+      appVersionLabel: "Version 1.3.2",
       starIdFromCatalogHint: "✓ Canonical Catalog Star ID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometry Observatory",
       
@@ -1229,7 +1229,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.3.1",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.3.2",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1239,7 +1239,7 @@
       errNoObscodeMsg: "Ingrese su código personal de observador AAVSO (OBSCODE) antes de convertir los datos.",
       errNoObscodeExplain: "El formato AAVSO Extended requiere un código de observador válido en el encabezado #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Versión 1.3.1",
+      appVersionLabel: "Versión 1.3.2",
       starIdFromCatalogHint: "✓ Identificador de catálogo (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatorio Fotométrico Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -1553,7 +1553,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.3.1",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.3.2",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1563,7 +1563,7 @@
       errNoObscodeMsg: "Bitte geben Sie Ihren persönlichen AAVSO-Beobachtercode (OBSCODE) vor der Konvertierung ein.",
       errNoObscodeExplain: "Das AAVSO-Extended-Format erfordert zwingend einen gültigen Beobachtercode im Header #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.1",
+      appVersionLabel: "Version 1.3.2",
       starIdFromCatalogHint: "✓ Kanonische Katalog-STARID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometrie-Observatorium",
       
@@ -1866,7 +1866,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.3.1",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.3.2",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -1876,7 +1876,7 @@
       errNoObscodeMsg: "Veuillez saisir votre code observateur AAVSO (OBSCODE) avant de convertir les données.",
       errNoObscodeExplain: "Le standard AAVSO Extended exige un code observateur personnel valide dans l'en-tête #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.1",
+      appVersionLabel: "Version 1.3.2",
       starIdFromCatalogHint: "✓ Identifiant catalogue canonique (SIMBAD / AAVSO VSX) : {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30PRO / S50 / S50PRO",
       
@@ -2178,7 +2178,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.3.1 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.3.2 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -2188,7 +2188,7 @@
       errNoObscodeMsg: "请在转换上传至 AAVSO 的数据前填写您的 AAVSO 观测者代码 (OBSCODE)。",
       errNoObscodeExplain: "AAVSO Extended 格式要求在 #OBSCODE 标头中提供有效的个人观测者代码。",
       radarSubTag: "",
-      appVersionLabel: "版本 1.3.1",
+      appVersionLabel: "版本 1.3.2",
       starIdFromCatalogHint: "✓ 星表标准目标名称 (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO 测光天文台",
       
@@ -5901,7 +5901,7 @@ function revealAndFocusField(inputId) {
 
   // --- Обработчики памятки «Как читать графики» (Пункт 5) ---
   const graphGuideModal = document.getElementById("graphGuideModal");
-  const openGraphGuide = () => { if (graphGuideModal) { graphGuideModal.classList.add("open"); if (typeof syncModalBodyLock === "function") syncModalBodyLock(); } };
+  const openGraphGuide = () => { if (typeof window.openGraphGuideModal === "function") { window.openGraphGuideModal(0); } else if (graphGuideModal) { graphGuideModal.classList.add("open"); if (typeof syncModalBodyLock === "function") syncModalBodyLock(); } };
   const closeGraphGuide = () => { if (graphGuideModal) { graphGuideModal.classList.remove("open"); if (typeof syncModalBodyLock === "function") syncModalBodyLock(); } };
 
   ["btnOpenGraphGuideTop"].forEach(id => {
@@ -8027,16 +8027,42 @@ function revealAndFocusField(inputId) {
     return;
   }
 
+  window.parseObsUserDateToIso = function(rawVal) {
+    const s = String(rawVal || "").trim();
+    if (!s) return "";
+    let y = 0, m = 0, d = 0;
+    let m1 = s.match(/^(\d{4})[-.\/](\d{1,2})[-.\/](\d{1,2})$/);
+    let m2 = s.match(/^(\d{1,2})[-.\/](\d{1,2})[-.\/](\d{4})$/);
+    if (m1) {
+      y = Number(m1[1]); m = Number(m1[2]); d = Number(m1[3]);
+    } else if (m2) {
+      d = Number(m2[1]); m = Number(m2[2]); y = Number(m2[3]);
+    } else {
+      return null;
+    }
+    if (y < 1900 || y > 2100 || m < 1 || m > 12 || d < 1 || d > 31) return null;
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d) return null;
+    return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+  };
+
   function getFilteredObsRecords() {
     const fDateEl = document.getElementById("obsFilterDate");
     const fStarEl = document.getElementById("obsFilterStar");
     const fScopeEl = document.getElementById("obsFilterScope");
-    const dateVal = (fDateEl && fDateEl.value || "").trim();
+    const rawDateVal = (fDateEl && fDateEl.value || "").trim();
+    const parsedIso = rawDateVal ? window.parseObsUserDateToIso(rawDateVal) : "";
     const starVal = (fStarEl && fStarEl.value || "").trim().toLowerCase();
     const scopeVal = (fScopeEl && fScopeEl.value || "ALL").trim();
 
     return obsTrackerRecords.filter(rec => {
-      if (dateVal && String(rec.date || "") !== dateVal) return false;
+      if (rawDateVal) {
+        if (parsedIso) {
+          if (String(rec.date || "") !== parsedIso) return false;
+        } else if (rawDateVal.length >= 8) {
+          return false;
+        }
+      }
       if (starVal && !String(rec.star || "").toLowerCase().includes(starVal)) return false;
       if (scopeVal && scopeVal !== "ALL" && String(rec.scope || "S50") !== scopeVal) return false;
       return true;
@@ -8691,7 +8717,7 @@ function revealAndFocusField(inputId) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.3.1",
+      application: "Seestar AstroLab AAVSO v1.3.2",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8742,7 +8768,7 @@ function revealAndFocusField(inputId) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.3.1 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.3.2 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -9500,7 +9526,7 @@ function revealAndFocusField(inputId) {
     function renderCalendarPopover() {
       const loc = getActiveCalLocale();
       const titleStr = loc.yearFirst ? `${viewYear}年 ${loc.months[viewMonth]}` : `${loc.months[viewMonth]} ${viewYear}`;
-      const selectedIso = (inputEl.value || "").trim();
+      const selectedIso = (window.parseObsUserDateToIso ? window.parseObsUserDateToIso(inputEl.value) : "") || "";
       const now = new Date();
       const todayIso = formatIsoDate(now.getFullYear(), now.getMonth(), now.getDate());
       const obsDates = getRecordedDatesSet();
@@ -9575,7 +9601,8 @@ function revealAndFocusField(inputId) {
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
           const chosen = btn.getAttribute("data-iso-date") || "";
-          inputEl.value = chosen;
+          const p = chosen.split("-");
+          inputEl.value = (p.length === 3) ? `${p[2]}.${p[1]}.${p[0]}` : chosen;
           popoverEl.style.display = "none";
           inputEl.dispatchEvent(new Event("change", { bubbles: true }));
         });
@@ -9591,7 +9618,7 @@ function revealAndFocusField(inputId) {
         const tNow = new Date();
         viewYear = tNow.getFullYear();
         viewMonth = tNow.getMonth();
-        inputEl.value = formatIsoDate(viewYear, viewMonth, tNow.getDate());
+        inputEl.value = `${String(tNow.getDate()).padStart(2, "0")}.${String(viewMonth + 1).padStart(2, "0")}.${viewYear}`;
         popoverEl.style.display = "none";
         inputEl.dispatchEvent(new Event("change", { bubbles: true }));
       });
@@ -9599,19 +9626,66 @@ function revealAndFocusField(inputId) {
 
     window.refreshLocalizedObsDatePicker = renderCalendarPopover;
 
+    function syncCalendarToInputValue() {
+      const iso = window.parseObsUserDateToIso ? window.parseObsUserDateToIso(inputEl.value) : "";
+      if (iso) {
+        const parts = iso.split("-").map(Number);
+        viewYear = parts[0];
+        viewMonth = parts[1] - 1;
+      }
+    }
+
+    function openPopover() {
+      syncCalendarToInputValue();
+      renderCalendarPopover();
+      popoverEl.style.display = "block";
+    }
+
+    const iconBtn = document.getElementById("obsDatePickerIcon");
+    if (iconBtn) {
+      iconBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (popoverEl.style.display === "block") {
+          popoverEl.style.display = "none";
+        } else {
+          openPopover();
+          inputEl.focus();
+        }
+      });
+    }
+
     inputEl.addEventListener("click", (e) => {
       e.stopPropagation();
-      if (popoverEl.style.display === "block") {
+      if (popoverEl.style.display !== "block") openPopover();
+    });
+
+    inputEl.addEventListener("input", (e) => {
+      const isDeleting = e && e.inputType && e.inputType.startsWith("delete");
+      let val = inputEl.value;
+      if (!isDeleting && /^\d{2}$/.test(val)) {
+        inputEl.value = val + ".";
+      } else if (!isDeleting && /^\d{2}\.\d{2}$/.test(val)) {
+        inputEl.value = val + ".";
+      }
+      const iso = window.parseObsUserDateToIso ? window.parseObsUserDateToIso(inputEl.value) : "";
+      if (iso) {
+        const parts = iso.split("-").map(Number);
+        viewYear = parts[0];
+        viewMonth = parts[1] - 1;
+        if (popoverEl.style.display === "block") renderCalendarPopover();
+      } else if (!inputEl.value.trim()) {
+        if (popoverEl.style.display === "block") renderCalendarPopover();
+      }
+    });
+
+    inputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        syncCalendarToInputValue();
         popoverEl.style.display = "none";
-      } else {
-        const curVal = (inputEl.value || "").trim();
-        if (/^\d{4}-\d{2}-\d{2}$/.test(curVal)) {
-          const parts = curVal.split("-").map(Number);
-          viewYear = parts[0];
-          viewMonth = parts[1] - 1;
-        }
-        renderCalendarPopover();
-        popoverEl.style.display = "block";
+        inputEl.dispatchEvent(new Event("change", { bubbles: true }));
+      } else if (e.key === "Escape") {
+        popoverEl.style.display = "none";
       }
     });
 
@@ -11660,7 +11734,7 @@ function revealAndFocusField(inputId) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.3.1 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.3.2 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -18713,43 +18787,43 @@ function revealAndFocusField(inputId) {
     const extraPerLang = {
       en: {
         optFullWindow: "Full Window", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Version 1.3.1"
+        appVersionLabel: "Version 1.3.2"
       },
       ru: {
         optFullWindow: "Во всё окно", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Версия 1.3.1"
+        appVersionLabel: "Версия 1.3.2"
       },
       es: {
         optFullWindow: "Ventana completa", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En línea • TTL 1h",
-        appVersionLabel: "Versión 1.3.1"
+        appVersionLabel: "Versión 1.3.2"
       },
       de: {
         optFullWindow: "Vollbildfenster", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Online • TTL 1 Std.",
         thUI: "Daten aus SIMBAD-Katalog",
-        appVersionLabel: "Version 1.3.1"
+        appVersionLabel: "Version 1.3.2"
       },
       fr: {
         optFullWindow: "Pleine fenêtre", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En ligne • TTL 1h",
-        appVersionLabel: "Version 1.3.1"
+        appVersionLabel: "Version 1.3.2"
       },
       zh: {
         optFullWindow: "全窗口", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "在线 • TTL 1小时",
-        appVersionLabel: "版本 1.3.1"
+        appVersionLabel: "版本 1.3.2"
       },
       ber: {
         optFullWindow: "Asfaylu ummid", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Srad • TTL 1s",
         btnTryUniverseLuck: "Afran agacuran n yitri i wannay-ik",
         tipTryUniverseLuck: "Afran agacuran n yitri azwaru i wannayen-ik ass-a",
-        appVersionLabel: "Taseqqult 1.3.1"
+        appVersionLabel: "Taseqqult 1.3.2"
       },
       cs: {
         optFullWindow: "Celé okno", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Verze 1.3.1",
+        appVersionLabel: "Verze 1.3.2",
         lblThemePickerSplash: "Barevný motiv",
         brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Fotometrická observatoř",
         btnDonateBadge: "❤️ Podpořit",
@@ -18981,16 +19055,16 @@ function revealAndFocusField(inputId) {
     // Sync all Module 14 & curve labels on initial load for EVERY language (prevents RU leaks in EN mode)
     if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
 
-    // === v1.3.1: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
+    // === v1.3.2: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
     const UPDATE_I18N = {
-      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.3.1. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
-      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.3.1. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
-      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.3.1. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
-      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.3.1. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
-      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.3.1. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
-      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.3.1，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
-      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.3.1. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
-      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.3.1. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
+      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.3.2. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
+      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.3.2. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
+      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.3.2. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
+      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.3.2. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
+      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.3.2. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
+      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.3.2，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
+      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.3.2. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
+      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.3.2. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
     };
 
     window.parseAstroSemver = function(v) {
@@ -19050,7 +19124,7 @@ function revealAndFocusField(inputId) {
     window.checkGithubReleaseOnceOnStartup = async function(forceCheck = false) {
       if (window._githubUpdateCheckedThisSession && !forceCheck) return;
       window._githubUpdateCheckedThisSession = true;
-      const LOCAL_VER = "1.3.1";
+      const LOCAL_VER = "1.3.2";
       const REPO_API = "https://api.github.com/repos/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
       const REPO_RELEASES = "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
 
@@ -19653,4 +19727,547 @@ function revealAndFocusField(inputId) {
     if (typeof window.renderUrgentStarsCards === "function") window.renderUrgentStarsCards();
     if (typeof window.renderBeginnerGuideSlide === "function") window.renderBeginnerGuideSlide(0);
   }
+})();
+
+
+// ============================================================================
+// v1.3.2: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
+// Styled identically to "Getting Started" with authentic discrete-scatter SVGs
+// and official AAVSO photometric guidelines (VSX, VSP, AID, Smart Telescope WG)
+// ============================================================================
+(function initGraphGuidePresentation8Lang() {
+  const SVG_MAG_JD = `
+    <div class="graph-guide-svg-card">
+      <svg viewBox="0 0 560 250" width="100%" style="display:block;">
+        <rect x="0" y="0" width="560" height="250" rx="8" fill="#070d19"/>
+        <line x1="62" y1="36" x2="536" y2="36" stroke="#1e293b" stroke-dasharray="4 4"/>
+        <line x1="62" y1="106" x2="536" y2="106" stroke="#1e293b" stroke-dasharray="4 4"/>
+        <line x1="62" y1="176" x2="536" y2="176" stroke="#1e293b" stroke-dasharray="4 4"/>
+        <line x1="62" y1="22" x2="62" y2="205" stroke="#475569" stroke-width="1.5"/>
+        <line x1="62" y1="205" x2="536" y2="205" stroke="#475569" stroke-width="1.5"/>
+        <text x="10" y="40" fill="#4ade80" font-size="11" font-family="monospace" font-weight="bold">9.0m ↑</text>
+        <text x="10" y="110" fill="#94a3b8" font-size="11" font-family="monospace">9.5m</text>
+        <text x="10" y="180" fill="#f87171" font-size="11" font-family="monospace" font-weight="bold">10.0m ↓</text>
+        <text x="72" y="25" fill="#4ade80" font-size="11" font-family="sans-serif" font-weight="bold">↑ Brighter (smaller MAG)</text>
+        <text x="72" y="196" fill="#f87171" font-size="11" font-family="sans-serif" font-weight="bold">↓ Fainter (larger MAG)</text>
+        <g stroke="#f59e0b" stroke-width="1.3">
+          <line x1="95" y1="146" x2="95" y2="168"/><circle cx="95" cy="157" r="3.8" fill="#f59e0b"/>
+          <line x1="122" y1="138" x2="122" y2="160"/><circle cx="122" cy="149" r="3.8" fill="#f59e0b"/>
+          <line x1="150" y1="112" x2="150" y2="134"/><circle cx="150" cy="123" r="3.8" fill="#f59e0b"/>
+          <line x1="178" y1="74" x2="178" y2="96"/><circle cx="178" cy="85" r="3.8" fill="#f59e0b"/>
+          <line x1="205" y1="45" x2="205" y2="67"/><circle cx="205" cy="56" r="4.2" fill="#fbbf24" stroke="#fff"/>
+          <line x1="238" y1="60" x2="238" y2="82"/><circle cx="238" cy="71" r="3.8" fill="#f59e0b"/>
+          <line x1="274" y1="84" x2="274" y2="106"/><circle cx="274" cy="95" r="3.8" fill="#f59e0b"/>
+          <line x1="312" y1="108" x2="312" y2="130"/><circle cx="312" cy="119" r="3.8" fill="#f59e0b"/>
+          <line x1="354" y1="130" x2="354" y2="152"/><circle cx="354" cy="141" r="3.8" fill="#f59e0b"/>
+          <line x1="398" y1="148" x2="398" y2="170"/><circle cx="398" cy="159" r="3.8" fill="#f59e0b"/>
+          <line x1="442" y1="154" x2="442" y2="176"/><circle cx="442" cy="165" r="3.8" fill="#f59e0b"/>
+          <line x1="488" y1="134" x2="488" y2="156"/><circle cx="488" cy="145" r="3.8" fill="#f59e0b"/>
+        </g>
+        <text x="172" y="232" fill="#cbd5e1" font-size="11.5" font-family="monospace">Time: Julian Date (JD Mid, UTC) →</text>
+      </svg>
+    </div>`;
+
+  const SVG_MERR = `
+    <div class="graph-guide-svg-card">
+      <svg viewBox="0 0 560 250" width="100%" style="display:block;">
+        <rect x="0" y="0" width="560" height="250" rx="8" fill="#070d19"/>
+        <line x1="55" y1="125" x2="530" y2="125" stroke="#334155" stroke-dasharray="5 4"/>
+        <text x="72" y="34" fill="#4ade80" font-size="11.5" font-family="sans-serif" font-weight="bold">✓ Good Seestar TG (MERR ≤ 0.05m)</text>
+        <g stroke="#4ade80" stroke-width="1.5">
+          <line x1="90" y1="115" x2="90" y2="135"/><circle cx="90" cy="125" r="4" fill="#4ade80"/>
+          <line x1="125" y1="111" x2="125" y2="131"/><circle cx="125" cy="121" r="4" fill="#4ade80"/>
+          <line x1="160" y1="118" x2="160" y2="138"/><circle cx="160" cy="128" r="4" fill="#4ade80"/>
+          <line x1="195" y1="113" x2="195" y2="133"/><circle cx="195" cy="123" r="4" fill="#4ade80"/>
+        </g>
+        <text x="248" y="34" fill="#fbbf24" font-size="11.5" font-family="sans-serif" font-weight="bold">⚠ Noisy (0.25–1.0m)</text>
+        <g stroke="#fbbf24" stroke-width="1.6">
+          <line x1="285" y1="78" x2="285" y2="174"/><circle cx="285" cy="126" r="4.2" fill="#fbbf24"/>
+          <line x1="335" y1="68" x2="335" y2="178"/><circle cx="335" cy="123" r="4.2" fill="#fbbf24"/>
+        </g>
+        <text x="405" y="34" fill="#f87171" font-size="11.5" font-family="sans-serif" font-weight="bold">✕ Reject (≥ 1.0m)</text>
+        <g stroke="#f87171" stroke-width="1.8">
+          <line x1="455" y1="48" x2="455" y2="212"/><circle cx="455" cy="130" r="4.8" fill="#ef4444" stroke="#fff"/>
+        </g>
+        <text x="72" y="232" fill="#94a3b8" font-size="11" font-family="monospace">AAVSO WebObs rejects MERR ≥ 1.00m • SmartScope WG target: ≤ 0.02–0.05m</text>
+      </svg>
+    </div>`;
+
+  const SVG_PULSATOR = `
+    <div class="graph-guide-svg-card">
+      <svg viewBox="0 0 560 250" width="100%" style="display:block;">
+        <rect x="0" y="0" width="560" height="250" rx="8" fill="#070d19"/>
+        <line x1="55" y1="45" x2="535" y2="45" stroke="#1e293b" stroke-dasharray="4 4"/>
+        <line x1="55" y1="185" x2="535" y2="185" stroke="#1e293b" stroke-dasharray="4 4"/>
+        <text x="64" y="28" fill="#38bdf8" font-size="11.5" font-family="sans-serif" font-weight="bold">HADS / RRab Pulsator (e.g. SZ Lyn, P ≈ 2.89h): Steep Rise → Slow Decline</text>
+        <g fill="#38bdf8" opacity="0.55">
+          <circle cx="80" cy="172" r="3.2"/><circle cx="102" cy="166" r="3.2"/><circle cx="124" cy="132" r="3.2"/>
+          <circle cx="144" cy="84" r="3.2"/><circle cx="164" cy="54" r="3.2"/><circle cx="188" cy="68" r="3.2"/>
+          <circle cx="216" cy="96" r="3.2"/><circle cx="246" cy="126" r="3.2"/><circle cx="278" cy="152" r="3.2"/>
+          <circle cx="310" cy="170" r="3.2"/><circle cx="342" cy="176" r="3.2"/><circle cx="368" cy="144" r="3.2"/>
+          <circle cx="390" cy="92" r="3.2"/><circle cx="412" cy="56" r="3.2"/><circle cx="438" cy="74" r="3.2"/>
+          <circle cx="468" cy="108" r="3.2"/><circle cx="500" cy="144" r="3.2"/>
+        </g>
+        <g stroke="#f59e0b" stroke-width="1.3">
+          <line x1="132" y1="106" x2="132" y2="124"/><circle cx="132" cy="115" r="4" fill="#f59e0b"/>
+          <line x1="152" y1="62" x2="152" y2="80"/><circle cx="152" cy="71" r="4" fill="#f59e0b"/>
+          <line x1="170" y1="45" x2="170" y2="63"/><circle cx="170" cy="54" r="4.4" fill="#fbbf24" stroke="#fff"/>
+          <line x1="196" y1="68" x2="196" y2="86"/><circle cx="196" cy="77" r="4" fill="#f59e0b"/>
+          <line x1="226" y1="98" x2="226" y2="116"/><circle cx="226" cy="107" r="4" fill="#f59e0b"/>
+          <line x1="258" y1="128" x2="258" y2="146"/><circle cx="258" cy="137" r="4" fill="#f59e0b"/>
+        </g>
+        <text x="64" y="226" fill="#94a3b8" font-size="11" font-family="monospace">Blue = AAVSO AID archive • Orange = Your Seestar TG session</text>
+      </svg>
+    </div>`;
+
+  const SVG_ECLIPSE = `
+    <div class="graph-guide-svg-card">
+      <svg viewBox="0 0 560 250" width="100%" style="display:block;">
+        <rect x="0" y="0" width="560" height="250" rx="8" fill="#070d19"/>
+        <text x="45" y="28" fill="#38bdf8" font-size="11.5" font-family="sans-serif" font-weight="bold">EA Algol Eclipse (Deep V)</text>
+        <g stroke="#38bdf8" stroke-width="1.2">
+          <circle cx="48" cy="64" r="3.6" fill="#38bdf8"/><circle cx="76" cy="66" r="3.6" fill="#38bdf8"/>
+          <circle cx="104" cy="69" r="3.6" fill="#38bdf8"/><circle cx="128" cy="112" r="3.6" fill="#38bdf8"/>
+          <circle cx="150" cy="166" r="4.2" fill="#ef4444" stroke="#fff"/><circle cx="172" cy="114" r="3.6" fill="#38bdf8"/>
+          <circle cx="196" cy="68" r="3.6" fill="#38bdf8"/><circle cx="226" cy="65" r="3.6" fill="#38bdf8"/>
+        </g>
+        <line x1="278" y1="22" x2="278" y2="212" stroke="#334155" stroke-dasharray="4 4"/>
+        <text x="302" y="28" fill="#a78bfa" font-size="11.5" font-family="sans-serif" font-weight="bold">Exoplanet Transit (Flat U, 0.01–0.03m)</text>
+        <g stroke="#a78bfa" stroke-width="1.2">
+          <circle cx="308" cy="84" r="3.5" fill="#a78bfa"/><circle cx="334" cy="82" r="3.5" fill="#a78bfa"/>
+          <circle cx="358" cy="86" r="3.5" fill="#a78bfa"/><circle cx="380" cy="118" r="3.5" fill="#a78bfa"/>
+          <circle cx="404" cy="122" r="3.5" fill="#a78bfa"/><circle cx="428" cy="120" r="3.5" fill="#a78bfa"/>
+          <circle cx="452" cy="121" r="3.5" fill="#a78bfa"/><circle cx="476" cy="88" r="3.5" fill="#a78bfa"/>
+          <circle cx="504" cy="83" r="3.5" fill="#a78bfa"/><circle cx="528" cy="85" r="3.5" fill="#a78bfa"/>
+        </g>
+        <text x="45" y="232" fill="#94a3b8" font-size="11" font-family="monospace">Primary eclipse depth: 0.3–3.0m (EA) vs 0.01–0.03m (Exoplanet)</text>
+      </svg>
+    </div>`;
+
+  const SVG_OUTBURST = `
+    <div class="graph-guide-svg-card">
+      <svg viewBox="0 0 560 250" width="100%" style="display:block;">
+        <rect x="0" y="0" width="560" height="250" rx="8" fill="#070d19"/>
+        <text x="42" y="28" fill="#fbbf24" font-size="11.5" font-family="sans-serif" font-weight="bold">Cataclysmic Outburst &amp; AAVSO Upper Limits ("fainter than" ▼)</text>
+        <g fill="#64748b">
+          <polygon points="62,175 72,175 67,187"/><polygon points="104,178 114,178 109,190"/>
+          <polygon points="148,174 158,174 153,186"/><polygon points="192,179 202,179 197,191"/>
+        </g>
+        <text x="55" y="206" fill="#94a3b8" font-size="10.5" font-family="monospace">▼ Upper limits (&lt; 14.5m)</text>
+        <g fill="#f59e0b">
+          <circle cx="248" cy="126" r="4"/><circle cx="274" cy="64" r="4.6" stroke="#fff"/>
+          <circle cx="308" cy="70" r="4"/><circle cx="348" cy="88" r="4"/>
+          <circle cx="390" cy="112" r="4"/><circle cx="434" cy="138" r="4"/>
+          <circle cx="480" cy="162" r="4"/>
+        </g>
+        <text x="262" y="52" fill="#fde047" font-size="11" font-family="sans-serif" font-weight="bold">Outburst (+3 to +8 mag!)</text>
+        <text x="42" y="232" fill="#94a3b8" font-size="11" font-family="monospace">▼ means star was NOT detected — fainter than the plotted magnitude</text>
+      </svg>
+    </div>`;
+
+  const EN_PACK = {
+    modalTitle: "📈 How to Read AAVSO & Seestar Light Curves",
+    btnPrev: "Previous",
+    btnNext: "Next",
+    tabs: [
+      "1. MAG & JD", "2. Bands (TG/V)", "3. Error Bars", "4. Pulsators",
+      "5. Eclipses", "6. Outbursts", "7. Ensemble", "8. Quality"
+    ],
+    slides: [
+      {
+        kicker: "SLIDE 1 / 8 • AAVSO FUNDAMENTALS",
+        headline: "Inverted Magnitude Scale (MAG) & Julian Date (JD Mid)",
+        callout: "In astronomy, smaller magnitude numbers mean a BRIGHTER star. Going UP on a light curve means brightening; going DOWN means fading.",
+        steps: [
+          "<strong>Logarithmic scale:</strong> Every <code>1.0 mag</code> change equals a <code>2.512×</code> brightness change; <code>5.0 mag = 100×</code>.",
+          "<strong>Julian Date (JD Mid):</strong> Continuous UTC day count at mid-exposure (e.g., <code>2461360.4439</code>), letting observers worldwide combine data to the second.",
+          "<strong>Why it matters:</strong> Always check the Y-axis range first — a <code>0.05m</code> zoom looks dramatic even when the star is nearly constant."
+        ],
+        svg: SVG_MAG_JD
+      },
+      {
+        kicker: "SLIDE 2 / 8 • PHOTOMETRIC BANDS",
+        headline: "Seestar TG vs. Standard Johnson V, CV & Visual",
+        callout: "ZWO Seestar measures in TG (Tri-color Green from its Bayer RGB sensor). On AAVSO AID charts, other observers submit V, B, R, I, CV, or Visual.",
+        steps: [
+          "<strong>TG vs V agreement:</strong> Per AAVSO observer benchmarks, untransformed Seestar <code>TG</code> typically agrees with Johnson <code>V</code> within <code>0.03–0.08 mag</code> (larger offsets occur for very red stars).",
+          "<strong>Why curves don't overlap identically:</strong> Different filters pass different wavelengths, so a small vertical offset between your orange <code>TG</code> points and blue <code>V</code>/<code>CV</code> archive points is completely normal.",
+          "<strong>Never mislabel bands:</strong> Always report Seestar measurements as <code>FILT=TG</code> with <code>TRANS=NO</code>."
+        ],
+        table: {
+          headers: ["AAVSO Band", "Meaning", "Typical Use & Notes"],
+          rows: [
+            ["<code>TG</code>", "Tri-color Green (Bayer CMOS)", "Native Seestar photometry band; closest to Johnson V"],
+            ["<code>V</code>", "Standard Johnson V filter", "Professional & calibrated monochrome CCD/CMOS baseline"],
+            ["<code>CV</code>", "Clear (unfiltered) to V zero-point", "Used for faint targets; wider bandpass can shift red stars"],
+            ["<code>Vis.</code>", "Visual eye estimate", "Historical AAVSO archive; typical scatter ±0.1–0.3 mag"]
+          ]
+        }
+      },
+      {
+        kicker: "SLIDE 3 / 8 • UNCERTAINTY & SCATTER",
+        headline: "Error Bars (±MERR), Precision vs. Accuracy",
+        callout: "Vertical bars show measurement uncertainty (±MERR). A real brightness change must clearly exceed the error-bar height.",
+        steps: [
+          "<strong>Precision vs. Accuracy (AAVSO WG):</strong> Tight scatter between adjacent points shows <em>precision</em> (repeatability), while agreement with catalog/AID zero-point shows <em>accuracy</em>.",
+          "<strong>Smart Telescope WG finding:</strong> Single 10s subs show atmospheric scintillation; consistent multi-frame runs reach <code>0.02–0.05 mag</code> scatter on mag 9–13 stars.",
+          "<strong>Strict AAVSO MERR limits:</strong> WebObs rejects <code>MERR ≥ 1.00m</code> automatically; AstroLab also flags noisy frames in <code>0.25–1.00m</code> so you can inspect or exclude them."
+        ],
+        svg: SVG_MERR
+      },
+      {
+        kicker: "SLIDE 4 / 8 • PULSATING VARIABLES",
+        headline: "Reading Pulsating Stars (HADS, δ Sct, RR Lyr, Cepheids, Mira)",
+        callout: "Pulsating stars physically expand and contract, producing repeating waves whose shape reveals the star's class.",
+        steps: [
+          "<strong>HADS & RRab (e.g., SZ Lyn):</strong> Asymmetric wave — steep, rapid rise to maximum followed by a slower decline (periods <code>2–15 hours</code>, amplitude <code>0.3–1.2m</code>).",
+          "<strong>Overtone pulsators (RRc / DCEPS):</strong> Smoother, more symmetric sinusoidal curves with smaller amplitude.",
+          "<strong>Long-Period Miras (LPV):</strong> Huge swings of <code>2.5–8+ mag</code> over <code>100–500 days</code> — one clean nightly session per week is scientifically valuable."
+        ],
+        svg: SVG_PULSATOR
+      },
+      {
+        kicker: "SLIDE 5 / 8 • ECLIPSES & TRANSITS",
+        headline: "Eclipsing Binaries (EA, EB, EW) & Exoplanet Transits",
+        callout: "When two stars (or a planet) cross our line of sight, the light curve drops into a characteristic V- or U-shaped minimum.",
+        steps: [
+          "<strong>EA (Algol-type):</strong> Flat plateau outside eclipse, then a sharp, deep V-shaped drop (<code>0.3–3.0m</code>) with precise mid-eclipse timing.",
+          "<strong>EW (W UMa contact binaries):</strong> Continuous rounded waves with nearly equal primary and secondary minima (periods <code>< 1 day</code>).",
+          "<strong>Exoplanet transits (EP):</strong> Shallow flat-bottomed U-shaped dip of only <code>0.01–0.03m</code> — requires bright host stars (<code>≤ 11m</code>) and very low scatter."
+        ],
+        svg: SVG_ECLIPSE
+      },
+      {
+        kicker: "SLIDE 6 / 8 • OUTBURSTS & UPPER LIMITS",
+        headline: "Cataclysmic Variables, Novae & 'Fainter Than' (▼) Symbols",
+        callout: "Downward triangles (▼) on AAVSO charts are Upper Limits — the observer confirmed the star was FAINTER than that magnitude.",
+        steps: [
+          "<strong>Dwarf Novae & Recurrent Novae (UG / NR, e.g., T CrB):</strong> Long quiet periods interrupted by sudden eruptions of <code>2–8+ mag</code> in hours or days.",
+          "<strong>Reading Upper Limits (<code>&lt; 14.5</code>):</strong> They are NOT detections — they prove an outburst had not yet started at that timestamp.",
+          "<strong>Spotting real outbursts vs. glitches:</strong> A real outburst persists across multiple consecutive frames; a single 1-frame spike is usually a cosmic ray, satellite, or guiding glitch."
+        ],
+        svg: SVG_OUTBURST
+      },
+      {
+        kicker: "SLIDE 7 / 8 • ENSEMBLE & SATURATION",
+        headline: "Seestar Ensemble Photometry, KNAME/KMAG & Sensor Saturation",
+        callout: "Scientific honesty comes first: never report catalog numbers as if they were measured in your frame.",
+        steps: [
+          "<strong>Why KNAME=na & KMAG=na:</strong> Seestar runs internal ensemble photometry (<code>CNAME=ENSEMBLE</code>) without outputting an independent check-star measurement, so AstroLab strictly exports <code>CMAG=na</code>, <code>KNAME=na</code>, <code>KMAG=na</code>.",
+          "<strong>Sensor saturation (~65,536 ADU):</strong> On Seestar S50/S30, stars brighter than <code>~8.0–8.5 mag</code> can saturate at 10s–20s, creating artificially flat-topped maxima.",
+          "<strong>Sweet spot for Seestar:</strong> Aim for targets between <code>8.5 and 13.5–14.5 mag</code> with clean non-saturated comparison stars in the field."
+        ],
+        table: {
+          headers: ["AAVSO Extended Field", "Seestar AstroLab Value", "Scientific Reason"],
+          rows: [
+            ["<code>CNAME</code> / <code>CMAG</code>", "<code>ENSEMBLE</code> / <code>na</code>", "Seestar calibrates against an internal multi-star ensemble"],
+            ["<code>KNAME</code> / <code>KMAG</code>", "<code>na</code> / <code>na</code>", "No independent check-star magnitude in raw Seestar CSV"],
+            ["<code>AMASS</code>", "<code>na</code>", "Computed locally for Alt &lt; 20° warnings only"],
+            ["<code>FILT</code> / <code>TRANS</code>", "<code>TG</code> / <code>NO</code>", "Untransformed Bayer green channel"]
+          ]
+        }
+      },
+      {
+        kicker: "SLIDE 8 / 8 • AAVSO DATA QUALITY CHECKLIST",
+        headline: "Airmass (< 20°), Clouds, Moon & Pre-Upload Review",
+        callout: "Always compare your orange Seestar curve against the blue AAVSO AID archive before clicking Submit on WebObs.",
+        steps: [
+          "<strong>Low altitude (Alt &lt; 20° / Airmass &gt; 2.9):</strong> Thick atmosphere causes color-dependent extinction and scintillation. AstroLab warns you automatically when frames drop below <code>20°</code>.",
+          "<strong>Thin uniform haze vs. patchy clouds:</strong> Differential ensemble photometry tolerates light uniform haze briefly, but passing patchy clouds cause sudden erratic drops and huge <code>MERR</code>.",
+          "<strong>Final sanity check:</strong> Confirm green/yellow RA/Dec match, no duplicate nights, no saturation plateau, and smooth alignment with AAVSO AID."
+        ],
+        table: {
+          headers: ["Visual Symptom on Chart", "Likely Cause", "Recommended Action"],
+          rows: [
+            ["Sudden 1–2 frame spike/drop", "Passing cloud, satellite, or guiding jump", "Inspect MERR; exclude noisy frames (&gt; 0.25m)"],
+            ["Slow drift at end of night", "Target sinking below 20° (high airmass)", "Enable 'Exclude frames below 20°' checkbox"],
+            ["Flat top on bright star (&lt; 8.5m)", "CMOS sensor saturation (65,536 ADU)", "Use shorter exposure or pick fainter target (9–14m)"],
+            ["Whole curve shifted by 1–3 mag", "Wrong star / mispointed frame", "Check RA/Dec match table before uploading"]
+          ]
+        }
+      }
+    ]
+  };
+
+  const RU_PACK = {
+    modalTitle: "📈 Как читать графики AAVSO и Seestar",
+    btnPrev: "Назад",
+    btnNext: "Далее",
+    tabs: [
+      "1. MAG и JD", "2. Полосы (TG/V)", "3. Ошибки MERR", "4. Пульсации",
+      "5. Затмения", "6. Вспышки", "7. Ансамбль", "8. Качество"
+    ],
+    slides: [
+      {
+        kicker: "СЛАЙД 1 / 8 • ОСНОВЫ AAVSO",
+        headline: "Перевёрнутая шкала блеска (MAG) и Юлианская дата (JD Mid)",
+        callout: "В астрономии чем МЕНЬШЕ число звёздной величины, тем ЯРЧЕ звезда. Подъём графика вверх = рост яркости, провал вниз = ослабление.",
+        steps: [
+          "<strong>Логарифмическая шкала:</strong> шаг в <code>1.0 mag</code> меняет яркость в <code>2.512 раза</code>, а <code>5.0 mag</code> — ровно в <code>100 раз</code>.",
+          "<strong>Юлианская дата (JD Mid):</strong> непрерывный счёт суток UTC на середину экспозиции (например, <code>2461360.4439</code>), объединяющий наблюдателей всей планеты.",
+          "<strong>Обращайте внимание на масштаб оси Y:</strong> при сильном увеличении (размах <code>0.05m</code>) даже почти постоянная звезда может казаться «прыгающей»."
+        ],
+        svg: SVG_MAG_JD
+      },
+      {
+        kicker: "СЛАЙД 2 / 8 • ФОТОМЕТРИЧЕСКИЕ ПОЛОСЫ",
+        headline: "Полоса Seestar TG против Johnson V, CV и визуальных оценок",
+        callout: "ZWO Seestar измеряет в полосе TG (зелёный канал Байера). В базе AAVSO AID рядом отображаются замеры других наблюдателей в V, CV и Vis.",
+        steps: [
+          "<strong>Согласие TG и V:</strong> по тестам наблюдателей AAVSO, нетрансформированный <code>TG</code> на Seestar обычно совпадает с фильтром <code>V</code> в пределах <code>0.03–0.08 mag</code> (у очень красных звёзд сдвиг может быть больше).",
+          "<strong>Небольшой вертикальный сдвиг — норма:</strong> разные фильтры пропускают разные длины волн, поэтому смещение оранжевых точек <code>TG</code> относительно синих точек <code>V</code>/<code>CV</code> на графике AID естественно.",
+          "<strong>Строгое обозначение:</strong> данные Seestar всегда отправляются как <code>FILT=TG</code> и <code>TRANS=NO</code>."
+        ],
+        table: {
+          headers: ["Полоса AAVSO", "Что означает", "Особенности на графике"],
+          rows: [
+            ["<code>TG</code>", "Tri-color Green (RGB CMOS)", "Родная полоса Seestar; ближе всего к стандартному V"],
+            ["<code>V</code>", "Стандартный фильтр Johnson V", "Опорная полоса монохромных CCD/CMOS-обсерваторий"],
+            ["<code>CV</code>", "Без фильтра с нуль-пунктом V", "Для слабых целей; широкая полоса сдвигает красные звёзды"],
+            ["<code>Vis.</code>", "Визуальная оценка глазом", "Исторический архив AAVSO; типичный разброс ±0.1–0.3m"]
+          ]
+        }
+      },
+      {
+        kicker: "СЛАЙД 3 / 8 • ПОГРЕШНОСТИ И РАЗБРОС",
+        headline: "Усы погрешности (±MERR): повторяемость и точность",
+        callout: "Вертикальные «усы» показывают погрешность измерения ±MERR. Реальная переменность звезды должна уверенно превышать высоту этих усов.",
+        steps: [
+          "<strong>Precision vs Accuracy (AAVSO WG):</strong> малый разброс соседних точек — это <em>повторяемость</em>, а совпадение с истинным блеском в AID — <em>точность</em>.",
+          "<strong>Опыт рабочей группы AAVSO по смарт-телескопам:</strong> на одиночных 10с кадрах заметно атмосферное мерцание; ровные серии дают разброс <code>0.02–0.05 mag</code> на звёздах 9–13m.",
+          "<strong>Пороги MERR в AstroLab:</strong> строки с <code>MERR ≥ 1.00m</code> отбрасываются автоматически (лимит WebObs), а шумные точки <code>0.25–1.00m</code> подсвечиваются с опциональной галочкой исключения."
+        ],
+        svg: SVG_MERR
+      },
+      {
+        kicker: "СЛАЙД 4 / 8 • ПУЛЬСИРУЮЩИЕ ЗВЁЗДЫ",
+        headline: "Как выглядят пульсирующие переменные (HADS, RR Lyr, цефеиды, мириды)",
+        callout: "Пульсирующие звёзды ритмично сжимаются и расширяются — форма волны напрямую подсказывает класс объекта.",
+        steps: [
+          "<strong>HADS и RRab (например, SZ Lyn):</strong> характерная асимметричная волна — резкий крутой подъём к максимуму и более пологий спад (период <code>2–15 ч</code>, амплитуда <code>0.3–1.2m</code>).",
+          "<strong>Обертонные пульсаторы (RRc / DCEPS):</strong> более плавная, почти синусоидальная кривая с меньшей амплитудой.",
+          "<strong>Долгопериодические мириды (LPV):</strong> размах <code>2.5–8+ mag</code> за <code>100–500 дней</code> — достаточно одного качественного замера раз в неделю."
+        ],
+        svg: SVG_PULSATOR
+      },
+      {
+        kicker: "СЛАЙД 5 / 8 • ЗАТМЕНИЯ И ТРАНЗИТЫ",
+        headline: "Затменно-двойные (EA, EB, EW) и транзиты экзопланет (EP)",
+        callout: "Когда компаньон или планета проходит перед звездой, на кривой блеска появляется чёткий V- или U-образный провал.",
+        steps: [
+          "<strong>EA (тип Алголя):</strong> ровное плато вне затмения и глубокий V-образный провал (<code>0.3–3.0m</code>) — важен точный момент минимума.",
+          "<strong>EW (контактные W UMa):</strong> непрерывная волна с почти равными главным и вторичным минимумами (период <code>&lt; 1 суток</code>).",
+          "<strong>Транзиты экзопланет (EP):</strong> неглубокое корытце с плоским дном (U-профиль всего <code>0.01–0.03m</code>) — нужны яркие звёзды (<code>≤ 11m</code>) и минимальный шум."
+        ],
+        svg: SVG_ECLIPSE
+      },
+      {
+        kicker: "СЛАЙД 6 / 8 • ВСПЫШКИ И ВЕРХНИЕ ПРЕДЕЛЫ",
+        headline: "Катаклизмические, новые звёзды и треугольники «слабее чем» (▼)",
+        callout: "Треугольники остриём вниз (▼) на графиках AAVSO — это верхние пределы (Upper Limits): звезда была СЛАБЕЕ указанной величины.",
+        steps: [
+          "<strong>Карликовые и повторные новые (UG / NR, например T CrB):</strong> долгий покой сменяется резкой вспышкой на <code>2–8+ mag</code> за часы или сутки.",
+          "<strong>Как читать <code>&lt; 14.5</code> (▼):</strong> это не измерение блеска, а подтверждение, что в этот момент вспышка ещё не началась.",
+          "<strong>Реальная вспышка или артефакт:</strong> реальный рост держится на многих кадрах подряд; единичный выброс на 1 кадре — это космическая частица, спутник или сбой ведения."
+        ],
+        svg: SVG_OUTBURST
+      },
+      {
+        kicker: "СЛАЙД 7 / 8 • АНСАМБЛЬ И НАСЫЩЕНИЕ",
+        headline: "Ансамблевая фотометрия Seestar, KNAME/KMAG и пересвет матрицы",
+        callout: "Главный принцип научной честности AAVSO: никогда не подставлять каталожные числа вместо реальных измерений.",
+        steps: [
+          "<strong>Почему KNAME=na и KMAG=na:</strong> Seestar делает внутреннюю ансамблевую фотометрию (<code>CNAME=ENSEMBLE</code>) и не выдаёт отдельный замер контрольной звезды — поэтому в CSV строго пишутся <code>na</code>.",
+          "<strong>Насыщение матрицы (~65 536 ADU):</strong> на Seestar S50/S30 звёзды ярче <code>~8.0–8.5 mag</code> при 10–20с могут уходить в пересвет, срезая вершину кривой («плоская полка»).",
+          "<strong>Оптимальный диапазон Seestar:</strong> звёзды <code>8.5–14.5 mag</code> без пересвеченных пикселей."
+        ],
+        table: {
+          headers: ["Поле AAVSO Extended", "Значение в AstroLab", "Научное обоснование"],
+          rows: [
+            ["<code>CNAME</code> / <code>CMAG</code>", "<code>ENSEMBLE</code> / <code>na</code>", "Калибровка по внутреннему ансамблю звёзд сравнения Seestar"],
+            ["<code>KNAME</code> / <code>KMAG</code>", "<code>na</code> / <code>na</code>", "В сыром CSV Seestar нет отдельного замера контрольной звезды"],
+            ["<code>AMASS</code>", "<code>na</code>", "Считается локально только для предупреждения Alt &lt; 20°"],
+            ["<code>FILT</code> / <code>TRANS</code>", "<code>TG</code> / <code>NO</code>", "Нетрансформированный зелёный канал Байера"]
+          ]
+        }
+      },
+      {
+        kicker: "СЛАЙД 8 / 8 • ЧЕК-ЛИСТ КАЧЕСТВА AAVSO",
+        headline: "Высота (< 20°), облака, Луна и проверка перед отправкой",
+        callout: "Перед загрузкой в WebObs всегда сверяйте свои оранжевые точки Seestar с синей архивной кривой AAVSO AID.",
+        steps: [
+          "<strong>Низко над горизонтом (Alt &lt; 20° / Airmass &gt; 2.9):</strong> толстый слой атмосферы даёт сильное поглощение и мерцание. AstroLab автоматически предупредит и предложит исключить такие кадры.",
+          "<strong>Равномерная дымка vs рваные облака:</strong> лёгкую равномерную дымку ансамбль отчасти компенсирует, а проходящие облака дают резкие провалы и скачок <code>MERR</code>.",
+          "<strong>Итоговая проверка:</strong> зелёная/жёлтая сверка RA/Dec, нет дублей прошлых ночей, нет пересвета и аккуратное согласие с AAVSO AID."
+        ],
+        table: {
+          headers: ["Что видно на графике", "Вероятная причина", "Что сделать"],
+          rows: [
+            ["Резкий выброс на 1–2 кадрах", "Облако, спутник или рывок ведения", "Проверить MERR; включить фильтр шумных кадров (&gt; 0.25m)"],
+            ["Плавный уход в конце ночи", "Звезда опустилась ниже 20° (высокий Airmass)", "Отметить галочку «Исключить кадры ниже 20°»"],
+            ["Плоская вершина на яркой звезде (&lt; 8.5m)", "Пересвет CMOS-матрицы (65 536 ADU)", "Уменьшить выдержку или выбрать цель 9–14m"],
+            ["Вся кривая сдвинута на 1–3 mag", "Снята не та звезда / ошибка наведения", "Проверить таблицу сверки RA/Dec перед отправкой"]
+          ]
+        }
+      }
+    ]
+  };
+
+  // Localized modal chrome for ES, DE, FR, ZH, CS, BER (with clean localized headers & EN technical slides fallback where concise)
+  const GRAPH_GUIDE_8LANG = {
+    en: EN_PACK,
+    ru: RU_PACK,
+    es: Object.assign({}, EN_PACK, {
+      modalTitle: "📈 Cómo leer curvas de luz de AAVSO y Seestar",
+      btnPrev: "Anterior", btnNext: "Siguiente",
+      tabs: ["1. MAG y JD", "2. Bandas", "3. MERR", "4. Pulsantes", "5. Eclipses", "6. Estallidos", "7. Ensamble", "8. Calidad"]
+    }),
+    de: Object.assign({}, EN_PACK, {
+      modalTitle: "📈 AAVSO- & Seestar-Lichtkurven richtig lesen",
+      btnPrev: "Zurück", btnNext: "Weiter",
+      tabs: ["1. MAG & JD", "2. Filter", "3. MERR", "4. Pulsierend", "5. Bedeckung", "6. Ausbrüche", "7. Ensemble", "8. Qualität"]
+    }),
+    fr: Object.assign({}, EN_PACK, {
+      modalTitle: "📈 Lire les courbes de lumière AAVSO et Seestar",
+      btnPrev: "Précédent", btnNext: "Suivant",
+      tabs: ["1. MAG & JD", "2. Bandes", "3. MERR", "4. Pulsantes", "5. Éclipses", "6. Éruptions", "7. Ensemble", "8. Qualité"]
+    }),
+    zh: Object.assign({}, EN_PACK, {
+      modalTitle: "📈 如何阅读 AAVSO 与 Seestar 光变曲线",
+      btnPrev: "上一页", btnNext: "下一页",
+      tabs: ["1. 星等与JD", "2. 波段TG/V", "3. 误差MERR", "4. 脉动变星", "5. 食变星", "6. 爆发与上限", "7. 集合测光", "8. 质量检查"]
+    }),
+    cs: Object.assign({}, EN_PACK, {
+      modalTitle: "📈 Jak číst světelné křivky AAVSO a Seestar",
+      btnPrev: "Předchozí", btnNext: "Další",
+      tabs: ["1. MAG a JD", "2. Pásma", "3. MERR", "4. Pulsující", "5. Zákryty", "6. Vzplanutí", "7. Ensemble", "8. Kvalita"]
+    }),
+    ber: Object.assign({}, EN_PACK, {
+      modalTitle: "📈 Amek ad nɣer izirigen n tafat AAVSO & Seestar",
+      btnPrev: "Ɣer deffir", btnNext: "Ɣer zdat",
+      tabs: ["1. MAG & JD", "2. TG / V", "3. MERR", "4. Pulsators", "5. Eclipses", "6. Outbursts", "7. Ensemble", "8. Quality"]
+    })
+  };
+
+  let _activeGraphSlideIdx = 0;
+
+  window.renderGraphGuideSlide = function(slideIdx = _activeGraphSlideIdx) {
+    _activeGraphSlideIdx = Math.max(0, Math.min(7, Number(slideIdx) || 0));
+    const lg = (window.__normAstroLang ? window.__normAstroLang(document.getElementById("langSelect")?.value || "en") : "en") || "en";
+    const pack = GRAPH_GUIDE_8LANG[lg] || GRAPH_GUIDE_8LANG.en;
+    const slide = pack.slides[_activeGraphSlideIdx] || pack.slides[0];
+
+    const titleEl = document.getElementById("graphGuideModalTitle");
+    if (titleEl) titleEl.textContent = pack.modalTitle;
+
+    const counterEl = document.getElementById("graphGuideCounterBadge");
+    if (counterEl) counterEl.textContent = `${_activeGraphSlideIdx + 1} / 8`;
+
+    const prevLbl = document.getElementById("lblGraphGuidePrev");
+    if (prevLbl) prevLbl.textContent = pack.btnPrev;
+    const nextLbl = document.getElementById("lblGraphGuideNext");
+    if (nextLbl) nextLbl.textContent = pack.btnNext;
+
+    const prevBtn = document.getElementById("btnGraphGuidePrev");
+    if (prevBtn) prevBtn.disabled = (_activeGraphSlideIdx === 0);
+
+    document.querySelectorAll("#graphGuideTabsBar .beginner-slide-tab").forEach((btn, idx) => {
+      btn.classList.toggle("active", idx === _activeGraphSlideIdx);
+      if (pack.tabs[idx]) btn.textContent = pack.tabs[idx];
+    });
+    document.querySelectorAll("#graphGuideDotsWrap .b-dot").forEach((d, idx) => {
+      d.classList.toggle("active", idx === _activeGraphSlideIdx);
+    });
+
+    const stageEl = document.getElementById("graphGuideStageContent");
+    if (!stageEl) return;
+
+    const stepsHtml = (slide.steps || []).map((stHtml, idx) => `
+      <div class="beginner-step-card">
+        <span class="beginner-step-num" style="background:linear-gradient(135deg,#0284c7,#0ea5e9);">${idx + 1}</span>
+        <div class="beginner-step-text">${stHtml}</div>
+      </div>
+    `).join("");
+
+    const leftHtml = `
+      <div class="graph-guide-kicker">${slide.kicker || ""}</div>
+      <h3 class="beginner-slide-headline">${slide.headline}</h3>
+      <div class="beginner-slide-BannerCallout" style="border-color:rgba(56,189,248,0.45); background:rgba(14,165,233,0.12);">${slide.callout}</div>
+      <div class="beginner-steps-list">${stepsHtml}</div>
+    `;
+
+    let rightHtml = "";
+    if (slide.svg) {
+      rightHtml = `
+        <div class="beginner-slide-mockup-box">
+          <div class="mockup-window-bar">
+            <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#10b981;"></i></span>
+            <span>${slide.kicker || "AAVSO • LIGHT CURVES"}</span>
+          </div>
+          ${slide.svg}
+        </div>
+      `;
+    } else if (slide.table) {
+      const ths = slide.table.headers.map(h => `<th>${h}</th>`).join("");
+      const trs = slide.table.rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("");
+      rightHtml = `
+        <div class="beginner-slide-mockup-box">
+          <div class="mockup-window-bar">
+            <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#10b981;"></i></span>
+            <span>${slide.kicker}</span>
+          </div>
+          <table class="pitfalls-table">
+            <thead><tr>${ths}</tr></thead>
+            <tbody>${trs}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    stageEl.innerHTML = `
+      <div class="beginner-slide-grid">
+        <div class="beginner-slide-left">${leftHtml}</div>
+        <div class="beginner-slide-right">${rightHtml}</div>
+      </div>
+    `;
+  };
+
+  window.openGraphGuideModal = function(slideIdx = 0) {
+    const modal = document.getElementById("graphGuideModal");
+    if (!modal) return;
+    window.renderGraphGuideSlide(slideIdx);
+    modal.classList.add("open");
+    if (typeof syncModalBodyLock === "function") syncModalBodyLock();
+  };
+
+  window.closeGraphGuideModal = function() {
+    const modal = document.getElementById("graphGuideModal");
+    if (!modal) return;
+    modal.classList.remove("open");
+    if (typeof syncModalBodyLock === "function") syncModalBodyLock();
+  };
+
+  window.stepGraphGuideSlide = function(delta) {
+    const next = _activeGraphSlideIdx + Number(delta || 0);
+    if (next > 7) {
+      window.closeGraphGuideModal();
+      return;
+    }
+    window.renderGraphGuideSlide(Math.max(0, Math.min(7, next)));
+  };
+
+  document.getElementById("langSelect")?.addEventListener("change", () => {
+    const modal = document.getElementById("graphGuideModal");
+    if (modal && modal.classList.contains("open")) {
+      window.renderGraphGuideSlide(_activeGraphSlideIdx);
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    const modal = document.getElementById("graphGuideModal");
+    if (!modal || !modal.classList.contains("open")) return;
+    if (e.key === "ArrowRight") window.stepGraphGuideSlide(1);
+    else if (e.key === "ArrowLeft") window.stepGraphGuideSlide(-1);
+    else if (e.key === "Escape") window.closeGraphGuideModal();
+  });
 })();
