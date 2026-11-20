@@ -32,7 +32,7 @@ Compare the output hash with the value published in `SHA256SUMS.txt` on the [Git
 
 ## Windows SmartScreen Notice
 
-Until open-source code signing via [SignPath.io](https://signpath.io/) is active on release builds, Windows Defender SmartScreen may display an *"Unknown publisher"* warning. This reflects the absence of a commercial Authenticode certificate rather than detected malware. Always verify the `SHA-256` checksum before proceeding.
+Because the Windows installer does not carry a commercial Authenticode code-signing certificate, Windows Defender SmartScreen may display an *"Unknown publisher"* warning. This reflects the absence of a commercial Authenticode certificate rather than detected malware. Always verify the `SHA-256` checksum before proceeding.
 
 ## Privacy & Network Scope
 

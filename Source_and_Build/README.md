@@ -178,8 +178,8 @@ Translated into **8 languages**: English, Russian, Spanish, German, French, Chin
 - ☕ **Support the project on Boosty:** [https://boosty.to/cosmobehemothych](https://boosty.to/cosmobehemothych)
 - 💙 **Support the AAVSO mission:** [https://aavso.org/donate-now/](https://aavso.org/donate-now/)
 
-### Code signing policy
-Free code signing provided by [SignPath.io](https://signpath.io/), certificate by [SignPath Foundation](https://signpath.org/).
+### Code signing & verification policy
+The Windows installer (`Seestar_AstroLab_Setup_v1.3.1.exe`) is currently **unsigned** (no commercial Authenticode certificate). Every release is built transparently from public MIT-licensed source code on GitHub-hosted Windows runners ([`.github/workflows/build.yml`](.github/workflows/build.yml)) and published with `SHA256SUMS.txt` and `VERIFY.txt` for independent verification.
 
 ### Team roles
 - **Authors and Reviewers:** CosmoBehemothych

@@ -23,10 +23,9 @@ If the hashes do not match, DO NOT run the file and re-download it from:
 2. WHY WINDOWS SMARTSCREEN MAY APPEAR
 -------------------------------------
 This is a free, MIT-licensed open-source project built automatically on
-GitHub-hosted Windows runners (.github/workflows/build.yml). Until free
-open-source code signing (SignPath.io) is enabled on release binaries,
-Windows Defender SmartScreen may display "Windows protected your PC"
-simply because the installer does not carry a paid commercial certificate.
+GitHub-hosted Windows runners (.github/workflows/build.yml). Because this installer does not carry a paid commercial code-signing
+certificate, Windows Defender SmartScreen may display "Windows protected
+your PC" ("Unknown publisher").
 
 If the SHA-256 hash matches SHA256SUMS.txt:
   Click "More info" -> "Run anyway".
