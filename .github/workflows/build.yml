@@ -29,10 +29,11 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install minimal test dependencies (certifi)
+      - name: Install Playwright Chromium & test dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install certifi
+          pip install certifi playwright
+          python -m playwright install chromium
 
       - name: Run all 3 mandatory pre-build regression autotests
         env:
