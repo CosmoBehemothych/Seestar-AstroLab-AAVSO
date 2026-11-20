@@ -10,8 +10,6 @@
 
 **[⬇️ Download Latest Release (`v1.3.0` — Installer & Portable)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.3.0)** • **[🇷🇺 Русская версия ниже](#-русская-версия-russian)**
 
-![Seestar AstroLab AAVSO Main Workspace](screenshots/01_main_dashboard_and_converter.png)
-
 ---
 
 ## 🎬 Quick Demo: Raw Seestar CSV → AAVSO Extended Report
