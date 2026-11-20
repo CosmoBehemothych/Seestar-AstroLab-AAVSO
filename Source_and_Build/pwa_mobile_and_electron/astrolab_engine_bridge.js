@@ -19051,18 +19051,12 @@ function revealAndFocusField(inputId) {
       if (window._githubUpdateCheckedThisSession && !forceCheck) return;
       window._githubUpdateCheckedThisSession = true;
       const LOCAL_VER = "1.3.1";
-      const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
-      const lastTs = parseInt((typeof safeGetStorage === "function" ? safeGetStorage("seestar_last_update_check_ts", "0") : "0") || "0", 10);
-      if (!forceCheck && lastTs > 0 && (Date.now() - lastTs) < SIX_HOURS_MS) {
-        const cachedVer = (typeof safeGetStorage === "function" ? safeGetStorage("seestar_cached_latest_ver", "") : "") || "";
-        const cachedUrl = (typeof safeGetStorage === "function" ? safeGetStorage("seestar_cached_latest_url", "") : "") || "";
-        if (cachedVer && window.isRemoteVersionNewer(cachedVer, LOCAL_VER)) {
-          window.showGithubUpdateBanner(cachedVer, cachedUrl);
-        }
-        return;
-      }
+      const REPO_API = "https://api.github.com/repos/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
+      const REPO_RELEASES = "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
+
+      let info = null;
+      // Канал 1: локальный Python backend (pywebview API или localhost RPC)
       try {
-        let info = null;
         if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_check_github_latest_release === "function") {
           info = await window.pywebview.api.backend_check_github_latest_release({ currentVersion: LOCAL_VER });
         } else {
@@ -19070,22 +19064,45 @@ function revealAndFocusField(inputId) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "check_github_latest_release", currentVersion: LOCAL_VER }),
-            signal: AbortSignal.timeout(4000)
+            signal: AbortSignal.timeout ? AbortSignal.timeout(4500) : undefined
           });
-          if (r.ok) info = await r.json();
+          if (r && r.ok) info = await r.json();
         }
-        if (info && info.ok && info.latestVersion) {
-          if (typeof safeSetStorage === "function") {
-            safeSetStorage("seestar_last_update_check_ts", String(Date.now()));
-            safeSetStorage("seestar_cached_latest_ver", String(info.latestVersion));
-            safeSetStorage("seestar_cached_latest_url", String(info.releaseUrl || ""));
+      } catch (_) {}
+
+      // Канал 2 (резерв): прямой однократный read-only fetch через системный TLS WebView2/браузера
+      // Защищает от случаев, когда Python urllib в PyInstaller на Windows не находит системные SSL-сертификаты
+      if (!info || !info.ok || !info.latestVersion) {
+        try {
+          const r2 = await fetch(REPO_API, {
+            method: "GET",
+            headers: { "Accept": "application/vnd.github+json" },
+            cache: "no-store",
+            signal: AbortSignal.timeout ? AbortSignal.timeout(5000) : undefined
+          });
+          if (r2 && r2.ok) {
+            const payload = await r2.json();
+            const tag = String((payload && payload.tag_name) || "").trim();
+            if (tag) {
+              const cleanVer = tag.replace(/^v/i, "");
+              info = {
+                ok: true,
+                latestVersion: cleanVer,
+                latestTag: tag,
+                releaseUrl: String((payload && payload.html_url) || REPO_RELEASES),
+                updateAvailable: window.isRemoteVersionNewer(cleanVer, LOCAL_VER)
+              };
+            }
           }
-          if (info.updateAvailable && window.isRemoteVersionNewer(info.latestVersion, LOCAL_VER)) {
-            window.showGithubUpdateBanner(info.latestVersion, info.releaseUrl);
-          }
+        } catch (_) {
+          // Offline / полевые наблюдения: молча игнорируем без ошибок в UI
         }
-      } catch (_) {
-        // Offline / field session: silently ignore with zero UI interruption
+      }
+
+      if (info && info.ok && info.latestVersion) {
+        if (window.isRemoteVersionNewer(info.latestVersion, LOCAL_VER)) {
+          window.showGithubUpdateBanner(info.latestVersion, info.releaseUrl || REPO_RELEASES);
+        }
       }
     };
     setTimeout(() => { window.checkGithubReleaseOnceOnStartup(false); }, 3500);

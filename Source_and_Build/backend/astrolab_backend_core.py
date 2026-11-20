@@ -1643,10 +1643,21 @@ class AavsoNativeAndStorageService:
         release_url = repo_releases_url
         headers = {"User-Agent": f"SeestarAstroLab/{current_version}", "Accept": "application/vnd.github+json"}
 
+        ssl_ctx = None
+        try:
+            import ssl
+            try:
+                import certifi
+                ssl_ctx = ssl.create_default_context(cafile=certifi.where())
+            except Exception:
+                ssl_ctx = ssl.create_default_context()
+        except Exception:
+            ssl_ctx = None
+
         # Канал 1: лёгкий редирект github.com/.../releases/latest (без жёсткого лимита 60 req/hr API)
         try:
             req = urllib.request.Request(repo_releases_url, headers={"User-Agent": f"SeestarAstroLab/{current_version}"})
-            with urllib.request.urlopen(req, timeout=4.0) as resp:
+            with urllib.request.urlopen(req, timeout=6.0, context=ssl_ctx) as resp:
                 final_url = resp.geturl() or ""
                 m = re.search(r"/releases/tag/([^/?#]+)", final_url)
                 if m:
@@ -1659,7 +1670,7 @@ class AavsoNativeAndStorageService:
         if not latest_tag:
             try:
                 req = urllib.request.Request(api_url, headers=headers)
-                with urllib.request.urlopen(req, timeout=4.0) as resp:
+                with urllib.request.urlopen(req, timeout=6.0, context=ssl_ctx) as resp:
                     payload = json.loads(resp.read().decode("utf-8", errors="replace"))
                     latest_tag = str(payload.get("tag_name") or "").strip()
                     release_url = str(payload.get("html_url") or repo_releases_url).strip()
