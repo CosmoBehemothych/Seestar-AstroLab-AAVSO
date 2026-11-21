@@ -8057,3 +8057,34 @@ body[data-theme="light"] .lc-trigger-card.primary-hit {
   border: 1px solid rgba(56, 189, 248, 0.3);
   font-weight: 600;
 }
+
+
+/* === v1.4.0-alpha Hotfix5: #graphGuideModal safe navigation padding & sticky Y-axis === */
+#graphGuideModal .beginner-guide-header {
+  padding: 16px 32px !important;
+  box-sizing: border-box !important;
+}
+#graphGuideModal .beginner-guide-header .ios-modal-close {
+  margin-right: 12px !important;
+}
+#graphGuideModal .beginner-guide-footer,
+#graphGuideModal .ios-modal-footer {
+  padding: 16px 36px 24px 36px !important;
+  gap: 12px !important;
+  box-sizing: border-box !important;
+}
+#graphGuideModal .beginner-guide-footer button,
+#graphGuideModal .ios-modal-footer button {
+  margin: 0 4px !important;
+}
+#fullPageLcInnerWrap {
+  position: relative !important;
+}
+#fullPageStickyYAxis {
+  position: sticky !important;
+  left: 0 !important;
+  top: 0 !important;
+  z-index: 9 !important;
+  pointer-events: none !important;
+}
+

@@ -11354,9 +11354,9 @@ function revealAndFocusField(inputId) {
     const showAavso = document.getElementById("chkAavsoWidgetOthers")?.checked !== false;
     const showUser = document.getElementById("chkAavsoWidgetUser")?.checked !== false;
 
-    const aavsoPts = (activeStar && showAavso && STATE_CURVES.aavsoHasEnoughData) ? STATE_CURVES.aavsoOtherPoints : [];
-    const userCurPts = (activeStar && showUser) ? currentPts : [];
-    const userPastPts = (activeStar && showUser) ? pastPts : [];
+    const aavsoPts = _applyFullPageLabFiltersToSeries((activeStar && showAavso && STATE_CURVES.aavsoHasEnoughData) ? STATE_CURVES.aavsoOtherPoints : [], canvasId);
+    const userCurPts = _applyFullPageLabFiltersToSeries((activeStar && showUser) ? currentPts : [], canvasId);
+    const userPastPts = _applyFullPageLabFiltersToSeries((activeStar && showUser) ? pastPts : [], canvasId);
     const totalUserCount = currentPts.length + pastPts.length;
     const allToPlot = [...aavsoPts, ...userPastPts, ...userCurPts];
 
@@ -12266,7 +12266,104 @@ function revealAndFocusField(inputId) {
   // --------------------------------------------------------------------------
   // 14.4. Двухстрочная ось X (JD + Календарная дата UTC) и выноски дат на графиках
   // --------------------------------------------------------------------------
-  function drawEnhancedTimeAxisWithUtcDates(ctx, timeMap, padL, padR, padT, plotW, plotH, cssW, cssH, isLight, zoomScale = 1.0) {
+  function _formatXTickLabelByUnit(jd, unitMode, spanDays) {
+    let eff = unitMode || "auto";
+    if (eff === "auto") {
+      if (spanDays <= 2.5) eff = "hours";
+      else if (spanDays <= 75) eff = "days";
+      else eff = "months";
+    }
+    if (eff === "jd") {
+      return spanDays < 2 ? jd.toFixed(4) : (spanDays < 30 ? jd.toFixed(2) : jd.toFixed(1));
+    }
+    const ms = (jd - 2440587.5) * 86400000;
+    const d = new Date(ms);
+    if (isNaN(d.getTime())) return jd.toFixed(2);
+    const pad2 = (n) => String(n).padStart(2, "0");
+    const lang = (typeof currentLang !== "undefined" ? currentLang : "en");
+    const monthsRu = ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
+    const monthsEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const mName = (lang === "ru" ? monthsRu : monthsEn)[d.getUTCMonth()];
+    if (eff === "hours") {
+      return `${pad2(d.getUTCDate())}.${pad2(d.getUTCMonth() + 1)} ${pad2(d.getUTCHours())}:${pad2(d.getUTCMinutes())}`;
+    }
+    if (eff === "months") {
+      return `${mName} ${d.getUTCFullYear()}`;
+    }
+    return `${pad2(d.getUTCDate())} ${mName}`;
+  }
+
+  function _drawStickyYAxisStrip(canvasId, minMag, maxMag, yDivs, padL, padT, plotH, cssH, isLight) {
+    if (canvasId !== "fullPageLightCurveCanvas") return;
+    const sticky = document.getElementById("fullPageStickyYAxis");
+    if (!sticky) return;
+    const dpr = Math.max(2, window.devicePixelRatio || 2);
+    const stripW = padL + 2;
+    sticky.style.width = `${stripW}px`;
+    sticky.style.height = `${cssH}px`;
+    sticky.style.marginRight = `-${stripW}px`;
+    if (sticky.width !== Math.round(stripW * dpr) || sticky.height !== Math.round(cssH * dpr)) {
+      sticky.width = Math.round(stripW * dpr);
+      sticky.height = Math.round(cssH * dpr);
+    }
+    const sctx = sticky.getContext("2d");
+    sctx.save();
+    sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    sctx.fillStyle = isLight ? "rgba(248, 250, 252, 0.96)" : "rgba(7, 11, 20, 0.96)";
+    sctx.fillRect(0, 0, stripW, cssH);
+
+    // Axis spine line
+    sctx.strokeStyle = isLight ? "rgba(15,23,42,0.28)" : "rgba(148,163,184,0.35)";
+    sctx.lineWidth = 1;
+    sctx.beginPath();
+    sctx.moveTo(padL, padT);
+    sctx.lineTo(padL, padT + plotH);
+    sctx.stroke();
+
+    const magSpan = Math.max(0.001, maxMag - minMag);
+    const stepMag = magSpan / Math.max(1, yDivs);
+    const dec = stepMag < 0.04 ? 3 : 2;
+
+    for (let k = 0; k <= yDivs; k++) {
+      const y = padT + (plotH * k) / yDivs;
+      const mVal = minMag + (magSpan * k) / yDivs;
+      sctx.strokeStyle = isLight ? "rgba(15,23,42,0.45)" : "rgba(148,163,184,0.55)";
+      sctx.beginPath();
+      sctx.moveTo(padL - 5, y);
+      sctx.lineTo(padL, y);
+      sctx.stroke();
+
+      sctx.fillStyle = isLight ? "#1e293b" : "#cbd5e1";
+      sctx.font = "600 10px monospace";
+      sctx.textAlign = "right";
+      sctx.fillText(mVal.toFixed(dec) + "m", padL - 7, y + 3);
+
+      // Minor halfway tick
+      if (k < yDivs) {
+        const yMid = padT + (plotH * (k + 0.5)) / yDivs;
+        sctx.strokeStyle = isLight ? "rgba(15,23,42,0.22)" : "rgba(148,163,184,0.28)";
+        sctx.beginPath();
+        sctx.moveTo(padL - 3, yMid);
+        sctx.lineTo(padL, yMid);
+        sctx.stroke();
+      }
+    }
+    sctx.restore();
+  }
+
+  function _applyFullPageLabFiltersToSeries(pts, canvasId) {
+    if (canvasId !== "fullPageLightCurveCanvas" || !Array.isArray(pts) || pts.length === 0) return pts;
+    const band = document.getElementById("fpBandFilterSelect")?.value || "ALL";
+    const binMinutes = Number(document.getElementById("fpBinningSelect")?.value || "0");
+    const sigmaClip = Boolean(document.getElementById("chkFpSigmaClip")?.checked);
+    if (band === "ALL" && !(binMinutes > 0) && !sigmaClip) return pts;
+    if (typeof window.AstroLabLightCurveLab !== "undefined" && typeof window.AstroLabLightCurveLab.preprocessPoints === "function") {
+      return window.AstroLabLightCurveLab.preprocessPoints(pts, { band, binMinutes, sigmaClip });
+    }
+    return pts;
+  }
+
+  function drawEnhancedTimeAxisWithUtcDates(ctx, timeMap, padL, padR, padT, plotW, plotH, cssW, cssH, isLight, zoomScale = 1.0, isFullPage = false) {
     if (timeMap.dividers && timeMap.dividers.length > 0) {
       ctx.save();
       ctx.strokeStyle = isLight ? "rgba(100,116,139,0.45)" : "rgba(148,163,184,0.38)";
@@ -12282,28 +12379,69 @@ function revealAndFocusField(inputId) {
       ctx.restore();
     }
 
-    const midJd = (timeMap.minJd + timeMap.maxJd) / 2;
-    const yLine1 = cssH - 17;
+    const spanDays = Math.max(0.0001, timeMap.maxJd - timeMap.minJd);
+    const unitMode = isFullPage ? (document.getElementById("fpXAxisUnitSelect")?.value || "auto") : "auto";
+
+    // Dense X-axis major + minor ticks (Point 7 & 8)
+    const desiredStepPx = isFullPage ? 115 : 135;
+    const numTicks = Math.max(4, Math.min(80, Math.round(plotW / desiredStepPx)));
+    const yAxisBottom = padT + plotH;
+    const yLine1 = cssH - 18;
     const yLine2 = cssH - 5;
 
     ctx.save();
-    ctx.fillStyle = isLight ? "#334155" : "#94a3b8";
-    ctx.font = "600 9.5px monospace";
-    ctx.textAlign = "left";
-    ctx.fillText(`JD ${timeMap.minJd.toFixed(4)}`, padL, yLine1);
-    ctx.textAlign = "center";
-    ctx.fillText(`${trCurve("axisTime")} • JD ${midJd.toFixed(4)}` + (zoomScale > 1.02 ? ` [🔍 ${zoomScale.toFixed(1)}x]` : ""), padL + plotW / 2, yLine1);
-    ctx.textAlign = "right";
-    ctx.fillText(`JD ${timeMap.maxJd.toFixed(4)}`, cssW - padR, yLine1);
+    // X-axis baseline
+    ctx.strokeStyle = isLight ? "rgba(15,23,42,0.28)" : "rgba(148,163,184,0.35)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, yAxisBottom);
+    ctx.lineTo(padL + plotW, yAxisBottom);
+    ctx.stroke();
 
-    ctx.fillStyle = isLight ? "#0369a1" : "#38bdf8";
-    ctx.font = "700 9.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace";
-    ctx.textAlign = "left";
-    ctx.fillText(`📅 ${jdToUtcFormatted(timeMap.minJd, "axis")}`, padL, yLine2);
-    ctx.textAlign = "center";
-    ctx.fillText(`📅 ${jdToUtcFormatted(midJd, "short")} UTC`, padL + plotW / 2, yLine2);
-    ctx.textAlign = "right";
-    ctx.fillText(`📅 ${jdToUtcFormatted(timeMap.maxJd, "axis")}`, cssW - padR, yLine2);
+    for (let i = 0; i <= numTicks; i++) {
+      const frac = i / numTicks;
+      const x = padL + plotW * frac;
+      const jdAt = timeMap.minJd + spanDays * frac;
+
+      // Vertical major gridline
+      if (i > 0 && i < numTicks) {
+        ctx.strokeStyle = isLight ? "rgba(15,23,42,0.08)" : "rgba(148,163,184,0.11)";
+        ctx.beginPath();
+        ctx.moveTo(x, padT);
+        ctx.lineTo(x, yAxisBottom);
+        ctx.stroke();
+      }
+      // Major tick mark
+      ctx.strokeStyle = isLight ? "rgba(15,23,42,0.5)" : "rgba(148,163,184,0.6)";
+      ctx.beginPath();
+      ctx.moveTo(x, yAxisBottom);
+      ctx.lineTo(x, yAxisBottom + 6);
+      ctx.stroke();
+
+      // Minor halfway tick mark
+      if (i < numTicks) {
+        const xm = padL + plotW * ((i + 0.5) / numTicks);
+        ctx.strokeStyle = isLight ? "rgba(15,23,42,0.22)" : "rgba(148,163,184,0.28)";
+        ctx.beginPath();
+        ctx.moveTo(xm, yAxisBottom);
+        ctx.lineTo(xm, yAxisBottom + 3.5);
+        ctx.stroke();
+      }
+
+      const align = i === 0 ? "left" : (i === numTicks ? "right" : "center");
+      ctx.textAlign = align;
+      const primaryLbl = _formatXTickLabelByUnit(jdAt, unitMode, spanDays);
+      ctx.fillStyle = isLight ? "#0369a1" : "#38bdf8";
+      ctx.font = "700 9.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace";
+      ctx.fillText(primaryLbl, x, yLine1);
+
+      // Secondary JD sub-label on full-page or endpoints
+      if (unitMode !== "jd" && (isFullPage || i === 0 || i === numTicks || i === Math.floor(numTicks / 2))) {
+        ctx.fillStyle = isLight ? "#475569" : "#94a3b8";
+        ctx.font = "500 8.5px monospace";
+        ctx.fillText(`JD ${jdAt.toFixed(spanDays < 3 ? 3 : 1)}`, x, yLine2);
+      }
+    }
     ctx.restore();
   }
 
@@ -12837,23 +12975,42 @@ function revealAndFocusField(inputId) {
       return padT + ((mag - minMag) / (maxMag - minMag || 0.05)) * plotH;
     };
 
-    ctx.strokeStyle = isLight ? "rgba(15,23,42,0.10)" : "rgba(148,163,184,0.14)";
-    ctx.lineWidth = 1;
-    for (let k = 0; k <= 4; k++) {
-      const y = padT + (plotH * k) / 4;
+    const isFullPageCv = (canvasId === "fullPageLightCurveCanvas");
+    const fpZoomFactor = isFullPageCv ? (parseFloat(document.getElementById("fullPageZoomSelect")?.value || "1") || 1) : 1;
+    const effZoomY = Math.max(fpZoomFactor, zoomSt.scale || 1);
+    const yDivs = isFullPageCv
+      ? Math.min(18, Math.max(8, Math.round((plotH / 48) * (1 + (effZoomY - 1) * 0.28))))
+      : 5;
+    const yStepMag = (maxMag - minMag) / Math.max(1, yDivs);
+    const yDec = yStepMag < 0.04 ? 3 : 2;
+
+    for (let k = 0; k <= yDivs; k++) {
+      const y = padT + (plotH * k) / yDivs;
+      ctx.strokeStyle = isLight ? "rgba(15,23,42,0.10)" : "rgba(148,163,184,0.14)";
+      ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(padL, y);
       ctx.lineTo(cssW - padR, y);
       ctx.stroke();
 
-      const mVal = minMag + ((maxMag - minMag) * k) / 4;
+      if (isFullPageCv && k < yDivs) {
+        const yMid = padT + (plotH * (k + 0.5)) / yDivs;
+        ctx.strokeStyle = isLight ? "rgba(15,23,42,0.045)" : "rgba(148,163,184,0.06)";
+        ctx.beginPath();
+        ctx.moveTo(padL, yMid);
+        ctx.lineTo(cssW - padR, yMid);
+        ctx.stroke();
+      }
+
+      const mVal = minMag + ((maxMag - minMag) * k) / yDivs;
       ctx.fillStyle = isLight ? "#334155" : "#94a3b8";
       ctx.font = "10px monospace";
       ctx.textAlign = "right";
-      ctx.fillText(mVal.toFixed(2) + "m", padL - 6, y + 3);
+      ctx.fillText(mVal.toFixed(yDec) + "m", padL - 6, y + 3);
     }
 
-    drawEnhancedTimeAxisWithUtcDates(ctx, timeMap, padL, padR, padT, plotW, plotH, cssW, cssH, isLight, zoomSt.scale);
+    _drawStickyYAxisStrip(canvasId, minMag, maxMag, yDivs, padL, padT, plotH, cssH, isLight);
+    drawEnhancedTimeAxisWithUtcDates(ctx, timeMap, padL, padR, padT, plotW, plotH, cssW, cssH, isLight, effZoomY, isFullPageCv);
 
     const aavsoCol = isLight ? "#0284c7" : "#38bdf8";
     const histCol = isLight ? "#059669" : "#10b981";
@@ -21743,26 +21900,13 @@ function revealAndFocusField(inputId) {
     const hasFilter = (band !== "ALL" || binMinutes > 0 || sigmaClip);
 
     if (!window._fpPhaseModeActive) {
-      if (!hasFilter) {
-        if (typeof window.renderFullPageScrollableChart === "function") window.renderFullPageScrollableChart();
-        return;
-      }
-      const { points } = _collectActiveFullPagePoints();
-      const cleanPts = AstroLabLightCurveLab.preprocessPoints(points, { band, binMinutes, sigmaClip });
-      const fpCanvas = document.getElementById("fullPageLightCurveCanvas");
-      const scrollContainer = document.getElementById("fullPageLcScrollContainer");
-      const innerWrap = document.getElementById("fullPageLcInnerWrap");
-      if (fpCanvas && scrollContainer && innerWrap) {
-        const w = Math.max(760, (scrollContainer.clientWidth || 1100) - 24);
-        const h = Math.max(460, (scrollContainer.clientHeight || 540) - 24);
-        innerWrap.style.width = `${w}px`;
-        innerWrap.style.height = `${h}px`;
-        fpCanvas.style.width = `${w}px`;
-        fpCanvas.style.height = `${h}px`;
-        AstroLabLightCurveLab.renderFilteredTimeSeriesCanvas(fpCanvas, points, cleanPts, { band, binMinutes, sigmaClip }, w, h);
-      }
+      const stickyY = document.getElementById("fullPageStickyYAxis");
+      if (stickyY) stickyY.style.display = "block";
+      if (typeof window.renderFullPageScrollableChart === "function") window.renderFullPageScrollableChart();
       return;
     }
+    const stickyYHide = document.getElementById("fullPageStickyYAxis");
+    if (stickyYHide) stickyYHide.style.display = "none";
     const { points } = _collectActiveFullPagePoints();
     const cleanPts = AstroLabLightCurveLab.preprocessPoints(points, { band, binMinutes, sigmaClip });
     let period = window._fpDetectedPeriodDays;
@@ -21810,10 +21954,13 @@ function revealAndFocusField(inputId) {
       window._renderFpPhaseOrTime();
     });
   });
-  document.getElementById("btnFpReloadAavso")?.addEventListener("click", async () => {
+  async function _autoReloadAavsoForSelectedDays() {
     const days = Number(document.getElementById("fpDaysBackSelect")?.value || "180") || 180;
     const { activeStar } = _collectActiveFullPagePoints();
     if (!activeStar) return;
+    const subEl = document.getElementById("fullPageLcSubtitle");
+    const prevSub = subEl ? subEl.textContent : "";
+    if (subEl) subEl.textContent = `⏳ Загрузка данных AAVSO за ${days} дн. (${activeStar})...`;
     try {
       const resp = await _callBackendLiveAction("backend_fetch_aavso_light_curve", "fetch_aavso_light_curve", {
         star: activeStar,
@@ -21825,9 +21972,19 @@ function revealAndFocusField(inputId) {
         _scReload.aavsoOtherPoints = resp.otherObserversPoints || [];
         _scReload.aavsoUserPoints = resp.userAavsoPoints || [];
         _scReload.aavsoHasEnoughData = (_scReload.aavsoOtherPoints.length + _scReload.aavsoUserPoints.length) > 0;
+        if (window._aavsoCurveMemoryCache) window._aavsoCurveMemoryCache.clear();
+        const panel = document.getElementById("lcAnalysisResultPanel");
+        if (panel && panel.style.display !== "none") window.runFullPageLightCurveAnalysis();
         window._renderFpPhaseOrTime();
       }
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      if (subEl && prevSub) subEl.textContent = prevSub;
+    }
+  }
+  document.getElementById("fpDaysBackSelect")?.addEventListener("change", _autoReloadAavsoForSelectedDays);
+  document.getElementById("fpXAxisUnitSelect")?.addEventListener("change", () => {
+    window._renderFpPhaseOrTime();
   });
 
   if (typeof applyTranslations === "function") applyTranslations();
@@ -22210,5 +22367,84 @@ function revealAndFocusField(inputId) {
   if (typeof applyI18n === "function") {
     try { applyI18n(); } catch (_e) {}
   }
+})();
+
+// ============================================================================
+// v1.4.0-alpha Hotfix5: 8-LANG I18N FOR X-AXIS TIME UNITS
+// ============================================================================
+(function initXAxisUnitI18nV140H5() {
+  const XUNIT_I18N = {
+    en: {
+      lblFpXAxisUnit: "🕒 X Axis:",
+      tipFpXAxisUnit: "Time scale units on the X axis",
+      optXUnitAuto: "Auto",
+      optXUnitHours: "Hours",
+      optXUnitDays: "Days",
+      optXUnitMonths: "Months"
+    },
+    ru: {
+      lblFpXAxisUnit: "🕒 Ось X:",
+      tipFpXAxisUnit: "Единицы шкалы времени по оси X",
+      optXUnitAuto: "Авто",
+      optXUnitHours: "Часы",
+      optXUnitDays: "Дни",
+      optXUnitMonths: "Месяцы"
+    },
+    es: {
+      lblFpXAxisUnit: "🕒 Eje X:",
+      tipFpXAxisUnit: "Unidades de tiempo en el eje X",
+      optXUnitAuto: "Auto",
+      optXUnitHours: "Horas",
+      optXUnitDays: "Días",
+      optXUnitMonths: "Meses"
+    },
+    de: {
+      lblFpXAxisUnit: "🕒 X-Achse:",
+      tipFpXAxisUnit: "Zeiteinheiten auf der X-Achse",
+      optXUnitAuto: "Auto",
+      optXUnitHours: "Stunden",
+      optXUnitDays: "Tage",
+      optXUnitMonths: "Monate"
+    },
+    fr: {
+      lblFpXAxisUnit: "🕒 Axe X :",
+      tipFpXAxisUnit: "Unités de temps sur l'axe X",
+      optXUnitAuto: "Auto",
+      optXUnitHours: "Heures",
+      optXUnitDays: "Jours",
+      optXUnitMonths: "Mois"
+    },
+    zh: {
+      lblFpXAxisUnit: "🕒 X轴:",
+      tipFpXAxisUnit: "X轴时间刻度单位",
+      optXUnitAuto: "自动",
+      optXUnitHours: "小时",
+      optXUnitDays: "天",
+      optXUnitMonths: "月"
+    },
+    cs: {
+      lblFpXAxisUnit: "🕒 Osa X:",
+      tipFpXAxisUnit: "Časové jednotky na ose X",
+      optXUnitAuto: "Auto",
+      optXUnitHours: "Hodiny",
+      optXUnitDays: "Dny",
+      optXUnitMonths: "Měsíce"
+    },
+    ber: {
+      lblFpXAxisUnit: "🕒 Agellus X:",
+      tipFpXAxisUnit: "Tiyunin n wakud ɣef ugellus X",
+      optXUnitAuto: "Awurman",
+      optXUnitHours: "Isragen",
+      optXUnitDays: "Ussan",
+      optXUnitMonths: "Iyyiren"
+    }
+  };
+  try {
+    const _dict = (typeof I18N !== "undefined" && I18N) ? I18N : (window.I18N || {});
+    for (const [lang, entries] of Object.entries(XUNIT_I18N)) {
+      if (_dict[lang]) Object.assign(_dict[lang], entries);
+    }
+    if (typeof applyI18n === "function") applyI18n();
+  } catch (_e) {}
 })();
 
