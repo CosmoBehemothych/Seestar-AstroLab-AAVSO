@@ -7487,7 +7487,7 @@ body[data-theme="light"] .github-update-banner {
 }
 
 
-/* === v1.3.4 FIX: Sky Clarity & Moon widgets responsive containment & centering === */
+/* === v1.3.5 FIX: Sky Clarity & Moon widgets responsive containment & centering === */
 .ui-theme-toolbar {
   width: 100% !important;
   max-width: 100% !important;
@@ -7570,7 +7570,7 @@ body.theme-light .graph-guide-svg-card {
 }
 
 
-/* === v1.3.4 FIX: #graphGuideModal full-screen presentation visibility & layout (identical to Getting Started) === */
+/* === v1.3.5 FIX: #graphGuideModal full-screen presentation visibility & layout (identical to Getting Started) === */
 #graphGuideModal.open {
   display: flex !important;
   visibility: visible !important;
@@ -7618,7 +7618,7 @@ body.theme-light .graph-guide-svg-card {
 }
 
 
-/* === v1.3.4 DESIGNER UPGRADE: #graphGuideModal rich typography, zero wasted space, KPIs & AAVSO article links === */
+/* === v1.3.5 DESIGNER UPGRADE: #graphGuideModal rich typography, zero wasted space, KPIs & AAVSO article links === */
 #graphGuideModal .beginner-guide-body {
   padding: 20px 30px 24px !important;
   justify-content: flex-start !important;
@@ -7783,7 +7783,7 @@ body.theme-light #graphGuideModal .graph-guide-visual-caption {
 
 
 /* ============================================================================
-   v1.3.4 — AAVSO Target Tool Live API Key Settings, Guide Modal & LIVE Badges
+   v1.3.5 — AAVSO Target Tool Live API Key Settings, Guide Modal & LIVE Badges
    ============================================================================ */
 .settings-api-key-box {
   background: rgba(14, 165, 233, 0.06);
@@ -7893,7 +7893,7 @@ body[data-theme="light"] .api-key-benefit-card {
   border-color: rgba(74, 222, 128, 0.45);
 }
 
-/* v1.3.4: 5-telescope quick switcher (S30 | S30 PLUS | S30PRO | S50 | S50PRO) */
+/* v1.3.5: 5-telescope quick switcher (S30 | S30 PLUS | S30PRO | S50 | S50PRO) */
 .v6-scope-tabs {
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   gap: 4px !important;
@@ -7903,3 +7903,44 @@ body[data-theme="light"] .api-key-benefit-card {
   font-size: 11px !important;
   white-space: nowrap !important;
 }
+
+/* ============================================================================
+   v1.3.5 — Modal Z-Index Hierarchy Fix (#starFullDossierModal above #urgentStarsModal)
+            + Progressive Load-More Button for 3,000+ Live AAVSO Targets
+   ============================================================================ */
+#starFullDossierModal.ios-modal-backdrop,
+#starFullDossierModal.ios-modal-backdrop.open {
+  z-index: 100250 !important;
+}
+#starFullDossierModal.ios-modal-backdrop.open {
+  visibility: visible !important;
+  opacity: 1 !important;
+  transition: opacity 0.16s ease, visibility 0s !important;
+}
+#aavsoApiKeyGuideModal.ios-modal-backdrop,
+#aavsoApiKeyGuideModal.ios-modal-backdrop.open {
+  z-index: 100200 !important;
+}
+.radar-load-more-wrap {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  padding: 10px 4px 14px;
+}
+.radar-load-more-btn {
+  width: 100%;
+  max-width: 420px;
+  padding: 9px 16px !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(56, 189, 248, 0.42) !important;
+  background: rgba(14, 165, 233, 0.14) !important;
+  color: var(--ios-text-primary) !important;
+  cursor: pointer;
+}
+.radar-load-more-btn:hover {
+  background: rgba(14, 165, 233, 0.25) !important;
+}
+
+.ios-modal-backdrop.open { visibility: visible !important; transition: opacity 0.16s ease, visibility 0s !important; }

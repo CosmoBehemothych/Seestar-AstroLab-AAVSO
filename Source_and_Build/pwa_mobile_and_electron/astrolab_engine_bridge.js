@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.3.4) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.3.5) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.3.4.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.3.5.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -547,7 +547,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.3.4",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.3.5",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -557,7 +557,7 @@
       errNoObscodeMsg: "Укажите ваш личный код наблюдателя AAVSO (OBSCODE) перед конвертацией данных для загрузки на AAVSO.",
       errNoObscodeExplain: "Стандарт AAVSO Extended требует обязательного указания персонального кода наблюдателя в заголовке #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Версия 1.3.4",
+      appVersionLabel: "Версия 1.3.5",
       starIdFromCatalogHint: "✓ Каталожный идентификатор звезды (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
@@ -900,7 +900,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.3.4 session",
+      actAppStarted: "Started Seestar AstroLab v1.3.5 session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -910,7 +910,7 @@
       errNoObscodeMsg: "Please enter your personal AAVSO Observer Code (OBSCODE) before converting data for AAVSO upload.",
       errNoObscodeExplain: "The AAVSO Extended format strictly requires a valid personal observer code in the #OBSCODE header.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.4",
+      appVersionLabel: "Version 1.3.5",
       starIdFromCatalogHint: "✓ Canonical Catalog Star ID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Photometry Observatory",
       
@@ -1248,7 +1248,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.3.4",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.3.5",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1258,7 +1258,7 @@
       errNoObscodeMsg: "Ingrese su código personal de observador AAVSO (OBSCODE) antes de convertir los datos.",
       errNoObscodeExplain: "El formato AAVSO Extended requiere un código de observador válido en el encabezado #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Versión 1.3.4",
+      appVersionLabel: "Versión 1.3.5",
       starIdFromCatalogHint: "✓ Identificador de catálogo (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatorio Fotométrico Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
@@ -1572,7 +1572,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.3.4",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.3.5",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1582,7 +1582,7 @@
       errNoObscodeMsg: "Bitte geben Sie Ihren persönlichen AAVSO-Beobachtercode (OBSCODE) vor der Konvertierung ein.",
       errNoObscodeExplain: "Das AAVSO-Extended-Format erfordert zwingend einen gültigen Beobachtercode im Header #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.4",
+      appVersionLabel: "Version 1.3.5",
       starIdFromCatalogHint: "✓ Kanonische Katalog-STARID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Photometrie-Observatorium",
       
@@ -1885,7 +1885,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.3.4",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.3.5",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -1895,7 +1895,7 @@
       errNoObscodeMsg: "Veuillez saisir votre code observateur AAVSO (OBSCODE) avant de convertir les données.",
       errNoObscodeExplain: "Le standard AAVSO Extended exige un code observateur personnel valide dans l'en-tête #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.4",
+      appVersionLabel: "Version 1.3.5",
       starIdFromCatalogHint: "✓ Identifiant catalogue canonique (SIMBAD / AAVSO VSX) : {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
@@ -2197,7 +2197,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.3.4 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.3.5 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -2207,7 +2207,7 @@
       errNoObscodeMsg: "请在转换上传至 AAVSO 的数据前填写您的 AAVSO 观测者代码 (OBSCODE)。",
       errNoObscodeExplain: "AAVSO Extended 格式要求在 #OBSCODE 标头中提供有效的个人观测者代码。",
       radarSubTag: "",
-      appVersionLabel: "版本 1.3.4",
+      appVersionLabel: "版本 1.3.5",
       starIdFromCatalogHint: "✓ 星表标准目标名称 (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO 测光天文台",
       
@@ -6889,7 +6889,30 @@ function revealAndFocusField(inputId) {
     const _lblRec = { ru: "🔭 Рекомендации:", en: "🔭 Imaging Rec.:", es: "🔭 Recomendación:", de: "🔭 Empfehlung:", fr: "🔭 Recommandation :", zh: "🔭 拍摄建议：", cs: "🔭 Doporučení:" }[_lgUrg] || "🔭 Рекомендации:";
     const _btnDossierLbl = { ru: "🔎 Досье и параметры звезды", en: "🔎 Star Dossier & Info", es: "🔎 Dossier de la estrella", de: "🔎 Sterndossier & Infos", fr: "🔎 Dossier de l'étoile", zh: "🔎 恒星完整档案与参数", cs: "🔎 Karta hvězdy a parametry" }[_lgUrg] || "🔎 Досье и параметры звезды";
 
-    container.innerHTML = filtered.map(rawItem => {
+    // v1.3.5 Performance: O(1) star lookup map + 60-card progressive windowing for 3,000+ live stars
+    const _urgPageSize = 60;
+    const _urgLimit = (typeof window._urgentVisibleLimit === "number" && window._urgentVisibleLimit >= _urgPageSize)
+      ? window._urgentVisibleLimit : _urgPageSize;
+    window._lastUrgentFilteredItems = filtered;
+    const _urgStarMap = new Map();
+    for (let _i = 0; _i < filtered.length; _i++) {
+      _urgStarMap.set(filtered[_i].star, filtered[_i]);
+    }
+    window._urgentStarMap = _urgStarMap;
+    const _urgSlice = filtered.slice(0, _urgLimit);
+    const _urgRem = Math.max(0, filtered.length - _urgSlice.length);
+    const _loadMoreLblUrg = {
+      ru: `⬇️ Показать ещё +${Math.min(_urgPageSize, _urgRem)} (осталось ${_urgRem})`,
+      en: `⬇️ Load More +${Math.min(_urgPageSize, _urgRem)} (${_urgRem} remaining)`,
+      es: `⬇️ Mostrar +${Math.min(_urgPageSize, _urgRem)} más (quedan ${_urgRem})`,
+      de: `⬇️ Mehr laden +${Math.min(_urgPageSize, _urgRem)} (noch ${_urgRem})`,
+      fr: `⬇️ Afficher +${Math.min(_urgPageSize, _urgRem)} (reste ${_urgRem})`,
+      zh: `⬇️ 加载更多 +${Math.min(_urgPageSize, _urgRem)}（剩余 ${_urgRem}）`,
+      cs: `⬇️ Zobrazit dalších +${Math.min(_urgPageSize, _urgRem)} (zbývá ${_urgRem})`,
+      ber: `⬇️ Sken-d ugar +${Math.min(_urgPageSize, _urgRem)} (qqimen-d ${_urgRem})`
+    }[_lgUrg] || `⬇️ Load More +${Math.min(_urgPageSize, _urgRem)} (${_urgRem} remaining)`;
+
+    container.innerHTML = _urgSlice.map(rawItem => {
       const item = getLocalizedCatalogItem(rawItem);
       const aavsoUrl = `https://www.aavso.org/vsx/index.php?view=results.get&ident=${encodeURIComponent(item.star)}`;
       const scopeEval = AstroLabCore.evaluateScopeSuitability(rawItem, scopeId);
@@ -6926,61 +6949,74 @@ function revealAndFocusField(inputId) {
           </button>
         </div>
       </div>`;
-    }).join("");
+    }).join("") + (_urgRem > 0 ? `<div class="radar-load-more-wrap"><button type="button" class="radar-load-more-btn" id="btnUrgentLoadMore">${escapeHtml(_loadMoreLblUrg)}</button></div>` : "");
 
-    container.querySelectorAll(".urgent-star-card").forEach(card => {
-      const starName = card.getAttribute("data-urgent-star");
-      const item = AAVSO_URGENT_CATALOGUE.find(it => it.star === starName);
-      if (item) {
-        card.addEventListener("mouseenter", e => showRadarObjectTooltip(e, item, AstroLabCore.evaluateScopeSuitability(item, window._currentScopeModel || "S50")));
-        card.addEventListener("mousemove", positionRadarTooltip);
-        card.addEventListener("mouseleave", hideRadarObjectTooltip);
-        card.addEventListener("click", (e) => {
-          if (e.target && (e.target.closest(".v6-target-aavso-link") || e.target.closest(".coord-copy-btn"))) return;
+    if (!container.dataset.v135Delegated) {
+      container.dataset.v135Delegated = "1";
+      let _lastUrgHoverStar = "";
+      container.addEventListener("mouseover", (e) => {
+        const card = e.target && e.target.closest ? e.target.closest(".urgent-star-card") : null;
+        if (!card) return;
+        const st = card.getAttribute("data-urgent-star") || "";
+        if (st && st !== _lastUrgHoverStar) {
+          _lastUrgHoverStar = st;
+          const item = (window._urgentStarMap && window._urgentStarMap.get(st)) || null;
+          if (item) showRadarObjectTooltip(e, item, AstroLabCore.evaluateScopeSuitability(item, window._currentScopeModel || "S50"));
+        }
+      });
+      container.addEventListener("mousemove", (e) => {
+        if (_lastUrgHoverStar) positionRadarTooltip(e);
+      });
+      container.addEventListener("mouseout", (e) => {
+        const card = e.target && e.target.closest ? e.target.closest(".urgent-star-card") : null;
+        if (!card) return;
+        const rel = e.relatedTarget;
+        if (!rel || !card.contains(rel)) {
+          _lastUrgHoverStar = "";
           hideRadarObjectTooltip();
-          if (typeof window.openStarFullDossierModal === "function") {
+        }
+      });
+      container.addEventListener("click", (e) => {
+        const loadBtn = e.target && e.target.closest ? e.target.closest("#btnUrgentLoadMore") : null;
+        if (loadBtn) {
+          window._urgentVisibleLimit = (window._urgentVisibleLimit || 60) + 60;
+          renderUrgentStarsCards();
+          return;
+        }
+        const copyBtn = e.target && e.target.closest ? e.target.closest(".coord-copy-btn") : null;
+        if (copyBtn) {
+          e.stopPropagation();
+          const coordsText = copyBtn.getAttribute("data-copy-coords") || "";
+          const stName = copyBtn.getAttribute("data-copy-star") || "";
+          if (navigator.clipboard && coordsText) navigator.clipboard.writeText(coordsText).catch(() => {});
+          copyBtn.textContent = "✓ OK";
+          setTimeout(() => { copyBtn.textContent = "📋 J2000"; }, 1400);
+          showIosNotification(`${stName} — J2000.0`, `${t("toastCoordsCopiedFmt") ? t("toastCoordsCopiedFmt").replace("{coords}", coordsText) : ("Координаты скопированы: " + coordsText)}`, "RA (HMS) / Dec (DMS)", "ok");
+          return;
+        }
+        if (e.target && e.target.closest && e.target.closest(".v6-target-aavso-link")) return;
+        const pickBtn = e.target && e.target.closest ? e.target.closest(".btn-pick-urgent") : null;
+        const card = e.target && e.target.closest ? e.target.closest(".urgent-star-card") : null;
+        const stName = (pickBtn && pickBtn.getAttribute("data-star")) || (card && card.getAttribute("data-urgent-star")) || "";
+        if (stName) {
+          const item = (window._urgentStarMap && window._urgentStarMap.get(stName)) || null;
+          hideRadarObjectTooltip();
+          if (item && typeof window.openStarFullDossierModal === "function") {
             window.openStarFullDossierModal(item);
           }
-        });
-      }
-    });
-
-    container.querySelectorAll(".coord-copy-btn").forEach(copyBtn => {
-      copyBtn.addEventListener("click", (ev) => {
-        ev.stopPropagation();
-        const coordsText = copyBtn.getAttribute("data-copy-coords") || "";
-        const stName = copyBtn.getAttribute("data-copy-star") || "";
-        if (navigator.clipboard && coordsText) {
-          navigator.clipboard.writeText(coordsText).catch(() => {});
-        }
-        copyBtn.textContent = "✓ OK";
-        setTimeout(() => { copyBtn.textContent = "📋 J2000"; }, 1400);
-        showIosNotification(
-          `${stName} — J2000.0`,
-          `${t("toastCoordsCopiedFmt") ? t("toastCoordsCopiedFmt").replace("{coords}", coordsText) : ("Координаты для наведения телескопа скопированы: " + coordsText)}`,
-          "RA (HMS) / Dec (DMS)",
-          "ok"
-        );
-      });
-    });
-
-    container.querySelectorAll(".btn-pick-urgent").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const star = btn.getAttribute("data-star") || "";
-        const item = AAVSO_URGENT_CATALOGUE.find(it => it.star === star);
-        hideRadarObjectTooltip();
-        if (item && typeof window.openStarFullDossierModal === "function") {
-          window.openStarFullDossierModal(item);
         }
       });
-    });
+    }
   }
 
   const urgentSearchField = document.getElementById("urgentSearchField");
   if (urgentSearchField) {
+    let _urgSearchTimer = null;
     urgentSearchField.addEventListener("input", (e) => {
-      renderUrgentStarsCards(e.target.value);
+      const val = e.target.value;
+      window._urgentVisibleLimit = 60;
+      clearTimeout(_urgSearchTimer);
+      _urgSearchTimer = setTimeout(() => renderUrgentStarsCards(val), 160);
     });
   }
 
@@ -7022,7 +7058,7 @@ function revealAndFocusField(inputId) {
     }
 
     try {
-      const idList = AAVSO_URGENT_CATALOGUE.map(s => `'${s.star}'`).join(",");
+      const idList = AAVSO_URGENT_CATALOGUE.filter(s => !s.isLiveTargetTool).slice(0, 250).map(s => `'${String(s.star).replace(/'/g, "''")}'`).join(",");
       const adql = `SELECT ident.id, basic.main_id, basic.ra, basic.dec, basic.otype_txt, basic.sp_type ` +
                    `FROM ident JOIN basic ON ident.oidref = basic.oid WHERE ident.id IN (${idList})`;
       const params = new URLSearchParams({ request: "doQuery", lang: "ADQL", format: "json", query: adql });
@@ -7050,7 +7086,7 @@ function revealAndFocusField(inputId) {
       }
     } catch (_) {}
 
-    // v1.3.4 FIX: Always run live AAVSO Target Tool API & Alert Notices independently of SIMBAD TAP!
+    // v1.3.5 FIX: Always run live AAVSO Target Tool API & Alert Notices independently of SIMBAD TAP!
     try {
       if (typeof window._syncLiveAavsoOnlineTargets === "function") {
         await window._syncLiveAavsoOnlineTargets();
@@ -7597,7 +7633,19 @@ function revealAndFocusField(inputId) {
     const radarSortSel = document.getElementById("v6RadarSortSelect");
     const radarSortMode = (radarSortSel && radarSortSel.value) ? radarSortSel.value : "date";
     const sortedAll = sortRadarCatalogItems(filteredAll, radarSortMode);
-    const displayed = (currentRadarLimit > 0) ? sortedAll.slice(0, currentRadarLimit) : sortedAll;
+    // v1.3.5 Performance: Progressive 60-card windowing + O(1) lookup map for 3,000+ live stars
+    const _v6PageSize = 60;
+    const _v6MaxWindow = (typeof window._v6VisibleLimit === "number" && window._v6VisibleLimit >= _v6PageSize)
+      ? window._v6VisibleLimit : _v6PageSize;
+    const _v6HardCap = (currentRadarLimit > 0) ? Math.min(currentRadarLimit, _v6MaxWindow) : _v6MaxWindow;
+    const _v6StarMap = new Map();
+    for (let _i = 0; _i < sortedAll.length; _i++) {
+      _v6StarMap.set(sortedAll[_i].star, sortedAll[_i]);
+    }
+    window._v6RadarStarMap = _v6StarMap;
+    const _v6TotalAllowed = (currentRadarLimit > 0) ? Math.min(currentRadarLimit, sortedAll.length) : sortedAll.length;
+    const displayed = sortedAll.slice(0, _v6HardCap);
+    const _v6Rem = Math.max(0, _v6TotalAllowed - displayed.length);
     if (countEl) {
       countEl.textContent = t("radarCountFmt")
         .replace("{shown}", displayed.length)
@@ -7661,74 +7709,100 @@ function revealAndFocusField(inputId) {
           </div>
         </div>
       `;
-    }).join("");
+    }).join("") + (_v6Rem > 0 ? (() => {
+      const _lgV6 = (typeof currentLang !== "undefined") ? currentLang : (document.getElementById("langSelect")?.value || "ru");
+      const _v6Lbl = {
+        ru: `⬇️ Показать ещё +${Math.min(_v6PageSize, _v6Rem)} (осталось ${_v6Rem})`,
+        en: `⬇️ Load More +${Math.min(_v6PageSize, _v6Rem)} (${_v6Rem} remaining)`,
+        es: `⬇️ Mostrar +${Math.min(_v6PageSize, _v6Rem)} más (quedan ${_v6Rem})`,
+        de: `⬇️ Mehr laden +${Math.min(_v6PageSize, _v6Rem)} (noch ${_v6Rem})`,
+        fr: `⬇️ Afficher +${Math.min(_v6PageSize, _v6Rem)} (reste ${_v6Rem})`,
+        zh: `⬇️ 加载更多 +${Math.min(_v6PageSize, _v6Rem)}（剩余 ${_v6Rem}）`,
+        cs: `⬇️ Zobrazit dalších +${Math.min(_v6PageSize, _v6Rem)} (zbývá ${_v6Rem})`,
+        ber: `⬇️ Sken-d ugar +${Math.min(_v6PageSize, _v6Rem)} (qqimen-d ${_v6Rem})`
+      }[_lgV6] || `⬇️ Load More +${Math.min(_v6PageSize, _v6Rem)} (${_v6Rem} remaining)`;
+      return `<div class="radar-load-more-wrap"><button type="button" class="radar-load-more-btn" id="btnV6RadarLoadMore">${escapeHtml(_v6Lbl)}</button></div>`;
+    })() : "");
 
-    listEl.querySelectorAll(".v6-target-card").forEach(card => {
-      const star = card.getAttribute("data-v6-star") || "SZ Lyn";
-      const item = AAVSO_URGENT_CATALOGUE.find(it => it.star === star);
-
-      // Пункт 7 Цикла 2 и Пункт 8 Цикла 1: единый кастомный тултип без дублирования системного title
-      if (item) {
-        card.addEventListener("mouseenter", (e) => {
-          showRadarObjectTooltip(e, item, AstroLabCore.evaluateScopeSuitability(item, currentScopeModel));
-        });
-        card.addEventListener("mousemove", positionRadarTooltip);
-        card.addEventListener("mouseleave", hideRadarObjectTooltip);
-      }
-
-      const aavsoLink = card.querySelector(".v6-target-aavso-link");
-      if (aavsoLink) {
-        aavsoLink.addEventListener("click", (e) => {
-          e.stopPropagation();
-        });
-      }
-      const copyBtn = card.querySelector(".coord-copy-btn");
-      if (copyBtn) {
-        copyBtn.addEventListener("click", (e) => {
+    if (!listEl.dataset.v135Delegated) {
+      listEl.dataset.v135Delegated = "1";
+      let _lastV6HoverStar = "";
+      listEl.addEventListener("mouseover", (e) => {
+        const card = e.target && e.target.closest ? e.target.closest(".v6-target-card") : null;
+        if (!card) return;
+        const st = card.getAttribute("data-v6-star") || "";
+        if (st && st !== _lastV6HoverStar) {
+          _lastV6HoverStar = st;
+          const item = (window._v6RadarStarMap && window._v6RadarStarMap.get(st)) || null;
+          if (item) showRadarObjectTooltip(e, item, AstroLabCore.evaluateScopeSuitability(item, currentScopeModel));
+        }
+      });
+      listEl.addEventListener("mousemove", (e) => {
+        if (_lastV6HoverStar) positionRadarTooltip(e);
+      });
+      listEl.addEventListener("mouseout", (e) => {
+        const card = e.target && e.target.closest ? e.target.closest(".v6-target-card") : null;
+        if (!card) return;
+        const rel = e.relatedTarget;
+        if (!rel || !card.contains(rel)) {
+          _lastV6HoverStar = "";
+          hideRadarObjectTooltip();
+        }
+      });
+      listEl.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        const card = e.target && e.target.closest ? e.target.closest(".v6-target-card") : null;
+        if (!card) return;
+        e.preventDefault();
+        const st = card.getAttribute("data-v6-star") || "";
+        const item = (window._v6RadarStarMap && window._v6RadarStarMap.get(st)) || null;
+        if (item && typeof window.openStarFullDossierModal === "function") window.openStarFullDossierModal(item);
+      });
+      listEl.addEventListener("click", (e) => {
+        const loadBtn = e.target && e.target.closest ? e.target.closest("#btnV6RadarLoadMore") : null;
+        if (loadBtn) {
+          window._v6VisibleLimit = (window._v6VisibleLimit || 60) + 60;
+          renderV6RadarDock();
+          return;
+        }
+        const copyBtn = e.target && e.target.closest ? e.target.closest(".coord-copy-btn") : null;
+        if (copyBtn) {
           e.stopPropagation();
           const coordsText = copyBtn.getAttribute("data-copy-coords") || "";
           const stName = copyBtn.getAttribute("data-copy-star") || "";
-          if (navigator.clipboard && coordsText) {
-            navigator.clipboard.writeText(coordsText).catch(() => {});
-          }
+          if (navigator.clipboard && coordsText) navigator.clipboard.writeText(coordsText).catch(() => {});
           copyBtn.textContent = "✓";
           setTimeout(() => { copyBtn.textContent = "📋"; }, 1400);
-          showIosNotification(
-            `${stName} — J2000.0`,
-            `${t("toastCoordsCopiedFmt") ? t("toastCoordsCopiedFmt").replace("{coords}", coordsText) : ("Координаты для наведения телескопа скопированы: " + coordsText)}`,
-            "RA (HMS) / Dec (DMS)",
-            "ok"
-          );
-        });
-      }
-
-      card.setAttribute("tabindex", "0");
-      card.setAttribute("role", "button");
-      card.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          if (item && typeof window.openStarFullDossierModal === "function") {
-            window.openStarFullDossierModal(item);
-          }
+          showIosNotification(`${stName} — J2000.0`, `${t("toastCoordsCopiedFmt") ? t("toastCoordsCopiedFmt").replace("{coords}", coordsText) : ("Координаты скопированы: " + coordsText)}`, "RA (HMS) / Dec (DMS)", "ok");
+          return;
         }
-      });
-      card.addEventListener("click", (e) => {
-        if (e.target && (e.target.closest(".v6-target-aavso-link") || e.target.closest(".coord-copy-btn"))) return;
+        if (e.target && e.target.closest && e.target.closest(".v6-target-aavso-link")) return;
+        const card = e.target && e.target.closest ? e.target.closest(".v6-target-card") : null;
+        if (!card) return;
+        const st = card.getAttribute("data-v6-star") || "";
+        const item = (window._v6RadarStarMap && window._v6RadarStarMap.get(st)) || null;
         hideRadarObjectTooltip();
         if (item && typeof window.openStarFullDossierModal === "function") {
           window.openStarFullDossierModal(item);
         }
       });
-    });
+    }
   }
 
   const v6RadarSearchEl = document.getElementById("v6RadarSearch");
   if (v6RadarSearchEl) {
+    let _v6SearchTimer = null;
     v6RadarSearchEl.addEventListener("input", () => {
+      const val = v6RadarSearchEl.value;
+      window._v6VisibleLimit = 60;
       const urgS = document.getElementById("urgentSearchField");
-      if (urgS && urgS.value !== v6RadarSearchEl.value) urgS.value = v6RadarSearchEl.value;
-      renderV6RadarDock();
-      renderUrgentStarsCards(v6RadarSearchEl.value);
+      if (urgS && urgS.value !== val) urgS.value = val;
+      clearTimeout(_v6SearchTimer);
+      _v6SearchTimer = setTimeout(() => {
+        renderV6RadarDock();
+        const urgM = document.getElementById("urgentStarsModal");
+        if (urgM && urgM.classList.contains("open")) renderUrgentStarsCards(val);
+      }, 160);
     });
   }
 
@@ -8727,7 +8801,7 @@ function revealAndFocusField(inputId) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.3.4",
+      application: "Seestar AstroLab AAVSO v1.3.5",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8778,7 +8852,7 @@ function revealAndFocusField(inputId) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.3.4 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.3.5 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -11744,7 +11818,7 @@ function revealAndFocusField(inputId) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.3.4 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.3.5 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -18797,43 +18871,43 @@ function revealAndFocusField(inputId) {
     const extraPerLang = {
       en: {
         optFullWindow: "Full Window", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Version 1.3.4"
+        appVersionLabel: "Version 1.3.5"
       },
       ru: {
         optFullWindow: "Во всё окно", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Версия 1.3.4"
+        appVersionLabel: "Версия 1.3.5"
       },
       es: {
         optFullWindow: "Ventana completa", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En línea • TTL 1h",
-        appVersionLabel: "Versión 1.3.4"
+        appVersionLabel: "Versión 1.3.5"
       },
       de: {
         optFullWindow: "Vollbildfenster", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Online • TTL 1 Std.",
         thUI: "Daten aus SIMBAD-Katalog",
-        appVersionLabel: "Version 1.3.4"
+        appVersionLabel: "Version 1.3.5"
       },
       fr: {
         optFullWindow: "Pleine fenêtre", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En ligne • TTL 1h",
-        appVersionLabel: "Version 1.3.4"
+        appVersionLabel: "Version 1.3.5"
       },
       zh: {
         optFullWindow: "全窗口", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "在线 • TTL 1小时",
-        appVersionLabel: "版本 1.3.4"
+        appVersionLabel: "版本 1.3.5"
       },
       ber: {
         optFullWindow: "Asfaylu ummid", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Srad • TTL 1s",
         btnTryUniverseLuck: "Afran agacuran n yitri i wannay-ik",
         tipTryUniverseLuck: "Afran agacuran n yitri azwaru i wannayen-ik ass-a",
-        appVersionLabel: "Taseqqult 1.3.4"
+        appVersionLabel: "Taseqqult 1.3.5"
       },
       cs: {
         optFullWindow: "Celé okno", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Verze 1.3.4",
+        appVersionLabel: "Verze 1.3.5",
         lblThemePickerSplash: "Barevný motiv",
         brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Fotometrická observatoř",
         btnDonateBadge: "❤️ Podpořit",
@@ -19065,16 +19139,16 @@ function revealAndFocusField(inputId) {
     // Sync all Module 14 & curve labels on initial load for EVERY language (prevents RU leaks in EN mode)
     if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
 
-    // === v1.3.4: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
+    // === v1.3.5: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
     const UPDATE_I18N = {
-      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.3.4. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
-      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.3.4. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
-      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.3.4. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
-      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.3.4. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
-      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.3.4. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
-      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.3.4，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
-      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.3.4. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
-      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.3.4. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
+      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.3.5. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
+      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.3.5. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
+      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.3.5. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
+      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.3.5. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
+      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.3.5. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
+      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.3.5，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
+      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.3.5. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
+      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.3.5. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
     };
 
     window.parseAstroSemver = function(v) {
@@ -19134,7 +19208,7 @@ function revealAndFocusField(inputId) {
     window.checkGithubReleaseOnceOnStartup = async function(forceCheck = false) {
       if (window._githubUpdateCheckedThisSession && !forceCheck) return;
       window._githubUpdateCheckedThisSession = true;
-      const LOCAL_VER = "1.3.4";
+      const LOCAL_VER = "1.3.5";
       const REPO_API = "https://api.github.com/repos/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
       const REPO_RELEASES = "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
 
@@ -19741,7 +19815,7 @@ function revealAndFocusField(inputId) {
 
 
 // ============================================================================
-// v1.3.4: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
+// v1.3.5: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
 // Designer full-canvas layout: high-res real-data visuals, KPI cards, pro tips,
 // reference tables, and verified official AAVSO / JAAVSO self-study links.
 // ============================================================================
@@ -20345,7 +20419,7 @@ function revealAndFocusField(inputId) {
     else if (e.key === "Escape") window.closeGraphGuideModal();
   });
   // ============================================================================
-  // v1.3.4: LIVE ONLINE AAVSO RADAR (PUBLIC CAMPAIGNS + TARGET TOOL API v1.0.0)
+  // v1.3.5: LIVE ONLINE AAVSO RADAR (PUBLIC CAMPAIGNS + TARGET TOOL API v1.0.0)
   //         + SETTINGS API KEY CONTROLS + 8-LANGUAGE API KEY GUIDE MODAL
   // ============================================================================
   const V133_I18N_PATCH = {
@@ -20716,7 +20790,8 @@ function revealAndFocusField(inputId) {
           isHighPriority: Boolean(raw.isHighPriority),
           lastDataPoint: String(raw.lastDataPoint || ""),
           solarConjunction: Boolean(raw.solarConjunction),
-          obsSection: String(raw.obsSection || "")
+          obsSection: String(raw.obsSection || ""),
+          pubDate: String(raw.pubDate || raw.published || new Date().toISOString().slice(0, 10))
         };
         toPrepend.push(entry);
         byKey.set(k1, -2);

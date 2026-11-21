@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Only the latest release line receives active security and bug fixes. Starting with `v1.3.4`, the project distributes **only the Windows Installer** (`Seestar_AstroLab_Setup_v*.exe`); portable builds are no longer maintained.
+Only the latest release line receives active security and bug fixes. Starting with `v1.3.5`, the project distributes **only the Windows Installer** (`Seestar_AstroLab_Setup_v*.exe`); portable builds are no longer maintained.
 
 | Version | Supported |
 | :--- | :---: |
@@ -25,7 +25,7 @@ Every official release binary is built transparently from source on GitHub-hoste
 To verify a downloaded installer on Windows:
 
 ```powershell
-Get-FileHash .\Seestar_AstroLab_Setup_v1.3.4.exe -Algorithm SHA256
+Get-FileHash .\Seestar_AstroLab_Setup_v1.3.5.exe -Algorithm SHA256
 ```
 
 Compare the output hash with the value published in `SHA256SUMS.txt` on the [GitHub Releases](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) page. You may also upload the installer to [VirusTotal](https://www.virustotal.com/) or build the executable yourself from source following [`BUILD.md`](BUILD.md).
