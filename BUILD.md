@@ -1,6 +1,6 @@
 # Building Seestar AstroLab AAVSO from Source
 
-This guide explains how to reproduce the official Windows installer (`Seestar_AstroLab_Setup_v1.4.0.exe`) directly from the source code in this repository — matching the exact pipeline executed by [`.github/workflows/build.yml`](.github/workflows/build.yml).
+This guide explains how to reproduce the official Windows installer (`Seestar_AstroLab_Setup_v1.4.0-alpha.exe`) directly from the source code in this repository — matching the exact pipeline executed by [`.github/workflows/build.yml`](.github/workflows/build.yml).
 
 ## Prerequisites (Windows 10 / 11, 64-bit)
 
@@ -60,13 +60,13 @@ The standalone binary is produced at `Source_and_Build\dist\Seestar AstroLab.exe
 The final installer is written to:
 
 ```text
-Source_and_Build\dist_installer\Seestar_AstroLab_Setup_v1.4.0.exe
+Source_and_Build\dist_installer\Seestar_AstroLab_Setup_v1.4.0-alpha.exe
 ```
 
 ## 5. Generate & Compare SHA-256 Checksum
 
 ```powershell
-Get-FileHash .\dist_installer\Seestar_AstroLab_Setup_v1.4.0.exe -Algorithm SHA256
+Get-FileHash .\dist_installer\Seestar_AstroLab_Setup_v1.4.0-alpha.exe -Algorithm SHA256
 ```
 
 You can inspect the official CI build log and published `SHA256SUMS.txt` on the [GitHub Actions](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/actions) and [Releases](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases) pages.

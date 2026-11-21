@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Mandatory v1.4.0 Stress Test (3,000+ Live Stars), Z-Index Stacking & Full E2E UI Autotest:
+Mandatory v1.4.0-alpha Stress Test (3,000+ Live Stars), Z-Index Stacking & Full E2E UI Autotest:
   1. Stress Test with 3,000 live AAVSO Target Tool stars:
      - Verifies renderV6RadarDock() and renderUrgentStarsCards() complete in < 250 ms
      - Verifies 60-card progressive windowing (DOM card count <= 65, Load More appends +60)
@@ -253,7 +253,7 @@ def test_stress_zindex_and_full_e2e():
 
     # Assertions: Zero Text Leaks
     assert res["hasUndefinedLeak"] is False, "Detected 'undefined' or '[object Object]' leak in rendered UI!"
-    print("[2/2] ALL v1.4.0 STRESS (3,246 STARS), Z-INDEX & FULL E2E CHECKS PASSED!")
+    print("[2/2] ALL v1.4.0-alpha STRESS (3,246 STARS), Z-INDEX & FULL E2E CHECKS PASSED!")
 
 
 if __name__ == "__main__":

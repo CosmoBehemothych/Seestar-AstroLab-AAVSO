@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ================================================================================
-Seestar AstroLab AAVSO v1.4.0 — Unified Python Backend Core (Single Source of Truth)
+Seestar AstroLab AAVSO v1.4.0-alpha — Unified Python Backend Core (Single Source of Truth)
 Author: CosmoBehemothych (https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO)
 ================================================================================
 Централизованное серверное/бэкенд-ядро бизнес-логики приложения:
@@ -42,7 +42,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-APP_VERSION = "1.4.0"
+APP_VERSION = "1.4.0-alpha"
 CRITICAL_COORD_DIFF_DEG = 0.05
 EXACT_COORD_MATCH_DEG = 0.00001
 DSS2_SURVEY_FOV_DEG = 2.40
@@ -1934,51 +1934,143 @@ class AavsoNativeAndStorageService:
         ssl_ctx = cls._build_ssl_context()
         eff_max = max(50, int(max_points or 3000))
 
-        # Канал 1 (основной, быстрый JSON): AAVSO REST API v2 с проверенными параметрами (target + page_size) и пагинацией
+        # Канал 1 (публичный, без токена): Официальная таблица AAVSO WebObs Results (app.aavso.org/webobs/results/)
         try:
-            q = urllib.parse.urlencode({"target": clean_star, "page_size": "200"})
-            next_url: Optional[str] = f"https://apps.aavso.org/v2/api/observations/photometry/?{q}"
-            req_headers = {"User-Agent": f"SeestarAstroLab/{APP_VERSION}", "Accept": "application/json"}
-            if tok:
-                req_headers["Authorization"] = f"Token {tok}"
-            api_pts: List[Dict[str, Any]] = []
-            pages_fetched = 0
-            while next_url and pages_fetched < 6 and len(api_pts) < eff_max:
-                req = urllib.request.Request(next_url, headers=req_headers)
-                with urllib.request.urlopen(req, timeout=6.0, context=ssl_ctx) as resp:
-                    data = json.loads(resp.read().decode("utf-8", errors="replace"))
-                pages_fetched += 1
-                for item in (data.get("results") or []):
-                    if item.get("fainterthan"):
+            webobs_pts: List[Dict[str, Any]] = []
+            for page_num in range(1, 5):
+                q_wo = urllib.parse.urlencode({
+                    "star": clean_star,
+                    "num_results": "200",
+                    "obs_types": "all",
+                    "page": str(page_num),
+                })
+                wo_url = f"https://app.aavso.org/webobs/results/?{q_wo}"
+                req = urllib.request.Request(
+                    wo_url,
+                    headers={
+                        "User-Agent": f"SeestarAstroLab/{APP_VERSION}",
+                        "Accept": "text/html,application/xhtml+xml",
+                    },
+                )
+                with urllib.request.urlopen(req, timeout=8.0, context=ssl_ctx) as resp:
+                    html_txt = resp.read().decode("utf-8", errors="replace")
+                page_found = 0
+                for tr_m in re.finditer(r"<tr[^>]*>([\s\S]*?)</tr>", html_txt, re.I):
+                    cells = [
+                        re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", c).replace("&nbsp;", " ")).strip()
+                        for c in re.findall(r"<td[^>]*>([\s\S]*?)</td>", tr_m.group(1), re.I)
+                    ]
+                    if len(cells) < 5:
                         continue
-                    try:
-                        jd_v = float(item["jd_dbl"])
-                        mag_v = float(str(item["magnitude"]).lstrip("<"))
-                        if jd_v < from_jd:
+                    jd_idx = -1
+                    jd_v = None
+                    for ci, val in enumerate(cells[:5]):
+                        try:
+                            fv = float(val.replace(",", ""))
+                            if 2400000.0 < fv < 2500000.0:
+                                jd_idx = ci
+                                jd_v = fv
+                                break
+                        except ValueError:
                             continue
-                        err_v = float(item.get("uncertainty") or 0.02)
-                        b_raw = str(item.get("band") or "V")
-                        api_pts.append({
+                    if jd_idx < 0 or jd_v is None or jd_v < from_jd:
+                        continue
+                    # Find Magnitude (first float in [-5, 25] after JD cell, skipping calendar date)
+                    mag_v = None
+                    err_v = 0.02
+                    band_v = "V"
+                    obs_v = "AAVSO"
+                    for ci in range(jd_idx + 1, len(cells)):
+                        c_s = cells[ci]
+                        if not c_s or c_s.startswith("<") or re.match(r"^\d{4}-\d{2}-\d{2}", c_s):
+                            continue
+                        if mag_v is None:
+                            try:
+                                mv = float(c_s)
+                                if -5.0 <= mv <= 25.0:
+                                    mag_v = mv
+                                    # Next cell may be uncertainty
+                                    if ci + 1 < len(cells):
+                                        try:
+                                            ev = float(cells[ci + 1])
+                                            if 0.0 < ev < 2.0:
+                                                err_v = ev
+                                        except ValueError:
+                                            pass
+                                    continue
+                            except ValueError:
+                                continue
+                        else:
+                            if c_s in ("V", "B", "R", "I", "U", "CV", "CR", "TG", "TB", "TR", "SG", "SR", "SI", "Vis.", "Vis"):
+                                band_v = "Vis." if c_s == "Vis" else c_s
+                            elif re.match(r"^[A-Z0-9]{2,6}$", c_s) and c_s not in ("MAG", "JD", "STD", "NA"):
+                                obs_v = c_s
+                    if mag_v is not None:
+                        webobs_pts.append({
                             "jd": round(jd_v, 6),
                             "mag": round(mag_v, 4),
                             "merr": round(err_v, 4),
-                            "band": band_map.get(b_raw, b_raw),
-                            "obscode": str(item.get("obscode") or "").strip().upper(),
-                            "source": "AAVSO_API_V2",
+                            "band": band_v,
+                            "obscode": obs_v.upper(),
+                            "source": "AAVSO_WEBOBS",
                             "utc": cls.jd_to_utc_str(jd_v),
                         })
-                    except Exception:
-                        continue
-                next_url = data.get("next")
-            if api_pts:
-                api_pts.sort(key=lambda x: x["jd"])
-                raw_points = api_pts[-eff_max:]
-                source_used = f"AAVSO API v2 ({len(raw_points)} pts, {pages_fetched} pages)"
+                        page_found += 1
+                if page_found < 150 or len(webobs_pts) >= eff_max:
+                    break
+            if webobs_pts:
+                webobs_pts.sort(key=lambda x: x["jd"])
+                raw_points = webobs_pts[-eff_max:]
+                source_used = f"AAVSO WebObs ({len(raw_points)} pts)"
         except Exception as e:
-            network_errors.append(f"AAVSO API v2: {e}")
+            network_errors.append(f"AAVSO WebObs: {e}")
 
-        # Канал 2 (резерв / расширение): Официальный потоковый эндпоинт AAVSO AID (api.delim — CSV или HTML table, newest tail)
-        if len(raw_points) < 50:
+        # Канал 2 (резерв): AAVSO REST API v2 с пагинацией
+        if len(raw_points) < 20:
+            try:
+                q = urllib.parse.urlencode({"target": clean_star, "page_size": "200"})
+                next_url: Optional[str] = f"https://apps.aavso.org/v2/api/observations/photometry/?{q}"
+                req_headers = {"User-Agent": f"SeestarAstroLab/{APP_VERSION}", "Accept": "application/json"}
+                if tok:
+                    req_headers["Authorization"] = f"Token {tok}"
+                api_pts: List[Dict[str, Any]] = []
+                pages_fetched = 0
+                while next_url and pages_fetched < 6 and len(api_pts) < eff_max:
+                    req = urllib.request.Request(next_url, headers=req_headers)
+                    with urllib.request.urlopen(req, timeout=6.0, context=ssl_ctx) as resp:
+                        data = json.loads(resp.read().decode("utf-8", errors="replace"))
+                    pages_fetched += 1
+                    for item in (data.get("results") or []):
+                        if item.get("fainterthan"):
+                            continue
+                        try:
+                            jd_v = float(item["jd_dbl"])
+                            mag_v = float(str(item["magnitude"]).lstrip("<"))
+                            if jd_v < from_jd:
+                                continue
+                            err_v = float(item.get("uncertainty") or 0.02)
+                            b_raw = str(item.get("band") or "V")
+                            api_pts.append({
+                                "jd": round(jd_v, 6),
+                                "mag": round(mag_v, 4),
+                                "merr": round(err_v, 4),
+                                "band": band_map.get(b_raw, b_raw),
+                                "obscode": str(item.get("obscode") or "").strip().upper(),
+                                "source": "AAVSO_API_V2",
+                                "utc": cls.jd_to_utc_str(jd_v),
+                            })
+                        except Exception:
+                            continue
+                    next_url = data.get("next")
+                if len(api_pts) > len(raw_points):
+                    api_pts.sort(key=lambda x: x["jd"])
+                    raw_points = api_pts[-eff_max:]
+                    source_used = f"AAVSO API v2 ({len(raw_points)} pts, {pages_fetched} pages)"
+            except Exception as e:
+                network_errors.append(f"AAVSO API v2: {e}")
+
+        # Канал 3 (резерв): AAVSO AID api.delim (CSV/HTML, newest tail)
+        if len(raw_points) < 20:
             try:
                 q_params = {
                     "DateFormat": "Julian",
@@ -1991,50 +2083,28 @@ class AavsoNativeAndStorageService:
                 }
                 url = f"https://www.aavso.org/vsx/index.php?{urllib.parse.urlencode(q_params)}"
                 req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
-                with urllib.request.urlopen(req, timeout=9.0, context=ssl_ctx) as resp:
+                with urllib.request.urlopen(req, timeout=8.0, context=ssl_ctx) as resp:
                     csv_text = resp.read().decode("utf-8", errors="replace")
                 delim_pts: List[Dict[str, Any]] = []
-                if "<table" in csv_text.lower():
-                    for tr_m in re.finditer(r"<tr[^>]*>([\s\S]*?)</tr>", csv_text, re.I):
-                        cells = [re.sub(r"<[^>]+>", "", c).replace("&nbsp;", " ").strip()
-                                 for c in re.findall(r"<td[^>]*>([\s\S]*?)</td>", tr_m.group(1), re.I)]
-                        if len(cells) >= 5:
-                            try:
-                                jd_v = float(cells[0])
-                                if not (2400000 < jd_v < 2500000):
-                                    continue
-                                mag_s = cells[1].strip()
-                                if mag_s.startswith("<"):
-                                    continue
-                                mag_v = float(mag_s)
-                                err_v = float(cells[2]) if cells[2] else 0.02
-                                delim_pts.append({
-                                    "jd": round(jd_v, 6), "mag": round(mag_v, 4), "merr": round(err_v, 4),
-                                    "band": cells[3] or "V", "obscode": cells[4].upper(),
-                                    "source": "AAVSO_AID_DELIM", "utc": cls.jd_to_utc_str(jd_v),
-                                })
-                            except Exception:
-                                continue
-                else:
-                    reader = _csv.DictReader(_io.StringIO(csv_text))
-                    for row in reader:
-                        jd_str = row.get("JD") or row.get("jd")
-                        mag_str = str(row.get("Magnitude") or row.get("mag") or "").strip()
-                        if not jd_str or not mag_str or mag_str.startswith("<"):
-                            continue
-                        try:
-                            jd_v = float(jd_str)
-                            mag_v = float(mag_str)
-                            err_v = float(row.get("Uncertainty") or row.get("uncert") or 0.02)
-                            band_v = str(row.get("Band") or row.get("band") or "V").strip()
-                            obs_v = str(row.get("Observer Code") or row.get("obscode") or "").strip().upper()
-                            delim_pts.append({
-                                "jd": round(jd_v, 6), "mag": round(mag_v, 4), "merr": round(err_v, 4),
-                                "band": band_v, "obscode": obs_v,
-                                "source": "AAVSO_AID_DELIM", "utc": cls.jd_to_utc_str(jd_v),
-                            })
-                        except Exception:
-                            continue
+                reader = _csv.DictReader(_io.StringIO(csv_text))
+                for row in reader:
+                    jd_str = row.get("JD") or row.get("jd")
+                    mag_str = str(row.get("Magnitude") or row.get("mag") or "").strip()
+                    if not jd_str or not mag_str or mag_str.startswith("<"):
+                        continue
+                    try:
+                        jd_v = float(jd_str)
+                        mag_v = float(mag_str)
+                        err_v = float(row.get("Uncertainty") or row.get("uncert") or 0.02)
+                        band_v = str(row.get("Band") or row.get("band") or "V").strip()
+                        obs_v = str(row.get("Observer Code") or row.get("obscode") or "").strip().upper()
+                        delim_pts.append({
+                            "jd": round(jd_v, 6), "mag": round(mag_v, 4), "merr": round(err_v, 4),
+                            "band": band_v, "obscode": obs_v,
+                            "source": "AAVSO_AID_DELIM", "utc": cls.jd_to_utc_str(jd_v),
+                        })
+                    except Exception:
+                        continue
                 if len(delim_pts) > len(raw_points):
                     delim_pts.sort(key=lambda x: x["jd"])
                     raw_points = delim_pts[-eff_max:]

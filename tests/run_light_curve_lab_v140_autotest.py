@@ -50,9 +50,23 @@ def test_backend_aavso_aid_api_v2_and_delim_tail():
 
     # 1a. Channel 1 (API v2): verify NO invalid fromjd/tojd query params & multi-page pagination
     seen_urls = []
+
+    # 1d. Channel 1 (Public AAVSO WebObs Results HTML table): verify real column extraction without token
+    wo_html = """<table>
+      <tr><th>Star</th><th>JD</th><th>Calendar Date</th><th>Magnitude</th><th>Error</th><th>Units</th><th>Filter</th><th>Observer</th></tr>
+      <tr><td>SZ Lyn</td><td>2461360.4150</td><td>2026-11-20 21:57</td><td>9.142</td><td>0.014</td><td>Mag</td><td>TG</td><td>APPA</td></tr>
+      <tr><td>SZ Lyn</td><td>2461360.4250</td><td>2026-11-20 22:12</td><td>9.085</td><td>0.012</td><td>Mag</td><td>V</td><td>HMB</td></tr>
+    </table>"""
+    with patch("urllib.request.urlopen", return_value=_FakeResp(wo_html)):
+        res_wo = Svc.fetch_aavso_light_curve("SZ Lyn", days_back=3650)
+    assert res_wo["ok"] is True and res_wo["totalAavsoPoints"] == 2, f"WebObs HTML parser failed: {res_wo}"
+    assert res_wo["otherObserversPoints"][0]["band"] == "TG" and res_wo["otherObserversPoints"][1]["band"] == "V"
+
     def _fake_api_v2(req, timeout=6.0, context=None):
         u = req.full_url if hasattr(req, "full_url") else str(req)
         seen_urls.append(u)
+        if "app.aavso.org/webobs/results" in u:
+            return _FakeResp("<html></html>")
         assert "fromjd=" not in u and "tojd=" not in u, f"API v2 must NOT pass invalid fromjd/tojd params: {u}"
         if "page=2" not in u:
             results = [{"jd_dbl": now_jd - 2.0 + i * 0.01, "magnitude": "9.10", "uncertainty": 0.015, "band": "22", "obscode": "OBS1", "fainterthan": False} for i in range(60)]
@@ -63,7 +77,7 @@ def test_backend_aavso_aid_api_v2_and_delim_tail():
     with patch("urllib.request.urlopen", side_effect=_fake_api_v2):
         res_v2 = Svc.fetch_aavso_light_curve("SZ Lyn", days_back=180, max_points=3000)
     assert res_v2["ok"] is True and res_v2["totalAavsoPoints"] == 120, f"API v2 pagination failed: {res_v2}"
-    assert len(seen_urls) == 2, f"Expected 2 paginated API v2 requests, got {seen_urls}"
+    assert len([u for u in seen_urls if "apps.aavso.org/v2" in u]) == 2, f"Expected 2 paginated API v2 requests, got {seen_urls}"
 
     # 1b. Channel 2 fallback (api.delim): 3,500 chronological rows -> keep newest 3,000 tail
     rows = ["JD,Magnitude,Uncertainty,Band,Observer Code"]
@@ -73,6 +87,8 @@ def test_backend_aavso_aid_api_v2_and_delim_tail():
 
     def _fake_fallback(req, timeout=9.0, context=None):
         u = req.full_url if hasattr(req, "full_url") else str(req)
+        if "app.aavso.org/webobs/results" in u:
+            return _FakeResp("<html></html>")
         if "apps.aavso.org/v2/api/observations" in u:
             return _FakeResp(json.dumps({"results": [], "next": None}))
         return _FakeResp(big_csv)
@@ -90,6 +106,8 @@ def test_backend_aavso_aid_api_v2_and_delim_tail():
     small_csv = "JD,Magnitude,Uncertainty,Band,Observer Code\n2461300.1,11.2,0.02,V,ABC\n2461301.2,11.4,0.02,V,DEF\n"
     def _fake_small(req, timeout=9.0, context=None):
         u = req.full_url if hasattr(req, "full_url") else str(req)
+        if "app.aavso.org/webobs/results" in u:
+            return _FakeResp("<html></html>")
         if "apps.aavso.org/v2/api/observations" in u:
             return _FakeResp(json.dumps({"results": [], "next": None}))
         return _FakeResp(small_csv)
@@ -188,9 +206,16 @@ def test_frontend_real_clicks_zero_errors_and_scientific_lab():
       clipChk.checked = true;
       clipChk.dispatchEvent(new Event("change", { bubbles: true }));
 
-      // Toggle back to Time Series mode
+      // Toggle back to Time Series mode & verify filtered Time Series visually changes canvas!
       btnPhase.click();
       const backToTimeMode = (window._fpPhaseModeActive === false);
+      const afterFilteredTimeUrl = fpCanvas.toDataURL();
+      const timeSeriesChangedOnFilter = (afterFilteredTimeUrl !== beforeUrl);
+
+      // Click Pro Help button -> verify #lcProHelpPanel opens with guide text
+      document.getElementById("btnOpenLcHelpModal").click();
+      const helpEl = document.getElementById("lcProHelpPanel");
+      const helpVisible = Boolean(helpEl && helpEl.style.display !== "none" && helpEl.textContent.length > 100);
       fpModal.classList.remove("open");
 
       // 4. Verify all 4 scientific triggers
@@ -226,6 +251,8 @@ def test_frontend_real_clicks_zero_errors_and_scientific_lab():
         phaseLabelChanged: phaseLabelBefore !== phaseLabelAfter,
         canvasChangedOnPhase,
         backToTimeMode,
+        timeSeriesChangedOnFilter,
+        helpVisible,
         pulsPeriod: resPuls.ls.bestPeriodDays,
         pulsCodes: resPuls.triggers.map(t => t.code),
         ebCodes: resEb.triggers.map(t => t.code),
@@ -248,7 +275,8 @@ def test_frontend_real_clicks_zero_errors_and_scientific_lab():
 
     assert res["panelVisible"] is True and res["panelHasPeriod"] is True, f"Real Analyze button click failed: {res}"
     assert res["phaseActiveAfterClick"] is True and res["phaseLabelChanged"] is True and res["canvasChangedOnPhase"] is True, f"Real Phase Plot button click did not update canvas: {res}"
-    assert res["backToTimeMode"] is True, "Toggle back to Time Series failed"
+    assert res["backToTimeMode"] is True and res["timeSeriesChangedOnFilter"] is True, f"Time Series filter did not visually update canvas: {res}"
+    assert res["helpVisible"] is True, "Pro Help guide panel did not open"
 
     assert abs(res["pulsPeriod"] - 0.1205) / 0.1205 < 0.03
     assert "PULSATING" in res["pulsCodes"]

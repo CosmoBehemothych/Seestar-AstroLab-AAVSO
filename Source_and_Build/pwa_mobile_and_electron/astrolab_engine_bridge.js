@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.4.0) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.4.0-alpha) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.4.0.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.4.0-alpha.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -547,7 +547,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.4.0",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.4.0-alpha",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -557,7 +557,7 @@
       errNoObscodeMsg: "Укажите ваш личный код наблюдателя AAVSO (OBSCODE) перед конвертацией данных для загрузки на AAVSO.",
       errNoObscodeExplain: "Стандарт AAVSO Extended требует обязательного указания персонального кода наблюдателя в заголовке #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Версия 1.4.0",
+      appVersionLabel: "Версия 1.4.0-alpha",
       starIdFromCatalogHint: "✓ Каталожный идентификатор звезды (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
@@ -900,7 +900,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.4.0 session",
+      actAppStarted: "Started Seestar AstroLab v1.4.0-alpha session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -910,7 +910,7 @@
       errNoObscodeMsg: "Please enter your personal AAVSO Observer Code (OBSCODE) before converting data for AAVSO upload.",
       errNoObscodeExplain: "The AAVSO Extended format strictly requires a valid personal observer code in the #OBSCODE header.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.4.0",
+      appVersionLabel: "Version 1.4.0-alpha",
       starIdFromCatalogHint: "✓ Canonical Catalog Star ID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Photometry Observatory",
       
@@ -1248,7 +1248,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.4.0",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.4.0-alpha",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1258,7 +1258,7 @@
       errNoObscodeMsg: "Ingrese su código personal de observador AAVSO (OBSCODE) antes de convertir los datos.",
       errNoObscodeExplain: "El formato AAVSO Extended requiere un código de observador válido en el encabezado #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Versión 1.4.0",
+      appVersionLabel: "Versión 1.4.0-alpha",
       starIdFromCatalogHint: "✓ Identificador de catálogo (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatorio Fotométrico Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
@@ -1572,7 +1572,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.4.0",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.4.0-alpha",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1582,7 +1582,7 @@
       errNoObscodeMsg: "Bitte geben Sie Ihren persönlichen AAVSO-Beobachtercode (OBSCODE) vor der Konvertierung ein.",
       errNoObscodeExplain: "Das AAVSO-Extended-Format erfordert zwingend einen gültigen Beobachtercode im Header #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.4.0",
+      appVersionLabel: "Version 1.4.0-alpha",
       starIdFromCatalogHint: "✓ Kanonische Katalog-STARID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Photometrie-Observatorium",
       
@@ -1885,7 +1885,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.4.0",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.4.0-alpha",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -1895,7 +1895,7 @@
       errNoObscodeMsg: "Veuillez saisir votre code observateur AAVSO (OBSCODE) avant de convertir les données.",
       errNoObscodeExplain: "Le standard AAVSO Extended exige un code observateur personnel valide dans l'en-tête #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.4.0",
+      appVersionLabel: "Version 1.4.0-alpha",
       starIdFromCatalogHint: "✓ Identifiant catalogue canonique (SIMBAD / AAVSO VSX) : {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
@@ -2197,7 +2197,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.4.0 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.4.0-alpha 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -2207,7 +2207,7 @@
       errNoObscodeMsg: "请在转换上传至 AAVSO 的数据前填写您的 AAVSO 观测者代码 (OBSCODE)。",
       errNoObscodeExplain: "AAVSO Extended 格式要求在 #OBSCODE 标头中提供有效的个人观测者代码。",
       radarSubTag: "",
-      appVersionLabel: "版本 1.4.0",
+      appVersionLabel: "版本 1.4.0-alpha",
       starIdFromCatalogHint: "✓ 星表标准目标名称 (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO 测光天文台",
       
@@ -6889,7 +6889,7 @@ function revealAndFocusField(inputId) {
     const _lblRec = { ru: "🔭 Рекомендации:", en: "🔭 Imaging Rec.:", es: "🔭 Recomendación:", de: "🔭 Empfehlung:", fr: "🔭 Recommandation :", zh: "🔭 拍摄建议：", cs: "🔭 Doporučení:" }[_lgUrg] || "🔭 Рекомендации:";
     const _btnDossierLbl = { ru: "🔎 Досье и параметры звезды", en: "🔎 Star Dossier & Info", es: "🔎 Dossier de la estrella", de: "🔎 Sterndossier & Infos", fr: "🔎 Dossier de l'étoile", zh: "🔎 恒星完整档案与参数", cs: "🔎 Karta hvězdy a parametry" }[_lgUrg] || "🔎 Досье и параметры звезды";
 
-    // v1.4.0 Performance: O(1) star lookup map + 60-card progressive windowing for 3,000+ live stars
+    // v1.4.0-alpha Performance: O(1) star lookup map + 60-card progressive windowing for 3,000+ live stars
     const _urgPageSize = 60;
     const _urgLimit = (typeof window._urgentVisibleLimit === "number" && window._urgentVisibleLimit >= _urgPageSize)
       ? window._urgentVisibleLimit : _urgPageSize;
@@ -7086,7 +7086,7 @@ function revealAndFocusField(inputId) {
       }
     } catch (_) {}
 
-    // v1.4.0 FIX: Always run live AAVSO Target Tool API & Alert Notices independently of SIMBAD TAP!
+    // v1.4.0-alpha FIX: Always run live AAVSO Target Tool API & Alert Notices independently of SIMBAD TAP!
     try {
       if (typeof window._syncLiveAavsoOnlineTargets === "function") {
         await window._syncLiveAavsoOnlineTargets();
@@ -7633,7 +7633,7 @@ function revealAndFocusField(inputId) {
     const radarSortSel = document.getElementById("v6RadarSortSelect");
     const radarSortMode = (radarSortSel && radarSortSel.value) ? radarSortSel.value : "date";
     const sortedAll = sortRadarCatalogItems(filteredAll, radarSortMode);
-    // v1.4.0 Performance: Progressive 60-card windowing + O(1) lookup map for 3,000+ live stars
+    // v1.4.0-alpha Performance: Progressive 60-card windowing + O(1) lookup map for 3,000+ live stars
     const _v6PageSize = 60;
     const _v6MaxWindow = (typeof window._v6VisibleLimit === "number" && window._v6VisibleLimit >= _v6PageSize)
       ? window._v6VisibleLimit : _v6PageSize;
@@ -8804,7 +8804,7 @@ function revealAndFocusField(inputId) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.4.0",
+      application: "Seestar AstroLab AAVSO v1.4.0-alpha",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8855,7 +8855,7 @@ function revealAndFocusField(inputId) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.4.0 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.4.0-alpha (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -11252,7 +11252,7 @@ function revealAndFocusField(inputId) {
     if (rawAavsoPts.length < 1) {
       return { ok: false, hasEnoughData: false, points: [], errorMsg: aavsoError };
     }
-    // v1.4.0 FIX: Preserve all loaded AAVSO AID observations (up to 3,000 newest points) without slicing to 2 runs!
+    // v1.4.0-alpha FIX: Preserve all loaded AAVSO AID observations (up to 3,000 newest points) without slicing to 2 runs!
     let cleanedAavsoPts = rawAavsoPts.slice(-3000);
     if (false) {
     } else {
@@ -11807,7 +11807,7 @@ function revealAndFocusField(inputId) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.4.0 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.4.0-alpha — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -18860,43 +18860,43 @@ function revealAndFocusField(inputId) {
     const extraPerLang = {
       en: {
         optFullWindow: "Full Window", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Version 1.4.0"
+        appVersionLabel: "Version 1.4.0-alpha"
       },
       ru: {
         optFullWindow: "Во всё окно", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Версия 1.4.0"
+        appVersionLabel: "Версия 1.4.0-alpha"
       },
       es: {
         optFullWindow: "Ventana completa", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En línea • TTL 1h",
-        appVersionLabel: "Versión 1.4.0"
+        appVersionLabel: "Versión 1.4.0-alpha"
       },
       de: {
         optFullWindow: "Vollbildfenster", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Online • TTL 1 Std.",
         thUI: "Daten aus SIMBAD-Katalog",
-        appVersionLabel: "Version 1.4.0"
+        appVersionLabel: "Version 1.4.0-alpha"
       },
       fr: {
         optFullWindow: "Pleine fenêtre", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En ligne • TTL 1h",
-        appVersionLabel: "Version 1.4.0"
+        appVersionLabel: "Version 1.4.0-alpha"
       },
       zh: {
         optFullWindow: "全窗口", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "在线 • TTL 1小时",
-        appVersionLabel: "版本 1.4.0"
+        appVersionLabel: "版本 1.4.0-alpha"
       },
       ber: {
         optFullWindow: "Asfaylu ummid", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Srad • TTL 1s",
         btnTryUniverseLuck: "Afran agacuran n yitri i wannay-ik",
         tipTryUniverseLuck: "Afran agacuran n yitri azwaru i wannayen-ik ass-a",
-        appVersionLabel: "Taseqqult 1.4.0"
+        appVersionLabel: "Taseqqult 1.4.0-alpha"
       },
       cs: {
         optFullWindow: "Celé okno", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Verze 1.4.0",
+        appVersionLabel: "Verze 1.4.0-alpha",
         lblThemePickerSplash: "Barevný motiv",
         brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Fotometrická observatoř",
         btnDonateBadge: "❤️ Podpořit",
@@ -19128,16 +19128,16 @@ function revealAndFocusField(inputId) {
     // Sync all Module 14 & curve labels on initial load for EVERY language (prevents RU leaks in EN mode)
     if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
 
-    // === v1.4.0: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
+    // === v1.4.0-alpha: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
     const UPDATE_I18N = {
-      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.4.0. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
-      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.4.0. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
-      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.4.0. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
-      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.4.0. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
-      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.4.0. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
-      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.4.0，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
-      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.4.0. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
-      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.4.0. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
+      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.4.0-alpha. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
+      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.4.0-alpha. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
+      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.4.0-alpha. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
+      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.4.0-alpha. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
+      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.4.0-alpha. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
+      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.4.0-alpha，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
+      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.4.0-alpha. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
+      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.4.0-alpha. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
     };
 
     window.parseAstroSemver = function(v) {
@@ -19197,7 +19197,7 @@ function revealAndFocusField(inputId) {
     window.checkGithubReleaseOnceOnStartup = async function(forceCheck = false) {
       if (window._githubUpdateCheckedThisSession && !forceCheck) return;
       window._githubUpdateCheckedThisSession = true;
-      const LOCAL_VER = "1.4.0";
+      const LOCAL_VER = "1.4.0-alpha";
       const REPO_API = "https://api.github.com/repos/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
       const REPO_RELEASES = "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
 
@@ -19804,7 +19804,7 @@ function revealAndFocusField(inputId) {
 
 
 // ============================================================================
-// v1.4.0: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
+// v1.4.0-alpha: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
 // Designer full-canvas layout: high-res real-data visuals, KPI cards, pro tips,
 // reference tables, and verified official AAVSO / JAAVSO self-study links.
 // ============================================================================
@@ -20408,7 +20408,7 @@ function revealAndFocusField(inputId) {
     else if (e.key === "Escape") window.closeGraphGuideModal();
   });
   // ============================================================================
-  // v1.4.0: LIVE ONLINE AAVSO RADAR (PUBLIC CAMPAIGNS + TARGET TOOL API v1.0.0)
+  // v1.4.0-alpha: LIVE ONLINE AAVSO RADAR (PUBLIC CAMPAIGNS + TARGET TOOL API v1.0.0)
   //         + SETTINGS API KEY CONTROLS + 8-LANGUAGE API KEY GUIDE MODAL
   // ============================================================================
   const V133_I18N_PATCH = {
@@ -20993,7 +20993,7 @@ function revealAndFocusField(inputId) {
   });
 
   // ============================================================================
-  // v1.4.0: RADAR API FETCH BUTTON + SCIENTIFIC LIGHT CURVE ANALYSIS LAB
+  // v1.4.0-alpha: RADAR API FETCH BUTTON + SCIENTIFIC LIGHT CURVE ANALYSIS LAB
   //         (Lomb-Scargle, BLS, Phase Folding, Kwee-van Woerden, Auto-Triggers)
   // ============================================================================
   const V140_I18N_PATCH = {
@@ -21550,7 +21550,103 @@ function revealAndFocusField(inputId) {
       ctx.fillText(`Phase Plot (φ ∈ [0, 2]) • P = ${pTxt} • Epoch JD ${epochJd.toFixed(4)} • N = ${pts.length}`, pad.l, 26);
     }
 
-    return { preprocessPoints, estimateExtremum, computeLombScargle, computeBLS, analyze, renderPhasePlotCanvas };
+    function renderFilteredTimeSeriesCanvas(canvas, rawPts, cleanPts, opts, width, height) {
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const isLight = document.body.getAttribute("data-theme") === "light";
+      ctx.fillStyle = isLight ? "#f8fafc" : "#0b1224";
+      ctx.fillRect(0, 0, width, height);
+
+      const pad = { l: 64, r: 28, t: 46, b: 48 };
+      const pw = Math.max(100, width - pad.l - pad.r);
+      const ph = Math.max(100, height - pad.t - pad.b);
+
+      if (!cleanPts || cleanPts.length === 0) {
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = "bold 15px sans-serif";
+        ctx.fillText("No points match the selected Band / Binning / 3σ filter — switch Band to All or turn Binning Off.", 40, Math.round(height / 2));
+        return;
+      }
+
+      const jds = cleanPts.map(p => p.jd);
+      const mags = cleanPts.map(p => p.mag);
+      const jdMin = Math.min(...jds);
+      const jdMax = Math.max(...jds) + (Math.max(...jds) === jdMin ? 0.01 : 0);
+      const mMin = Math.min(...mags) - 0.06;
+      const mMax = Math.max(...mags) + 0.06;
+      const xOf = (jd) => pad.l + ((jd - jdMin) / Math.max(1e-6, jdMax - jdMin)) * pw;
+      const yOf = (mag) => pad.t + ((mag - mMin) / Math.max(0.02, mMax - mMin)) * ph;
+
+      // Grid
+      ctx.strokeStyle = isLight ? "rgba(15,23,42,0.10)" : "rgba(148,163,184,0.16)";
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 6; i++) {
+        const jv = jdMin + (i / 6) * (jdMax - jdMin);
+        const x = xOf(jv);
+        ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, pad.t + ph); ctx.stroke();
+        ctx.fillStyle = isLight ? "#475569" : "#94a3b8";
+        ctx.font = "11px sans-serif";
+        ctx.fillText(jv.toFixed(3), x - 22, pad.t + ph + 18);
+      }
+      for (let i = 0; i <= 5; i++) {
+        const mv = mMin + (i / 5) * (mMax - mMin);
+        const y = yOf(mv);
+        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + pw, y); ctx.stroke();
+        ctx.fillStyle = isLight ? "#475569" : "#94a3b8";
+        ctx.fillText(mv.toFixed(2), 10, y + 4);
+      }
+
+      // Faint raw points in background for visual comparison when binning/clipping is active
+      if (rawPts && rawPts.length > cleanPts.length) {
+        ctx.fillStyle = isLight ? "rgba(100,116,139,0.22)" : "rgba(148,163,184,0.20)";
+        rawPts.forEach(p => {
+          if (p.jd < jdMin || p.jd > jdMax || p.mag < mMin || p.mag > mMax) return;
+          ctx.beginPath();
+          ctx.arc(xOf(p.jd), yOf(p.mag), 2.0, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      // Filtered/binned points + error bars + connecting trend line
+      ctx.strokeStyle = "rgba(74, 222, 128, 0.45)";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      cleanPts.forEach((p, idx) => {
+        const x = xOf(p.jd), y = yOf(p.mag);
+        if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      cleanPts.forEach(p => {
+        const x = xOf(p.jd), y = yOf(p.mag);
+        const isAavso = (p.source === "AAVSO_WEBOBS" || p.source === "AAVSO_AID_DELIM" || p.source === "AAVSO_API_V2");
+        const col = isAavso ? "#38bdf8" : "#4ade80";
+        const errPx = Math.min(26, (p.merr / Math.max(0.02, mMax - mMin)) * ph);
+        ctx.strokeStyle = col;
+        ctx.globalAlpha = 0.55;
+        ctx.beginPath(); ctx.moveTo(x, y - errPx); ctx.lineTo(x, y + errPx); ctx.stroke();
+        ctx.globalAlpha = 0.95;
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.arc(x, y, 3.6, 0, Math.PI * 2); ctx.fill();
+      });
+      ctx.globalAlpha = 1.0;
+
+      // Active filter summary header
+      const tags = [];
+      if (opts.band && opts.band !== "ALL") tags.push(`Band: ${opts.band}`);
+      if (opts.binMinutes > 0) tags.push(`Bin: ${opts.binMinutes} min`);
+      if (opts.sigmaClip) tags.push("3σ Clip ON");
+      ctx.fillStyle = isLight ? "#0f172a" : "#f8fafc";
+      ctx.font = "bold 13px sans-serif";
+      ctx.fillText(`Filtered Time Series (${tags.join(" • ")}) — ${cleanPts.length} pts (from ${rawPts.length} raw)`, pad.l, 26);
+    }
+
+    return { preprocessPoints, estimateExtremum, computeLombScargle, computeBLS, analyze, renderPhasePlotCanvas, renderFilteredTimeSeriesCanvas };
   })();
 
   window.AstroLabLightCurveLab = AstroLabLightCurveLab;
@@ -21642,14 +21738,33 @@ function revealAndFocusField(inputId) {
   window._renderFpPhaseOrTime = function() {
     const toggleBtn = document.getElementById("btnFpTogglePhaseMode");
     if (toggleBtn) toggleBtn.textContent = window._fpPhaseModeActive ? t("btnFpTimeView") : t("btnFpPhaseView");
-    if (!window._fpPhaseModeActive) {
-      if (typeof window.renderFullPageScrollableChart === "function") window.renderFullPageScrollableChart();
-      return;
-    }
-    const { points } = _collectActiveFullPagePoints();
     const band = document.getElementById("fpBandFilterSelect")?.value || "ALL";
     const binMinutes = Number(document.getElementById("fpBinningSelect")?.value || "0");
     const sigmaClip = Boolean(document.getElementById("chkFpSigmaClip")?.checked);
+    const hasFilter = (band !== "ALL" || binMinutes > 0 || sigmaClip);
+
+    if (!window._fpPhaseModeActive) {
+      if (!hasFilter) {
+        if (typeof window.renderFullPageScrollableChart === "function") window.renderFullPageScrollableChart();
+        return;
+      }
+      const { points } = _collectActiveFullPagePoints();
+      const cleanPts = AstroLabLightCurveLab.preprocessPoints(points, { band, binMinutes, sigmaClip });
+      const fpCanvas = document.getElementById("fullPageLightCurveCanvas");
+      const scrollContainer = document.getElementById("fullPageLcScrollContainer");
+      const innerWrap = document.getElementById("fullPageLcInnerWrap");
+      if (fpCanvas && scrollContainer && innerWrap) {
+        const w = Math.max(760, (scrollContainer.clientWidth || 1100) - 24);
+        const h = Math.max(460, (scrollContainer.clientHeight || 540) - 24);
+        innerWrap.style.width = `${w}px`;
+        innerWrap.style.height = `${h}px`;
+        fpCanvas.style.width = `${w}px`;
+        fpCanvas.style.height = `${h}px`;
+        AstroLabLightCurveLab.renderFilteredTimeSeriesCanvas(fpCanvas, points, cleanPts, { band, binMinutes, sigmaClip }, w, h);
+      }
+      return;
+    }
+    const { points } = _collectActiveFullPagePoints();
     const cleanPts = AstroLabLightCurveLab.preprocessPoints(points, { band, binMinutes, sigmaClip });
     let period = window._fpDetectedPeriodDays;
     let epoch = window._fpDetectedEpochJd;
@@ -21693,7 +21808,7 @@ function revealAndFocusField(inputId) {
     document.getElementById(id)?.addEventListener("change", () => {
       const panel = document.getElementById("lcAnalysisResultPanel");
       if (panel && panel.style.display !== "none") window.runFullPageLightCurveAnalysis();
-      if (window._fpPhaseModeActive) window._renderFpPhaseOrTime();
+      window._renderFpPhaseOrTime();
     });
   });
   document.getElementById("btnFpReloadAavso")?.addEventListener("click", async () => {
@@ -21718,5 +21833,225 @@ function revealAndFocusField(inputId) {
 
   if (typeof applyTranslations === "function") applyTranslations();
   window._syncRadarApiFetchButton();
+
+  // v1.4.0-alpha: Intuitive 8-language labels, tooltips & Pro Light Curve Analysis Help Panel
+  const V140A_I18N_EXTRA = {
+    en: {
+      lblFpWindow: "📅 AAVSO Period:",
+      btnFpReloadAid: "🔄 Load AAVSO Data",
+      lblFpBand: "🎨 Filter Band:",
+      lblFpBin: "📊 Averaging (Bin):",
+      lblFpSigmaClip: "✂️ Remove Outliers (3σ)",
+      btnFpPhaseView: "🔄 Fold by Period (Phase)",
+      btnFpTimeView: "📈 Time Series View",
+      btnRunLcAnalysis: "🔬 Auto-Analyze Star",
+      btnLcProHelp: "❓ Guide",
+      tipFpWindow: "Time window for loading other AAVSO observers' measurements",
+      tipFpReloadAid: "Download public measurements from AAVSO WebObs / AID",
+      tipFpBand: "Show only one filter (TG = Seestar green, V = standard Johnson V)",
+      tipFpBin: "Average nearby points in time bins to smooth Seestar sensor noise (use 2–10 min for short sessions)",
+      tipFpSigmaClip: "Automatically hide random spikes from clouds or satellites (> 3σ)",
+      tipFpPhaseView: "Fold all nights into one 0..2 phase cycle to clearly see eclipses or pulsations",
+      tipRunLcAnalysis: "Run Lomb-Scargle period search, BLS transit/eclipse detector & variability triggers",
+      tipLcProHelp: "Open guide explaining how professional astronomers use each light curve tool"
+    },
+    ru: {
+      lblFpWindow: "📅 Период AAVSO:",
+      btnFpReloadAid: "🔄 Загрузить чужие (AAVSO)",
+      lblFpBand: "🎨 Полоса:",
+      lblFpBin: "📊 Усреднение:",
+      lblFpSigmaClip: "✂️ Убрать выбросы (3σ)",
+      btnFpPhaseView: "🔄 Свернуть по периоду (Фаза)",
+      btnFpTimeView: "📈 Обычный график (Время)",
+      btnRunLcAnalysis: "🔬 Автоанализ звезды",
+      btnLcProHelp: "❓ Справка",
+      tipFpWindow: "За какой период загружать наблюдения других участников AAVSO",
+      tipFpReloadAid: "Загрузить свежие открытые замеры из базы AAVSO WebObs / AID",
+      tipFpBand: "Оставить точки только одного фильтра (TG — зелёный канал Seestar, V — стандарт Johnson V)",
+      tipFpBin: "Усреднение соседних точек по времени: снижает шум матрицы (для коротких сессий 2–10 мин)",
+      tipFpSigmaClip: "Автоматически скрывает случайные скачки от облаков и спутников (отклонение > 3σ)",
+      tipFpPhaseView: "Сворачивает все ночи в один цикл фазы (0..2), чтобы чётко увидеть форму пульсации или затмения",
+      tipRunLcAnalysis: "Запустить поиск периода (Ломб–Скаргл), детектор транзитов BLS и триггеры типа звезды",
+      tipLcProHelp: "Открыть понятную справку по профессиональному анализу кривых блеска"
+    },
+    es: {
+      lblFpWindow: "📅 Periodo AAVSO:",
+      btnFpReloadAid: "🔄 Cargar datos AAVSO",
+      lblFpBand: "🎨 Banda:",
+      lblFpBin: "📊 Promedio (Bin):",
+      lblFpSigmaClip: "✂️ Quitar atípicos (3σ)",
+      btnFpPhaseView: "🔄 Plegar por periodo (Fase)",
+      btnFpTimeView: "📈 Vista temporal",
+      btnRunLcAnalysis: "🔬 Autoanálisis",
+      btnLcProHelp: "❓ Guía",
+      tipFpWindow: "Ventana de tiempo para cargar observaciones de otros usuarios AAVSO",
+      tipFpReloadAid: "Descargar observaciones públicas de AAVSO WebObs / AID",
+      tipFpBand: "Mostrar solo una banda fotométrica (TG = verde Seestar, V = Johnson V)",
+      tipFpBin: "Promedia puntos cercanos para reducir el ruido del sensor (usa 2–10 min en sesiones cortas)",
+      tipFpSigmaClip: "Oculta automáticamente picos por nubes o satélites (> 3σ)",
+      tipFpPhaseView: "Pliega todas las noches en un ciclo de fase 0..2",
+      tipRunLcAnalysis: "Ejecuta Lomb-Scargle, detector BLS y clasificadores",
+      tipLcProHelp: "Abrir guía profesional de análisis de curvas de luz"
+    },
+    de: {
+      lblFpWindow: "📅 AAVSO-Zeitraum:",
+      btnFpReloadAid: "🔄 AAVSO-Daten laden",
+      lblFpBand: "🎨 Filterband:",
+      lblFpBin: "📊 Mittelung (Bin):",
+      lblFpSigmaClip: "✂️ Ausreißer (3σ)",
+      btnFpPhaseView: "🔄 Phasenfaltung",
+      btnFpTimeView: "📈 Zeitreihe",
+      btnRunLcAnalysis: "🔬 Auto-Analyse",
+      btnLcProHelp: "❓ Anleitung",
+      tipFpWindow: "Zeitraum zum Laden von Messungen anderer AAVSO-Beobachter",
+      tipFpReloadAid: "Öffentliche Messungen von AAVSO WebObs / AID laden",
+      tipFpBand: "Nur ein photometrisches Filterband anzeigen (TG = Seestar Grün, V = Johnson V)",
+      tipFpBin: "Mittelt benachbarte Punkte zur Rauschreduktion (2–10 Min. für kurze Sitzungen)",
+      tipFpSigmaClip: "Blendet Ausreißer durch Wolken oder Satelliten (> 3σ) aus",
+      tipFpPhaseView: "Faltet alle Nächte in einen Phasenzyklus 0..2",
+      tipRunLcAnalysis: "Lomb-Scargle-Periodogramm, BLS-Detektor und Klassifikator starten",
+      tipLcProHelp: "Anleitung zur professionellen Lichtkurvenanalyse öffnen"
+    },
+    fr: {
+      lblFpWindow: "📅 Période AAVSO :",
+      btnFpReloadAid: "🔄 Charger AAVSO",
+      lblFpBand: "🎨 Bande :",
+      lblFpBin: "📊 Moyenne (Bin) :",
+      lblFpSigmaClip: "✂️ Filtrer pics (3σ)",
+      btnFpPhaseView: "🔄 Plier en phase",
+      btnFpTimeView: "📈 Série temporelle",
+      btnRunLcAnalysis: "🔬 Auto-analyse",
+      btnLcProHelp: "❓ Guide",
+      tipFpWindow: "Fenêtre temporelle pour charger les observations d'autres membres AAVSO",
+      tipFpReloadAid: "Télécharger les observations publiques AAVSO WebObs / AID",
+      tipFpBand: "Afficher uniquement une bande photométrique (TG = vert Seestar, V = Johnson V)",
+      tipFpBin: "Moyenne les points voisins pour réduire le bruit (2–10 min pour sessions courtes)",
+      tipFpSigmaClip: "Masque automatiquement les pics dus aux nuages ou satellites (> 3σ)",
+      tipFpPhaseView: "Plie toutes les nuits sur un cycle de phase 0..2",
+      tipRunLcAnalysis: "Lance Lomb-Scargle, le détecteur BLS et les déclencheurs",
+      tipLcProHelp: "Ouvrir le guide professionnel d'analyse de courbes de lumière"
+    },
+    zh: {
+      lblFpWindow: "📅 AAVSO 窗口:",
+      btnFpReloadAid: "🔄 加载 AAVSO 数据",
+      lblFpBand: "🎨 波段:",
+      lblFpBin: "📊 时间平均:",
+      lblFpSigmaClip: "✂️ 去除噪点 (3σ)",
+      btnFpPhaseView: "🔄 按周期折叠(相位)",
+      btnFpTimeView: "📈 时间序列视图",
+      btnRunLcAnalysis: "🔬 自动分析恒星",
+      btnLcProHelp: "❓ 指南",
+      tipFpWindow: "加载其他 AAVSO 观测者数据的时间范围",
+      tipFpReloadAid: "从 AAVSO WebObs / AID 拉取公开观测数据",
+      tipFpBand: "仅显示选定测光波段（TG = Seestar 绿通道，V = 标准 V 波段）",
+      tipFpBin: "按时间分箱平均相邻点以降低噪声（短时观测建议 2–10 分钟）",
+      tipFpSigmaClip: "自动隐藏云层或卫星引起的异常跳点（> 3σ）",
+      tipFpPhaseView: "将多晚数据折叠到 0..2 相位周期以清晰观察食变或脉动",
+      tipRunLcAnalysis: "运行 Lomb-Scargle 周期图、BLS 凌星检测与变星触发器",
+      tipLcProHelp: "打开专业光变曲线分析使用说明"
+    },
+    cs: {
+      lblFpWindow: "📅 Období AAVSO:",
+      btnFpReloadAid: "🔄 Načíst AAVSO",
+      lblFpBand: "🎨 Pásmo:",
+      lblFpBin: "📊 Průměrování:",
+      lblFpSigmaClip: "✂️ Odstranit výkyvy (3σ)",
+      btnFpPhaseView: "🔄 Složit do fáze",
+      btnFpTimeView: "📈 Časová osa",
+      btnRunLcAnalysis: "🔬 Autoanalýza",
+      btnLcProHelp: "❓ Nápověda",
+      tipFpWindow: "Časové okno pro stažení pozorování ostatních pozorovatelů AAVSO",
+      tipFpReloadAid: "Stáhnout veřejná měření z AAVSO WebObs / AID",
+      tipFpBand: "Zobrazit pouze zvolený filtr (TG = zelený kanál Seestar, V = Johnson V)",
+      tipFpBin: "Průměruje blízké body pro snížení šumu (pro krátké série 2–10 min)",
+      tipFpSigmaClip: "Skryje náhodné výkyvy od mraků nebo družic (> 3σ)",
+      tipFpPhaseView: "Složí noci do jednoho fázového cyklu 0..2",
+      tipRunLcAnalysis: "Spustí Lomb-Scargle periodogram, BLS a detektory",
+      tipLcProHelp: "Otevřít průvodce profesionální analýzou světelných křivek"
+    },
+    ber: {
+      lblFpWindow: "📅 Tallit AAVSO:",
+      btnFpReloadAid: "🔄 Awi-d AAVSO",
+      lblFpBand: "🎨 Aseffay:",
+      lblFpBin: "📊 Asegrew:",
+      lblFpSigmaClip: "✂️ Kkes tizgalin (3σ)",
+      btnFpPhaseView: "🔄 Sdukkel s tallit",
+      btnFpTimeView: "📈 Asaru n wakud",
+      btnRunLcAnalysis: "🔬 Tasleḍt tawurmant",
+      btnLcProHelp: "❓ Tallalt",
+      tipFpWindow: "Tallit i usader n yizwilen n AAVSO",
+      tipFpReloadAid: "Sader-d tizrawin tizayazin seg AAVSO WebObs / AID",
+      tipFpBand: "Sken-d yiwen n useffay kan (TG neɣ V)",
+      tipFpBin: "Yessegraw tinqiḍin iqerben i usenɣes n uzuzer",
+      tipFpSigmaClip: "Yetteffer tizgalin (> 3σ)",
+      tipFpPhaseView: "Yessuddukel uḍan ɣer yiwet n tallit 0..2",
+      tipRunLcAnalysis: "Sker tasleḍt Lomb-Scargle d BLS",
+      tipLcProHelp: "Ldi amnir n tesleḍt n tekniwt n tafat"
+    }
+  };
+  Object.keys(V140A_I18N_EXTRA).forEach((lc) => {
+    if (I18N[lc]) Object.assign(I18N[lc], V140A_I18N_EXTRA[lc]);
+  });
+
+  window.toggleLcProHelpPanel = function() {
+    const p = document.getElementById("lcProHelpPanel");
+    if (!p) return;
+    if (p.style.display !== "none") {
+      p.style.display = "none";
+      return;
+    }
+    const isRu = (typeof currentLang !== "undefined" ? currentLang : "ru") === "ru";
+    p.innerHTML = isRu ? `
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+        <div style="font-size:13px; font-weight:800;">📖 Как профессионально анализировать кривую блеска (методика AAVSO VStar / Peranso)</div>
+        <button type="button" class="ios-btn secondary tiny" onclick="document.getElementById('lcProHelpPanel').style.display='none';" style="width:auto; padding:3px 9px;">✕</button>
+      </div>
+      <div class="lc-analysis-grid">
+        <div class="lc-trigger-card">
+          <div style="font-weight:800; font-size:12px;">1️⃣ 📅 Период AAVSO + 🔄 Загрузить чужие</div>
+          <div style="font-size:11.5px; color:var(--ios-text-secondary); margin-top:4px; line-height:1.4;">Загружает открытые замеры других астрономов из базы AAVSO WebObs / AID за 30 дней – 3 года, чтобы сравнить ваш Seestar с мировой кривой.</div>
+        </div>
+        <div class="lc-trigger-card">
+          <div style="font-weight:800; font-size:12px;">2️⃣ 🎨 Полоса фильтра + ✂️ Убрать выбросы (3σ)</div>
+          <div style="font-size:11.5px; color:var(--ios-text-secondary); margin-top:4px; line-height:1.4;">Оставьте только <strong>TG</strong> (зелёный канал Seestar) или <strong>V</strong>, чтобы визуальные оценки (±0.2m) не портили график. Чекбокс <strong>3σ</strong> убирает случайные скачки от облаков и спутников.</div>
+        </div>
+        <div class="lc-trigger-card">
+          <div style="font-weight:800; font-size:12px;">3️⃣ 📊 Усреднение (Биннинг)</div>
+          <div style="font-size:11.5px; color:var(--ios-text-secondary); margin-top:4px; line-height:1.4;">Складывает соседние кадры Seestar в одну более точную точку. Для 1–3 часовой сессии (как SZ Lyn) выбирайте <strong>2–10 мин</strong>; значения <strong>30 мин / 2 ч</strong> подходят для длинных рядов на много ночей.</div>
+        </div>
+        <div class="lc-trigger-card">
+          <div style="font-weight:800; font-size:12px;">4️⃣ 🔬 Автоанализ + 🔄 Свернуть по периоду (Фаза)</div>
+          <div style="font-size:11.5px; color:var(--ios-text-secondary); margin-top:4px; line-height:1.4;"><strong>Автоанализ</strong> ищет период (Ломб–Скаргл), провалы транзитов/затмений (BLS) и вспышки новых. <strong>Фазовая кривая (0..2)</strong> накладывает все ночи друг на друга в один цикл — идеально для проверки формы пульсации или затмения.</div>
+        </div>
+      </div>
+    ` : `
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+        <div style="font-size:13px; font-weight:800;">📖 Professional Light Curve Analysis Guide (AAVSO VStar / Peranso Workflow)</div>
+        <button type="button" class="ios-btn secondary tiny" onclick="document.getElementById('lcProHelpPanel').style.display='none';" style="width:auto; padding:3px 9px;">✕</button>
+      </div>
+      <div class="lc-analysis-grid">
+        <div class="lc-trigger-card">
+          <div style="font-weight:800; font-size:12px;">1️⃣ 📅 AAVSO Period + 🔄 Load AAVSO Data</div>
+          <div style="font-size:11.5px; color:var(--ios-text-secondary); margin-top:4px; line-height:1.4;">Fetches public measurements from AAVSO WebObs / AID (30d–3yr) to compare your Seestar curve against worldwide observers.</div>
+        </div>
+        <div class="lc-trigger-card">
+          <div style="font-weight:800; font-size:12px;">2️⃣ 🎨 Filter Band + ✂️ Remove Outliers (3σ)</div>
+          <div style="font-size:11.5px; color:var(--ios-text-secondary); margin-top:4px; line-height:1.4;">Isolate <strong>TG</strong> (Seestar green) or <strong>V</strong> so visual scatter doesn't blur your photometry. Enable <strong>3σ</strong> to hide cloud/satellite spikes.</div>
+        </div>
+        <div class="lc-trigger-card">
+          <div style="font-weight:800; font-size:12px;">3️⃣ 📊 Averaging (Binning)</div>
+          <div style="font-size:11.5px; color:var(--ios-text-secondary); margin-top:4px; line-height:1.4;">Combines nearby points to lower noise. Use <strong>2–10 min</strong> for single-night Seestar sessions; use <strong>30 min / 2 h</strong> for multi-night datasets.</div>
+        </div>
+        <div class="lc-trigger-card">
+          <div style="font-weight:800; font-size:12px;">4️⃣ 🔬 Auto-Analyze + 🔄 Fold by Period (Phase)</div>
+          <div style="font-size:11.5px; color:var(--ios-text-secondary); margin-top:4px; line-height:1.4;">Runs Lomb-Scargle periodogram, BLS transit/eclipse search & outburst triggers. <strong>Phase Plot (0..2)</strong> overlays all cycles to inspect curve shape cleanly.</div>
+        </div>
+      </div>
+    `;
+    p.style.display = "block";
+  };
+
+  document.getElementById("btnOpenLcHelpModal")?.addEventListener("click", () => window.toggleLcProHelpPanel());
+  if (typeof applyTranslations === "function") applyTranslations();
 
 })();
