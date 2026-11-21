@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.3.5) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.4.0) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.3.5.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.4.0.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -547,7 +547,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.3.5",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.4.0",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -557,7 +557,7 @@
       errNoObscodeMsg: "Укажите ваш личный код наблюдателя AAVSO (OBSCODE) перед конвертацией данных для загрузки на AAVSO.",
       errNoObscodeExplain: "Стандарт AAVSO Extended требует обязательного указания персонального кода наблюдателя в заголовке #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Версия 1.3.5",
+      appVersionLabel: "Версия 1.4.0",
       starIdFromCatalogHint: "✓ Каталожный идентификатор звезды (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
@@ -900,7 +900,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.3.5 session",
+      actAppStarted: "Started Seestar AstroLab v1.4.0 session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -910,7 +910,7 @@
       errNoObscodeMsg: "Please enter your personal AAVSO Observer Code (OBSCODE) before converting data for AAVSO upload.",
       errNoObscodeExplain: "The AAVSO Extended format strictly requires a valid personal observer code in the #OBSCODE header.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.5",
+      appVersionLabel: "Version 1.4.0",
       starIdFromCatalogHint: "✓ Canonical Catalog Star ID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Photometry Observatory",
       
@@ -1248,7 +1248,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.3.5",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.4.0",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1258,7 +1258,7 @@
       errNoObscodeMsg: "Ingrese su código personal de observador AAVSO (OBSCODE) antes de convertir los datos.",
       errNoObscodeExplain: "El formato AAVSO Extended requiere un código de observador válido en el encabezado #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Versión 1.3.5",
+      appVersionLabel: "Versión 1.4.0",
       starIdFromCatalogHint: "✓ Identificador de catálogo (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatorio Fotométrico Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
@@ -1572,7 +1572,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.3.5",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.4.0",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1582,7 +1582,7 @@
       errNoObscodeMsg: "Bitte geben Sie Ihren persönlichen AAVSO-Beobachtercode (OBSCODE) vor der Konvertierung ein.",
       errNoObscodeExplain: "Das AAVSO-Extended-Format erfordert zwingend einen gültigen Beobachtercode im Header #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.5",
+      appVersionLabel: "Version 1.4.0",
       starIdFromCatalogHint: "✓ Kanonische Katalog-STARID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Photometrie-Observatorium",
       
@@ -1885,7 +1885,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.3.5",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.4.0",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -1895,7 +1895,7 @@
       errNoObscodeMsg: "Veuillez saisir votre code observateur AAVSO (OBSCODE) avant de convertir les données.",
       errNoObscodeExplain: "Le standard AAVSO Extended exige un code observateur personnel valide dans l'en-tête #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.5",
+      appVersionLabel: "Version 1.4.0",
       starIdFromCatalogHint: "✓ Identifiant catalogue canonique (SIMBAD / AAVSO VSX) : {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
@@ -2197,7 +2197,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.3.5 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.4.0 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -2207,7 +2207,7 @@
       errNoObscodeMsg: "请在转换上传至 AAVSO 的数据前填写您的 AAVSO 观测者代码 (OBSCODE)。",
       errNoObscodeExplain: "AAVSO Extended 格式要求在 #OBSCODE 标头中提供有效的个人观测者代码。",
       radarSubTag: "",
-      appVersionLabel: "版本 1.3.5",
+      appVersionLabel: "版本 1.4.0",
       starIdFromCatalogHint: "✓ 星表标准目标名称 (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO 测光天文台",
       
@@ -6889,7 +6889,7 @@ function revealAndFocusField(inputId) {
     const _lblRec = { ru: "🔭 Рекомендации:", en: "🔭 Imaging Rec.:", es: "🔭 Recomendación:", de: "🔭 Empfehlung:", fr: "🔭 Recommandation :", zh: "🔭 拍摄建议：", cs: "🔭 Doporučení:" }[_lgUrg] || "🔭 Рекомендации:";
     const _btnDossierLbl = { ru: "🔎 Досье и параметры звезды", en: "🔎 Star Dossier & Info", es: "🔎 Dossier de la estrella", de: "🔎 Sterndossier & Infos", fr: "🔎 Dossier de l'étoile", zh: "🔎 恒星完整档案与参数", cs: "🔎 Karta hvězdy a parametry" }[_lgUrg] || "🔎 Досье и параметры звезды";
 
-    // v1.3.5 Performance: O(1) star lookup map + 60-card progressive windowing for 3,000+ live stars
+    // v1.4.0 Performance: O(1) star lookup map + 60-card progressive windowing for 3,000+ live stars
     const _urgPageSize = 60;
     const _urgLimit = (typeof window._urgentVisibleLimit === "number" && window._urgentVisibleLimit >= _urgPageSize)
       ? window._urgentVisibleLimit : _urgPageSize;
@@ -7086,7 +7086,7 @@ function revealAndFocusField(inputId) {
       }
     } catch (_) {}
 
-    // v1.3.5 FIX: Always run live AAVSO Target Tool API & Alert Notices independently of SIMBAD TAP!
+    // v1.4.0 FIX: Always run live AAVSO Target Tool API & Alert Notices independently of SIMBAD TAP!
     try {
       if (typeof window._syncLiveAavsoOnlineTargets === "function") {
         await window._syncLiveAavsoOnlineTargets();
@@ -7633,7 +7633,7 @@ function revealAndFocusField(inputId) {
     const radarSortSel = document.getElementById("v6RadarSortSelect");
     const radarSortMode = (radarSortSel && radarSortSel.value) ? radarSortSel.value : "date";
     const sortedAll = sortRadarCatalogItems(filteredAll, radarSortMode);
-    // v1.3.5 Performance: Progressive 60-card windowing + O(1) lookup map for 3,000+ live stars
+    // v1.4.0 Performance: Progressive 60-card windowing + O(1) lookup map for 3,000+ live stars
     const _v6PageSize = 60;
     const _v6MaxWindow = (typeof window._v6VisibleLimit === "number" && window._v6VisibleLimit >= _v6PageSize)
       ? window._v6VisibleLimit : _v6PageSize;
@@ -7647,9 +7647,12 @@ function revealAndFocusField(inputId) {
     const displayed = sortedAll.slice(0, _v6HardCap);
     const _v6Rem = Math.max(0, _v6TotalAllowed - displayed.length);
     if (countEl) {
-      countEl.textContent = t("radarCountFmt")
-        .replace("{shown}", displayed.length)
+      const baseCntText = t("radarCountFmt")
+        .replace("{shown}", sortedAll.length)
         .replace("{total}", totalCatalogCount);
+      countEl.textContent = (displayed.length < sortedAll.length)
+        ? `${baseCntText} (${displayed.length}↓)`
+        : baseCntText;
     }
 
     const isLight = document.body.getAttribute("data-theme") === "light";
@@ -8801,7 +8804,7 @@ function revealAndFocusField(inputId) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.3.5",
+      application: "Seestar AstroLab AAVSO v1.4.0",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8852,7 +8855,7 @@ function revealAndFocusField(inputId) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.3.5 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.4.0 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -11818,7 +11821,7 @@ function revealAndFocusField(inputId) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.3.5 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.4.0 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -18871,43 +18874,43 @@ function revealAndFocusField(inputId) {
     const extraPerLang = {
       en: {
         optFullWindow: "Full Window", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Version 1.3.5"
+        appVersionLabel: "Version 1.4.0"
       },
       ru: {
         optFullWindow: "Во всё окно", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Версия 1.3.5"
+        appVersionLabel: "Версия 1.4.0"
       },
       es: {
         optFullWindow: "Ventana completa", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En línea • TTL 1h",
-        appVersionLabel: "Versión 1.3.5"
+        appVersionLabel: "Versión 1.4.0"
       },
       de: {
         optFullWindow: "Vollbildfenster", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Online • TTL 1 Std.",
         thUI: "Daten aus SIMBAD-Katalog",
-        appVersionLabel: "Version 1.3.5"
+        appVersionLabel: "Version 1.4.0"
       },
       fr: {
         optFullWindow: "Pleine fenêtre", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En ligne • TTL 1h",
-        appVersionLabel: "Version 1.3.5"
+        appVersionLabel: "Version 1.4.0"
       },
       zh: {
         optFullWindow: "全窗口", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "在线 • TTL 1小时",
-        appVersionLabel: "版本 1.3.5"
+        appVersionLabel: "版本 1.4.0"
       },
       ber: {
         optFullWindow: "Asfaylu ummid", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Srad • TTL 1s",
         btnTryUniverseLuck: "Afran agacuran n yitri i wannay-ik",
         tipTryUniverseLuck: "Afran agacuran n yitri azwaru i wannayen-ik ass-a",
-        appVersionLabel: "Taseqqult 1.3.5"
+        appVersionLabel: "Taseqqult 1.4.0"
       },
       cs: {
         optFullWindow: "Celé okno", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Verze 1.3.5",
+        appVersionLabel: "Verze 1.4.0",
         lblThemePickerSplash: "Barevný motiv",
         brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Fotometrická observatoř",
         btnDonateBadge: "❤️ Podpořit",
@@ -19139,16 +19142,16 @@ function revealAndFocusField(inputId) {
     // Sync all Module 14 & curve labels on initial load for EVERY language (prevents RU leaks in EN mode)
     if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
 
-    // === v1.3.5: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
+    // === v1.4.0: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
     const UPDATE_I18N = {
-      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.3.5. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
-      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.3.5. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
-      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.3.5. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
-      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.3.5. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
-      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.3.5. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
-      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.3.5，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
-      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.3.5. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
-      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.3.5. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
+      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.4.0. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
+      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.4.0. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
+      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.4.0. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
+      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.4.0. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
+      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.4.0. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
+      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.4.0，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
+      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.4.0. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
+      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.4.0. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
     };
 
     window.parseAstroSemver = function(v) {
@@ -19208,7 +19211,7 @@ function revealAndFocusField(inputId) {
     window.checkGithubReleaseOnceOnStartup = async function(forceCheck = false) {
       if (window._githubUpdateCheckedThisSession && !forceCheck) return;
       window._githubUpdateCheckedThisSession = true;
-      const LOCAL_VER = "1.3.5";
+      const LOCAL_VER = "1.4.0";
       const REPO_API = "https://api.github.com/repos/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
       const REPO_RELEASES = "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
 
@@ -19815,7 +19818,7 @@ function revealAndFocusField(inputId) {
 
 
 // ============================================================================
-// v1.3.5: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
+// v1.4.0: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
 // Designer full-canvas layout: high-res real-data visuals, KPI cards, pro tips,
 // reference tables, and verified official AAVSO / JAAVSO self-study links.
 // ============================================================================
@@ -20419,7 +20422,7 @@ function revealAndFocusField(inputId) {
     else if (e.key === "Escape") window.closeGraphGuideModal();
   });
   // ============================================================================
-  // v1.3.5: LIVE ONLINE AAVSO RADAR (PUBLIC CAMPAIGNS + TARGET TOOL API v1.0.0)
+  // v1.4.0: LIVE ONLINE AAVSO RADAR (PUBLIC CAMPAIGNS + TARGET TOOL API v1.0.0)
   //         + SETTINGS API KEY CONTROLS + 8-LANGUAGE API KEY GUIDE MODAL
   // ============================================================================
   const V133_I18N_PATCH = {
@@ -20827,6 +20830,9 @@ function revealAndFocusField(inputId) {
       badgeEl.classList.toggle("active-key", hasKey);
       badgeEl.textContent = hasKey ? t("badgeApiKeyActive") : t("badgeApiKeyPublic");
     }
+    if (typeof window._syncRadarApiFetchButton === "function") {
+      window._syncRadarApiFetchButton(hasKey);
+    }
     if (statusEl && statusText) {
       statusEl.textContent = statusText;
     } else if (statusEl && !statusText && !hasKey) {
@@ -20999,5 +21005,720 @@ function revealAndFocusField(inputId) {
       if (m && m.classList.contains("open")) window.closeAavsoApiKeyGuideModal();
     }
   });
+
+  // ============================================================================
+  // v1.4.0: RADAR API FETCH BUTTON + SCIENTIFIC LIGHT CURVE ANALYSIS LAB
+  //         (Lomb-Scargle, BLS, Phase Folding, Kwee-van Woerden, Auto-Triggers)
+  // ============================================================================
+  const V140_I18N_PATCH = {
+    en: {
+      btnRadarFetchApi: "📡 Fetch All (API)",
+      tipRadarFetchApiDisabled: "Enter your AAVSO Target Tool API key in ⚙️ Settings to enable",
+      tipRadarFetchApiReady: "Download all live targets from AAVSO Target Tool API",
+      lblFpWindow: "AID Window:",
+      btnFpReloadAid: "🔄 AID",
+      lblFpBand: "Band:",
+      lblFpBin: "Binning:",
+      lblFpSigmaClip: "3σ Clip",
+      btnFpPhaseView: "🔄 Phase Plot",
+      btnFpTimeView: "📈 Time Series",
+      btnRunLcAnalysis: "🔬 Analyze Curve & Auto-Triggers"
+    },
+    ru: {
+      btnRadarFetchApi: "📡 Выгрузить по API",
+      tipRadarFetchApiDisabled: "Укажите API-ключ AAVSO Target Tool в ⚙️ Настройках, чтобы активировать кнопку",
+      tipRadarFetchApiReady: "Выгрузить все актуальные звёзды из AAVSO Target Tool API",
+      lblFpWindow: "Окно AID:",
+      btnFpReloadAid: "🔄 AID",
+      lblFpBand: "Фильтр:",
+      lblFpBin: "Биннинг:",
+      lblFpSigmaClip: "3σ фильтр",
+      btnFpPhaseView: "🔄 Фазовая кривая",
+      btnFpTimeView: "📈 Кривая по времени",
+      btnRunLcAnalysis: "🔬 Анализ кривой и автодетектор"
+    },
+    es: {
+      btnRadarFetchApi: "📡 Cargar todo (API)",
+      tipRadarFetchApiDisabled: "Introduce tu clave API de AAVSO Target Tool en ⚙️ Ajustes para activar",
+      tipRadarFetchApiReady: "Descargar todos los objetivos en vivo de AAVSO Target Tool API",
+      lblFpWindow: "Ventana AID:",
+      btnFpReloadAid: "🔄 AID",
+      lblFpBand: "Banda:",
+      lblFpBin: "Agrupado:",
+      lblFpSigmaClip: "Filtro 3σ",
+      btnFpPhaseView: "🔄 Curva de fase",
+      btnFpTimeView: "📈 Serie temporal",
+      btnRunLcAnalysis: "🔬 Analizar curva y detectores"
+    },
+    de: {
+      btnRadarFetchApi: "📡 Alle laden (API)",
+      tipRadarFetchApiDisabled: "Geben Sie Ihren AAVSO Target Tool API-Schlüssel in ⚙️ Einstellungen ein",
+      tipRadarFetchApiReady: "Alle Live-Ziele über die AAVSO Target Tool API abrufen",
+      lblFpWindow: "AID-Fenster:",
+      btnFpReloadAid: "🔄 AID",
+      lblFpBand: "Filter:",
+      lblFpBin: "Binning:",
+      lblFpSigmaClip: "3σ Filter",
+      btnFpPhaseView: "🔄 Phasenkurve",
+      btnFpTimeView: "📈 Zeitreihe",
+      btnRunLcAnalysis: "🔬 Kurvenanalyse & Detektor"
+    },
+    fr: {
+      btnRadarFetchApi: "📡 Tout charger (API)",
+      tipRadarFetchApiDisabled: "Saisissez votre clé API AAVSO Target Tool dans ⚙️ Paramètres pour activer",
+      tipRadarFetchApiReady: "Télécharger toutes les cibles en direct via AAVSO Target Tool API",
+      lblFpWindow: "Fenêtre AID :",
+      btnFpReloadAid: "🔄 AID",
+      lblFpBand: "Bande :",
+      lblFpBin: "Binning :",
+      lblFpSigmaClip: "Filtre 3σ",
+      btnFpPhaseView: "🔄 Courbe de phase",
+      btnFpTimeView: "📈 Série temporelle",
+      btnRunLcAnalysis: "🔬 Analyser la courbe & déclencheurs"
+    },
+    zh: {
+      btnRadarFetchApi: "📡 API 全量同步",
+      tipRadarFetchApiDisabled: "请在 ⚙️ 设置中输入 AAVSO Target Tool API 密钥以启用",
+      tipRadarFetchApiReady: "从 AAVSO Target Tool API 拉取全部实时目标",
+      lblFpWindow: "AID 窗口:",
+      btnFpReloadAid: "🔄 AID",
+      lblFpBand: "波段:",
+      lblFpBin: "分箱:",
+      lblFpSigmaClip: "3σ 去噪",
+      btnFpPhaseView: "🔄 相位图",
+      btnFpTimeView: "📈 时间序列",
+      btnRunLcAnalysis: "🔬 光变曲线分析与自动识别"
+    },
+    cs: {
+      btnRadarFetchApi: "📡 Načíst vše (API)",
+      tipRadarFetchApiDisabled: "Zadejte API klíč AAVSO Target Tool v ⚙️ Nastavení pro aktivaci",
+      tipRadarFetchApiReady: "Stáhnout všechny živé cíle z AAVSO Target Tool API",
+      lblFpWindow: "Okno AID:",
+      btnFpReloadAid: "🔄 AID",
+      lblFpBand: "Filtr:",
+      lblFpBin: "Binning:",
+      lblFpSigmaClip: "3σ filtr",
+      btnFpPhaseView: "🔄 Fázová křivka",
+      btnFpTimeView: "📈 Časová řada",
+      btnRunLcAnalysis: "🔬 Analýza křivky a detektor"
+    },
+    ber: {
+      btnRadarFetchApi: "📡 Awi-d akk (API)",
+      tipRadarFetchApiDisabled: "Sekcem tasarut API n AAVSO Target Tool deg ⚙️ Iɣewwaren",
+      tipRadarFetchApiReady: "Sader-d akk itran srid seg AAVSO Target Tool API",
+      lblFpWindow: "Asfaylu AID:",
+      btnFpReloadAid: "🔄 AID",
+      lblFpBand: "Aseffay:",
+      lblFpBin: "Asegrew:",
+      lblFpSigmaClip: "Aseffay 3σ",
+      btnFpPhaseView: "🔄 Takniwt n tallit",
+      btnFpTimeView: "📈 Asaru n wakud",
+      btnRunLcAnalysis: "🔬 Tasleḍt n tekniwt d unadi"
+    }
+  };
+
+  Object.keys(V140_I18N_PATCH).forEach((lc) => {
+    if (I18N[lc]) Object.assign(I18N[lc], V140_I18N_PATCH[lc]);
+  });
+
+  // 1. Radar Filter Panel Target Tool API Button (disabled when no key, active when key is set)
+  window._syncRadarApiFetchButton = function(hasKeyOverride = null) {
+    const btn = document.getElementById("btnRadarFetchTargetToolApi");
+    if (!btn) return;
+    const hasKey = hasKeyOverride !== null ? Boolean(hasKeyOverride) : Boolean(_getStoredAavsoApiKey());
+    btn.disabled = !hasKey;
+    btn.title = hasKey ? t("tipRadarFetchApiReady") : t("tipRadarFetchApiDisabled");
+  };
+
+  const _btnRadarApi = document.getElementById("btnRadarFetchTargetToolApi");
+  if (_btnRadarApi) {
+    window._syncRadarApiFetchButton();
+    _btnRadarApi.addEventListener("click", async () => {
+      if (_btnRadarApi.disabled) return;
+      _btnRadarApi.disabled = true;
+      const prevTxt = _btnRadarApi.textContent;
+      _btnRadarApi.textContent = "⏳ API...";
+      try {
+        const res = await window._syncLiveAavsoOnlineTargets();
+        const nowStr = new Date().toLocaleTimeString(currentLang === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        if (res && res.targetToolOk) {
+          showIosNotification(
+            t("toastRadarRefreshedTitle"),
+            t("toastRadarRefreshedMsgFmt").replace("{count}", AAVSO_URGENT_CATALOGUE.length).replace("{time}", nowStr),
+            t("apiKeyStatusActiveFmt").replace("{added}", res.targetToolAdded || 0).replace("{total}", AAVSO_URGENT_CATALOGUE.length),
+            "ok"
+          );
+        } else if (res && res.targetToolError) {
+          showIosNotification(t("lblAavsoApiKeyTitle"), res.targetToolError, "targettool.aavso.org", "warn");
+        }
+      } finally {
+        _btnRadarApi.textContent = prevTxt;
+        window._syncRadarApiFetchButton();
+      }
+    });
+  }
+
+  // 2. Scientific Light Curve Analysis Lab (100% local in-app algorithms: Lomb-Scargle, BLS, Phase Folding, Triggers)
+  const AstroLabLightCurveLab = (function() {
+    function _median(arr) {
+      if (!arr.length) return 0;
+      const s = [...arr].sort((a, b) => a - b);
+      const m = Math.floor(s.length / 2);
+      return (s.length % 2) ? s[m] : (s[m - 1] + s[m]) / 2;
+    }
+
+    function preprocessPoints(rawPts, opts = {}) {
+      const band = String(opts.band || "ALL").toUpperCase();
+      const sigmaClip = Boolean(opts.sigmaClip);
+      const binMinutes = Number(opts.binMinutes || 0);
+
+      let pts = (rawPts || []).filter(p => p && Number.isFinite(Number(p.jd)) && Number.isFinite(Number(p.mag))).map(p => ({
+        jd: Number(p.jd),
+        mag: Number(p.mag),
+        merr: Math.max(0.002, Number(p.merr || 0.02)),
+        band: String(p.band || "TG").toUpperCase(),
+        source: p.source || "LOCAL",
+        obscode: p.obscode || ""
+      }));
+
+      if (band !== "ALL") {
+        pts = pts.filter(p => {
+          const b = p.band.replace(".", "");
+          return (band === "VIS") ? (b === "VIS" || b === "VISUAL") : (b === band);
+        });
+      }
+      pts.sort((a, b) => a.jd - b.jd);
+
+      if (sigmaClip && pts.length >= 6) {
+        const med = _median(pts.map(p => p.mag));
+        const mad = _median(pts.map(p => Math.abs(p.mag - med))) * 1.4826 || 0.05;
+        const limit = Math.max(0.06, 3.0 * mad);
+        pts = pts.filter(p => Math.abs(p.mag - med) <= limit);
+      }
+
+      if (binMinutes > 0 && pts.length >= 4) {
+        const binDays = binMinutes / 1440.0;
+        const t0 = pts[0].jd;
+        const buckets = new Map();
+        pts.forEach(p => {
+          const idx = Math.floor((p.jd - t0) / binDays);
+          if (!buckets.has(idx)) buckets.set(idx, []);
+          buckets.get(idx).push(p);
+        });
+        const binned = [];
+        buckets.forEach(group => {
+          let wSum = 0, mSum = 0, tSum = 0;
+          group.forEach(g => {
+            const w = 1.0 / (g.merr * g.merr);
+            wSum += w;
+            mSum += g.mag * w;
+            tSum += g.jd * w;
+          });
+          binned.push({
+            jd: tSum / wSum,
+            mag: mSum / wSum,
+            merr: Math.sqrt(1.0 / wSum),
+            band: group[0].band,
+            source: group[0].source,
+            obscode: group[0].obscode
+          });
+        });
+        binned.sort((a, b) => a.jd - b.jd);
+        pts = binned;
+      }
+      return pts;
+    }
+
+    function estimateExtremum(pts) {
+      if (!pts.length) return null;
+      const mags = pts.map(p => p.mag);
+      const n = mags.length;
+      const mean = mags.reduce((a, b) => a + b, 0) / n;
+      const med = _median(mags);
+      const madSigma = Math.max(0.003, _median(mags.map(m => Math.abs(m - med))) * 1.4826);
+      let variance = 0, m3 = 0;
+      for (let i = 0; i < n; i++) {
+        const d = mags[i] - mean;
+        variance += d * d;
+        m3 += d * d * d;
+      }
+      const rms = Math.sqrt(variance / Math.max(1, n - 1));
+      const skewness = (rms > 1e-6) ? ((m3 / n) / Math.pow(rms, 3)) : 0;
+
+      let brightest = pts[0], faintest = pts[0];
+      for (let i = 1; i < n; i++) {
+        if (pts[i].mag < brightest.mag) brightest = pts[i];
+        if (pts[i].mag > faintest.mag) faintest = pts[i];
+      }
+      return {
+        n,
+        spanDays: Math.max(0, pts[n - 1].jd - pts[0].jd),
+        meanMag: mean,
+        medianMag: med,
+        rmsMag: rms,
+        madSigma,
+        skewness,
+        minMagBrightest: brightest.mag,
+        maxMagFaintest: faintest.mag,
+        amplitudeMag: faintest.mag - brightest.mag,
+        tMaxJd: brightest.jd,
+        tMinJd: faintest.jd,
+        brightJumpMag: med - brightest.mag,
+        faintDropMag: faintest.mag - med
+      };
+    }
+
+    function computeLombScargle(pts) {
+      const n = pts.length;
+      if (n < 10) return { bestPeriodDays: 0, bestPeriodHours: 0, peakPower: 0, significant: false };
+      const t0 = pts[0].jd;
+      const span = pts[n - 1].jd - t0;
+      if (span <= 0.02) return { bestPeriodDays: 0, bestPeriodHours: 0, peakPower: 0, significant: false };
+
+      // Downsample if > 900 pts for < 30ms execution
+      const step = Math.max(1, Math.floor(n / 900));
+      const ts = [], ys = [];
+      for (let i = 0; i < n; i += step) {
+        ts.push(pts[i].jd - t0);
+        ys.push(pts[i].mag);
+      }
+      const m = ts.length;
+      const yMean = ys.reduce((a, b) => a + b, 0) / m;
+      let yVar = 0;
+      const yc = ys.map(v => { const d = v - yMean; yVar += d * d; return d; });
+      if (yVar < 1e-9) return { bestPeriodDays: 0, bestPeriodHours: 0, peakPower: 0, significant: false };
+
+      const minP = Math.max(0.03, Math.min(0.08, span / 20));
+      const maxP = Math.max(minP * 2, Math.min(span * 1.15, 250.0));
+      const fMin = 1.0 / maxP;
+      const fMax = 1.0 / minP;
+      const nFreq = Math.min(900, Math.max(220, Math.round(span * 30)));
+      const df = (fMax - fMin) / nFreq;
+
+      let bestPower = 0;
+      let bestFreq = fMin;
+      const TWO_PI = 2 * Math.PI;
+
+      for (let k = 0; k <= nFreq; k++) {
+        const f = fMin + k * df;
+        const w = TWO_PI * f;
+        let s2 = 0, c2 = 0;
+        for (let i = 0; i < m; i++) {
+          const wt2 = 2 * w * ts[i];
+          s2 += Math.sin(wt2);
+          c2 += Math.cos(wt2);
+        }
+        const tau = Math.atan2(s2, c2) / (2 * w);
+        let ycCos = 0, ycSin = 0, cos2 = 0, sin2 = 0;
+        for (let i = 0; i < m; i++) {
+          const arg = w * (ts[i] - tau);
+          const ca = Math.cos(arg);
+          const sa = Math.sin(arg);
+          ycCos += yc[i] * ca;
+          ycSin += yc[i] * sa;
+          cos2 += ca * ca;
+          sin2 += sa * sa;
+        }
+        const pwr = ((ycCos * ycCos) / Math.max(1e-9, cos2) + (ycSin * ycSin) / Math.max(1e-9, sin2)) / yVar;
+        if (pwr > bestPower) {
+          bestPower = pwr;
+          bestFreq = f;
+        }
+      }
+
+      const bestPeriodDays = 1.0 / bestFreq;
+      return {
+        bestPeriodDays,
+        bestPeriodHours: bestPeriodDays * 24.0,
+        peakPower: Math.min(1.0, bestPower),
+        significant: bestPower >= 0.32 && m >= 12
+      };
+    }
+
+    function computeBLS(pts, stats) {
+      if (!pts || pts.length < 12 || !stats) {
+        return { depthMag: 0, snr: 0, isBoxDip: false, midTransitJd: 0 };
+      }
+      // Evaluate box-shaped dip against upper baseline (median of brightest 70% of points)
+      const sortedMags = pts.map(p => p.mag).sort((a, b) => a - b);
+      const baseCut = Math.max(4, Math.floor(sortedMags.length * 0.7));
+      const baseSlice = sortedMags.slice(0, baseCut);
+      const baseMed = _median(baseSlice);
+      const baseSigma = Math.max(0.0025, _median(baseSlice.map(v => Math.abs(v - baseMed))) * 1.4826);
+
+      // Find contiguous faint dip points (> baseMed + 2.5*baseSigma)
+      let bestDipPts = [];
+      let curDip = [];
+      for (let i = 0; i < pts.length; i++) {
+        if (pts[i].mag > baseMed + 2.5 * baseSigma) {
+          curDip.push(pts[i]);
+        } else {
+          if (curDip.length > bestDipPts.length) bestDipPts = curDip;
+          curDip = [];
+        }
+      }
+      if (curDip.length > bestDipPts.length) bestDipPts = curDip;
+
+      if (bestDipPts.length < 3) {
+        return { depthMag: 0, snr: 0, isBoxDip: false, midTransitJd: 0 };
+      }
+      const dipMed = _median(bestDipPts.map(p => p.mag));
+      const depthMag = Math.max(0, dipMed - baseMed);
+      const snr = (depthMag / baseSigma) * Math.sqrt(bestDipPts.length);
+      const midTransitJd = (bestDipPts[0].jd + bestDipPts[bestDipPts.length - 1].jd) / 2.0;
+      const dipFrac = bestDipPts.length / pts.length;
+      return {
+        depthMag,
+        snr,
+        dipFrac,
+        baseSigma,
+        midTransitJd,
+        isBoxDip: depthMag >= 0.005 && snr >= 4.5 && dipFrac <= 0.40
+      };
+    }
+
+    function analyze(rawPts, opts = {}) {
+      const pts = preprocessPoints(rawPts, opts);
+      const stats = estimateExtremum(pts);
+      const lang = (typeof currentLang !== "undefined") ? currentLang : "ru";
+      const isRu = lang === "ru";
+
+      if (!stats || pts.length < 8) {
+        return {
+          ok: false,
+          count: pts.length,
+          stats,
+          ls: { bestPeriodDays: 0, bestPeriodHours: 0, peakPower: 0, significant: false },
+          bls: { depthMag: 0, snr: 0, isBoxDip: false, midTransitJd: 0 },
+          triggers: [{
+            code: "INSUFFICIENT_DATA",
+            icon: "ℹ️",
+            confidence: 0,
+            title: isRu ? "Недостаточно точек для анализа" : "Insufficient points for analysis",
+            reason: isRu ? "Загрузите CSV Seestar или расширьте окно AAVSO AID (нужно ≥ 8 точек)." : "Load a Seestar CSV or widen the AAVSO AID window (need ≥ 8 points)."
+          }]
+        };
+      }
+
+      const ls = computeLombScargle(pts);
+      const bls = computeBLS(pts, stats);
+      const triggers = [];
+
+      // Trigger 1: Outburst / Nova / Dwarf Nova (sudden bright jump above quiescence)
+      if (stats.brightJumpMag >= 1.0 && (stats.brightJumpMag / stats.madSigma) >= 4.5 && stats.skewness < -0.5) {
+        const conf = Math.min(96, Math.round(58 + stats.brightJumpMag * 12));
+        triggers.push({
+          code: "OUTBURST_NOVA",
+          icon: "💥",
+          confidence: conf,
+          title: isRu ? "Вспышка Новой / Карликовой новой (UG / N)" : "Nova / Dwarf Nova Outburst (UG / N)",
+          reason: isRu
+            ? `Резкий рост блеска на Δm = ${stats.brightJumpMag.toFixed(2)} mag выше базового уровня (${stats.medianMag.toFixed(2)}m) с отрицательной асимметрией (${stats.skewness.toFixed(2)}).`
+            : `Sudden brightening Δm = ${stats.brightJumpMag.toFixed(2)} mag above baseline (${stats.medianMag.toFixed(2)}m), skewness ${stats.skewness.toFixed(2)}.`
+        });
+      }
+
+      // Trigger 2: Exoplanet Transit (flat baseline + shallow U/box dip 0.005-0.08 mag)
+      if (bls.isBoxDip && bls.depthMag >= 0.005 && bls.depthMag <= 0.08 && bls.baseSigma <= 0.03) {
+        const conf = Math.min(92, Math.round(50 + bls.snr * 4.5));
+        triggers.push({
+          code: "EXOPLANET_TRANSIT",
+          icon: "🪐",
+          confidence: conf,
+          title: isRu ? "Возможный транзит экзопланеты (EP)" : "Exoplanet Transit Candidate (EP)",
+          reason: isRu
+            ? `Обнаружен неглубокий П-образный провал BLS: глубина ${(bls.depthMag * 1000).toFixed(1)} mmag (SNR ${bls.snr.toFixed(1)}), середина JD ${bls.midTransitJd.toFixed(4)}.`
+            : `Shallow box-shaped BLS dip detected: depth ${(bls.depthMag * 1000).toFixed(1)} mmag (SNR ${bls.snr.toFixed(1)}), mid-transit JD ${bls.midTransitJd.toFixed(4)}.`
+        });
+      }
+
+      // Trigger 3: Eclipsing Binary (EA / EB / EW — deep sharp minima below plateau)
+      if ((stats.faintDropMag >= 0.18 && stats.skewness >= 0.55) || (bls.isBoxDip && bls.depthMag >= 0.15)) {
+        const conf = Math.min(95, Math.round(55 + Math.min(35, stats.faintDropMag * 28 + Math.max(0, stats.skewness) * 10)));
+        triggers.push({
+          code: "ECLIPSING_BINARY",
+          icon: "🌑",
+          confidence: conf,
+          title: isRu ? "Затменная двойная звезда (EA / EB / EW)" : "Eclipsing Binary Star (EA / EB / EW)",
+          reason: isRu
+            ? `Выраженный провал блеска вниз от плато на Δm = ${Math.max(stats.faintDropMag, bls.depthMag).toFixed(2)} mag (асимметрия +${stats.skewness.toFixed(2)}), минимум JD ${stats.tMinJd.toFixed(4)}.`
+            : `Sharp downward eclipse dip Δm = ${Math.max(stats.faintDropMag, bls.depthMag).toFixed(2)} mag below plateau (skew +${stats.skewness.toFixed(2)}), min JD ${stats.tMinJd.toFixed(4)}.`
+        });
+      }
+
+      // Trigger 4: Pulsating Variable (Lomb-Scargle significant period + continuous oscillation)
+      if (ls.significant && stats.amplitudeMag >= 0.08 && Math.abs(stats.skewness) < 1.2) {
+        const pStr = ls.bestPeriodDays < 2.0 ? `${ls.bestPeriodHours.toFixed(2)} ч (${ls.bestPeriodDays.toFixed(4)} d)` : `${ls.bestPeriodDays.toFixed(3)} d`;
+        const conf = Math.min(96, Math.round(45 + ls.peakPower * 52));
+        triggers.push({
+          code: "PULSATING",
+          icon: "💓",
+          confidence: conf,
+          title: isRu ? "Пульсирующая переменная (HADS / RR Lyr / δ Sct / Cep)" : "Pulsating Variable (HADS / RR Lyr / δ Sct / Cep)",
+          reason: isRu
+            ? `Устойчивый пик периодограммы Ломба–Скаргла: P ≈ ${pStr} (мощность ${(ls.peakPower * 100).toFixed(0)}%), амплитуда Δm = ${stats.amplitudeMag.toFixed(2)} mag.`
+            : `Strong Lomb–Scargle periodogram peak: P ≈ ${pStr} (power ${(ls.peakPower * 100).toFixed(0)}%), amplitude Δm = ${stats.amplitudeMag.toFixed(2)} mag.`
+        });
+      }
+
+      if (triggers.length === 0) {
+        triggers.push({
+          code: "STABLE_OR_SHORT",
+          icon: "🟢",
+          confidence: 65,
+          title: isRu ? "Спокойная фаза / короткий ряд наблюдений" : "Quiescent Baseline / Short Time Span",
+          reason: isRu
+            ? `Размах Δm = ${stats.amplitudeMag.toFixed(3)} mag, RMS = ${stats.rmsMag.toFixed(3)} mag за ${stats.spanDays.toFixed(2)} сут. Добавьте больше ночей или расширьте окно AAVSO AID.`
+            : `Span Δm = ${stats.amplitudeMag.toFixed(3)} mag, RMS = ${stats.rmsMag.toFixed(3)} mag over ${stats.spanDays.toFixed(2)} d. Add more nights or widen AAVSO AID window.`
+        });
+      }
+
+      triggers.sort((a, b) => b.confidence - a.confidence);
+      return { ok: true, count: pts.length, stats, ls, bls, triggers };
+    }
+
+    function renderPhasePlotCanvas(canvas, pts, periodDays, epochJd, width, height) {
+      if (!canvas || !pts || !pts.length || !periodDays || periodDays <= 0) return;
+      const ctx = canvas.getContext("2d");
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const isLight = document.body.getAttribute("data-theme") === "light";
+      ctx.fillStyle = isLight ? "#f8fafc" : "#0b1224";
+      ctx.fillRect(0, 0, width, height);
+
+      const pad = { l: 64, r: 28, t: 44, b: 48 };
+      const pw = Math.max(100, width - pad.l - pad.r);
+      const ph = Math.max(100, height - pad.t - pad.b);
+
+      const mags = pts.map(p => p.mag);
+      const mMin = Math.min(...mags) - 0.08;
+      const mMax = Math.max(...mags) + 0.08;
+      const xOf = (phase) => pad.l + (phase / 2.0) * pw;
+      const yOf = (mag) => pad.t + ((mag - mMin) / Math.max(0.02, mMax - mMin)) * ph;
+
+      // Grid
+      ctx.strokeStyle = isLight ? "rgba(15,23,42,0.10)" : "rgba(148,163,184,0.16)";
+      ctx.lineWidth = 1;
+      for (let phTick = 0; phTick <= 2.001; phTick += 0.25) {
+        const x = xOf(phTick);
+        ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, pad.t + ph); ctx.stroke();
+        ctx.fillStyle = isLight ? "#475569" : "#94a3b8";
+        ctx.font = "11px sans-serif";
+        ctx.fillText(phTick.toFixed(2), x - 12, pad.t + ph + 18);
+      }
+      for (let i = 0; i <= 5; i++) {
+        const mv = mMin + (i / 5) * (mMax - mMin);
+        const y = yOf(mv);
+        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + pw, y); ctx.stroke();
+        ctx.fillStyle = isLight ? "#475569" : "#94a3b8";
+        ctx.fillText(mv.toFixed(2), 10, y + 4);
+      }
+
+      // Plot points across 2 cycles (phase 0..2)
+      const binSums = new Array(20).fill(0);
+      const binCnts = new Array(20).fill(0);
+      pts.forEach(p => {
+        let ph0 = ((p.jd - epochJd) / periodDays) % 1.0;
+        if (ph0 < 0) ph0 += 1.0;
+        const bIdx = Math.min(19, Math.floor(ph0 * 20));
+        binSums[bIdx] += p.mag;
+        binCnts[bIdx] += 1;
+        const isUser = p.source !== "AAVSO_AID_DELIM" && p.source !== "AAVSO_API_V2";
+        const col = isUser ? "#f59e0b" : "#38bdf8";
+        for (const shift of [0, 1]) {
+          const x = xOf(ph0 + shift);
+          const y = yOf(p.mag);
+          const errPx = Math.min(24, (p.merr / Math.max(0.02, mMax - mMin)) * ph);
+          ctx.strokeStyle = col;
+          ctx.globalAlpha = 0.45;
+          ctx.beginPath(); ctx.moveTo(x, y - errPx); ctx.lineTo(x, y + errPx); ctx.stroke();
+          ctx.globalAlpha = 0.92;
+          ctx.fillStyle = col;
+          ctx.beginPath(); ctx.arc(x, y, isUser ? 3.5 : 2.8, 0, Math.PI * 2); ctx.fill();
+        }
+      });
+      ctx.globalAlpha = 1.0;
+
+      // Mean phase curve overlay
+      ctx.strokeStyle = "#4ade80";
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      let started = false;
+      for (let shift = 0; shift <= 1; shift++) {
+        for (let b = 0; b < 20; b++) {
+          if (!binCnts[b]) continue;
+          const x = xOf((b + 0.5) / 20 + shift);
+          const y = yOf(binSums[b] / binCnts[b]);
+          if (!started) { ctx.moveTo(x, y); started = true; } else { ctx.lineTo(x, y); }
+        }
+      }
+      ctx.stroke();
+
+      // Title
+      ctx.fillStyle = isLight ? "#0f172a" : "#f8fafc";
+      ctx.font = "bold 13px sans-serif";
+      const pTxt = periodDays < 2.0 ? `${(periodDays * 24).toFixed(3)} h (${periodDays.toFixed(5)} d)` : `${periodDays.toFixed(4)} d`;
+      ctx.fillText(`Phase Plot (φ ∈ [0, 2]) • P = ${pTxt} • Epoch JD ${epochJd.toFixed(4)} • N = ${pts.length}`, pad.l, 26);
+    }
+
+    return { preprocessPoints, estimateExtremum, computeLombScargle, computeBLS, analyze, renderPhasePlotCanvas };
+  })();
+
+  window.AstroLabLightCurveLab = AstroLabLightCurveLab;
+  window._fpPhaseModeActive = false;
+  window._fpDetectedPeriodDays = 0;
+  window._fpDetectedEpochJd = 0;
+
+  function _collectActiveFullPagePoints() {
+    const liveCurPts = (typeof parseCurrentCsvPoints === "function") ? parseCurrentCsvPoints() : [];
+    const domStar = (document.getElementById("starid")?.value || "").trim();
+    const catStar = (window.STATE && window.STATE.catalogStarName) ? String(window.STATE.catalogStarName).trim() : "";
+    const activeStar = domStar || catStar || (liveCurPts.length > 0 ? liveCurPts[0].star : "");
+    const livePastPts = (activeStar && typeof getPastConvertedPointsExcludingCurrent === "function")
+      ? getPastConvertedPointsExcludingCurrent(activeStar, liveCurPts) : [];
+    const aavsoPts = (STATE_CURVES && Array.isArray(STATE_CURVES.aavsoOtherPoints)) ? STATE_CURVES.aavsoOtherPoints : [];
+    const userAavsoPts = (STATE_CURVES && Array.isArray(STATE_CURVES.aavsoUserPoints)) ? STATE_CURVES.aavsoUserPoints : [];
+    return {
+      activeStar,
+      points: (STATE_CURVES && STATE_CURVES.fullPageMode === "user_only")
+        ? [...livePastPts, ...liveCurPts]
+        : [...aavsoPts, ...userAavsoPts, ...livePastPts, ...liveCurPts]
+    };
+  }
+
+  window.runFullPageLightCurveAnalysis = function(customPoints = null) {
+    const panel = document.getElementById("lcAnalysisResultPanel");
+    const { activeStar, points } = customPoints ? { activeStar: "Test", points: customPoints } : _collectActiveFullPagePoints();
+    const band = document.getElementById("fpBandFilterSelect")?.value || "ALL";
+    const binMinutes = Number(document.getElementById("fpBinningSelect")?.value || "0");
+    const sigmaClip = Boolean(document.getElementById("chkFpSigmaClip")?.checked);
+
+    const res = AstroLabLightCurveLab.analyze(points, { band, binMinutes, sigmaClip });
+    if (res.ls && res.ls.bestPeriodDays > 0) {
+      window._fpDetectedPeriodDays = res.ls.bestPeriodDays;
+      window._fpDetectedEpochJd = (res.stats && res.stats.tMinJd) ? res.stats.tMinJd : 0;
+    }
+
+    if (panel) {
+      const isRu = (typeof currentLang !== "undefined" ? currentLang : "ru") === "ru";
+      const vsxItem = activeStar ? AAVSO_URGENT_CATALOGUE.find(it => it.star.toLowerCase() === activeStar.toLowerCase()) : null;
+      const vsxNote = vsxItem
+        ? (isRu ? ` • Справка AAVSO VSX: <strong>${escapeHtml(vsxItem.type)}</strong>` : ` • AAVSO VSX Ref: <strong>${escapeHtml(vsxItem.type)}</strong>`)
+        : "";
+      const pPill = (res.ls && res.ls.bestPeriodDays > 0)
+        ? `<span class="lc-metric-pill">⏱ P ≈ ${res.ls.bestPeriodDays < 2 ? res.ls.bestPeriodHours.toFixed(2) + " h" : res.ls.bestPeriodDays.toFixed(3) + " d"} (LS ${(res.ls.peakPower * 100).toFixed(0)}%)</span>`
+        : "";
+      const stPills = res.stats
+        ? `<span class="lc-metric-pill">📊 N = ${res.count}</span>` +
+          `<span class="lc-metric-pill">↕ Δm = ${res.stats.amplitudeMag.toFixed(3)} mag</span>` +
+          `<span class="lc-metric-pill">📉 RMS = ${res.stats.rmsMag.toFixed(3)} mag</span>` +
+          `<span class="lc-metric-pill">🔻 T_min JD ${res.stats.tMinJd.toFixed(4)}</span>`
+        : "";
+
+      const foldBtn = (res.ls && res.ls.bestPeriodDays > 0)
+        ? `<button type="button" class="ios-btn tiny" id="btnApplyDetectedPhaseFold" style="width:auto; padding:4px 11px; font-size:11px; font-weight:700;">🔄 ${isRu ? "Свернуть в фазовую кривую" : "Fold Phase Plot"} (P=${res.ls.bestPeriodDays.toFixed(4)}d)</button>`
+        : "";
+
+      panel.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+          <div style="font-size:12.5px; font-weight:800;">🔬 ${isRu ? "Предварительная математическая диагностика формы кривой" : "Preliminary Light Curve Shape Diagnostics"}${vsxNote}</div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            ${foldBtn}
+            <button type="button" class="ios-btn secondary tiny" id="btnCloseLcAnalysisPanel" style="width:auto; padding:3px 9px; font-size:11px;">✕</button>
+          </div>
+        </div>
+        <div class="lc-metrics-strip">${stPills}${pPill}</div>
+        <div class="lc-analysis-grid">
+          ${res.triggers.map((tr, i) => `
+            <div class="lc-trigger-card ${i === 0 && tr.confidence >= 55 ? "primary-hit" : ""}">
+              <div style="display:flex; justify-content:space-between; gap:6px; font-size:12px; font-weight:800;">
+                <span>${tr.icon} ${escapeHtml(tr.title)}</span>
+                ${tr.confidence > 0 ? `<span style="color:#4ade80;">${tr.confidence}%</span>` : ""}
+              </div>
+              <div style="font-size:11.5px; color:var(--ios-text-secondary); margin-top:4px; line-height:1.4;">${escapeHtml(tr.reason)}</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+      panel.style.display = "block";
+      document.getElementById("btnCloseLcAnalysisPanel")?.addEventListener("click", () => { panel.style.display = "none"; });
+      document.getElementById("btnApplyDetectedPhaseFold")?.addEventListener("click", () => {
+        window._fpPhaseModeActive = true;
+        window._renderFpPhaseOrTime();
+      });
+    }
+    return res;
+  };
+
+  window._renderFpPhaseOrTime = function() {
+    const toggleBtn = document.getElementById("btnFpTogglePhaseMode");
+    if (toggleBtn) toggleBtn.textContent = window._fpPhaseModeActive ? t("btnFpTimeView") : t("btnFpPhaseView");
+    if (!window._fpPhaseModeActive) {
+      if (typeof renderFullPageScrollableChart === "function") renderFullPageScrollableChart();
+      return;
+    }
+    const { points } = _collectActiveFullPagePoints();
+    const band = document.getElementById("fpBandFilterSelect")?.value || "ALL";
+    const binMinutes = Number(document.getElementById("fpBinningSelect")?.value || "0");
+    const sigmaClip = Boolean(document.getElementById("chkFpSigmaClip")?.checked);
+    const cleanPts = AstroLabLightCurveLab.preprocessPoints(points, { band, binMinutes, sigmaClip });
+    let period = window._fpDetectedPeriodDays;
+    let epoch = window._fpDetectedEpochJd;
+    if (!period || period <= 0) {
+      const ls = AstroLabLightCurveLab.computeLombScargle(cleanPts);
+      period = ls.bestPeriodDays || 0.1205;
+      epoch = cleanPts.length ? cleanPts[0].jd : 0;
+      window._fpDetectedPeriodDays = period;
+      window._fpDetectedEpochJd = epoch;
+    }
+    const fpCanvas = document.getElementById("fullPageLightCurveCanvas");
+    const scrollContainer = document.getElementById("fullPageLcScrollContainer");
+    const innerWrap = document.getElementById("fullPageLcInnerWrap");
+    if (fpCanvas && scrollContainer && innerWrap) {
+      const w = Math.max(760, (scrollContainer.clientWidth || 1100) - 24);
+      const h = Math.max(460, (scrollContainer.clientHeight || 540) - 24);
+      innerWrap.style.width = `${w}px`;
+      innerWrap.style.height = `${h}px`;
+      fpCanvas.style.width = `${w}px`;
+      fpCanvas.style.height = `${h}px`;
+      AstroLabLightCurveLab.renderPhasePlotCanvas(fpCanvas, cleanPts, period, epoch, w, h);
+    }
+  };
+
+  document.getElementById("btnRunLightCurveAnalysis")?.addEventListener("click", () => window.runFullPageLightCurveAnalysis());
+  document.getElementById("btnFpTogglePhaseMode")?.addEventListener("click", () => {
+    window._fpPhaseModeActive = !window._fpPhaseModeActive;
+    window._renderFpPhaseOrTime();
+  });
+  ["fpBandFilterSelect", "fpBinningSelect", "chkFpSigmaClip"].forEach(id => {
+    document.getElementById(id)?.addEventListener("change", () => {
+      const panel = document.getElementById("lcAnalysisResultPanel");
+      if (panel && panel.style.display !== "none") window.runFullPageLightCurveAnalysis();
+      if (window._fpPhaseModeActive) window._renderFpPhaseOrTime();
+    });
+  });
+  document.getElementById("btnFpReloadAavso")?.addEventListener("click", async () => {
+    const days = Number(document.getElementById("fpDaysBackSelect")?.value || "180") || 180;
+    const { activeStar } = _collectActiveFullPagePoints();
+    if (!activeStar) return;
+    try {
+      const resp = await _callBackendLiveAction("backend_fetch_aavso_light_curve", "fetch_aavso_light_curve", {
+        star: activeStar,
+        daysBack: days,
+        obscode: document.getElementById("obscode")?.value || ""
+      });
+      if (resp && resp.ok && STATE_CURVES) {
+        STATE_CURVES.aavsoOtherPoints = resp.otherObserversPoints || [];
+        STATE_CURVES.aavsoUserPoints = resp.userAavsoPoints || [];
+        window._renderFpPhaseOrTime();
+      }
+    } catch (_) {}
+  });
+
+  if (typeof applyTranslations === "function") applyTranslations();
+  window._syncRadarApiFetchButton();
 
 })();

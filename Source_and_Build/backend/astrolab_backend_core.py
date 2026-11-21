@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ================================================================================
-Seestar AstroLab AAVSO v1.3.5 — Unified Python Backend Core (Single Source of Truth)
+Seestar AstroLab AAVSO v1.4.0 — Unified Python Backend Core (Single Source of Truth)
 Author: CosmoBehemothych (https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO)
 ================================================================================
 Централизованное серверное/бэкенд-ядро бизнес-логики приложения:
@@ -42,7 +42,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-APP_VERSION = "1.3.5"
+APP_VERSION = "1.4.0"
 CRITICAL_COORD_DIFF_DEG = 0.05
 EXACT_COORD_MATCH_DEG = 0.00001
 DSS2_SURVEY_FOV_DEG = 2.40
@@ -1889,7 +1889,7 @@ class AavsoNativeAndStorageService:
         days_back: int = 180,
         api_token: str = "",
         user_obscode: str = "",
-        max_points: int = 400,
+        max_points: int = 3000,
     ) -> Dict[str, Any]:
         """
         Загружает УЖЕ ИЗВЕСТНУЮ кривую блеска звезды из базы AAVSO AID:
@@ -1931,93 +1931,111 @@ class AavsoNativeAndStorageService:
         source_used = ""
         network_errors: List[str] = []
 
-        # Канал 1: AAVSO REST API v2 (/v2/api/observations/photometry/) — с токеном или публичный запрос
+        ssl_ctx = cls._build_ssl_context()
+        eff_max = max(50, int(max_points or 3000))
+
+        # Канал 1: Официальный потоковый эндпоинт AAVSO AID (api.delim) — отдаёт полную историю за окно fromjd..tojd
+        # v1.4.0 FIX: собираем ВСЕ строки и берём самые СВЕЖИЕ eff_max точек (tail), а не обрезаем старые 400!
         try:
-            q = urllib.parse.urlencode({"target": clean_star, "page_size": str(min(200, max_points))})
-            url = f"https://apps.aavso.org/v2/api/observations/photometry/?{q}"
-            req_headers = {"User-Agent": f"SeestarAstroLab/{APP_VERSION}", "Accept": "application/json"}
-            if tok:
-                req_headers["Authorization"] = f"Token {tok}"
-            req = urllib.request.Request(url, headers=req_headers)
-            with urllib.request.urlopen(req, timeout=9.0) as resp:
-                data = json.loads(resp.read().decode("utf-8", errors="replace"))
-            for item in (data.get("results") or [])[:max_points]:
-                if item.get("fainterthan"):
+            q_params = {
+                "DateFormat": "Julian",
+                "RequestedBands": "",
+                "view": "api.delim",
+                "ident": clean_star,
+                "fromjd": f"{from_jd:.4f}",
+                "tojd": f"{now_jd:.4f}",
+                "delimiter": ",",
+            }
+            url = f"https://www.aavso.org/vsx/index.php?{urllib.parse.urlencode(q_params)}"
+            req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
+            with urllib.request.urlopen(req, timeout=12.0, context=ssl_ctx) as resp:
+                csv_text = resp.read().decode("utf-8", errors="replace")
+            reader = _csv.DictReader(_io.StringIO(csv_text))
+            delim_pts: List[Dict[str, Any]] = []
+            for row in reader:
+                jd_str = row.get("JD") or row.get("jd")
+                mag_str = str(row.get("Magnitude") or row.get("mag") or "").strip()
+                if not jd_str or not mag_str or mag_str.startswith("<"):
                     continue
-                jd_v = float(item["jd_dbl"])
-                mag_v = float(str(item["magnitude"]).lstrip("<"))
-                if jd_v < from_jd:
+                try:
+                    jd_v = float(jd_str)
+                    mag_v = float(mag_str)
+                    err_v = float(row.get("Uncertainty") or row.get("uncert") or 0.02)
+                    band_v = str(row.get("Band") or row.get("band") or "V").strip()
+                    obs_v = str(row.get("Observer Code") or row.get("obscode") or "").strip().upper()
+                    delim_pts.append({
+                        "jd": round(jd_v, 6),
+                        "mag": round(mag_v, 4),
+                        "merr": round(err_v, 4),
+                        "band": band_v,
+                        "obscode": obs_v,
+                        "source": "AAVSO_AID_DELIM",
+                        "utc": cls.jd_to_utc_str(jd_v),
+                    })
+                except Exception:
                     continue
-                err_v = float(item.get("uncertainty") or 0.02)
-                b_raw = str(item.get("band") or "V")
-                raw_points.append({
-                    "jd": round(jd_v, 6),
-                    "mag": round(mag_v, 4),
-                    "merr": round(err_v, 4),
-                    "band": band_map.get(b_raw, b_raw),
-                    "obscode": str(item.get("obscode") or "").strip().upper(),
-                    "source": "AAVSO_API_V2",
-                    "utc": cls.jd_to_utc_str(jd_v),
-                })
-            if raw_points:
-                source_used = "AAVSO API v2 (/v2/api/observations/photometry/)"
+            if delim_pts:
+                delim_pts.sort(key=lambda x: x["jd"])
+                raw_points = delim_pts[-eff_max:]
+                source_used = f"AAVSO AID (api.delim, {len(raw_points)}/{len(delim_pts)} latest pts)"
         except Exception as e:
-            network_errors.append(f"AAVSO API v2: {e}")
+            network_errors.append(f"AAVSO AID api.delim: {e}")
 
-        
-
-# Канал 2: Официальный эндпоинт выгрузки кривой блеска AAVSO (api.delim)
-        if not raw_points:
+        # Канал 2 (fallback + пагинация до 6 страниц): AAVSO REST API v2 (/v2/api/observations/photometry/)
+        if len(raw_points) < 20:
             try:
-                q_params = {
-                    "DateFormat": "Julian",
-                    "RequestedBands": "",
-                    "view": "api.delim",
-                    "ident": clean_star,
+                q = urllib.parse.urlencode({
+                    "target": clean_star,
                     "fromjd": f"{from_jd:.4f}",
                     "tojd": f"{now_jd:.4f}",
-                    "delimiter": ",",
-                }
-                url = f"https://www.aavso.org/vsx/index.php?{urllib.parse.urlencode(q_params)}"
-                req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
-                with urllib.request.urlopen(req, timeout=9.0) as resp:
-                    csv_text = resp.read().decode("utf-8", errors="replace")
-                reader = _csv.DictReader(_io.StringIO(csv_text))
-                for row in reader:
-                    jd_str = row.get("JD") or row.get("jd")
-                    mag_str = str(row.get("Magnitude") or row.get("mag") or "").strip()
-                    if not jd_str or not mag_str or mag_str.startswith("<"):
-                        continue
-                    try:
-                        jd_v = float(jd_str)
-                        mag_v = float(mag_str)
-                        err_v = float(row.get("Uncertainty") or row.get("uncert") or 0.02)
-                        band_v = str(row.get("Band") or row.get("band") or "V").strip()
-                        obs_v = str(row.get("Observer Code") or row.get("obscode") or "").strip().upper()
-                        raw_points.append({
-                            "jd": round(jd_v, 6),
-                            "mag": round(mag_v, 4),
-                            "merr": round(err_v, 4),
-                            "band": band_v,
-                            "obscode": obs_v,
-                            "source": "AAVSO_AID_DELIM",
-                            "utc": cls.jd_to_utc_str(jd_v),
-                        })
-                        if len(raw_points) >= max_points:
-                            break
-                    except Exception:
-                        continue
-                if raw_points:
-                    source_used = "AAVSO AID (vsx/index.php?view=api.delim)"
+                    "page_size": "200",
+                })
+                next_url: Optional[str] = f"https://apps.aavso.org/v2/api/observations/photometry/?{q}"
+                req_headers = {"User-Agent": f"SeestarAstroLab/{APP_VERSION}", "Accept": "application/json"}
+                if tok:
+                    req_headers["Authorization"] = f"Token {tok}"
+                api_pts: List[Dict[str, Any]] = []
+                pages_fetched = 0
+                while next_url and pages_fetched < 6 and len(api_pts) < eff_max:
+                    req = urllib.request.Request(next_url, headers=req_headers)
+                    with urllib.request.urlopen(req, timeout=10.0, context=ssl_ctx) as resp:
+                        data = json.loads(resp.read().decode("utf-8", errors="replace"))
+                    pages_fetched += 1
+                    for item in (data.get("results") or []):
+                        if item.get("fainterthan"):
+                            continue
+                        try:
+                            jd_v = float(item["jd_dbl"])
+                            mag_v = float(str(item["magnitude"]).lstrip("<"))
+                            if jd_v < from_jd:
+                                continue
+                            err_v = float(item.get("uncertainty") or 0.02)
+                            b_raw = str(item.get("band") or "V")
+                            api_pts.append({
+                                "jd": round(jd_v, 6),
+                                "mag": round(mag_v, 4),
+                                "merr": round(err_v, 4),
+                                "band": band_map.get(b_raw, b_raw),
+                                "obscode": str(item.get("obscode") or "").strip().upper(),
+                                "source": "AAVSO_API_V2",
+                                "utc": cls.jd_to_utc_str(jd_v),
+                            })
+                        except Exception:
+                            continue
+                    next_url = data.get("next")
+                if len(api_pts) > len(raw_points):
+                    api_pts.sort(key=lambda x: x["jd"])
+                    raw_points = api_pts[-eff_max:]
+                    source_used = f"AAVSO API v2 ({len(raw_points)} pts, {pages_fetched} pages)"
             except Exception as e:
-                network_errors.append(f"AAVSO AID api.delim: {e}")
+                network_errors.append(f"AAVSO API v2: {e}")
 
         raw_points.sort(key=lambda x: x["jd"])
         other_pts = [p for p in raw_points if not u_obs or p.get("obscode") != u_obs]
         user_aavso_pts = [p for p in raw_points if u_obs and p.get("obscode") == u_obs]
 
         local_history = cls.get_converted_history(clean_star)
-        has_aavso = len(raw_points) >= 5
+        has_aavso = len(raw_points) >= 1
 
         aavso_err_msg = ""
         if len(raw_points) == 0:
@@ -2026,14 +2044,6 @@ class AavsoNativeAndStorageService:
                 f"В базе AAVSO (AID) не найдено наблюдений для звезды «{clean_star}» "
                 f"за последние {days_back} сут.{detail}"
             )
-        elif len(raw_points) < 5:
-            aavso_err_msg = (
-                f"В базе AAVSO (AID) недостаточно точек для построения кривой блеска звезды «{clean_star}» "
-                f"(найдено точек: {len(raw_points)})."
-            )
-            raw_points = []
-            other_pts = []
-            user_aavso_pts = []
 
         return {
             "ok": has_aavso or local_history.get("hasData", False),

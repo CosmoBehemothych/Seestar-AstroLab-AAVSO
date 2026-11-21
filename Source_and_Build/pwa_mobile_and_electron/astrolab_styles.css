@@ -7487,7 +7487,7 @@ body[data-theme="light"] .github-update-banner {
 }
 
 
-/* === v1.3.5 FIX: Sky Clarity & Moon widgets responsive containment & centering === */
+/* === v1.4.0 FIX: Sky Clarity & Moon widgets responsive containment & centering === */
 .ui-theme-toolbar {
   width: 100% !important;
   max-width: 100% !important;
@@ -7570,7 +7570,7 @@ body.theme-light .graph-guide-svg-card {
 }
 
 
-/* === v1.3.5 FIX: #graphGuideModal full-screen presentation visibility & layout (identical to Getting Started) === */
+/* === v1.4.0 FIX: #graphGuideModal full-screen presentation visibility & layout (identical to Getting Started) === */
 #graphGuideModal.open {
   display: flex !important;
   visibility: visible !important;
@@ -7618,7 +7618,7 @@ body.theme-light .graph-guide-svg-card {
 }
 
 
-/* === v1.3.5 DESIGNER UPGRADE: #graphGuideModal rich typography, zero wasted space, KPIs & AAVSO article links === */
+/* === v1.4.0 DESIGNER UPGRADE: #graphGuideModal rich typography, zero wasted space, KPIs & AAVSO article links === */
 #graphGuideModal .beginner-guide-body {
   padding: 20px 30px 24px !important;
   justify-content: flex-start !important;
@@ -7783,7 +7783,7 @@ body.theme-light #graphGuideModal .graph-guide-visual-caption {
 
 
 /* ============================================================================
-   v1.3.5 — AAVSO Target Tool Live API Key Settings, Guide Modal & LIVE Badges
+   v1.4.0 — AAVSO Target Tool Live API Key Settings, Guide Modal & LIVE Badges
    ============================================================================ */
 .settings-api-key-box {
   background: rgba(14, 165, 233, 0.06);
@@ -7893,7 +7893,7 @@ body[data-theme="light"] .api-key-benefit-card {
   border-color: rgba(74, 222, 128, 0.45);
 }
 
-/* v1.3.5: 5-telescope quick switcher (S30 | S30 PLUS | S30PRO | S50 | S50PRO) */
+/* v1.4.0: 5-telescope quick switcher (S30 | S30 PLUS | S30PRO | S50 | S50PRO) */
 .v6-scope-tabs {
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   gap: 4px !important;
@@ -7905,7 +7905,7 @@ body[data-theme="light"] .api-key-benefit-card {
 }
 
 /* ============================================================================
-   v1.3.5 — Modal Z-Index Hierarchy Fix (#starFullDossierModal above #urgentStarsModal)
+   v1.4.0 — Modal Z-Index Hierarchy Fix (#starFullDossierModal above #urgentStarsModal)
             + Progressive Load-More Button for 3,000+ Live AAVSO Targets
    ============================================================================ */
 #starFullDossierModal.ios-modal-backdrop,
@@ -7944,3 +7944,116 @@ body[data-theme="light"] .api-key-benefit-card {
 }
 
 .ios-modal-backdrop.open { visibility: visible !important; transition: opacity 0.16s ease, visibility 0s !important; }
+
+/* ============================================================================
+   v1.4.0 — Radar Target Tool API Filter Button + Scientific Light Curve Lab
+   ============================================================================ */
+.radar-api-fetch-btn:disabled {
+  opacity: 0.42 !important;
+  cursor: not-allowed !important;
+  filter: grayscale(0.6);
+}
+.radar-api-fetch-btn:not(:disabled) {
+  border-color: rgba(74, 222, 128, 0.55) !important;
+  background: rgba(34, 197, 94, 0.16) !important;
+  color: #4ade80 !important;
+}
+body[data-theme="light"] .radar-api-fetch-btn:not(:disabled) {
+  color: #15803d !important;
+}
+.fullpage-sci-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(15, 23, 42, 0.72);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.22);
+}
+body[data-theme="light"] .fullpage-sci-toolbar {
+  background: rgba(241, 245, 249, 0.95);
+  border-bottom-color: rgba(15, 23, 42, 0.12);
+}
+.fp-sci-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.fp-sci-lbl {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ios-text-secondary);
+  margin: 0;
+}
+.fp-sci-sel {
+  width: auto !important;
+  padding: 3px 7px !important;
+  font-size: 11px !important;
+}
+.fp-sci-chk {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0;
+}
+.fp-analyze-btn {
+  background: linear-gradient(135deg, #0284c7, #6366f1) !important;
+  color: #fff !important;
+  border: 1px solid rgba(129, 140, 248, 0.65) !important;
+}
+.lc-analysis-panel {
+  padding: 12px 16px;
+  background: rgba(15, 23, 42, 0.88);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+  max-height: 230px;
+  overflow-y: auto;
+}
+body[data-theme="light"] .lc-analysis-panel {
+  background: #f8fafc;
+  border-bottom-color: rgba(15, 23, 42, 0.14);
+}
+.lc-analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+.lc-trigger-card {
+  padding: 9px 11px;
+  border-radius: 10px;
+  background: rgba(30, 41, 59, 0.72);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+}
+body[data-theme="light"] .lc-trigger-card {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.14);
+}
+.lc-trigger-card.primary-hit {
+  border-color: rgba(74, 222, 128, 0.65);
+  background: rgba(20, 83, 45, 0.28);
+}
+body[data-theme="light"] .lc-trigger-card.primary-hit {
+  background: rgba(220, 252, 231, 0.7);
+}
+.lc-metrics-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 11.5px;
+}
+.lc-metric-pill {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.14);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-weight: 600;
+}

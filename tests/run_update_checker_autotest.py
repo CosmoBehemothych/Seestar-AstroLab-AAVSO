@@ -48,13 +48,13 @@ def test_backend():
         if calls["n"] == 1:
             raise OSError("redirect blocked")
         return _FakeResp(body=json.dumps({
-            "tag_name": "v1.3.5",
-            "html_url": "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.3.5"
+            "tag_name": "v1.4.0",
+            "html_url": "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.4.0"
         }).encode("utf-8"))
 
     with patch("urllib.request.urlopen", side_effect=fake_open):
         r = core.AavsoNativeAndStorageService.check_github_latest_release("1.3.1")
-        assert r["ok"] is True and r["updateAvailable"] is True and r["latestVersion"] == "1.3.5", r
+        assert r["ok"] is True and r["updateAvailable"] is True and r["latestVersion"] == "1.4.0", r
 
     print("BACKEND_UPDATE_CHECKER_PASS (redirect + REST fallback + semver)")
 
