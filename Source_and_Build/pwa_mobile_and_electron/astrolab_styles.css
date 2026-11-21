@@ -8088,3 +8088,30 @@ body[data-theme="light"] .lc-trigger-card.primary-hit {
   pointer-events: none !important;
 }
 
+
+/* === v1.4.0-alpha Hotfix6: Hard-clipped chart viewport right of fixed Y-axis column === */
+#fullPageLcViewportFlex {
+  display: flex !important;
+  align-items: stretch !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+#fullPageStickyYCol {
+  flex: 0 0 60px !important;
+  width: 60px !important;
+  overflow: hidden !important;
+  background: #070b14 !important;
+  z-index: 10 !important;
+}
+body[data-theme="light"] #fullPageStickyYCol {
+  background: #f8fafc !important;
+}
+#fullPageLcScrollContainer {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  padding-left: 0 !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+}
+

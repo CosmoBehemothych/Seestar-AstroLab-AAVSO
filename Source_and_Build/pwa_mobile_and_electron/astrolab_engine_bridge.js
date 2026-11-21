@@ -6659,7 +6659,7 @@ function revealAndFocusField(inputId) {
         it => it.star.toLowerCase() === lowVal || (it.alias && it.alias.toLowerCase() === lowVal)
       );
       const nextStarName = matchedItem ? matchedItem.star : normalizeStarForVsp(val, null);
-      const changedToDifferentStar = prevCatStar && nextStarName && !AstroLabCore.areSameStar(prevCatStar, nextStarName);
+      const changedToDifferentStar = Boolean(nextStarName && (!prevCatStar || !AstroLabCore.areSameStar(prevCatStar, nextStarName)));
       STATE.catalogStarName = nextStarName;
       if (changedToDifferentStar) {
         STATE.simbadCatalogLoaded = false;
@@ -6669,6 +6669,14 @@ function revealAndFocusField(inputId) {
         STATE_CURVES.aavsoHasEnoughData = false;
         STATE_CURVES.aavsoOtherPoints = [];
         STATE_CURVES.aavsoLoadedForStar = "";
+        STATE_CURVES.aavsoUserPoints = [];
+        window._fpPhaseModeActive = false;
+        window._fpDetectedPeriodDays = 0;
+        if (CHART_ZOOM_STATE && CHART_ZOOM_STATE.fullPageLightCurveCanvas) {
+          CHART_ZOOM_STATE.fullPageLightCurveCanvas = { scale: 1.0, offsetX: 0, offsetY: 0, isDragging: false, dragStartX: 0, dragStartY: 0 };
+        }
+        const _stalePanel = document.getElementById("lcAnalysisResultPanel");
+        if (_stalePanel) _stalePanel.style.display = "none";
         setFieldStatus("starid", "staridHint", null, "");
         setFieldStatus("ra", "raHint", null, "");
         setFieldStatus("dec", "decHint", null, "");
@@ -11509,7 +11517,7 @@ function revealAndFocusField(inputId) {
     drawFittedCanvasLegend(
       ctx,
       [
-        { col: aavsoCol, txt: `${trCurve("legAavso")}: ${aavsoPts.length}` },
+        { col: aavsoCol, txt: `${trCurve("legAavso")}: ${aavsoPts.length}` + (isFullPageCv && STATE_CURVES.aavsoOtherPoints.length !== aavsoPts.length ? ` (из ${STATE_CURVES.aavsoOtherPoints.length})` : "") },
         { col: histCol, txt: `${trCurve("legHistory")}: ${userPastPts.length}` },
         { col: curCol, txt: `${trCurve("legCurrent")}: ${userCurPts.length}` }
       ],
@@ -11645,9 +11653,16 @@ function revealAndFocusField(inputId) {
     const modal = document.getElementById("fullPageLightCurveModal");
     if (!modal || !modal.classList.contains("open")) return;
 
+    // Bug 1 fix: never revert from Phase Plot back to Time Series on scroll/zoom!
+    if (window._fpPhaseModeActive) {
+      if (typeof window._renderFpPhaseOrTime === "function") window._renderFpPhaseOrTime();
+      return;
+    }
+
     const zoomFactor = parseFloat(document.getElementById("fullPageZoomSelect")?.value || "1") || 1;
+    const xUnitMode = document.getElementById("fpXAxisUnitSelect")?.value || "auto";
     const scrollContainerEl = document.getElementById("fullPageLcScrollContainer");
-    const availFullH = Math.max(540, ((scrollContainerEl && scrollContainerEl.clientHeight) || (window.innerHeight - 130)) - 24);
+    const availFullH = Math.max(480, ((scrollContainerEl && scrollContainerEl.clientHeight) || (window.innerHeight - 180)) - 12);
     const rawHVal = document.getElementById("fullPageHeightSelect")?.value || "auto";
     const parsedH = parseInt(rawHVal, 10);
     const heightPx = (rawHVal === "auto" || isNaN(parsedH) || parsedH <= 520) ? availFullH : Math.max(availFullH, parsedH);
@@ -11663,13 +11678,15 @@ function revealAndFocusField(inputId) {
     const activeStar = domStar || catStar || STATE_CURVES.star || (liveCurPts.length > 0 ? liveCurPts[0].star : "");
     const livePastPts = activeStar ? getPastConvertedPointsExcludingCurrent(activeStar, liveCurPts) : [];
 
-    const baseViewportW = Math.max(720, (scrollContainer.clientWidth || 1100) - 28);
-    const totalPtsCount = STATE_CURVES.fullPageMode === "user_only"
-      ? (liveCurPts.length + livePastPts.length)
-      : (liveCurPts.length + livePastPts.length + (activeStar ? STATE_CURVES.aavsoOtherPoints.length : 0));
-
-    const minScrollW = totalPtsCount > 0 ? Math.max(baseViewportW, totalPtsCount * 7 * (zoomFactor / 2)) : baseViewportW;
-    const targetW = totalPtsCount > 0 ? Math.round(Math.max(baseViewportW * zoomFactor, minScrollW)) : baseViewportW;
+    // Bug 4 & Bug 6 fix: safe GPU canvas cap <= 6400px + true scale per X-axis unit!
+    const dprSafe = Math.max(2, window.devicePixelRatio || 2);
+    const MAX_SAFE_CSS_W = Math.min(6400, Math.round(12800 / dprSafe));
+    const baseViewportW = Math.max(660, (scrollContainer.clientWidth || 1040) - 8);
+    let unitScaleMul = 1.0;
+    if (xUnitMode === "months") unitScaleMul = 1.0;       // Compress entire multi-month curve to viewport
+    else if (xUnitMode === "days") unitScaleMul = 1.25;
+    else if (xUnitMode === "hours") unitScaleMul = 2.0;   // Expanded intraday detail, safely capped
+    const targetW = Math.min(MAX_SAFE_CSS_W, Math.max(baseViewportW, Math.round(baseViewportW * zoomFactor * unitScaleMul)));
 
     innerWrap.style.width = `${targetW}px`;
     innerWrap.style.height = `${heightPx}px`;
@@ -12295,13 +12312,14 @@ function revealAndFocusField(inputId) {
 
   function _drawStickyYAxisStrip(canvasId, minMag, maxMag, yDivs, padL, padT, plotH, cssH, isLight) {
     if (canvasId !== "fullPageLightCurveCanvas") return;
+    const stickyCol = document.getElementById("fullPageStickyYCol");
     const sticky = document.getElementById("fullPageStickyYAxis");
     if (!sticky) return;
+    if (stickyCol) stickyCol.style.display = "block";
     const dpr = Math.max(2, window.devicePixelRatio || 2);
-    const stripW = padL + 2;
+    const stripW = 60;
     sticky.style.width = `${stripW}px`;
     sticky.style.height = `${cssH}px`;
-    sticky.style.marginRight = `-${stripW}px`;
     if (sticky.width !== Math.round(stripW * dpr) || sticky.height !== Math.round(cssH * dpr)) {
       sticky.width = Math.round(stripW * dpr);
       sticky.height = Math.round(cssH * dpr);
@@ -12309,15 +12327,16 @@ function revealAndFocusField(inputId) {
     const sctx = sticky.getContext("2d");
     sctx.save();
     sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    sctx.fillStyle = isLight ? "rgba(248, 250, 252, 0.96)" : "rgba(7, 11, 20, 0.96)";
+    sctx.fillStyle = isLight ? "#f8fafc" : "#070b14";
     sctx.fillRect(0, 0, stripW, cssH);
 
-    // Axis spine line
-    sctx.strokeStyle = isLight ? "rgba(15,23,42,0.28)" : "rgba(148,163,184,0.35)";
+    // Axis spine line at right edge of dedicated column
+    const spineX = stripW - 1;
+    sctx.strokeStyle = isLight ? "rgba(15,23,42,0.32)" : "rgba(148,163,184,0.42)";
     sctx.lineWidth = 1;
     sctx.beginPath();
-    sctx.moveTo(padL, padT);
-    sctx.lineTo(padL, padT + plotH);
+    sctx.moveTo(spineX, padT);
+    sctx.lineTo(spineX, padT + plotH);
     sctx.stroke();
 
     const magSpan = Math.max(0.001, maxMag - minMag);
@@ -12327,24 +12346,23 @@ function revealAndFocusField(inputId) {
     for (let k = 0; k <= yDivs; k++) {
       const y = padT + (plotH * k) / yDivs;
       const mVal = minMag + (magSpan * k) / yDivs;
-      sctx.strokeStyle = isLight ? "rgba(15,23,42,0.45)" : "rgba(148,163,184,0.55)";
+      sctx.strokeStyle = isLight ? "rgba(15,23,42,0.5)" : "rgba(148,163,184,0.6)";
       sctx.beginPath();
-      sctx.moveTo(padL - 5, y);
-      sctx.lineTo(padL, y);
+      sctx.moveTo(spineX - 5, y);
+      sctx.lineTo(spineX, y);
       sctx.stroke();
 
       sctx.fillStyle = isLight ? "#1e293b" : "#cbd5e1";
       sctx.font = "600 10px monospace";
       sctx.textAlign = "right";
-      sctx.fillText(mVal.toFixed(dec) + "m", padL - 7, y + 3);
+      sctx.fillText(mVal.toFixed(dec) + "m", spineX - 7, y + 3);
 
-      // Minor halfway tick
       if (k < yDivs) {
         const yMid = padT + (plotH * (k + 0.5)) / yDivs;
         sctx.strokeStyle = isLight ? "rgba(15,23,42,0.22)" : "rgba(148,163,184,0.28)";
         sctx.beginPath();
-        sctx.moveTo(padL - 3, yMid);
-        sctx.lineTo(padL, yMid);
+        sctx.moveTo(spineX - 3, yMid);
+        sctx.lineTo(spineX, yMid);
         sctx.stroke();
       }
     }
@@ -12354,13 +12372,36 @@ function revealAndFocusField(inputId) {
   function _applyFullPageLabFiltersToSeries(pts, canvasId) {
     if (canvasId !== "fullPageLightCurveCanvas" || !Array.isArray(pts) || pts.length === 0) return pts;
     const band = document.getElementById("fpBandFilterSelect")?.value || "ALL";
-    const binMinutes = Number(document.getElementById("fpBinningSelect")?.value || "0");
+    let binMinutes = Number(document.getElementById("fpBinningSelect")?.value || "0");
     const sigmaClip = Boolean(document.getElementById("chkFpSigmaClip")?.checked);
+    const xUnitMode = document.getElementById("fpXAxisUnitSelect")?.value || "auto";
+
+    // Scientific "Months" mode: auto-apply 1-day weighted-mean binning if no larger bin is selected & >80 pts
+    if (xUnitMode === "months" && binMinutes < 1440 && pts.length > 80) {
+      binMinutes = 1440;
+    }
     if (band === "ALL" && !(binMinutes > 0) && !sigmaClip) return pts;
     if (typeof window.AstroLabLightCurveLab !== "undefined" && typeof window.AstroLabLightCurveLab.preprocessPoints === "function") {
       return window.AstroLabLightCurveLab.preprocessPoints(pts, { band, binMinutes, sigmaClip });
     }
     return pts;
+  }
+
+  function _buildLinearTimeMapForFullPage(allPts, padL, plotW) {
+    let minJd = Infinity, maxJd = -Infinity;
+    for (const p of allPts) {
+      if (p.jd < minJd) minJd = p.jd;
+      if (p.jd > maxJd) maxJd = p.jd;
+    }
+    if (!Number.isFinite(minJd) || !Number.isFinite(maxJd)) return { minJd: 2460000, maxJd: 2460001, dividers: [], mapJdToX: () => padL };
+    const span = Math.max(0.001, maxJd - minJd);
+    return {
+      minJd,
+      maxJd,
+      dividers: [],
+      isLinearCalendar: true,
+      mapJdToX: (jd) => padL + ((jd - minJd) / span) * plotW
+    };
   }
 
   function drawEnhancedTimeAxisWithUtcDates(ctx, timeMap, padL, padR, padT, plotW, plotH, cssW, cssH, isLight, zoomScale = 1.0, isFullPage = false) {
@@ -12381,16 +12422,11 @@ function revealAndFocusField(inputId) {
 
     const spanDays = Math.max(0.0001, timeMap.maxJd - timeMap.minJd);
     const unitMode = isFullPage ? (document.getElementById("fpXAxisUnitSelect")?.value || "auto") : "auto";
-
-    // Dense X-axis major + minor ticks (Point 7 & 8)
-    const desiredStepPx = isFullPage ? 115 : 135;
-    const numTicks = Math.max(4, Math.min(80, Math.round(plotW / desiredStepPx)));
     const yAxisBottom = padT + plotH;
     const yLine1 = cssH - 18;
     const yLine2 = cssH - 5;
 
     ctx.save();
-    // X-axis baseline
     ctx.strokeStyle = isLight ? "rgba(15,23,42,0.28)" : "rgba(148,163,184,0.35)";
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -12398,29 +12434,62 @@ function revealAndFocusField(inputId) {
     ctx.lineTo(padL + plotW, yAxisBottom);
     ctx.stroke();
 
-    for (let i = 0; i <= numTicks; i++) {
-      const frac = i / numTicks;
-      const x = padL + plotW * frac;
-      const jdAt = timeMap.minJd + spanDays * frac;
+    // Build clean non-overlapping tick positions (calendar month boundaries when unitMode === "months")
+    const ticks = [];
+    if (isFullPage && unitMode === "months" && spanDays >= 15) {
+      const startMs = (timeMap.minJd - 2440587.5) * 86400000;
+      const endMs = (timeMap.maxJd - 2440587.5) * 86400000;
+      const dStart = new Date(startMs);
+      let yr = dStart.getUTCFullYear();
+      let mo = dStart.getUTCMonth();
+      for (let guard = 0; guard < 120; guard++) {
+        const curMs = Date.UTC(yr, mo, 1, 0, 0, 0);
+        const curJd = (curMs / 86400000) + 2440587.5;
+        if (curJd >= timeMap.minJd && curJd <= timeMap.maxJd) {
+          const x = timeMap.mapJdToX ? timeMap.mapJdToX(curJd) : (padL + ((curJd - timeMap.minJd) / spanDays) * plotW);
+          ticks.push({ x, jd: curJd });
+        }
+        mo++;
+        if (mo > 11) { mo = 0; yr++; }
+        if (curMs > endMs) break;
+      }
+    }
 
-      // Vertical major gridline
-      if (i > 0 && i < numTicks) {
+    // Fallback or standard evenly-spaced non-overlapping ticks (min 120px gap so labels NEVER overlap!)
+    if (ticks.length < 3) {
+      ticks.length = 0;
+      const desiredStepPx = isFullPage ? 125 : 140;
+      const numTicks = Math.max(4, Math.min(48, Math.floor(plotW / desiredStepPx)));
+      for (let i = 0; i <= numTicks; i++) {
+        const frac = i / numTicks;
+        ticks.push({
+          x: padL + plotW * frac,
+          jd: timeMap.minJd + spanDays * frac
+        });
+      }
+    }
+
+    let lastLabelRight = -1e9;
+    for (let i = 0; i < ticks.length; i++) {
+      const tk = ticks[i];
+      const x = tk.x;
+      if (x < padL - 2 || x > padL + plotW + 2) continue;
+
+      if (i > 0 && i < ticks.length - 1) {
         ctx.strokeStyle = isLight ? "rgba(15,23,42,0.08)" : "rgba(148,163,184,0.11)";
         ctx.beginPath();
         ctx.moveTo(x, padT);
         ctx.lineTo(x, yAxisBottom);
         ctx.stroke();
       }
-      // Major tick mark
       ctx.strokeStyle = isLight ? "rgba(15,23,42,0.5)" : "rgba(148,163,184,0.6)";
       ctx.beginPath();
       ctx.moveTo(x, yAxisBottom);
       ctx.lineTo(x, yAxisBottom + 6);
       ctx.stroke();
 
-      // Minor halfway tick mark
-      if (i < numTicks) {
-        const xm = padL + plotW * ((i + 0.5) / numTicks);
+      if (i + 1 < ticks.length) {
+        const xm = (x + ticks[i + 1].x) / 2;
         ctx.strokeStyle = isLight ? "rgba(15,23,42,0.22)" : "rgba(148,163,184,0.28)";
         ctx.beginPath();
         ctx.moveTo(xm, yAxisBottom);
@@ -12428,18 +12497,21 @@ function revealAndFocusField(inputId) {
         ctx.stroke();
       }
 
-      const align = i === 0 ? "left" : (i === numTicks ? "right" : "center");
+      const align = i === 0 ? "left" : (i === ticks.length - 1 ? "right" : "center");
+      const estLeft = align === "left" ? x : (align === "right" ? x - 80 : x - 44);
+      if (estLeft < lastLabelRight + 8 && i !== ticks.length - 1) continue;
+      lastLabelRight = align === "left" ? x + 84 : (align === "right" ? x : x + 44);
+
       ctx.textAlign = align;
-      const primaryLbl = _formatXTickLabelByUnit(jdAt, unitMode, spanDays);
+      const primaryLbl = _formatXTickLabelByUnit(tk.jd, unitMode, spanDays);
       ctx.fillStyle = isLight ? "#0369a1" : "#38bdf8";
       ctx.font = "700 9.5px -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace";
       ctx.fillText(primaryLbl, x, yLine1);
 
-      // Secondary JD sub-label on full-page or endpoints
-      if (unitMode !== "jd" && (isFullPage || i === 0 || i === numTicks || i === Math.floor(numTicks / 2))) {
+      if (unitMode !== "jd" && (isFullPage || i === 0 || i === ticks.length - 1)) {
         ctx.fillStyle = isLight ? "#475569" : "#94a3b8";
         ctx.font = "500 8.5px monospace";
-        ctx.fillText(`JD ${jdAt.toFixed(spanDays < 3 ? 3 : 1)}`, x, yLine2);
+        ctx.fillText(`JD ${tk.jd.toFixed(spanDays < 3 ? 3 : 1)}`, x, yLine2);
       }
     }
     ctx.restore();
@@ -12864,6 +12936,12 @@ function revealAndFocusField(inputId) {
       if (aavsoRes && aavsoRes.hasEnoughData && Array.isArray(aavsoRes.points) && aavsoRes.points.length > 0) {
         STATE_CURVES.aavsoHasEnoughData = true;
         STATE_CURVES.aavsoOtherPoints = aavsoRes.points;
+        if (!targetCanvasOverride) {
+          const _fpM = document.getElementById("fullPageLightCurveModal");
+          if (_fpM && _fpM.classList.contains("open") && typeof window._renderFpPhaseOrTime === "function") {
+            setTimeout(() => window._renderFpPhaseOrTime(), 20);
+          }
+        }
       } else {
         // [RU] НИКОГДА не выдумываем синтетические точки, если AAVSO AID не вернула реальных данных
         STATE_CURVES.aavsoHasEnoughData = false;
@@ -12961,12 +13039,16 @@ function revealAndFocusField(inputId) {
     minMag -= magSpan * 0.12;
     maxMag += magSpan * 0.12;
 
-    const padL = 54, padR = 16, padT = 30, padB = 40;
+    const isFullPageLayout = (canvasId === "fullPageLightCurveCanvas");
+    const padL = isFullPageLayout ? 8 : 54, padR = 16, padT = 30, padB = 40;
     const plotW = cssW - padL - padR;
     const plotH = cssH - padT - padB;
     clampChartZoomOffsets(zoomSt, plotW, plotH);
 
-    const timeMap = buildContinuousSessionTimeMapping(allToPlot, padL, plotW);
+    const fpXUnitNow = isFullPageLayout ? (document.getElementById("fpXAxisUnitSelect")?.value || "auto") : "auto";
+    const timeMap = (isFullPageLayout && (fpXUnitNow === "months" || fpXUnitNow === "days"))
+      ? _buildLinearTimeMapForFullPage(allToPlot, padL, plotW)
+      : buildContinuousSessionTimeMapping(allToPlot, padL, plotW);
     const getX = (jd) => {
       const baseX = timeMap.mapJdToX(jd);
       return padL + (baseX - padL) * zoomSt.scale + zoomSt.offsetX;
@@ -13002,11 +13084,13 @@ function revealAndFocusField(inputId) {
         ctx.stroke();
       }
 
-      const mVal = minMag + ((maxMag - minMag) * k) / yDivs;
-      ctx.fillStyle = isLight ? "#334155" : "#94a3b8";
-      ctx.font = "10px monospace";
-      ctx.textAlign = "right";
-      ctx.fillText(mVal.toFixed(yDec) + "m", padL - 6, y + 3);
+      if (!isFullPageCv) {
+        const mVal = minMag + ((maxMag - minMag) * k) / yDivs;
+        ctx.fillStyle = isLight ? "#334155" : "#94a3b8";
+        ctx.font = "10px monospace";
+        ctx.textAlign = "right";
+        ctx.fillText(mVal.toFixed(yDec) + "m", padL - 6, y + 3);
+      }
     }
 
     _drawStickyYAxisStrip(canvasId, minMag, maxMag, yDivs, padL, padT, plotH, cssH, isLight);
@@ -13046,16 +13130,26 @@ function revealAndFocusField(inputId) {
       idx: i + 1,
       label: `AAVSO (${p.obscode || "AID"})`
     }));
-    drawSmoothSessionCurve(
-      ctx,
-      aavsoScreen,
-      aavsoCol,
-      isLight ? "rgba(2, 132, 199, 0.16)" : "rgba(56, 189, 248, 0.16)",
-      "rgba(56, 189, 248, 0.0)",
-      padT + plotH,
-      1.45,
-      false
-    );
+    if (aavsoScreen.length >= 2) {
+      ctx.save();
+      ctx.strokeStyle = isLight ? "rgba(2, 132, 199, 0.55)" : "rgba(56, 189, 248, 0.55)";
+      ctx.lineWidth = 1.35;
+      const maxGapJd = (isFullPageCv && fpXUnitNow === "months") ? 12.0 : 0.45;
+      ctx.beginPath();
+      let started = false;
+      for (let i = 0; i < aavsoScreen.length; i++) {
+        const cur = aavsoScreen[i];
+        const prev = i > 0 ? aavsoScreen[i - 1] : null;
+        if (!prev || (cur.jd - prev.jd) > maxGapJd || Math.abs(cur.mag - prev.mag) > 1.25) {
+          ctx.moveTo(cur.x, cur.y);
+          started = true;
+        } else if (started) {
+          ctx.lineTo(cur.x, cur.y);
+        }
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
     for (const sp of aavsoScreen) {
       ctx.fillStyle = aavsoCol;
       ctx.beginPath();
@@ -21899,14 +21993,13 @@ function revealAndFocusField(inputId) {
     const sigmaClip = Boolean(document.getElementById("chkFpSigmaClip")?.checked);
     const hasFilter = (band !== "ALL" || binMinutes > 0 || sigmaClip);
 
+    const stickyColEl = document.getElementById("fullPageStickyYCol");
     if (!window._fpPhaseModeActive) {
-      const stickyY = document.getElementById("fullPageStickyYAxis");
-      if (stickyY) stickyY.style.display = "block";
+      if (stickyColEl) stickyColEl.style.display = "block";
       if (typeof window.renderFullPageScrollableChart === "function") window.renderFullPageScrollableChart();
       return;
     }
-    const stickyYHide = document.getElementById("fullPageStickyYAxis");
-    if (stickyYHide) stickyYHide.style.display = "none";
+    if (stickyColEl) stickyColEl.style.display = "none";
     const { points } = _collectActiveFullPagePoints();
     const cleanPts = AstroLabLightCurveLab.preprocessPoints(points, { band, binMinutes, sigmaClip });
     let period = window._fpDetectedPeriodDays;
@@ -21922,8 +22015,9 @@ function revealAndFocusField(inputId) {
     const scrollContainer = document.getElementById("fullPageLcScrollContainer");
     const innerWrap = document.getElementById("fullPageLcInnerWrap");
     if (fpCanvas && scrollContainer && innerWrap) {
-      const w = Math.max(760, (scrollContainer.clientWidth || 1100) - 24);
-      const h = Math.max(460, (scrollContainer.clientHeight || 540) - 24);
+      const phZoom = parseFloat(document.getElementById("fullPageZoomSelect")?.value || "1") || 1;
+      const w = Math.min(4800, Math.round(Math.max(720, (scrollContainer.clientWidth || 1060) - 16) * phZoom));
+      const h = Math.max(460, (scrollContainer.clientHeight || 540) - 16);
       innerWrap.style.width = `${w}px`;
       innerWrap.style.height = `${h}px`;
       fpCanvas.style.width = `${w}px`;
