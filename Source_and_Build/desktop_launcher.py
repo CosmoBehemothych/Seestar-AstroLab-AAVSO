@@ -26,16 +26,17 @@ if sys.platform == "win32":
 
 # Подключение единого серверного ядра бизнес-логики PhotometryBackendEngine
 try:
-    from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server
+    from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server, AstroLabDiagnosticLogger
 except ImportError:
     try:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server
+        from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server, AstroLabDiagnosticLogger
     except ImportError:
         PhotometryBackendEngine = None
         AavsoNativeAndStorageService = None
         get_program_converted_storage_dir = None
         start_background_rpc_server = None
+        AstroLabDiagnosticLogger = None
 
 
 APP_VERSION = "1.4.0-alpha"
@@ -388,13 +389,58 @@ class AstroLabDiskBridge:
 
     def backend_fetch_aavso_light_curve(self, payload):
         if AavsoNativeAndStorageService and isinstance(payload, dict):
-            return AavsoNativeAndStorageService.fetch_aavso_light_curve(
-                star_name=payload.get("star", ""),
-                days_back=int(payload.get("daysBack", 180) or 180),
-                api_token=payload.get("apiToken", ""),
-                user_obscode=payload.get("obscode", ""),
-            )
+            try:
+                return AavsoNativeAndStorageService.fetch_aavso_light_curve(
+                    star_name=payload.get("star", ""),
+                    days_back=int(payload.get("daysBack", 180) or 180),
+                    api_token=payload.get("apiToken", ""),
+                    user_obscode=payload.get("obscode", ""),
+                )
+            except Exception as e:
+                if AstroLabDiagnosticLogger:
+                    AstroLabDiagnosticLogger.log_exception("BRIDGE_AAVSO_CURVE", "Unhandled error in backend_fetch_aavso_light_curve", e)
+                return {"ok": False, "hasAavsoData": False, "error": str(e), "otherObserversPoints": [], "userAavsoPoints": []}
         return {"ok": False, "hasAavsoData": False, "otherObserversPoints": [], "userAavsoPoints": []}
+
+    def backend_log_frontend_event(self, payload=None):
+        if AstroLabDiagnosticLogger and isinstance(payload, dict):
+            AstroLabDiagnosticLogger.log_event(
+                level=payload.get("level", "INFO"),
+                category=payload.get("category", "FRONTEND_JS"),
+                message=payload.get("message", ""),
+                details=payload.get("details"),
+            )
+            return {"ok": True}
+        return {"ok": False}
+
+    def backend_export_diagnostic_report(self, payload=None):
+        if AstroLabDiagnosticLogger:
+            try:
+                snap = payload if isinstance(payload, dict) else None
+                res = AstroLabDiagnosticLogger.export_diagnostic_report(snap)
+                if res.get("ok") and res.get("path") and sys.platform == "win32":
+                    try:
+                        subprocess.Popen(["explorer", "/select,", os.path.normpath(res["path"])])
+                    except Exception:
+                        pass
+                return res
+            except Exception as e:
+                return {"ok": False, "error": str(e)}
+        return {"ok": False, "error": "Diagnostic logger unavailable"}
+
+    def backend_open_logs_folder(self):
+        try:
+            folder = AstroLabDiagnosticLogger.get_log_dir() if AstroLabDiagnosticLogger else self.data_dir
+            os.makedirs(folder, exist_ok=True)
+            if sys.platform == "win32":
+                os.startfile(folder)
+            elif sys.platform == "darwin":
+                subprocess.Popen(["open", folder])
+            else:
+                subprocess.Popen(["xdg-open", folder])
+            return {"ok": True, "path": folder}
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
 
     def backend_open_converted_storage_folder(self):
         try:
@@ -518,6 +564,16 @@ def _acquire_running_app_mutex():
 
 
 def main():
+    if AstroLabDiagnosticLogger:
+        AstroLabDiagnosticLogger.init_session("desktop_launcher")
+        _orig_excepthook = sys.excepthook
+        def _diag_excepthook(exc_type, exc_value, exc_tb):
+            try:
+                AstroLabDiagnosticLogger.log_exception("UNCAUGHT_PYTHON", "Uncaught exception in desktop_launcher", exc_value)
+            except Exception:
+                pass
+            _orig_excepthook(exc_type, exc_value, exc_tb)
+        sys.excepthook = _diag_excepthook
     _acquire_running_app_mutex()
     if start_background_rpc_server:
         start_background_rpc_server(18765)

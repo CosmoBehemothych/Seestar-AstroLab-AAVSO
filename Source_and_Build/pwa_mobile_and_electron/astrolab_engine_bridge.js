@@ -11138,6 +11138,9 @@ function revealAndFocusField(inputId) {
   // ==========================================================================
   async function fetchAavsoCurveSeriesForStar(starName, userObscode = "") {
     const cleanStar = String(starName || "").trim();
+    if (window.AstroLabDiagBridge) {
+      window.AstroLabDiagBridge.log("INFO", "FE_AAVSO_CURVE", "Requesting AAVSO curve for " + cleanStar, { hasPyWebView: !!(window.pywebview && window.pywebview.api) });
+    }
     if (!cleanStar) {
       return { ok: false, hasEnoughData: false, points: [] };
     }
@@ -11253,14 +11256,10 @@ function revealAndFocusField(inputId) {
       return { ok: false, hasEnoughData: false, points: [], errorMsg: aavsoError };
     }
     // v1.4.0-alpha FIX: Preserve all loaded AAVSO AID observations (up to 3,000 newest points) without slicing to 2 runs!
-    let cleanedAavsoPts = rawAavsoPts.slice(-3000);
-    if (false) {
-    } else {
-      return { ok: false, hasEnoughData: false, points: [] };
-    }
-
-    return { ok: true, hasEnoughData: cleanedAavsoPts.length >= 5, points: cleanedAavsoPts };
+    const cleanedAavsoPts = rawAavsoPts.slice(-3000);
+    return { ok: true, hasEnoughData: cleanedAavsoPts.length >= 1, points: cleanedAavsoPts };
   }
+  window.fetchAavsoCurveSeriesForStar = fetchAavsoCurveSeriesForStar;
 
   window.renderAavsoAndContributionWidget = async function(explicitStar = "", forceFetch = false, targetCanvasOverride = null, customW = null, customH = null) {
     const myClearGen = window._clearGenerationCounter || 0;
@@ -22055,3 +22054,161 @@ function revealAndFocusField(inputId) {
   if (typeof applyTranslations === "function") applyTranslations();
 
 })();
+
+
+// ============================================================================
+// v1.4.0-alpha Hotfix3: BUILT-IN FRONTEND DIAGNOSTIC BRIDGE + 8-LANG I18N
+// ============================================================================
+(function initAstroLabDiagBridgeV140H3() {
+  const DIAG_I18N = {
+    en: {
+      btnExportDiagnosticLog: "🛠️ Save Diagnostic Log (.txt)",
+      diagLogSavedFmt: "Diagnostic log saved: {path}",
+      diagLogFailedFmt: "Failed to save diagnostic log: {err}"
+    },
+    ru: {
+      btnExportDiagnosticLog: "🛠️ Сохранить лог ошибок (.txt)",
+      diagLogSavedFmt: "Диагностический лог сохранён: {path}",
+      diagLogFailedFmt: "Не удалось сохранить лог: {err}"
+    },
+    es: {
+      btnExportDiagnosticLog: "🛠️ Guardar registro de diagnóstico (.txt)",
+      diagLogSavedFmt: "Registro de diagnóstico guardado: {path}",
+      diagLogFailedFmt: "Error al guardar el registro: {err}"
+    },
+    de: {
+      btnExportDiagnosticLog: "🛠️ Diagnoseprotokoll speichern (.txt)",
+      diagLogSavedFmt: "Diagnoseprotokoll gespeichert: {path}",
+      diagLogFailedFmt: "Protokoll konnte nicht gespeichert werden: {err}"
+    },
+    fr: {
+      btnExportDiagnosticLog: "🛠️ Enregistrer le journal de diagnostic (.txt)",
+      diagLogSavedFmt: "Journal de diagnostic enregistré : {path}",
+      diagLogFailedFmt: "Échec de l'enregistrement du journal : {err}"
+    },
+    zh: {
+      btnExportDiagnosticLog: "🛠️ 保存诊断日志 (.txt)",
+      diagLogSavedFmt: "诊断日志已保存：{path}",
+      diagLogFailedFmt: "保存诊断日志失败：{err}"
+    },
+    cs: {
+      btnExportDiagnosticLog: "🛠️ Uložit diagnostický protokol (.txt)",
+      diagLogSavedFmt: "Diagnostický protokol uložen: {path}",
+      diagLogFailedFmt: "Nepodařilo se uložit protokol: {err}"
+    },
+    ber: {
+      btnExportDiagnosticLog: "🛠️ ⵃⵔⵣ ⴰⵖⵎⵉⵙ ⵏ ⵓⵙⴼⵙⵉ (.txt)",
+      diagLogSavedFmt: "ⴰⵖⵎⵉⵙ ⵏ ⵓⵙⴼⵙⵉ ⵉⵜⵜⵓⵃⵔⵣ: {path}",
+      diagLogFailedFmt: "ⵓⵔ ⵉⵣⵎⵉⵔ ⴰⴷ ⵉⵃⵔⵣ ⴰⵖⵎⵉⵙ: {err}"
+    }
+  };
+
+  try {
+    const _dict = (typeof I18N !== "undefined" && I18N) ? I18N : (window.I18N || {});
+    for (const [lang, entries] of Object.entries(DIAG_I18N)) {
+      if (_dict[lang]) Object.assign(_dict[lang], entries);
+    }
+  } catch (_e) {}
+
+  window._ASTROLAB_DIAG_BUFFER = window._ASTROLAB_DIAG_BUFFER || [];
+
+  function sanitizeDiagStr(val) {
+    return String(val == null ? "" : val)
+      .replace(/(ghp_[A-Za-z0-9_]{16,}|github_pat_[A-Za-z0-9_]{20,})/g, "***REDACTED***")
+      .replace(/(authorization\s*[:=]\s*(?:bearer|token|basic)\s+)([^\s,;"'<>]+)/gi, "$1***REDACTED***")
+      .replace(/((?:api[_-]?key|api[_-]?token|apikey|apitoken)\s*[:=]\s*["']?)([A-Za-z0-9_\-\.]{6,})/gi, "$1***REDACTED***");
+  }
+
+  function logEvent(level, category, message, details) {
+    const entry = {
+      ts: new Date().toISOString(),
+      level: String(level || "INFO").toUpperCase(),
+      category: String(category || "FRONTEND_JS").toUpperCase(),
+      message: sanitizeDiagStr(message),
+      details: details != null ? sanitizeDiagStr(typeof details === "object" ? JSON.stringify(details) : String(details)) : undefined
+    };
+    window._ASTROLAB_DIAG_BUFFER.push(entry);
+    if (window._ASTROLAB_DIAG_BUFFER.length > 400) {
+      window._ASTROLAB_DIAG_BUFFER.splice(0, window._ASTROLAB_DIAG_BUFFER.length - 400);
+    }
+    try {
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_log_frontend_event === "function") {
+        window.pywebview.api.backend_log_frontend_event(entry);
+      }
+    } catch (_e) {}
+  }
+
+  if (!window._ASTROLAB_DIAG_HOOKED) {
+    window._ASTROLAB_DIAG_HOOKED = true;
+    window.addEventListener("error", function (ev) {
+      logEvent("ERROR", "JS_ERROR", ev && ev.message ? ev.message : "Unhandled JS error", {
+        filename: ev && ev.filename,
+        lineno: ev && ev.lineno,
+        colno: ev && ev.colno,
+        stack: ev && ev.error && ev.error.stack ? String(ev.error.stack).slice(0, 800) : ""
+      });
+    });
+    window.addEventListener("unhandledrejection", function (ev) {
+      const reason = ev && ev.reason;
+      logEvent("ERROR", "JS_PROMISE", reason && reason.message ? reason.message : String(reason || "Unhandled rejection"), {
+        stack: reason && reason.stack ? String(reason.stack).slice(0, 800) : ""
+      });
+    });
+    const _origErr = console.error;
+    console.error = function (...args) {
+      try {
+        logEvent("ERROR", "CONSOLE_ERROR", args.map(a => (a && a.message) ? a.message : String(a)).join(" ").slice(0, 600));
+      } catch (_e) {}
+      return _origErr.apply(console, args);
+    };
+  }
+
+  async function exportReport() {
+    const lang = (typeof STATE !== "undefined" && STATE && STATE.lang) ? STATE.lang : "en";
+    const tPack = DIAG_I18N[lang] || DIAG_I18N.en;
+    const snapshot = {
+      exportedAtUtc: new Date().toISOString(),
+      lang: lang,
+      userAgent: navigator.userAgent,
+      hasPyWebView: !!(window.pywebview && window.pywebview.api),
+      recentFrontendEvents: window._ASTROLAB_DIAG_BUFFER.slice(-150)
+    };
+    try {
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_export_diagnostic_report === "function") {
+        const res = await window.pywebview.api.backend_export_diagnostic_report(snapshot);
+        if (res && res.ok) {
+          const msg = tPack.diagLogSavedFmt.replace("{path}", res.path || "Desktop");
+          if (typeof showToast === "function") showToast(msg);
+          return res;
+        }
+        throw new Error((res && res.error) || "Unknown error");
+      }
+      // Browser/PWA fallback download
+      const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "AstroLab_Diagnostic_Report_" + new Date().toISOString().replace(/[:.]/g, "-") + ".txt";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      if (typeof showToast === "function") showToast(tPack.diagLogSavedFmt.replace("{path}", a.download));
+      return { ok: true, path: a.download };
+    } catch (e) {
+      if (typeof showToast === "function") showToast(tPack.diagLogFailedFmt.replace("{err}", String(e.message || e)));
+      return { ok: false, error: String(e.message || e) };
+    }
+  }
+
+  window.AstroLabDiagBridge = {
+    log: logEvent,
+    exportReport: exportReport,
+    getBuffer: () => window._ASTROLAB_DIAG_BUFFER.slice()
+  };
+
+  if (typeof applyI18n === "function") {
+    try { applyI18n(); } catch (_e) {}
+  }
+})();
+

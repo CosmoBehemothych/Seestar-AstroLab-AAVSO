@@ -43,6 +43,207 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 APP_VERSION = "1.4.0-alpha"
+
+
+# =============================================================================
+# BUILT-IN DIAGNOSTIC LOGGER (v1.4.0-alpha Hotfix3) — Secret-Safe Live Telemetry
+# =============================================================================
+import logging as _logging
+from logging.handlers import RotatingFileHandler as _RotatingFileHandler
+import platform as _platform
+import ssl as _ssl
+import threading as _threading
+import traceback as _traceback
+
+
+class AstroLabDiagnosticLogger:
+    """
+    Потокобезопасный диагностический логгер Seestar AstroLab AAVSO.
+    Пишет события бэкенда и фронтенда в %LOCALAPPDATA%/SeestarAstroLab/logs/astrolab_debug.log,
+    автоматически маскирует API-ключи/токены и умеет экспортировать готовый .txt отчёт.
+    """
+    _lock = _threading.Lock()
+    _logger = None
+    _initialized = False
+
+    _SECRET_PATTERNS = [
+        (re.compile(r"(ghp_[A-Za-z0-9_]{16,}|github_pat_[A-Za-z0-9_]{20,})"), "***GITHUB_TOKEN_REDACTED***"),
+        (re.compile(r"(?i)(authorization\s*[:=]\s*(?:bearer|token|basic)\s+)([^\s,;\"'<>]+)"), r"\1***REDACTED***"),
+        (re.compile(r"(?i)((?:api[_-]?key|api[_-]?token|apikey|apitoken|access[_-]?token|secret|password)\s*[:=]\s*[\"']?)([A-Za-z0-9_\-\.]{6,})([\"']?)"), r"\1***REDACTED***\3"),
+    ]
+
+    @classmethod
+    def sanitize_text(cls, value: Any) -> str:
+        s = "" if value is None else str(value)
+        for pat, repl in cls._SECRET_PATTERNS:
+            s = pat.sub(repl, s)
+        return s
+
+    @classmethod
+    def get_log_dir(cls) -> str:
+        env_dir = os.environ.get("ASTROLAB_LOG_DIR", "").strip()
+        if env_dir:
+            os.makedirs(env_dir, exist_ok=True)
+            return env_dir
+        if os.name == "nt":
+            base = os.environ.get("LOCALAPPDATA") or os.path.expanduser("~")
+            log_dir = os.path.join(base, "SeestarAstroLab", "logs")
+        else:
+            log_dir = os.path.join(os.path.expanduser("~"), ".local", "share", "SeestarAstroLab", "logs")
+        os.makedirs(log_dir, exist_ok=True)
+        return log_dir
+
+    @classmethod
+    def get_log_file_path(cls) -> str:
+        return os.path.join(cls.get_log_dir(), "astrolab_debug.log")
+
+    @classmethod
+    def _ensure_logger(cls):
+        if cls._logger is not None:
+            return cls._logger
+        with cls._lock:
+            if cls._logger is not None:
+                return cls._logger
+            lg = _logging.getLogger("SeestarAstroLabDiag")
+            lg.setLevel(_logging.DEBUG)
+            lg.propagate = False
+            if not lg.handlers:
+                log_file = cls.get_log_file_path()
+                handler = _RotatingFileHandler(
+                    log_file,
+                    maxBytes=2 * 1024 * 1024,
+                    backupCount=3,
+                    encoding="utf-8",
+                )
+                fmt = _logging.Formatter("[%(asctime)s.%(msecs)03d] [%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+                handler.setFormatter(fmt)
+                lg.addHandler(handler)
+            cls._logger = lg
+            return lg
+
+    @classmethod
+    def init_session(cls, entry_point: str = "desktop") -> str:
+        lg = cls._ensure_logger()
+        if not cls._initialized:
+            cls._initialized = True
+            certifi_ver = "not-installed"
+            try:
+                import certifi as _certifi_chk
+                certifi_ver = f"ok ({_certifi_chk.where()})"
+            except Exception as _ce:
+                certifi_ver = f"error ({_ce})"
+            proxy_keys = [k for k in ("HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "http_proxy", "https_proxy") if os.environ.get(k)]
+            cls.log_event(
+                "INFO",
+                "SESSION",
+                f"=== Seestar AstroLab AAVSO v{APP_VERSION} started ({entry_point}) ===",
+                {
+                    "os": f"{_platform.system()} {_platform.release()} ({_platform.machine()})",
+                    "python": _platform.python_version(),
+                    "openssl": getattr(_ssl, "OPENSSL_VERSION", "unknown"),
+                    "certifi": certifi_ver,
+                    "proxy_env_keys": proxy_keys,
+                    "log_file": cls.get_log_file_path(),
+                },
+            )
+        return cls.get_log_file_path()
+
+    @classmethod
+    def log_event(cls, level: str, category: str, message: str, details: Any = None) -> None:
+        try:
+            lg = cls._ensure_logger()
+            lvl_name = str(level or "INFO").upper()
+            lvl_map = {
+                "DEBUG": _logging.DEBUG,
+                "INFO": _logging.INFO,
+                "WARN": _logging.WARNING,
+                "WARNING": _logging.WARNING,
+                "ERROR": _logging.ERROR,
+                "CRITICAL": _logging.CRITICAL,
+            }
+            num_lvl = lvl_map.get(lvl_name, _logging.INFO)
+            safe_cat = re.sub(r"[^A-Z0-9_/-]", "", str(category or "APP").upper()) or "APP"
+            safe_msg = cls.sanitize_text(message)
+            if details is not None:
+                try:
+                    if isinstance(details, (dict, list)):
+                        det_str = json.dumps(details, ensure_ascii=False, default=str)
+                    else:
+                        det_str = str(details)
+                except Exception:
+                    det_str = repr(details)
+                safe_det = cls.sanitize_text(det_str)
+                if len(safe_det) > 2000:
+                    safe_det = safe_det[:2000] + "...[truncated]"
+                line = f"[{safe_cat}] {safe_msg} | {safe_det}"
+            else:
+                line = f"[{safe_cat}] {safe_msg}"
+            lg.log(num_lvl, line)
+            for h in lg.handlers:
+                try:
+                    h.flush()
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+    @classmethod
+    def log_exception(cls, category: str, message: str, exc: BaseException) -> None:
+        tb = "".join(_traceback.format_exception(type(exc), exc, exc.__traceback__))
+        cls.log_event("ERROR", category, f"{message}: {exc}", tb)
+
+    @classmethod
+    def export_diagnostic_report(cls, frontend_snapshot: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        cls.init_session("export")
+        log_path = cls.get_log_file_path()
+        stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d_%H%M%S")
+        report_name = f"AstroLab_Diagnostic_Report_{stamp}.txt"
+
+        desktop_dir = os.path.join(os.path.expanduser("~"), "Desktop")
+        if os.path.isdir(desktop_dir):
+            out_path = os.path.join(desktop_dir, report_name)
+        else:
+            out_path = os.path.join(cls.get_log_dir(), report_name)
+
+        log_lines: List[str] = []
+        if os.path.isfile(log_path):
+            try:
+                with open(log_path, "r", encoding="utf-8", errors="replace") as lf:
+                    log_lines = lf.readlines()[-900:]
+            except Exception as e:
+                log_lines = [f"[Failed to read log file: {e}]\n"]
+
+        header_lines = [
+            "==============================================================================",
+            f"  SEESTAR ASTROLAB AAVSO — DIAGNOSTIC ERROR REPORT (v{APP_VERSION})",
+            f"  Generated (UTC): {datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}",
+            "==============================================================================",
+            f"OS:       {_platform.system()} {_platform.release()} ({_platform.version()})",
+            f"Python:   {_platform.python_version()}",
+            f"OpenSSL:  {getattr(_ssl, 'OPENSSL_VERSION', 'unknown')}",
+            f"Log File: {log_path}",
+            "Secrets:  All API keys, tokens & Authorization headers are automatically redacted.",
+            "",
+        ]
+
+        if isinstance(frontend_snapshot, dict) and frontend_snapshot:
+            header_lines.append("--- FRONTEND STATE & RECENT JS EVENTS ---")
+            header_lines.append(cls.sanitize_text(json.dumps(frontend_snapshot, ensure_ascii=False, indent=2, default=str)))
+            header_lines.append("")
+
+        header_lines.append(f"--- BACKEND & FRONTEND LIVE LOG (last {len(log_lines)} lines) ---")
+        body = "\n".join(header_lines) + "\n" + cls.sanitize_text("".join(log_lines))
+
+        with open(out_path, "w", encoding="utf-8") as rf:
+            rf.write(body)
+
+        cls.log_event("INFO", "DIAG_EXPORT", f"Diagnostic report saved: {out_path}", {"lines": len(log_lines)})
+        return {
+            "ok": True,
+            "path": out_path,
+            "logPath": log_path,
+            "lineCount": len(log_lines),
+        }
 CRITICAL_COORD_DIFF_DEG = 0.05
 EXACT_COORD_MATCH_DEG = 0.00001
 DSS2_SURVEY_FOV_DEG = 2.40
@@ -1204,11 +1405,11 @@ class AavsoNativeAndStorageService:
             except Exception:
                 pass
 
-        # 2. Официальный AAVSO VSX VOTable API (https://www.aavso.org/vsx/index.php?view=query.votable&ident=...)
+        # 2. Официальный AAVSO VSX VOTable API (https://vsx.aavso.org/index.php?view=query.votable&ident=...)
         if not result["ok"]:
             for cand_ident in (norm_q, vsx_q, raw_q):
                 try:
-                    u_vsx = f"https://www.aavso.org/vsx/index.php?{urllib.parse.urlencode({'view': 'query.votable', 'ident': cand_ident})}"
+                    u_vsx = f"https://vsx.aavso.org/index.php?{urllib.parse.urlencode({'view': 'query.votable', 'ident': cand_ident})}"
                     req = urllib.request.Request(u_vsx, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
                     with urllib.request.urlopen(req, timeout=7.0) as resp:
                         xml_str = resp.read().decode("utf-8", errors="replace")
@@ -1356,7 +1557,7 @@ class AavsoNativeAndStorageService:
 
         # 1) AAVSO VSX API
         try:
-            vsx_url = f"https://www.aavso.org/vsx/index.php?view=api.object&ident={urllib.parse.quote(clean_star)}&format=json"
+            vsx_url = f"https://vsx.aavso.org/index.php?view=api.object&ident={urllib.parse.quote(clean_star)}&format=json"
             req = urllib.request.Request(vsx_url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
             with urllib.request.urlopen(req, timeout=7.0) as resp:
                 data = json.loads(resp.read().decode("utf-8", errors="replace"))
@@ -1895,7 +2096,7 @@ class AavsoNativeAndStorageService:
         Загружает УЖЕ ИЗВЕСТНУЮ кривую блеска звезды из базы AAVSO AID:
         1) Официальный AAVSO REST API v2: GET https://apps.aavso.org/v2/api/observations/photometry/?target=...
         2) Официальный веб-эндпоинт кривых блеска AAVSO:
-           GET https://www.aavso.org/vsx/index.php?view=api.delim&ident=...&fromjd=...&tojd=...&delimiter=,
+           GET https://vsx.aavso.org/index.php?view=api.delim&ident=...&fromjd=...&tojd=...&delimiter=,
         Разделяет точки на:
           - `otherObserversPoints` (данные других участников AAVSO);
           - `userAavsoPoints` (точки в базе AAVSO с кодом `user_obscode`).
@@ -1931,40 +2132,72 @@ class AavsoNativeAndStorageService:
         source_used = ""
         network_errors: List[str] = []
 
+        t0_lc = time.time()
         ssl_ctx = cls._build_ssl_context()
         eff_max = max(50, int(max_points or 3000))
+        AstroLabDiagnosticLogger.log_event(
+            "INFO",
+            "AAVSO_CURVE",
+            f"Start fetch_aavso_light_curve star={clean_star}",
+            {"rawStar": star_name, "daysBack": days_back, "fromJd": round(from_jd, 3), "nowJd": round(now_jd, 3), "hasToken": bool(tok), "obscode": u_obs},
+        )
 
-        # Канал 1 (публичный, без токена): Официальная таблица AAVSO WebObs Results (app.aavso.org/webobs/results/)
+        # Канал 1 (публичный, без токена): Актуальный AAVSO Data Search v2 (apps.aavso.org/v2/data/search/photometry/)
+        v2_band_norm = {
+            "visual": "Vis.", "vis.": "Vis.", "vis": "Vis.",
+            "johnson v": "V", "v": "V",
+            "johnson b": "B", "b": "B",
+            "johnson u": "U", "u": "U",
+            "cousins r": "R", "johnson r": "R", "r": "R",
+            "cousins i": "I", "johnson i": "I", "i": "I",
+            "tri-color green": "TG", "tg": "TG", "green": "TG",
+            "tri-color blue": "TB", "tb": "TB", "blue": "TB",
+            "tri-color red": "TR", "tr": "TR", "red": "TR",
+            "unfiltered with v zeropoint": "CV", "cv": "CV",
+            "unfiltered with r zeropoint": "CR", "cr": "CR",
+            "sloan g": "SG", "sg": "SG",
+            "sloan r": "SR", "sr": "SR",
+            "sloan i": "SI", "si": "SI",
+            "sloan u": "SU", "sloan z": "SZ",
+        }
         try:
-            webobs_pts: List[Dict[str, Any]] = []
-            for page_num in range(1, 5):
+            webobs_all_pts: List[Dict[str, Any]] = []
+            webobs_recent_pts: List[Dict[str, Any]] = []
+            for page_num in range(1, 13):
                 q_wo = urllib.parse.urlencode({
-                    "star": clean_star,
-                    "num_results": "200",
-                    "obs_types": "all",
+                    "target": clean_star,
                     "page": str(page_num),
                 })
-                wo_url = f"https://app.aavso.org/webobs/results/?{q_wo}"
+                wo_url = f"https://apps.aavso.org/v2/data/search/photometry/?{q_wo}"
                 req = urllib.request.Request(
                     wo_url,
                     headers={
-                        "User-Agent": f"SeestarAstroLab/{APP_VERSION}",
-                        "Accept": "text/html,application/xhtml+xml",
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+                        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                     },
                 )
-                with urllib.request.urlopen(req, timeout=8.0, context=ssl_ctx) as resp:
+                with urllib.request.urlopen(req, timeout=10.0, context=ssl_ctx) as resp:
+                    wo_status = getattr(resp, "status", 200)
                     html_txt = resp.read().decode("utf-8", errors="replace")
+                if page_num == 1:
+                    tr_cnt = len(re.findall(r"<tr[^>]*>", html_txt, re.I))
+                    AstroLabDiagnosticLogger.log_event(
+                        "INFO",
+                        "AAVSO_SEARCH_V2",
+                        f"DataSearch v2 p1 HTTP {wo_status} bytes={len(html_txt)} tr_tags={tr_cnt} star={clean_star}",
+                        {"preview": re.sub(r"\s+", " ", html_txt[:220])} if tr_cnt < 3 else None,
+                    )
                 page_found = 0
                 for tr_m in re.finditer(r"<tr[^>]*>([\s\S]*?)</tr>", html_txt, re.I):
                     cells = [
                         re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", c).replace("&nbsp;", " ")).strip()
                         for c in re.findall(r"<td[^>]*>([\s\S]*?)</td>", tr_m.group(1), re.I)
                     ]
-                    if len(cells) < 5:
+                    if len(cells) < 6:
                         continue
                     jd_idx = -1
                     jd_v = None
-                    for ci, val in enumerate(cells[:5]):
+                    for ci, val in enumerate(cells[:6]):
                         try:
                             fv = float(val.replace(",", ""))
                             if 2400000.0 < fv < 2500000.0:
@@ -1973,13 +2206,17 @@ class AavsoNativeAndStorageService:
                                 break
                         except ValueError:
                             continue
-                    if jd_idx < 0 or jd_v is None or jd_v < from_jd:
+                    if jd_idx < 0 or jd_v is None:
                         continue
-                    # Find Magnitude (first float in [-5, 25] after JD cell, skipping calendar date)
+
+                    # Observer is usually right before JD in v2 table (#, Target, Observer, JD, UTC, Mag, Uncert, Band, Type)
+                    obs_v = "AAVSO"
+                    if jd_idx >= 1 and re.match(r"^[A-Za-z0-9_-]{2,8}$", cells[jd_idx - 1]):
+                        obs_v = cells[jd_idx - 1].upper()
+
                     mag_v = None
                     err_v = 0.02
                     band_v = "V"
-                    obs_v = "AAVSO"
                     for ci in range(jd_idx + 1, len(cells)):
                         c_s = cells[ci]
                         if not c_s or c_s.startswith("<") or re.match(r"^\d{4}-\d{2}-\d{2}", c_s):
@@ -1989,7 +2226,6 @@ class AavsoNativeAndStorageService:
                                 mv = float(c_s)
                                 if -5.0 <= mv <= 25.0:
                                     mag_v = mv
-                                    # Next cell may be uncertainty
                                     if ci + 1 < len(cells):
                                         try:
                                             ev = float(cells[ci + 1])
@@ -2001,29 +2237,38 @@ class AavsoNativeAndStorageService:
                             except ValueError:
                                 continue
                         else:
-                            if c_s in ("V", "B", "R", "I", "U", "CV", "CR", "TG", "TB", "TR", "SG", "SR", "SI", "Vis.", "Vis"):
-                                band_v = "Vis." if c_s == "Vis" else c_s
-                            elif re.match(r"^[A-Z0-9]{2,6}$", c_s) and c_s not in ("MAG", "JD", "STD", "NA"):
+                            low_b = c_s.lower().strip()
+                            if low_b in v2_band_norm:
+                                band_v = v2_band_norm[low_b]
+                            elif obs_v == "AAVSO" and re.match(r"^[A-Z0-9]{2,6}$", c_s) and c_s not in ("MAG", "JD", "STD", "NA", "CCD", "PEP", "DSLR"):
                                 obs_v = c_s
                     if mag_v is not None:
-                        webobs_pts.append({
+                        pt = {
                             "jd": round(jd_v, 6),
                             "mag": round(mag_v, 4),
                             "merr": round(err_v, 4),
                             "band": band_v,
                             "obscode": obs_v.upper(),
-                            "source": "AAVSO_WEBOBS",
+                            "source": "AAVSO_SEARCH_V2",
                             "utc": cls.jd_to_utc_str(jd_v),
-                        })
+                        }
+                        webobs_all_pts.append(pt)
+                        if jd_v >= from_jd:
+                            webobs_recent_pts.append(pt)
                         page_found += 1
-                if page_found < 150 or len(webobs_pts) >= eff_max:
+                if page_found < 20 or len(webobs_all_pts) >= eff_max:
                     break
-            if webobs_pts:
-                webobs_pts.sort(key=lambda x: x["jd"])
-                raw_points = webobs_pts[-eff_max:]
-                source_used = f"AAVSO WebObs ({len(raw_points)} pts)"
+                # Stop early once we have plenty of points and have passed from_jd
+                if len(webobs_recent_pts) >= 200 and webobs_all_pts and webobs_all_pts[-1]["jd"] < from_jd:
+                    break
+            chosen = webobs_recent_pts if len(webobs_recent_pts) >= 10 else webobs_all_pts
+            if chosen:
+                chosen.sort(key=lambda x: x["jd"])
+                raw_points = chosen[-eff_max:]
+                source_used = f"AAVSO Data Search v2 ({len(raw_points)} pts)"
         except Exception as e:
-            network_errors.append(f"AAVSO WebObs: {e}")
+            network_errors.append(f"AAVSO Data Search v2: {e}")
+            AstroLabDiagnosticLogger.log_event("WARN", "AAVSO_SEARCH_V2", f"Channel 1 failed for {clean_star}: {e}")
 
         # Канал 2 (резерв): AAVSO REST API v2 с пагинацией
         if len(raw_points) < 20:
@@ -2068,6 +2313,7 @@ class AavsoNativeAndStorageService:
                     source_used = f"AAVSO API v2 ({len(raw_points)} pts, {pages_fetched} pages)"
             except Exception as e:
                 network_errors.append(f"AAVSO API v2: {e}")
+                AstroLabDiagnosticLogger.log_event("WARN", "AAVSO_API_V2", f"Channel failed for {clean_star}: {e}")
 
         # Канал 3 (резерв): AAVSO AID api.delim (CSV/HTML, newest tail)
         if len(raw_points) < 20:
@@ -2081,7 +2327,7 @@ class AavsoNativeAndStorageService:
                     "tojd": f"{now_jd:.4f}",
                     "delimiter": ",",
                 }
-                url = f"https://www.aavso.org/vsx/index.php?{urllib.parse.urlencode(q_params)}"
+                url = f"https://vsx.aavso.org/index.php?{urllib.parse.urlencode(q_params)}"
                 req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
                 with urllib.request.urlopen(req, timeout=8.0, context=ssl_ctx) as resp:
                     csv_text = resp.read().decode("utf-8", errors="replace")
@@ -2111,6 +2357,7 @@ class AavsoNativeAndStorageService:
                     source_used = f"AAVSO AID (api.delim, {len(raw_points)}/{len(delim_pts)} latest pts)"
             except Exception as e:
                 network_errors.append(f"AAVSO AID api.delim: {e}")
+                AstroLabDiagnosticLogger.log_event("WARN", "AAVSO_DELIM", f"Channel failed for {clean_star}: {e}")
 
         raw_points.sort(key=lambda x: x["jd"])
         other_pts = [p for p in raw_points if not u_obs or p.get("obscode") != u_obs]
@@ -2127,6 +2374,12 @@ class AavsoNativeAndStorageService:
                 f"за последние {days_back} сут.{detail}"
             )
 
+        AstroLabDiagnosticLogger.log_event(
+            "INFO" if has_aavso else "WARN",
+            "AAVSO_CURVE",
+            f"Done fetch_aavso_light_curve star={clean_star} hasData={has_aavso} other={len(other_pts)} user={len(user_aavso_pts)} local={local_history.get('totalPoints', 0)} source={source_used or 'none'} ms={int((time.time()-t0_lc)*1000)}",
+            {"errors": network_errors} if network_errors else None,
+        )
         return {
             "ok": has_aavso or local_history.get("hasData", False),
             "star": clean_star,

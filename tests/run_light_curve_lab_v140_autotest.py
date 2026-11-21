@@ -77,7 +77,7 @@ def test_backend_aavso_aid_api_v2_and_delim_tail():
     with patch("urllib.request.urlopen", side_effect=_fake_api_v2):
         res_v2 = Svc.fetch_aavso_light_curve("SZ Lyn", days_back=180, max_points=3000)
     assert res_v2["ok"] is True and res_v2["totalAavsoPoints"] == 120, f"API v2 pagination failed: {res_v2}"
-    assert len([u for u in seen_urls if "apps.aavso.org/v2" in u]) == 2, f"Expected 2 paginated API v2 requests, got {seen_urls}"
+    assert len([u for u in seen_urls if "apps.aavso.org/v2/api/observations" in u]) == 2, f"Expected 2 paginated API v2 requests, got {seen_urls}"
 
     # 1b. Channel 2 fallback (api.delim): 3,500 chronological rows -> keep newest 3,000 tail
     rows = ["JD,Magnitude,Uncertainty,Band,Observer Code"]
@@ -129,7 +129,7 @@ def test_frontend_real_clicks_zero_errors_and_scientific_lab():
     bundled = re.sub(r'<script[^>]+astrolab_engine_bridge\.js[^>]*></script>', lambda m: f'<script>{eng}</script>', bundled)
 
     js = r"""
-    (() => {
+    (async () => {
       const jsErrors = [];
       window.addEventListener("error", (e) => jsErrors.push(String(e.message || e)));
       window.addEventListener("unhandledrejection", (e) => jsErrors.push(String(e.reason || e)));
@@ -156,6 +156,23 @@ def test_frontend_real_clicks_zero_errors_and_scientific_lab():
       const cntTxt = (document.getElementById("v6RadarCountText")?.textContent || "").trim();
       const domCards = document.querySelectorAll("#v6RadarListContainer .v6-target-card").length;
       window.resetLiveAavsoTargetsToBaseline();
+
+      // 2b. DIRECT E2E TEST of fetchAavsoCurveSeriesForStar() with mocked pywebview backend (prevents silent empty return!)
+      const mockBackendPts = [];
+      for (let i = 0; i < 150; i++) {
+        mockBackendPts.push({ jd: 2461350.0 + i * 0.01, mag: 9.1 + 0.3 * Math.sin(i * 0.2), merr: 0.015, band: "TG", obscode: "OTHER1" });
+      }
+      window.pywebview = {
+        api: {
+          backend_fetch_aavso_light_curve: async () => ({
+            ok: true,
+            hasAavsoData: true,
+            otherObserversPoints: mockBackendPts,
+            userAavsoPoints: []
+          })
+        }
+      };
+      const fetchBridgeRes = await window.fetchAavsoCurveSeriesForStar("SZ Lyn", "APPA");
 
       // 3. REAL-USER CLICK TEST inside #fullPageLightCurveModal (ZERO custom args!)
       const jd0 = 2461360.0;
@@ -240,6 +257,8 @@ def test_frontend_real_clicks_zero_errors_and_scientific_lab():
 
       return JSON.stringify({
         jsErrors,
+        fetchBridgeOk: Boolean(fetchBridgeRes && fetchBridgeRes.ok && fetchBridgeRes.hasEnoughData),
+        fetchBridgeCount: (fetchBridgeRes && Array.isArray(fetchBridgeRes.points)) ? fetchBridgeRes.points.length : 0,
         disabledNoKey,
         enabledWithKey,
         disabledAfterClear,
@@ -261,13 +280,14 @@ def test_frontend_real_clicks_zero_errors_and_scientific_lab():
       });
     })()
     """
-    raw = loc.eval_in_browser(bundled, js, port=9295, await_promise=False, wait_ms=1400)
+    raw = loc.eval_in_browser(bundled, js, port=9295, await_promise=True, wait_ms=1400)
     res = json.loads(raw)
     print(f"  ZERO JS ERRORS: {res['jsErrors']}")
     print(f"  REAL CLICKS: panelVisible={res['panelVisible']}, panelHasPeriod={res['panelHasPeriod']}, phaseActive={res['phaseActiveAfterClick']}, canvasChanged={res['canvasChangedOnPhase']}, backToTime={res['backToTimeMode']}")
     print(f"  SCIENTIFIC TRIGGERS: Pulsating P={res['pulsPeriod']:.5f}d {res['pulsCodes']}, EB={res['ebCodes']}, Nova={res['novaCodes']}, Transit={res['epCodes']}")
 
     assert len(res["jsErrors"]) == 0, f"UNCAUGHT JS ERRORS DETECTED: {res['jsErrors']}"
+    assert res["fetchBridgeOk"] is True and res["fetchBridgeCount"] == 150, f"fetchAavsoCurveSeriesForStar dropped points: {res}"
     assert res["disabledNoKey"] is True and res["enabledWithKey"] is True and res["disabledAfterClear"] is True
     assert res["domCards"] <= 60 and "(60↓)" in res["cntTxt"]
     nums = [int(x) for x in re.findall(r"\d+", res["cntTxt"])]
