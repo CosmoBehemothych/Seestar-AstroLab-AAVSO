@@ -1,10 +1,10 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.3.3) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.3.4) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
- *   telescopes (S30, S30PRO, S50, S50PRO) into the scientific AAVSO Extended
+ *   telescopes (S30, S30 PLUS, S30PRO, S50, S50PRO) into the scientific AAVSO Extended
  *   file format (#TYPE=EXTENDED) for submission to AAVSO WebObs.
  *
  *   Key Modules in this file (`astrolab_engine_bridge.js`):
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.3.3.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.3.4.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -94,6 +94,24 @@
       sensor: "Sony IMX662 (FHD)",
       focalMm: 150, skySurveyFovDeg: 2.40, frameRect: { x: 80, y: 119, w: 181, h: 102 },
       notes: "Широкое поле 1.28°×0.72°, разрешение 1920×1080 (2.40″/px), лимит ≤ 13.5 mag, выдержка 10–20 с"
+    }),
+    S30PLUS: Object.freeze({
+      id: "S30PLUS",
+      name: "ZWO Seestar S30 Plus",
+      shortName: "Seestar S30 PLUS",
+      fovDegW: 2.66,
+      fovDegH: 1.50,
+      fovStr: "2.66°×1.50°",
+      resPx: "2560×1440",
+      pixelScale: 3.74,
+      magLimit: 13.8,
+      brightLimit: 5.2,
+      minExpSec: 10,
+      maxExpSec: 20,
+      vspFovArcmin: 110,
+      sensor: "SC485SL (2K, 1/1.8\")",
+      focalMm: 160, skySurveyFovDeg: 2.80, frameRect: { x: 15, y: 76, w: 310, h: 175 },
+      notes: "Широкое 2K-поле 2.66°×1.50° (диаг. ~3°), SC485SL 2560×1440 (3.74″/px), лимит ≤ 13.8 mag, выдержка 10–20 с"
     }),
     S30PRO: Object.freeze({
       id: "S30PRO",
@@ -208,7 +226,8 @@
       if (typeof currentLang !== "undefined" && currentLang !== "ru") {
         const notesMap = {
           S30: "Wide field 2.40°×1.35° (1080p) — ideal for bright variables (≤13.5m) with abundant VSP comparison stars.",
-          S30PRO: "Wide 4K field 2.10°×1.18° — high angular resolution (1.97″/px) for crowded variable star fields up to 14.2m.",
+          S30PLUS: "Wide 2K field 2.66°×1.50° (3° diag.) — 1/1.8\" SC485SL (3.74″/px) for bright/medium variable stars up to 13.8m.",
+      S30PRO: "Wide 4K field 2.10°×1.18° — high angular resolution (1.97″/px) for crowded variable star fields up to 14.2m.",
           S50: "Classic apochromatic triplet 0.78°×1.05° — primary photometry instrument up to 14.5m.",
           S50PRO: "High-sensitivity 4K apochromatic triplet 1.15°×0.65° (1.08″/px) — deep photometry of cataclysmics & exoplanets up to 15.2m."
         };
@@ -465,7 +484,7 @@
       const diffCheck = AstroLabCore.compareStarIds("SZ Lyncis", "CH Cyg");
       assert("8. Сверка разных звёзд (SZ Lyncis / CH Cyg -> bad / Расхождение)", diffCheck.status === "bad" && diffCheck.isSameStar === false);
 
-      const scopesOk = ["S30", "S30PRO", "S50", "S50PRO"].every(k => Boolean(AstroLabCore.TELESCOPE_MODELS[k]));
+      const scopesOk = ["S30", "S30PLUS", "S30PRO", "S50", "S50PRO"].every(k => Boolean(AstroLabCore.TELESCOPE_MODELS[k]));
       assert("9. Поддержка всех моделей телескопов S30, S30PRO, S50, S50PRO", scopesOk);
 
       const allPassed = results.every(r => r.passed);
@@ -528,7 +547,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.3.3",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.3.4",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -538,9 +557,9 @@
       errNoObscodeMsg: "Укажите ваш личный код наблюдателя AAVSO (OBSCODE) перед конвертацией данных для загрузки на AAVSO.",
       errNoObscodeExplain: "Стандарт AAVSO Extended требует обязательного указания персонального кода наблюдателя в заголовке #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Версия 1.3.3",
+      appVersionLabel: "Версия 1.3.4",
       starIdFromCatalogHint: "✓ Каталожный идентификатор звезды (SIMBAD / AAVSO VSX): {star}",
-      brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30PRO / S50 / S50PRO",
+      brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
       missionSummaryTitle: "ℹ️ Как работает сверка полей Seestar → SIMBAD & VSP (цветовые индикаторы)",
       lblExpand: "Развернуть\u00A0▾",
@@ -552,7 +571,7 @@
       lblThemePickerSplash: "Цветовая панель",
       lblObscodeHeader: "OBSCODE:",
       phObscodeHeader: "Ваш код",
-      tipToggleScope: "Переключить модель умного телескопа (S30 / S30PRO / S50 / S50PRO)",
+      tipToggleScope: "Переключить модель умного телескопа (S30 / S30 PLUS / S30PRO / S50 / S50PRO)",
       btnUrgentTop: "Радар целей AAVSO",
       tipRefreshRadar: "Обновить каталог целей AAVSO",
       tipExpandUrgent: "Открыть подробную таблицу целей",
@@ -574,7 +593,7 @@
       tagPhotometry: "📈 Фотометрия звезд",
       tagBinaries: "🌑 Затменные двойные",
       tagExoplanets: "🪐 Экзопланеты",
-      tagTelescopes: "🔭 S30 • S30PRO • S50 • S50PRO",
+      tagTelescopes: "🔭 S30 • S30 PLUS • S30PRO • S50 • S50PRO",
       lblBentoService: "Сервис SIMBAD TAP",
       valBentoService: "✓ 3 зеркала (CDS / Harvard / IDIA)",
       lblBentoVsp: "Шкала AAVSO VSP",
@@ -623,7 +642,7 @@
       btnRefreshLoading: "⏳ Обновление...",
       toastRadarRefreshedTitle: "🔄 Радар целей AAVSO обновлён",
       toastRadarRefreshedMsgFmt: "Успешно синхронизировано {count} целевых объектов ({time})",
-      toastRadarRefreshedSub: "Все координаты J2000, карты VSP и профили телескопов S30/S30PRO/S50/S50PRO актуальны.",
+      toastRadarRefreshedSub: "Все координаты J2000, карты VSP и профили телескопов S30/S30 PLUS/S30PRO/S50/S50PRO актуальны.",
       demoFilePillText: "✅ SZ_Lyn_20261103_Demo.csv • 25 кадров (Загружен)",
       dssFieldFallbackFmt: "Поле звезды <strong>{star}</strong> (автономная астрометрическая карта VSP • ",
       verifyTitle: "Проверка совместимости AAVSO",
@@ -881,7 +900,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.3.3 session",
+      actAppStarted: "Started Seestar AstroLab v1.3.4 session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -891,9 +910,9 @@
       errNoObscodeMsg: "Please enter your personal AAVSO Observer Code (OBSCODE) before converting data for AAVSO upload.",
       errNoObscodeExplain: "The AAVSO Extended format strictly requires a valid personal observer code in the #OBSCODE header.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.3",
+      appVersionLabel: "Version 1.3.4",
       starIdFromCatalogHint: "✓ Canonical Catalog Star ID (SIMBAD / AAVSO VSX): {star}",
-      brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometry Observatory",
+      brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Photometry Observatory",
       
       missionSummaryTitle: "ℹ️ How Seestar → SIMBAD & VSP Field Reconciliation Works (Color Indicators)",
       lblExpand: "Expand\u00A0▾",
@@ -905,7 +924,7 @@
       lblThemePickerSplash: "Color Theme",
       lblObscodeHeader: "OBSCODE:",
       phObscodeHeader: "Your code",
-      tipToggleScope: "Switch smart telescope model (S30 / S30PRO / S50 / S50PRO)",
+      tipToggleScope: "Switch smart telescope model (S30 / S30 PLUS / S30PRO / S50 / S50PRO)",
       btnUrgentTop: "AAVSO Target Radar",
       tipRefreshRadar: "Refresh AAVSO Target Radar",
       tipExpandUrgent: "Open full target table",
@@ -927,7 +946,7 @@
       tagPhotometry: "📈 Stellar Photometry",
       tagBinaries: "🌑 Eclipsing Binaries",
       tagExoplanets: "🪐 Exoplanets",
-      tagTelescopes: "🔭 S30 • S30PRO • S50 • S50PRO",
+      tagTelescopes: "🔭 S30 • S30 PLUS • S30PRO • S50 • S50PRO",
       lblBentoService: "SIMBAD TAP Service",
       valBentoService: "✓ 3 mirrors (CDS / Harvard / IDIA)",
       lblBentoVsp: "AAVSO VSP Scale",
@@ -976,7 +995,7 @@
       btnRefreshLoading: "⏳ Refreshing...",
       toastRadarRefreshedTitle: "🔄 AAVSO Target Radar Refreshed",
       toastRadarRefreshedMsgFmt: "Successfully synchronized {count} target objects ({time})",
-      toastRadarRefreshedSub: "All J2000 coordinates, VSP charts, and S30/S30PRO/S50/S50PRO profiles are up to date.",
+      toastRadarRefreshedSub: "All J2000 coordinates, VSP charts, and S30/S30 PLUS/S30PRO/S50/S50PRO profiles are up to date.",
       demoFilePillText: "✅ SZ_Lyn_20261103_Demo.csv • 25 frames (Loaded)",
       dssFieldFallbackFmt: "Star field <strong>{star}</strong> (offline VSP astrometric chart • ",
       verifyTitle: "AAVSO Compatibility Check",
@@ -1229,7 +1248,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.3.3",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.3.4",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1239,9 +1258,9 @@
       errNoObscodeMsg: "Ingrese su código personal de observador AAVSO (OBSCODE) antes de convertir los datos.",
       errNoObscodeExplain: "El formato AAVSO Extended requiere un código de observador válido en el encabezado #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Versión 1.3.3",
+      appVersionLabel: "Versión 1.3.4",
       starIdFromCatalogHint: "✓ Identificador de catálogo (SIMBAD / AAVSO VSX): {star}",
-      brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatorio Fotométrico Seestar S30 / S30PRO / S50 / S50PRO",
+      brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatorio Fotométrico Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
       missionSummaryTitle: "ℹ️ Cómo funciona la verificación Seestar → SIMBAD y VSP (Indicadores de color)",
       lblExpand: "Expandir\u00A0▾",
@@ -1253,7 +1272,7 @@
       lblThemePickerSplash: "Tema de color",
       lblObscodeHeader: "OBSCODE:",
       phObscodeHeader: "Tu código",
-      tipToggleScope: "Cambiar modelo de telescopio (S30 / S30PRO / S50 / S50PRO)",
+      tipToggleScope: "Cambiar modelo de telescopio (S30 / S30 PLUS / S30PRO / S50 / S50PRO)",
       btnUrgentTop: "Radar de objetivos AAVSO",
       tipRefreshRadar: "Actualizar radar de objetivos AAVSO",
       tipExpandUrgent: "Abrir tabla completa de objetivos",
@@ -1275,7 +1294,7 @@
       tagPhotometry: "📈 Fotometría estelar",
       tagBinaries: "🌑 Binarias eclipsantes",
       tagExoplanets: "🪐 Exoplanetas",
-      tagTelescopes: "🔭 S30 • S30PRO • S50 • S50PRO",
+      tagTelescopes: "🔭 S30 • S30 PLUS • S30PRO • S50 • S50PRO",
       lblBentoService: "Servicio SIMBAD TAP",
       valBentoService: "✓ 3 espejos (CDS / Harvard / IDIA)",
       lblBentoVsp: "Escala AAVSO VSP",
@@ -1324,7 +1343,7 @@
       btnRefreshLoading: "⏳ Actualizando...",
       toastRadarRefreshedTitle: "🔄 Radar de objetivos AAVSO actualizado",
       toastRadarRefreshedMsgFmt: "Sincronizados {count} objetos correctamente ({time})",
-      toastRadarRefreshedSub: "Coordenadas J2000, cartas VSP y perfiles S30/S30PRO/S50/S50PRO actualizados.",
+      toastRadarRefreshedSub: "Coordenadas J2000, cartas VSP y perfiles S30/S30 PLUS/S30PRO/S50/S50PRO actualizados.",
       demoFilePillText: "✅ SZ_Lyn_20261103_Demo.csv • 25 cuadros (Cargado)",
       dssFieldFallbackFmt: "Campo estelar <strong>{star}</strong> (carta astrométrica VSP • ",
       verifyTitle: "Verificación de compatibilidad AAVSO",
@@ -1553,7 +1572,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.3.3",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.3.4",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1563,9 +1582,9 @@
       errNoObscodeMsg: "Bitte geben Sie Ihren persönlichen AAVSO-Beobachtercode (OBSCODE) vor der Konvertierung ein.",
       errNoObscodeExplain: "Das AAVSO-Extended-Format erfordert zwingend einen gültigen Beobachtercode im Header #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.3",
+      appVersionLabel: "Version 1.3.4",
       starIdFromCatalogHint: "✓ Kanonische Katalog-STARID (SIMBAD / AAVSO VSX): {star}",
-      brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Photometrie-Observatorium",
+      brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Photometrie-Observatorium",
       
       missionSummaryTitle: "ℹ️ Funktionsweise des Seestar → SIMBAD & VSP Feldabgleichs (Farbindikatoren)",
       lblExpand: "Ausklappen\u00A0▾",
@@ -1577,7 +1596,7 @@
       lblThemePickerSplash: "Farbschema",
       lblObscodeHeader: "OBSCODE:",
       phObscodeHeader: "Ihr Code",
-      tipToggleScope: "Teleskopmodell wechseln (S30 / S30PRO / S50 / S50PRO)",
+      tipToggleScope: "Teleskopmodell wechseln (S30 / S30 PLUS / S30PRO / S50 / S50PRO)",
       btnUrgentTop: "AAVSO-Zielradar",
       tipRefreshRadar: "AAVSO-Zielradar aktualisieren",
       tipExpandUrgent: "Vollständige Zieltabelle öffnen",
@@ -1599,7 +1618,7 @@
       tagPhotometry: "📈 Sternphotometrie",
       tagBinaries: "🌑 Bedeckungsveränderliche",
       tagExoplanets: "🪐 Exoplaneten",
-      tagTelescopes: "🔭 S30 • S30PRO • S50 • S50PRO",
+      tagTelescopes: "🔭 S30 • S30 PLUS • S30PRO • S50 • S50PRO",
       lblBentoService: "SIMBAD TAP-Dienst",
       valBentoService: "✓ 3 Spiegelserver (CDS / Harvard / IDIA)",
       lblBentoVsp: "AAVSO VSP-Skala",
@@ -1648,7 +1667,7 @@
       btnRefreshLoading: "⏳ Aktualisiere...",
       toastRadarRefreshedTitle: "🔄 AAVSO-Zielradar aktualisiert",
       toastRadarRefreshedMsgFmt: "{count} Zielobjekte erfolgreich synchronisiert ({time})",
-      toastRadarRefreshedSub: "Alle J2000-Koordinaten, VSP-Karten und S30/S30PRO/S50/S50PRO-Profile sind aktuell.",
+      toastRadarRefreshedSub: "Alle J2000-Koordinaten, VSP-Karten und S30/S30 PLUS/S30PRO/S50/S50PRO-Profile sind aktuell.",
       demoFilePillText: "✅ SZ_Lyn_20261103_Demo.csv • 25 Bilder (Geladen)",
       dssFieldFallbackFmt: "Sternfeld <strong>{star}</strong> (offline VSP-Karte • ",
       verifyTitle: "AAVSO-Kompatibilitätsprüfung",
@@ -1866,7 +1885,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.3.3",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.3.4",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -1876,9 +1895,9 @@
       errNoObscodeMsg: "Veuillez saisir votre code observateur AAVSO (OBSCODE) avant de convertir les données.",
       errNoObscodeExplain: "Le standard AAVSO Extended exige un code observateur personnel valide dans l'en-tête #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.3.3",
+      appVersionLabel: "Version 1.3.4",
       starIdFromCatalogHint: "✓ Identifiant catalogue canonique (SIMBAD / AAVSO VSX) : {star}",
-      brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30PRO / S50 / S50PRO",
+      brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
       missionSummaryTitle: "ℹ️ Fonctionnement de la vérification Seestar → SIMBAD & VSP (Indicateurs couleur)",
       lblExpand: "Déployer\u00A0▾",
@@ -1890,7 +1909,7 @@
       lblThemePickerSplash: "Thème de couleur",
       lblObscodeHeader: "OBSCODE :",
       phObscodeHeader: "Votre code",
-      tipToggleScope: "Changer de modèle de télescope (S30 / S30PRO / S50 / S50PRO)",
+      tipToggleScope: "Changer de modèle de télescope (S30 / S30 PLUS / S30PRO / S50 / S50PRO)",
       btnUrgentTop: "AAVSO Target Radar",
       tipRefreshRadar: "Actualiser le radar de cibles AAVSO",
       tipExpandUrgent: "Ouvrir le tableau complet des cibles",
@@ -1912,7 +1931,7 @@
       tagPhotometry: "📈 Photométrie stellaire",
       tagBinaries: "🌑 Binaires à éclipses",
       tagExoplanets: "🪐 Exoplanètes",
-      tagTelescopes: "🔭 S30 • S30PRO • S50 • S50PRO",
+      tagTelescopes: "🔭 S30 • S30 PLUS • S30PRO • S50 • S50PRO",
       lblBentoService: "Service SIMBAD TAP",
       valBentoService: "✓ 3 miroirs (CDS / Harvard / IDIA)",
       lblBentoVsp: "Échelle AAVSO VSP",
@@ -1961,7 +1980,7 @@
       btnRefreshLoading: "⏳ Actualisation...",
       toastRadarRefreshedTitle: "🔄 Radar de cibles AAVSO actualisé",
       toastRadarRefreshedMsgFmt: "{count} objets cibles synchronisés avec succès ({time})",
-      toastRadarRefreshedSub: "Coordonnées J2000, cartes VSP et profils S30/S30PRO/S50/S50PRO à jour.",
+      toastRadarRefreshedSub: "Coordonnées J2000, cartes VSP et profils S30/S30 PLUS/S30PRO/S50/S50PRO à jour.",
       demoFilePillText: "✅ SZ_Lyn_20261103_Demo.csv • 25 images (Chargé)",
       dssFieldFallbackFmt: "Champ stellaire <strong>{star}</strong> (carte astrométrique VSP • ",
       verifyTitle: "Vérification de compatibilité AAVSO",
@@ -2178,7 +2197,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.3.3 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.3.4 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -2188,9 +2207,9 @@
       errNoObscodeMsg: "请在转换上传至 AAVSO 的数据前填写您的 AAVSO 观测者代码 (OBSCODE)。",
       errNoObscodeExplain: "AAVSO Extended 格式要求在 #OBSCODE 标头中提供有效的个人观测者代码。",
       radarSubTag: "",
-      appVersionLabel: "版本 1.3.3",
+      appVersionLabel: "版本 1.3.4",
       starIdFromCatalogHint: "✓ 星表标准目标名称 (SIMBAD / AAVSO VSX): {star}",
-      brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO 测光天文台",
+      brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO 测光天文台",
       
       missionSummaryTitle: "ℹ️ Seestar → SIMBAD 与 VSP 字段比对说明（颜色指示器）",
       lblExpand: "展开\u00A0▾",
@@ -2202,7 +2221,7 @@
       lblThemePickerSplash: "色彩主题",
       lblObscodeHeader: "OBSCODE:",
       phObscodeHeader: "观测者代码",
-      tipToggleScope: "切换智能望远镜型号 (S30 / S30PRO / S50 / S50PRO)",
+      tipToggleScope: "切换智能望远镜型号 (S30 / S30 PLUS / S30PRO / S50 / S50PRO)",
       btnUrgentTop: "AAVSO 目标雷达",
       tipRefreshRadar: "刷新 AAVSO 目标雷达",
       tipExpandUrgent: "打开完整目标表格",
@@ -2224,7 +2243,7 @@
       tagPhotometry: "📈 恒星测光",
       tagBinaries: "🌑 食双星",
       tagExoplanets: "🪐 系外行星",
-      tagTelescopes: "🔭 S30 • S30PRO • S50 • S50PRO",
+      tagTelescopes: "🔭 S30 • S30 PLUS • S30PRO • S50 • S50PRO",
       lblBentoService: "SIMBAD TAP 服务",
       valBentoService: "✓ 3 镜像节点 (CDS / Harvard / IDIA)",
       lblBentoVsp: "AAVSO VSP 视场比例",
@@ -2273,7 +2292,7 @@
       btnRefreshLoading: "⏳ 正在刷新...",
       toastRadarRefreshedTitle: "🔄 AAVSO 目标雷达已刷新",
       toastRadarRefreshedMsgFmt: "成功同步 {count} 个目标天体 ({time})",
-      toastRadarRefreshedSub: "所有 J2000 坐标、VSP 星图及 S30/S30PRO/S50/S50PRO 参数均为最新。",
+      toastRadarRefreshedSub: "所有 J2000 坐标、VSP 星图及 S30/S30 PLUS/S30PRO/S50/S50PRO 参数均为最新。",
       demoFilePillText: "✅ SZ_Lyn_20261103_Demo.csv • 25 帧 (已加载)",
       dssFieldFallbackFmt: "恒星视场 <strong>{star}</strong>（离线 VSP 天体测量星图 • ",
       verifyTitle: "AAVSO 兼容性校验",
@@ -4519,7 +4538,7 @@ function revealAndFocusField(inputId) {
   }
 
   // [EN] Validates photometric uncertainty MERR against optimal (<=0.03m) and acceptable (<=0.15m) differential photometry thresholds.
-  // [RU] Проверяет погрешность фотометрии MERR для смарт-телескопов (S30/S30PRO/S50/S50PRO, апертура 30–50 мм, субэкспозиции 10–30 с):
+  // [RU] Проверяет погрешность фотометрии MERR для смарт-телескопов (S30/S30 PLUS/S30PRO/S50/S50PRO, апертура 30–50 мм, субэкспозиции 10–30 с):
   //      оптимальный порог одиночного кадра <= 0.0600m (status: "ok"), допустимый рабочий предел на тусклых целях <= 0.2500m (status: "warn").
   // [EN] Validates photometric uncertainty MERR calibrated for smart telescopes (30-50mm aperture, 10-30s sub-exposures):
   //      optimal threshold <= 0.0600m ("ok"), acceptable smart-scope tolerance <= 0.2500m ("warn").
@@ -6078,7 +6097,7 @@ function revealAndFocusField(inputId) {
     { star: "RX And", alias: "AAVSO 0058+40", type: "Переходная карликовая новая (UGZ+VY)", auid: "000-BRX-101", con: "And", ra: 16.14833, dec: 41.29944, magRange: "10.2m → 14.9m (P_orb = 5.08 h)", chart: "X18404A", kname: "000-BRX-107", kmag: "11.150", priority: "⚡ Активно", desc: "Уникальная катаклизмическая переменная, сочетающая плато типа Z Cam и глубокие анти-карликовые минимумы типа VY Scl.", comment: "Выдержка 15–20 с в полосе TG; отличное соотношение сигнал/шум на S30, S30PRO, S50 и S50PRO." },
     { star: "VW Hyi", alias: "AAVSO 0409-71", type: "Южный эталон сверхвспышек (UGSU)", auid: "000-BVW-101", con: "Hyi", ra: 62.29750, dec: -71.29472, magRange: "8.4m → 14.4m (P_orb = 1.78 h)", chart: "X18405S", kname: "000-BVW-104", kmag: "10.220", priority: "⚡ Кампания", desc: "Ярчайшая карликовая новая типа SU UMa южного неба с орбитальным периодом всего 107 минут.", comment: "Во вспышке достигает 8.4 mag — выдержка 10 с для высокого временного разрешения сверхгорбов." },
     { star: "HL CMa", alias: "1E 0643.0-1648", type: "Рентгеновская карликовая новая (UGZ)", auid: "000-BHL-101", con: "CMa", ra: 101.32167, dec: -16.85944, magRange: "10.6m → 14.2m (цикл ~15 d)", chart: "X18406A", kname: "000-BHL-105", kmag: "11.280", priority: "⚡ Активно", desc: "Катаклизмическая переменная, открытая как жесткий рентгеновский источник вблизи Сириуса.", comment: "Частые вспышки каждые две недели; оптимальная выдержка 15–20 с." },
-    { star: "BF Cyg", alias: "MWC 315", type: "Затменная симбиотическая (ZAND+EA)", auid: "000-BBF-101", con: "Cyg", ra: 290.98542, dec: 29.67472, magRange: "9.0m → 13.5m (P_orb = 757 d)", chart: "X18407B", kname: "000-BBF-104", kmag: "10.740", priority: "⚡ Симбиотическая", desc: "Классическая симбиотическая система (M5III + горячий субкарлик) с выраженными волнами отражения и затмениями.", comment: "Доступна на всех телескопах Seestar (S30, S30PRO, S50, S50PRO) во всем диапазоне блеска." },
+    { star: "BF Cyg", alias: "MWC 315", type: "Затменная симбиотическая (ZAND+EA)", auid: "000-BBF-101", con: "Cyg", ra: 290.98542, dec: 29.67472, magRange: "9.0m → 13.5m (P_orb = 757 d)", chart: "X18407B", kname: "000-BBF-104", kmag: "10.740", priority: "⚡ Симбиотическая", desc: "Классическая симбиотическая система (M5III + горячий субкарлик) с выраженными волнами отражения и затмениями.", comment: "Доступна на всех телескопах Seestar (S30, S30 PLUS, S30PRO, S50, S50PRO) во всем диапазоне блеска." },
     { star: "YY Her", alias: "AN 51.1919", type: "Симбиотическая новая (ZAND)", auid: "000-BYY-101", con: "Her", ra: 273.64250, dec: 20.98917, magRange: "11.1m → 14.0m (P_orb = 590 d)", chart: "X18408A", kname: "000-BYY-105", kmag: "11.880", priority: "⚡ Симбиотическая", desc: "Взаимодействующая двойная с гигантом M4III и горячим белым карликом, демонстрирующая вторичные эллипсоидальные минимумы.", comment: "Рекомендуется выдержка 20 с (TG) и стек из 3–5 кадров." },
     { star: "AX Per", alias: "MWC 411", type: "Затменная симбиотическая (ZAND+EA)", auid: "000-BAX-101", con: "Per", ra: 24.09583, dec: 54.25056, magRange: "8.9m → 13.6m (P_orb = 680 d)", chart: "X18409A", kname: "000-BAX-106", kmag: "10.520", priority: "⚡ Затмения", desc: "Симбиотическая система с глубокими полными затмениями горячего компонента протяженной атмосферой гиганта M4.5III.", comment: "Высокая точность ансамблевой калибровки благодаря насыщенному звёздному полю Персея." },
     { star: "PU Vul", alias: "Nova Vul 1979", type: "Симбиотическая новая (NC+EA)", auid: "000-BPU-101", con: "Vul", ra: 305.30500, dec: 21.57194, magRange: "8.5m → 13.8m (P_orb = 13.4 г.)", chart: "X18410A", kname: "000-BPU-105", kmag: "11.080", priority: "⚡ Новая", desc: "Экстремально медленная симбиотическая новая («объект Кувано—Хонды») с затмениями каждые 4900 суток.", comment: "Наблюдения 1 раз в неделю позволяют отслеживать небулярную эволюцию горячего белого карлика." },
@@ -6100,7 +6119,7 @@ function revealAndFocusField(inputId) {
     { star: "P Cyg", alias: "34 Cyg / HD 193237", type: "Гипергигант S Золотой Рыбы (SDOR)", auid: "000-BCY-034", con: "Cyg", ra: 304.44667, dec: 38.03294, magRange: "4.7m → 5.3m (ветровые выбросы)", chart: "X16234A", kname: "000-BCY-038", kmag: "6.850", priority: "⚡ Кампания", desc: "Знаменитый голубой гипергигант B1Ia+ с мощным звездным ветром (профиль P Лебедя), вспыхнувший в 1600 году.", comment: "Приоритетная цель AAVSO Target Tool (Alert/Campaign); контроль медленных пульсаций оболочки." },
     { star: "VV Cep", alias: "HD 208816", type: "Затменная сверхгигантская система (EA/GS+SRC)", auid: "000-BCE-022", con: "Cep", ra: 329.16292, dec: 63.62556, magRange: "4.8m → 5.4m (P = 7430 d / 20.3 г.)", chart: "X18422A", kname: "000-BCE-025", kmag: "7.240", priority: "⚡ Кампания", desc: "Грандиозная затменная двойная (красный сверхгигант M2epIa + горячий спутник B0V) с периодом 20.3 года.", comment: "Объект долгосрочного мониторинга AAVSO Target Tool (Alert/Campaign & EB)." },
     { star: "eps Aur", alias: "Almaaz / HD 31964", type: "Сверхдолгопериодическая затменная (EA/GS)", auid: "000-BAU-007", con: "Aur", ra: 75.49208, dec: 43.82333, magRange: "2.9m → 3.8m (P = 9892 d / 27.1 г.)", chart: "X13907A", kname: "000-BAU-010", kmag: "6.950", priority: "⚡ Кампания", desc: "Затменная система с гигантским пылевым тором и внезатменными пульсациями сверхгиганта F0Ia (P_puls ≈ 67 сут).", comment: "Регулярный контроль внезатменных пульсаций в AAVSO Target Tool." },
-    { star: "TX CVn", alias: "BD+37 2318", type: "Симбиотическая типа Z And (ZAND)", auid: "000-BCV-012", con: "CVn", ra: 191.17458, dec: 36.76417, magRange: "9.1m → 11.8m (P_orb = 199 d)", chart: "X17212A", kname: "000-BCV-015", kmag: "10.120", priority: "🔥 СРОЧНО", desc: "Активная симбиотическая двойная система (B9Veq + K5III) из списка приоритетных кампаний AAVSO Target Tool.", comment: "Отличная весенне-летняя цель для всех моделей Seestar (S30, S30PRO, S50, S50PRO); выдержка 10–15 с." },
+    { star: "TX CVn", alias: "BD+37 2318", type: "Симбиотическая типа Z And (ZAND)", auid: "000-BCV-012", con: "CVn", ra: 191.17458, dec: 36.76417, magRange: "9.1m → 11.8m (P_orb = 199 d)", chart: "X17212A", kname: "000-BCV-015", kmag: "10.120", priority: "🔥 СРОЧНО", desc: "Активная симбиотическая двойная система (B9Veq + K5III) из списка приоритетных кампаний AAVSO Target Tool.", comment: "Отличная весенне-летняя цель для всех моделей Seestar (S30, S30 PLUS, S30PRO, S50, S50PRO); выдержка 10–15 с." },
     { star: "EG And", alias: "HD 4174", type: "Затменная симбиотическая (ZAND+E)", auid: "000-BAN-044", con: "And", ra: 11.15500, dec: 40.67944, magRange: "7.1m → 7.8m (P_orb = 482.6 d)", chart: "X11244A", kname: "000-BAN-048", kmag: "8.340", priority: "⚡ Кампания", desc: "Яркая симбиотическая двойная с красным гигантом M2III и эллипсоидальным эффектом.", comment: "Цель AAVSO Target Tool (Alert/Campaign & CV); выдержка 10 с в фильтре TG." },
     { star: "QR Vul", alias: "HD 192685", type: "Эруптивная Be-звезда (GCAS)", auid: "000-BVU-020", con: "Vul", ra: 303.82917, dec: 25.58639, magRange: "4.6m → 5.0m (быстрые пульсации)", chart: "X18420A", kname: "000-BVU-024", kmag: "7.120", priority: "⚡ Кампания", desc: "Яркая переменная Be-звезда класса B3Ve в созвездии Лисички из списка AAVSO Target Tool (Alert/Campaign).", comment: "Контроль сброса газового диска и нерадиальных пульсаций." },
     { star: "T Tau", alias: "HD 284419", type: "Прототип молодых звёзд (INT)", auid: "000-BTA-001", con: "Tau", ra: 65.49750, dec: 19.53500, magRange: "9.3m → 13.5m (аккреция + туманность Хайнда)", chart: "X13801A", kname: "000-BTA-005", kmag: "10.280", priority: "🔥 СРОЧНО", desc: "Фундаментальный прототип молодых звёзд типа T Тельца в тройной системе с переменной туманностью Хайнда (NGC 1555).", comment: "Ключевая цель секции YSO в AAVSO Target Tool; выдержка 15–20 с в полосе TG." },
@@ -7029,11 +7048,13 @@ function revealAndFocusField(inputId) {
         const simbadPill = document.getElementById("bentoSimbadPill");
         if (simbadPill) simbadPill.textContent = `✓ ${mirrorName.split(" ")[0] || "CDS"} (Online)`;
       }
-      try {
-        if (typeof window._syncLiveAavsoOnlineTargets === "function") {
-          await window._syncLiveAavsoOnlineTargets();
-        }
-      } catch (_) {}
+    } catch (_) {}
+
+    // v1.3.4 FIX: Always run live AAVSO Target Tool API & Alert Notices independently of SIMBAD TAP!
+    try {
+      if (typeof window._syncLiveAavsoOnlineTargets === "function") {
+        await window._syncLiveAavsoOnlineTargets();
+      }
     } catch (_) {}
 
     const nowStr = new Date().toLocaleTimeString(currentLang === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
@@ -7160,9 +7181,9 @@ function revealAndFocusField(inputId) {
 
   // ============================================================================
   // МОДУЛЬ 10: ВАРИАНТ 6 (РАДАР + ЦЕНТР), ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ (СВЕТЛАЯ/ТЁМНАЯ),
-  // ТЕЛЕСКОПЫ S30/S30PRO/S50/S50PRO, СТАТУС КАТАЛОГОВ БЕЗ ДУБЛЕЙ (БЕЗ )
+  // ТЕЛЕСКОПЫ S30/S30 PLUS/S30PRO/S50/S50PRO, СТАТУС КАТАЛОГОВ БЕЗ ДУБЛЕЙ (БЕЗ )
   // ============================================================================
-  const VALID_SCOPES = ["S30", "S30PRO", "S50", "S50PRO"];
+  const VALID_SCOPES = ["S30", "S30PLUS", "S30PRO", "S50", "S50PRO"];
   let currentScopeModel = safeGetStorage("seestar_scope_model", "S50") || "S50";
   if (!VALID_SCOPES.includes(currentScopeModel)) currentScopeModel = "S50";
   window._currentScopeModel = currentScopeModel;
@@ -7174,7 +7195,7 @@ function revealAndFocusField(inputId) {
   let currentRadarLimit = parseInt(safeGetStorage("seestar_radar_limit", "0"), 10) || 0;
   let netLogExpanded = false;
 
-  // Отрисовка автономной звездной карты DSS2 с учетом рамки выбранного телескопа (S30, S30PRO, S50, S50PRO)
+  // Отрисовка автономной звездной карты DSS2 с учетом рамки выбранного телескопа (S30, S30 PLUS, S30PRO, S50, S50PRO)
   window.renderProceduralDssFallback = function(starId, ra, dec) {
     const canvas = document.getElementById("dssFallbackCanvas");
     if (!canvas) return;
@@ -8706,7 +8727,7 @@ function revealAndFocusField(inputId) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.3.3",
+      application: "Seestar AstroLab AAVSO v1.3.4",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8757,7 +8778,7 @@ function revealAndFocusField(inputId) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.3.3 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.3.4 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -11723,7 +11744,7 @@ function revealAndFocusField(inputId) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.3.3 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.3.4 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -14231,7 +14252,7 @@ function revealAndFocusField(inputId) {
 
     const activeScope = scopeModel || window._currentScopeModel || document.getElementById("headerScopeSelect")?.value || document.querySelector("[data-scope-tab].active")?.getAttribute("data-scope-tab") || "S50";
     const allItems = Array.from(byName.values());
-    // Строгий фильтр по оптическому профилю выбранного телескопа (S30 / S30PRO / S50 / S50PRO):
+    // Строгий фильтр по оптическому профилю выбранного телескопа (S30 / S30 PLUS / S30PRO / S50 / S50PRO):
     // исключаем звёзды, которые вызывают пересвет матрицы (< brightLimit) или уходят тусклее проницающей способности телескопа (> magLimit)
     const activeVisMode = document.getElementById("v6HemisphereSelect")?.value || "city";
     const strictlySuitable = allItems.filter(it => {
@@ -17121,7 +17142,7 @@ function revealAndFocusField(inputId) {
     appTitle: "Seestar AstroLab AAVSO",
     appSubtitle: "Afutomitri SIMBAD d AAVSO VSP s ufran awurman n yitri n usenqed (para Ramón)",
     splashTitle: "Seestar AstroLab AAVSO: Afutomitri n Yitriyen (para Ramón)",
-    splashDesc: "Asnas ussnan i ubeddel n wannayen n ufutomitri ZWO Seestar (S30, S30PRO, S50, S50PRO) ɣer umasal agraɣlan AAVSO Extended.",
+    splashDesc: "Asnas ussnan i ubeddel n wannayen n ufutomitri ZWO Seestar (S30, S30 PLUS, S30PRO, S50, S50PRO) ɣer umasal agraɣlan AAVSO Extended.",
     btnStartApp: "🚀 Bdu amahil deg Seestar AstroLab",
     lblThemePanel: "Agalis n yiniten",
     themeDarkBtn: "Aberkan (Iḍ)",
@@ -17907,7 +17928,7 @@ function revealAndFocusField(inputId) {
           type: "hero",
           kicker: "ГРАЖДАНСКАЯ ФОТОМЕТРИЯ • ZWO SEESTAR",
           headline: "Гражданская фотометрия с Seestar: от звёздного света до базы AAVSO",
-          callout: "Пошаговое руководство для наблюдателей переменных звёзд • Seestar S30 / S30PRO / S50 / S50PRO • Seestar AstroLab AAVSO • WebObs",
+          callout: "Пошаговое руководство для наблюдателей переменных звёзд • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO • Seestar AstroLab AAVSO • WebObs",
           steps: [
             "<strong>Для кого этот курс:</strong> для каждого владельца ZWO Seestar, кто хочет получать не только красивые снимки космоса, но и реальные научные данные.",
             "<strong>Что вы освоите:</strong> регистрацию в <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO</a>, съёмку фотометрии в EQ-режиме, конвертацию <code>Magnitude_*.csv</code> и публикацию на WebObs.",
@@ -17976,7 +17997,7 @@ function revealAndFocusField(inputId) {
           headline: "Выбор цели в Радаре целей Seestar AstroLab AAVSO",
           callout: "Фильтры видимости, рекомендации по выдержке и точные координаты J2000.0 для наведения телескопа.",
           steps: [
-            "<strong>Фильтры радара (246 целей):</strong> выбери модель Seestar (<code>S30/S30PRO/S50/S50PRO</code>) и отфильтруй цели по полушарию, азимуту, видимости в городе и высоте над горизонтом.",
+            "<strong>Фильтры радара (246 целей):</strong> выбери модель Seestar (<code>S30/S30 PLUS/S30PRO/S50/S50PRO</code>) и отфильтруй цели по полушарию, азимуту, видимости в городе и высоте над горизонтом.",
             "<strong>Выдержка для срочных целей:</strong> при выборе срочной звезды обязательно учитывай рекомендации по экспозиции (например, <code>10 с</code> или <code>10–20 с</code>) и риск насыщения из досье.",
             "<strong>Поиск по координатам:</strong> если звезду не удалось найти по имени в приложении Seestar, возьми точные координаты <code>RA / Dec (J2000.0)</code> из досье цели в конвертере."
           ],
@@ -18100,7 +18121,7 @@ function revealAndFocusField(inputId) {
           type: "hero",
           kicker: "CITIZEN PHOTOMETRY • ZWO SEESTAR",
           headline: "Citizen Photometry with Seestar: From Starlight to the AAVSO Database",
-          callout: "Step-by-step guide for variable star observers • Seestar S30 / S30PRO / S50 / S50PRO • Seestar AstroLab AAVSO • WebObs",
+          callout: "Step-by-step guide for variable star observers • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO • Seestar AstroLab AAVSO • WebObs",
           steps: [
             "<strong>Who this guide is for:</strong> every ZWO Seestar owner who wants to turn clear nights into real scientific measurements.",
             "<strong>What you will learn:</strong> registering on <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO</a>, shooting EQ-mode photometry, converting <code>Magnitude_*.csv</code>, and uploading to WebObs.",
@@ -18169,7 +18190,7 @@ function revealAndFocusField(inputId) {
           headline: "Picking a Target in the Seestar AstroLab AAVSO Radar",
           callout: "Visibility filters, exposure guidance, and J2000.0 pointing coordinates for your telescope.",
           steps: [
-            "<strong>Radar Filters (246 targets):</strong> pick your Seestar model (<code>S30/S30PRO/S50/S50PRO</code>) and filter by hemisphere, azimuth, city visibility, and altitude.",
+            "<strong>Radar Filters (246 targets):</strong> pick your Seestar model (<code>S30/S30 PLUS/S30PRO/S50/S50PRO</code>) and filter by hemisphere, azimuth, city visibility, and altitude.",
             "<strong>Exposure for Urgent Targets:</strong> always check exposure recommendations (e.g., <code>10s</code> or <code>10–20s</code>) and saturation warnings in the target dossier.",
             "<strong>Search by Coordinates:</strong> if a star isn't found by name in the Seestar app, copy its exact <code>RA / Dec (J2000.0)</code> from the dossier."
           ],
@@ -18618,7 +18639,7 @@ function revealAndFocusField(inputId) {
     appSubtitle: "Rozlišení SIMBAD & AAVSO VSP s automatickým výběrem kontrolní hvězdy",
     aavsoBadge: "AAVSO VSX & VSP Aktivní",
     splashTitle: "Seestar AstroLab AAVSO: Fotometrie",
-    splashDesc: "Profesionální aplikace pro převod vědeckých fotometrických pozorování z dalekohledů ZWO Seestar (S30, S30PRO, S50, S50PRO) do mezinárodního formátu AAVSO Extended, sledování urgentních výzev AAVSO a evidenci vašich pozorování.",
+    splashDesc: "Profesionální aplikace pro převod vědeckých fotometrických pozorování z dalekohledů ZWO Seestar (S30, S30 PLUS, S30PRO, S50, S50PRO) do mezinárodního formátu AAVSO Extended, sledování urgentních výzev AAVSO a evidenci vašich pozorování.",
     btnStartApp: "🚀 Spustit Seestar AstroLab",
     lblSplashLang: "Jazyk rozhraní:",
     splashLangLabel: "Jazyk rozhraní:",
@@ -18776,45 +18797,45 @@ function revealAndFocusField(inputId) {
     const extraPerLang = {
       en: {
         optFullWindow: "Full Window", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Version 1.3.3"
+        appVersionLabel: "Version 1.3.4"
       },
       ru: {
         optFullWindow: "Во всё окно", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Версия 1.3.3"
+        appVersionLabel: "Версия 1.3.4"
       },
       es: {
         optFullWindow: "Ventana completa", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En línea • TTL 1h",
-        appVersionLabel: "Versión 1.3.3"
+        appVersionLabel: "Versión 1.3.4"
       },
       de: {
         optFullWindow: "Vollbildfenster", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Online • TTL 1 Std.",
         thUI: "Daten aus SIMBAD-Katalog",
-        appVersionLabel: "Version 1.3.3"
+        appVersionLabel: "Version 1.3.4"
       },
       fr: {
         optFullWindow: "Pleine fenêtre", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En ligne • TTL 1h",
-        appVersionLabel: "Version 1.3.3"
+        appVersionLabel: "Version 1.3.4"
       },
       zh: {
         optFullWindow: "全窗口", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "在线 • TTL 1小时",
-        appVersionLabel: "版本 1.3.3"
+        appVersionLabel: "版本 1.3.4"
       },
       ber: {
         optFullWindow: "Asfaylu ummid", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Srad • TTL 1s",
         btnTryUniverseLuck: "Afran agacuran n yitri i wannay-ik",
         tipTryUniverseLuck: "Afran agacuran n yitri azwaru i wannayen-ik ass-a",
-        appVersionLabel: "Taseqqult 1.3.3"
+        appVersionLabel: "Taseqqult 1.3.4"
       },
       cs: {
         optFullWindow: "Celé okno", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Verze 1.3.3",
+        appVersionLabel: "Verze 1.3.4",
         lblThemePickerSplash: "Barevný motiv",
-        brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30PRO / S50 / S50PRO Fotometrická observatoř",
+        brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Fotometrická observatoř",
         btnDonateBadge: "❤️ Podpořit",
         btnSupportAavsoHeader: "💙 Podpořit",
         subtitle: "Načtení dat SIMBAD a AAVSO VSP s automatickým výběrem srovnávací hvězdy",
@@ -19044,16 +19065,16 @@ function revealAndFocusField(inputId) {
     // Sync all Module 14 & curve labels on initial load for EVERY language (prevents RU leaks in EN mode)
     if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
 
-    // === v1.3.3: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
+    // === v1.3.4: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
     const UPDATE_I18N = {
-      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.3.3. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
-      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.3.3. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
-      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.3.3. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
-      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.3.3. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
-      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.3.3. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
-      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.3.3，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
-      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.3.3. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
-      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.3.3. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
+      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.3.4. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
+      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.3.4. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
+      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.3.4. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
+      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.3.4. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
+      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.3.4. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
+      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.3.4，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
+      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.3.4. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
+      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.3.4. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
     };
 
     window.parseAstroSemver = function(v) {
@@ -19113,7 +19134,7 @@ function revealAndFocusField(inputId) {
     window.checkGithubReleaseOnceOnStartup = async function(forceCheck = false) {
       if (window._githubUpdateCheckedThisSession && !forceCheck) return;
       window._githubUpdateCheckedThisSession = true;
-      const LOCAL_VER = "1.3.3";
+      const LOCAL_VER = "1.3.4";
       const REPO_API = "https://api.github.com/repos/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
       const REPO_RELEASES = "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
 
@@ -19720,7 +19741,7 @@ function revealAndFocusField(inputId) {
 
 
 // ============================================================================
-// v1.3.3: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
+// v1.3.4: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
 // Designer full-canvas layout: high-res real-data visuals, KPI cards, pro tips,
 // reference tables, and verified official AAVSO / JAAVSO self-study links.
 // ============================================================================
@@ -20324,7 +20345,7 @@ function revealAndFocusField(inputId) {
     else if (e.key === "Escape") window.closeGraphGuideModal();
   });
   // ============================================================================
-  // v1.3.3: LIVE ONLINE AAVSO RADAR (PUBLIC CAMPAIGNS + TARGET TOOL API v1.0.0)
+  // v1.3.4: LIVE ONLINE AAVSO RADAR (PUBLIC CAMPAIGNS + TARGET TOOL API v1.0.0)
   //         + SETTINGS API KEY CONTROLS + 8-LANGUAGE API KEY GUIDE MODAL
   // ============================================================================
   const V133_I18N_PATCH = {
@@ -20740,6 +20761,9 @@ function revealAndFocusField(inputId) {
 
   window._syncLiveAavsoOnlineTargets = async function() {
     let totalAdded = 0;
+    let targetToolOk = false;
+    let targetToolAdded = 0;
+    let targetToolError = "";
     const vspPill = document.getElementById("bentoVspPill");
     const apiKey = _getStoredAavsoApiKey();
 
@@ -20780,6 +20804,8 @@ function revealAndFocusField(inputId) {
         );
         if (ttRes && ttRes.ok && Array.isArray(ttRes.targets)) {
           const m2 = window.mergeLiveAavsoTargetsIntoCatalog(ttRes.targets, "target_tool");
+          targetToolOk = true;
+          targetToolAdded = m2.added;
           totalAdded += m2.added;
           _updateApiKeySettingsUi(
             t("apiKeyStatusActiveFmt").replace("{added}", m2.added).replace("{total}", m2.total),
@@ -20789,19 +20815,21 @@ function revealAndFocusField(inputId) {
             vspPill.textContent = `✓ Target Tool API (${m2.total})`;
           }
         } else if (ttRes && ttRes.error) {
+          targetToolError = ttRes.error;
           _updateApiKeySettingsUi(
             t("apiKeyStatusErrorFmt").replace("{err}", ttRes.error),
             false
           );
         }
       } catch (err) {
+        targetToolError = String(err && err.message || err || "offline");
         _updateApiKeySettingsUi(
           t("apiKeyStatusErrorFmt").replace("{err}", String(err && err.message || err || "offline")),
           false
         );
       }
     }
-    return { totalAdded, total: AAVSO_URGENT_CATALOGUE.length };
+    return { totalAdded, total: AAVSO_URGENT_CATALOGUE.length, targetToolOk, targetToolAdded, targetToolError };
   };
 
   window.openAavsoApiKeyGuideModal = function() {
@@ -20843,9 +20871,37 @@ function revealAndFocusField(inputId) {
       saveBtn.addEventListener("click", async () => {
         const val = inputEl.value.trim();
         _setStoredAavsoApiKey(val);
-        _updateApiKeySettingsUi(val ? "" : t("apiKeyStatusSavedEmpty"), Boolean(val));
-        if (typeof refreshUrgentStarsData === "function") {
-          await refreshUrgentStarsData(true);
+        if (!val) {
+          window.resetLiveAavsoTargetsToBaseline();
+          _updateApiKeySettingsUi(t("apiKeyStatusSavedEmpty"), false);
+          return;
+        }
+        saveBtn.disabled = true;
+        const origLabel = saveBtn.textContent;
+        saveBtn.textContent = "⏳ ...";
+        _updateApiKeySettingsUi(t("urgentSyncProgress"), false);
+        try {
+          const syncRes = await window._syncLiveAavsoOnlineTargets();
+          if (typeof updateCatalogStatusCardTelemetry === "function") updateCatalogStatusCardTelemetry();
+          const nowStr = new Date().toLocaleTimeString(currentLang === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+          if (syncRes && syncRes.targetToolOk) {
+            showIosNotification(
+              t("toastRadarRefreshedTitle"),
+              t("toastRadarRefreshedMsgFmt").replace("{count}", AAVSO_URGENT_CATALOGUE.length).replace("{time}", nowStr),
+              t("apiKeyStatusActiveFmt").replace("{added}", syncRes.targetToolAdded || 0).replace("{total}", AAVSO_URGENT_CATALOGUE.length),
+              "ok"
+            );
+          } else if (syncRes && syncRes.targetToolError) {
+            showIosNotification(
+              t("lblAavsoApiKeyTitle"),
+              syncRes.targetToolError,
+              "targettool.aavso.org",
+              "warn"
+            );
+          }
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = origLabel;
         }
       });
     }

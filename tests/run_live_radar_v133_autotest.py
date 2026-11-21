@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Mandatory v1.3.3 Regression Autotest:
+Mandatory v1.3.4 Regression Autotest:
   1. Backend Option 1 (Public Live AAVSO Alert Notices -> star extraction + SIMBAD TAP resolution)
   2. Backend Option 2 (Official AAVSO Target Tool API v1.0.0 with HTTP Basic Auth api_key:api_token,
      rate-limit header, 401/429 error handling)
   3. Frontend Settings API Key UI (#settingsAavsoApiKeyInput, #btnSaveAavsoApiKey, #btnClearAavsoApiKey,
      #btnOpenApiKeyGuideModal) + localized #aavsoApiKeyGuideModal (RU & EN)
   4. Dynamic Target Radar catalog merge beyond 246 baseline + dynamic header/filter counters + LIVE badges
-  5. v1.3.3 version & Trust Infrastructure consistency (Zenodo Concept DOI, no Portable/SignPath)
+  5. v1.3.4 version & Trust Infrastructure consistency (Zenodo Concept DOI, no Portable/SignPath)
 """
 
 import base64
@@ -108,9 +108,9 @@ def test_backend_target_tool_api_v1():
                 "dec": "+38:00:00",
                 "constellation": "Cyg",
                 "priority": True,
-                "last_data_point": "2026-11-20T11:45:00Z",
+                "last_data_point": 1700000000,
                 "solar_conjunction": False,
-                "obs_section": "CV",
+                "obs_section": ["CV", "AC"],
                 "min_mag": 14.1,
                 "max_mag": 10.2,
             },
@@ -142,7 +142,8 @@ def test_backend_target_tool_api_v1():
     assert captured_headers.get("Authorization") == expected_auth, f"Bad auth header: {captured_headers}"
     assert res["targets"][0]["isLiveTargetTool"] is True
     assert res["targets"][0]["isHighPriority"] is True
-    assert res["targets"][0]["lastDataPoint"] == "2026-11-20T11:45:00Z"
+    assert res["targets"][0]["lastDataPoint"] == "2023-11-14 22:13 UTC" and res["targets"][0]["obsSection"] == "CV, AC"
+    assert "S30PLUS" in core.SCOPE_PROFILES and core.SCOPE_PROFILES["S30PLUS"]["fovStr"] == "2.66°×1.50°"
     assert res["targets"][1]["solarConjunction"] is True
 
     # Test 401 unauthorized handling
@@ -236,6 +237,10 @@ def test_frontend_settings_modal_and_dynamic_radar():
       // Reset to baseline and verify
       window.resetLiveAavsoTargetsToBaseline();
       const resetHeader = headerEl ? headerEl.textContent : "";
+      // v1.3.4: verify S30PLUS tab & specs
+      const s30PlusTab = document.querySelector('.v6-scope-tab[data-scope-tab="S30PLUS"]');
+      if (s30PlusTab) s30PlusTab.click();
+      const s30PlusSpecs = (document.getElementById("v6ScopeSpecsLine")?.textContent || "");
 
       return {
         ok: true,
@@ -250,7 +255,9 @@ def test_frontend_settings_modal_and_dynamic_radar():
         afterHeader,
         afterAllBtn,
         hasLiveBadge,
-        resetHeader
+        resetHeader,
+        hasS30PlusTab: Boolean(s30PlusTab),
+        s30PlusSpecs
       };
     })()
     """
@@ -278,11 +285,12 @@ def test_frontend_settings_modal_and_dynamic_radar():
     assert str(res["mergeRes"]["total"]) in res["afterAllBtn"], f"Filter All btn not updated: {res['afterAllBtn']}"
     assert res["hasLiveBadge"] is True, "LIVE badge not rendered in Radar cards"
     assert "(246)" in res["resetHeader"], f"Reset did not restore 246 baseline: {res['resetHeader']}"
+    assert res["hasS30PlusTab"] is True and "2.66" in res["s30PlusSpecs"], f"S30PLUS UI check failed: {res}"
     print(f"  PASS: UI modal (RU/EN), dynamic merge ({res['beforeHeader']} -> {res['afterHeader']} -> {res['resetHeader']}), LIVE badge")
 
 
 def test_version_and_policy_consistency():
-    print("[4/5] Version 1.3.3 & Trust Infrastructure policy consistency...")
+    print("[4/5] Version 1.3.4 & Trust Infrastructure policy consistency...")
     files_must_have_133 = [
         "README.md",
         "Source_and_Build/README.md",
@@ -296,7 +304,7 @@ def test_version_and_policy_consistency():
     ]
     for rel in files_must_have_133:
         txt = open(os.path.join(REPO_ROOT, rel), "r", encoding="utf-8").read()
-        assert "1.3.3" in txt, f"Version 1.3.3 missing in {rel}"
+        assert "1.3.4" in txt, f"Version 1.3.4 missing in {rel}"
 
     readme = open(os.path.join(REPO_ROOT, "README.md"), "r", encoding="utf-8").read()
     assert "10.5281/zenodo.24402803" in readme, "Zenodo Concept DOI missing in README.md"
@@ -336,16 +344,16 @@ def test_version_and_policy_consistency():
     assert len(ci_tests) >= 5, f"Expected >=5 CI autotests in build.yml, found {ci_tests}"
     for t_rel in ci_tests:
         assert os.path.isfile(os.path.join(REPO_ROOT, t_rel)), f"CI workflow references missing test file: {t_rel}"
-    print(f"  PASS: All core files at v1.3.3, Zenodo DOI preserved, CI-to-Repo parity OK ({len(ci_tests)} CI tests)")
+    print(f"  PASS: All core files at v1.3.4, Zenodo DOI preserved, CI-to-Repo parity OK ({len(ci_tests)} CI tests)")
 
 
 def main():
-    print("=== Seestar AstroLab AAVSO v1.3.3 Live Radar & API Key Autotest ===")
+    print("=== Seestar AstroLab AAVSO v1.3.4 Live Radar & API Key Autotest ===")
     test_backend_live_campaign_parser_and_simbad()
     test_backend_target_tool_api_v1()
     test_frontend_settings_modal_and_dynamic_radar()
     test_version_and_policy_consistency()
-    print("[5/5] ALL v1.3.3 LIVE RADAR & API KEY CHECKS PASSED!")
+    print("[5/5] ALL v1.3.4 LIVE RADAR & API KEY CHECKS PASSED!")
 
 
 if __name__ == "__main__":

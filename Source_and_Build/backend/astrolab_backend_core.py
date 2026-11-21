@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ================================================================================
-Seestar AstroLab AAVSO v1.3.3 — Unified Python Backend Core (Single Source of Truth)
+Seestar AstroLab AAVSO v1.3.4 — Unified Python Backend Core (Single Source of Truth)
 Author: CosmoBehemothych (https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO)
 ================================================================================
 Централизованное серверное/бэкенд-ядро бизнес-логики приложения:
@@ -42,7 +42,7 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-APP_VERSION = "1.3.3"
+APP_VERSION = "1.3.4"
 CRITICAL_COORD_DIFF_DEG = 0.05
 EXACT_COORD_MATCH_DEG = 0.00001
 DSS2_SURVEY_FOV_DEG = 2.40
@@ -72,6 +72,26 @@ SCOPE_PROFILES: Dict[str, Dict[str, Any]] = {
         "optCheckMin": 8.5,
         "optCheckMax": 12.8,
         "recExp": "10 с",
+    },
+    "S30PLUS": {
+        "code": "S30PLUS",
+        "name": "ZWO Seestar S30 Plus",
+        "shortName": "Seestar S30 PLUS",
+        "apertureMm": 30,
+        "focalMm": 160,
+        "fovDegW": 2.66,
+        "fovDegH": 1.50,
+        "fovStr": "2.66°×1.50°",
+        "resPx": "2560×1440",
+        "pixelScale": 3.74,
+        "skySurveyFovDeg": DSS2_SURVEY_FOV_DEG,
+        "frameRect": {"x": 15, "y": 76, "w": 310, "h": 175},
+        "vspFovArcmin": 110,
+        "magMin": 3.8,
+        "magLimit": 13.8,
+        "optCheckMin": 8.5,
+        "optCheckMax": 13.0,
+        "recExp": "10–20 с",
     },
     "S30PRO": {
         "code": "S30PRO",
@@ -1798,8 +1818,19 @@ class AavsoNativeAndStorageService:
                 con = parts[-1] if (len(parts) >= 2 and parts[-1] in cls._IAU_CONSTELLATIONS) else "AAVSO"
             is_prio = bool(rec.get("priority"))
             solar_conj = bool(rec.get("solar_conjunction"))
-            last_dp = str(rec.get("last_data_point") or "").strip()
-            obs_sec = str(rec.get("obs_section") or rec.get("observing_section") or rec.get("section") or "").strip()
+            raw_ldp = rec.get("last_data_point")
+            if isinstance(raw_ldp, (int, float)) and raw_ldp > 100000000:
+                try:
+                    last_dp = datetime.datetime.fromtimestamp(float(raw_ldp), tz=datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+                except Exception:
+                    last_dp = str(raw_ldp)
+            else:
+                last_dp = str(raw_ldp or "").strip()
+            raw_sec = rec.get("obs_section") or rec.get("observing_section") or rec.get("section") or ""
+            if isinstance(raw_sec, list):
+                obs_sec = ", ".join(str(x).strip() for x in raw_sec if str(x).strip() and str(x).strip().lower() != "none")
+            else:
+                obs_sec = str(raw_sec).strip()
             var_type = str(rec.get("var_type") or rec.get("type") or obs_sec or "AAVSO Target Tool").strip()
             auid = str(rec.get("auid") or "").strip()
             min_m = rec.get("min_mag")

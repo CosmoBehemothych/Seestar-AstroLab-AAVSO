@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Mandatory Pre-Build Regression Autotest for v1.3.3 UI Fixes & AAVSO Chart Guide:
+Mandatory Pre-Build Regression Autotest for v1.3.4 UI Fixes & AAVSO Chart Guide:
 1. Sky Clarity & Moon widgets stay strictly inside header toolbar bounds on narrow 860px viewport.
 2. #obsFilterDate allows keyboard typing (no readonly), parses DD.MM.YYYY & YYYY-MM-DD, rejects invalid dates.
 3. #graphGuideModal opens in 8-slide presentation layout (matching Getting Started) and renders all 8 slides.
-4. Version 1.3.3 is consistent across release files, with zero SignPath or Portable build artifacts.
+4. Version 1.3.4 is consistent across release files, with zero SignPath or Portable build artifacts.
 """
 import json, pathlib, re, sys
 
@@ -27,7 +27,7 @@ def test_version_and_policy_consistency():
     ]
     for rel in must_have_132:
         txt = (ROOT / rel).read_text(encoding="utf-8")
-        assert "1.3.3" in txt, f"Version 1.3.3 missing in {rel}"
+        assert "1.3.4" in txt, f"Version 1.3.4 missing in {rel}"
 
     for doc in ["README.md", "SECURITY.md", "VERIFY.txt"]:
         txt = (ROOT / doc).read_text(encoding="utf-8")
@@ -36,7 +36,7 @@ def test_version_and_policy_consistency():
     build_yml = (ROOT / ".github/workflows/build.yml").read_text(encoding="utf-8")
     assert "Seestar_AstroLab_Portable" not in build_yml, "Portable build must not exist in build.yml"
     assert "regression-tests:" in build_yml and "needs: regression-tests" in build_yml, "CI regression gate missing"
-    print("VERSION_AND_POLICY_CONSISTENCY_PASS (v1.3.3, no Portable, no SignPath, CI gate intact)")
+    print("VERSION_AND_POLICY_CONSISTENCY_PASS (v1.3.4, no Portable, no SignPath, CI gate intact)")
 
 
 def test_ui_and_guides_in_browser():
@@ -119,7 +119,7 @@ def test_ui_and_guides_in_browser():
     assert res["parseOk"] is True, "parseObsUserDateToIso failed"
     assert res["dateValuePreserved"] is True, "#obsFilterDate did not preserve keyboard value"
     assert res["modalOpen"] is True and res["slidesOk"] == 8, f"8-slide Graph Guide failed: {res}"
-    print("=== V1.3.3 UI, KEYBOARD DATE & 8-SLIDE GRAPH GUIDE AUTOTEST: ALL PASS ===")
+    print("=== V1.3.4 UI, KEYBOARD DATE & 8-SLIDE GRAPH GUIDE AUTOTEST: ALL PASS ===")
 
 
 if __name__ == "__main__":
