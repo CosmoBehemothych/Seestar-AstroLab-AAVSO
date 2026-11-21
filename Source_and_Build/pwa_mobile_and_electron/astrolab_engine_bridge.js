@@ -11158,7 +11158,7 @@ function revealAndFocusField(inputId) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "fetch_aavso_light_curve", star: cleanStar, daysBack: 240, obscode: userObscode }),
-          signal: AbortSignal.timeout(6500)
+          signal: AbortSignal.timeout(18000)
         });
         if (r.ok) rpcRes = await r.json();
       }
@@ -11249,30 +11249,12 @@ function revealAndFocusField(inputId) {
     }
 
     rawAavsoPts.sort((a, b) => a.jd - b.jd);
-    if (rawAavsoPts.length < 5) {
+    if (rawAavsoPts.length < 1) {
       return { ok: false, hasEnoughData: false, points: [], errorMsg: aavsoError };
     }
-
-    const runs = [];
-    let curRun = [rawAavsoPts[0]];
-    for (let i = 1; i < rawAavsoPts.length; i++) {
-      if (rawAavsoPts[i].jd - rawAavsoPts[i - 1].jd > 0.045) {
-        runs.push(curRun);
-        curRun = [rawAavsoPts[i]];
-      } else {
-        curRun.push(rawAavsoPts[i]);
-      }
-    }
-    runs.push(curRun);
-
-    const denseRuns = runs.filter(r => r.length >= 5);
-    let cleanedAavsoPts = [];
-    if (denseRuns.length > 0) {
-      denseRuns.sort((a, b) => b.length - a.length);
-      const topRuns = denseRuns.slice(0, 2).sort((a, b) => a[0].jd - b[0].jd);
-      for (const r of topRuns) cleanedAavsoPts.push(...r);
-    } else if (rawAavsoPts.length >= 8) {
-      cleanedAavsoPts = rawAavsoPts.slice(-120);
+    // v1.4.0 FIX: Preserve all loaded AAVSO AID observations (up to 3,000 newest points) without slicing to 2 runs!
+    let cleanedAavsoPts = rawAavsoPts.slice(-3000);
+    if (false) {
     } else {
       return { ok: false, hasEnoughData: false, points: [] };
     }
@@ -11679,7 +11661,7 @@ function revealAndFocusField(inputId) {
     const liveCurPts = parseCurrentCsvPoints();
     const domStar = (document.getElementById("starid")?.value || "").trim();
     const catStar = (window.STATE && window.STATE.catalogStarName) ? String(window.STATE.catalogStarName).trim() : "";
-    const activeStar = domStar || catStar || (liveCurPts.length > 0 ? liveCurPts[0].star : "");
+    const activeStar = domStar || catStar || STATE_CURVES.star || (liveCurPts.length > 0 ? liveCurPts[0].star : "");
     const livePastPts = activeStar ? getPastConvertedPointsExcludingCurrent(activeStar, liveCurPts) : [];
 
     const baseViewportW = Math.max(720, (scrollContainer.clientWidth || 1100) - 28);
@@ -11703,6 +11685,10 @@ function revealAndFocusField(inputId) {
       window.renderAavsoAndContributionWidget(activeStar, false, fpCanvas, targetW, heightPx);
     }
   }
+
+  window.parseCurrentCsvPoints = parseCurrentCsvPoints;
+  window.getPastConvertedPointsExcludingCurrent = getPastConvertedPointsExcludingCurrent;
+  window.renderFullPageScrollableChart = renderFullPageScrollableChart;
 
   function openFullPageLightCurveModal(mode = "user_only") {
     STATE_CURVES.fullPageMode = mode;
@@ -21573,20 +21559,20 @@ function revealAndFocusField(inputId) {
   window._fpDetectedEpochJd = 0;
 
   function _collectActiveFullPagePoints() {
-    const liveCurPts = (typeof parseCurrentCsvPoints === "function") ? parseCurrentCsvPoints() : [];
+    const sc = window._STATE_CURVES || null;
+    const liveCurPts = (typeof window.parseCurrentCsvPoints === "function") ? window.parseCurrentCsvPoints() : [];
     const domStar = (document.getElementById("starid")?.value || "").trim();
     const catStar = (window.STATE && window.STATE.catalogStarName) ? String(window.STATE.catalogStarName).trim() : "";
-    const activeStar = domStar || catStar || (liveCurPts.length > 0 ? liveCurPts[0].star : "");
-    const livePastPts = (activeStar && typeof getPastConvertedPointsExcludingCurrent === "function")
-      ? getPastConvertedPointsExcludingCurrent(activeStar, liveCurPts) : [];
-    const aavsoPts = (STATE_CURVES && Array.isArray(STATE_CURVES.aavsoOtherPoints)) ? STATE_CURVES.aavsoOtherPoints : [];
-    const userAavsoPts = (STATE_CURVES && Array.isArray(STATE_CURVES.aavsoUserPoints)) ? STATE_CURVES.aavsoUserPoints : [];
-    return {
-      activeStar,
-      points: (STATE_CURVES && STATE_CURVES.fullPageMode === "user_only")
-        ? [...livePastPts, ...liveCurPts]
-        : [...aavsoPts, ...userAavsoPts, ...livePastPts, ...liveCurPts]
-    };
+    const activeStar = domStar || catStar || (sc && sc.star) || (liveCurPts.length > 0 ? liveCurPts[0].star : "");
+    const livePastPts = (activeStar && typeof window.getPastConvertedPointsExcludingCurrent === "function")
+      ? window.getPastConvertedPointsExcludingCurrent(activeStar, liveCurPts) : [];
+    const aavsoPts = (sc && Array.isArray(sc.aavsoOtherPoints)) ? sc.aavsoOtherPoints : [];
+    const userAavsoPts = (sc && Array.isArray(sc.aavsoUserPoints)) ? sc.aavsoUserPoints : [];
+    const mode = (sc && sc.fullPageMode) ? sc.fullPageMode : "aavso_combined";
+    const combined = (mode === "user_only")
+      ? [...livePastPts, ...liveCurPts]
+      : [...aavsoPts, ...userAavsoPts, ...livePastPts, ...liveCurPts];
+    return { activeStar, points: combined };
   }
 
   window.runFullPageLightCurveAnalysis = function(customPoints = null) {
@@ -21657,7 +21643,7 @@ function revealAndFocusField(inputId) {
     const toggleBtn = document.getElementById("btnFpTogglePhaseMode");
     if (toggleBtn) toggleBtn.textContent = window._fpPhaseModeActive ? t("btnFpTimeView") : t("btnFpPhaseView");
     if (!window._fpPhaseModeActive) {
-      if (typeof renderFullPageScrollableChart === "function") renderFullPageScrollableChart();
+      if (typeof window.renderFullPageScrollableChart === "function") window.renderFullPageScrollableChart();
       return;
     }
     const { points } = _collectActiveFullPagePoints();
@@ -21684,7 +21670,17 @@ function revealAndFocusField(inputId) {
       innerWrap.style.height = `${h}px`;
       fpCanvas.style.width = `${w}px`;
       fpCanvas.style.height = `${h}px`;
-      AstroLabLightCurveLab.renderPhasePlotCanvas(fpCanvas, cleanPts, period, epoch, w, h);
+      if (cleanPts.length >= 2) {
+        AstroLabLightCurveLab.renderPhasePlotCanvas(fpCanvas, cleanPts, period, epoch, w, h);
+      } else {
+        const ctx = fpCanvas.getContext("2d");
+        fpCanvas.width = w; fpCanvas.height = h;
+        ctx.fillStyle = document.body.getAttribute("data-theme") === "light" ? "#f8fafc" : "#0b1224";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = "bold 15px sans-serif";
+        ctx.fillText("Phase Plot: load a Seestar CSV or click 🔄 AID to load AAVSO points (need ≥ 2 points)", 40, Math.round(h / 2));
+      }
     }
   };
 
@@ -21710,9 +21706,11 @@ function revealAndFocusField(inputId) {
         daysBack: days,
         obscode: document.getElementById("obscode")?.value || ""
       });
-      if (resp && resp.ok && STATE_CURVES) {
-        STATE_CURVES.aavsoOtherPoints = resp.otherObserversPoints || [];
-        STATE_CURVES.aavsoUserPoints = resp.userAavsoPoints || [];
+      const _scReload = window._STATE_CURVES;
+      if (resp && resp.ok && _scReload) {
+        _scReload.aavsoOtherPoints = resp.otherObserversPoints || [];
+        _scReload.aavsoUserPoints = resp.userAavsoPoints || [];
+        _scReload.aavsoHasEnoughData = (_scReload.aavsoOtherPoints.length + _scReload.aavsoUserPoints.length) > 0;
         window._renderFpPhaseOrTime();
       }
     } catch (_) {}
