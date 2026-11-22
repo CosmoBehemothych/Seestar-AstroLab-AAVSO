@@ -1001,6 +1001,22 @@ class PhotometryBackendEngine:
 
         seen_in_file_jds = set()
 
+        _pre_mags: List[float] = []
+        if clip_outliers_3sigma:
+            for _rl in raw_lines_all:
+                _s = _rl.strip()
+                if not _s or _s.startswith("#"):
+                    continue
+                _c = cls._split_dirty_csv_line(_s)
+                if len(_c) >= 19 and _c[1].lower() == "non-reference star":
+                    try:
+                        _mv = float(_c[6].replace(",", "."))
+                        if math.isfinite(_mv):
+                            _pre_mags.append(_mv)
+                    except ValueError:
+                        pass
+        _mad_info = cls.detect_mad_3sigma_outliers(_pre_mags) if clip_outliers_3sigma else {"count": 0, "indices": set(), "median": None, "limit": None}
+        _clipped_3sigma_count = 0
         for idx, raw_line in enumerate(raw_lines_all):
             raw = raw_line.strip()
             if not raw:
@@ -1023,10 +1039,6 @@ class PhotometryBackendEngine:
                     if abs(mag_orig - _mad_info["median"]) > _mad_info["limit"]:
                         _clipped_3sigma_count += 1
                         continue
-                if clip_outliers_3sigma and _mad_info.get("median") is not None and _mad_info.get("limit") is not None:
-                    if abs(mag_orig - _mad_info["median"]) > _mad_info["limit"]:
-                        _clipped_3sigma_count += 1
-                        continue
 
                 mag_conv = round(mag_orig, 4)
                 err_conv = round(err_orig, 4)
@@ -1041,14 +1053,14 @@ class PhotometryBackendEngine:
                 jd_end_str = cols[15] if cols[15] else cols[12]
                 jd_start = float(jd_start_str)
                 jd_end = float(jd_end_str)
-                from decimal import Decimal, ROUND_HALF_UP, InvalidOperation, InvalidOperation
+                from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
                 if not (math.isfinite(jd_start) and math.isfinite(jd_end)):
-                    skipped_bad_rows += 1
+                    bad += 1
                     continue
                 try:
                     jd_mid_dec = ((Decimal(str(jd_start)) + Decimal(str(jd_end))) / Decimal("2")).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
                 except (InvalidOperation, ValueError):
-                    skipped_bad_rows += 1
+                    bad += 1
                     continue
                 jd_mid = str(jd_mid_dec)
                 jd_mid_float = float(jd_mid_dec)
@@ -2310,135 +2322,60 @@ class AavsoNativeAndStorageService:
             {"rawStar": star_name, "daysBack": days_back, "fromJd": round(from_jd, 3), "nowJd": round(now_jd, 3), "hasToken": bool(tok), "obscode": u_obs},
         )
 
-        # Канал 1 (публичный, без токена): Актуальный AAVSO Data Search v2 (apps.aavso.org/v2/data/search/photometry/)
-        v2_band_norm = {
-            "visual": "Vis.", "vis.": "Vis.", "vis": "Vis.",
-            "johnson v": "V", "v": "V",
-            "johnson b": "B", "b": "B",
-            "johnson u": "U", "u": "U",
-            "cousins r": "R", "johnson r": "R", "r": "R",
-            "cousins i": "I", "johnson i": "I", "i": "I",
-            "tri-color green": "TG", "tg": "TG", "green": "TG",
-            "tri-color blue": "TB", "tb": "TB", "blue": "TB",
-            "tri-color red": "TR", "tr": "TR", "red": "TR",
-            "unfiltered with v zeropoint": "CV", "cv": "CV",
-            "unfiltered with r zeropoint": "CR", "cr": "CR",
-            "sloan g": "SG", "sg": "SG",
-            "sloan r": "SR", "sr": "SR",
-            "sloan i": "SI", "si": "SI",
-            "sloan u": "SU", "sloan z": "SZ",
-        }
+        # Канал 1 (основной, быстрый, без токена): Официальный AAVSO AID api.delim (vsx.aavso.org, таймаут 18с для T CrB / SS Cyg)
         try:
-            webobs_all_pts: List[Dict[str, Any]] = []
-            webobs_recent_pts: List[Dict[str, Any]] = []
-            for page_num in range(1, 13):
-                q_wo = urllib.parse.urlencode({
-                    "target": clean_star,
-                    "page": str(page_num),
-                })
-                wo_url = f"https://apps.aavso.org/v2/data/search/photometry/?{q_wo}"
-                req = urllib.request.Request(
-                    wo_url,
-                    headers={
-                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-                        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-                    },
-                )
-                with cls._urlopen_with_ssl_fallback(req, timeout=10.0) as resp:
-                    wo_status = getattr(resp, "status", 200)
-                    html_txt = resp.read().decode("utf-8", errors="replace")
-                if page_num == 1:
-                    tr_cnt = len(re.findall(r"<tr[^>]*>", html_txt, re.I))
-                    AstroLabDiagnosticLogger.log_event(
-                        "INFO",
-                        "AAVSO_SEARCH_V2",
-                        f"DataSearch v2 p1 HTTP {wo_status} bytes={len(html_txt)} tr_tags={tr_cnt} star={clean_star}",
-                        {"preview": re.sub(r"\s+", " ", html_txt[:220])} if tr_cnt < 3 else None,
-                    )
-                page_found = 0
-                for tr_m in re.finditer(r"<tr[^>]*>([\s\S]*?)</tr>", html_txt, re.I):
-                    cells = [
-                        re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", c).replace("&nbsp;", " ")).strip()
-                        for c in re.findall(r"<td[^>]*>([\s\S]*?)</td>", tr_m.group(1), re.I)
-                    ]
-                    if len(cells) < 6:
-                        continue
-                    jd_idx = -1
-                    jd_v = None
-                    for ci, val in enumerate(cells[:6]):
-                        try:
-                            fv = float(val.replace(",", ""))
-                            if 2400000.0 < fv < 2500000.0:
-                                jd_idx = ci
-                                jd_v = fv
-                                break
-                        except ValueError:
-                            continue
-                    if jd_idx < 0 or jd_v is None:
-                        continue
-
-                    # Observer is usually right before JD in v2 table (#, Target, Observer, JD, UTC, Mag, Uncert, Band, Type)
-                    obs_v = "AAVSO"
-                    if jd_idx >= 1 and re.match(r"^[A-Za-z0-9_-]{2,8}$", cells[jd_idx - 1]):
-                        obs_v = cells[jd_idx - 1].upper()
-
-                    mag_v = None
-                    err_v = 0.02
-                    band_v = "V"
-                    for ci in range(jd_idx + 1, len(cells)):
-                        c_s = cells[ci]
-                        if not c_s or c_s.startswith("<") or re.match(r"^\d{4}-\d{2}-\d{2}", c_s):
-                            continue
-                        if mag_v is None:
-                            try:
-                                mv = float(c_s)
-                                if -5.0 <= mv <= 25.0:
-                                    mag_v = mv
-                                    if ci + 1 < len(cells):
-                                        try:
-                                            ev = float(cells[ci + 1])
-                                            if 0.0 < ev < 2.0:
-                                                err_v = ev
-                                        except ValueError:
-                                            pass
-                                    continue
-                            except ValueError:
-                                continue
-                        else:
-                            low_b = c_s.lower().strip()
-                            if low_b in v2_band_norm:
-                                band_v = v2_band_norm[low_b]
-                            elif obs_v == "AAVSO" and re.match(r"^[A-Z0-9]{2,6}$", c_s) and c_s not in ("MAG", "JD", "STD", "NA", "CCD", "PEP", "DSLR"):
-                                obs_v = c_s
-                    if mag_v is not None:
-                        pt = {
-                            "jd": round(jd_v, 6),
-                            "mag": round(mag_v, 4),
-                            "merr": round(err_v, 4),
-                            "band": band_v,
-                            "obscode": obs_v.upper(),
-                            "source": "AAVSO_SEARCH_V2",
-                            "utc": cls.jd_to_utc_str(jd_v),
-                        }
-                        webobs_all_pts.append(pt)
-                        if jd_v >= from_jd:
-                            webobs_recent_pts.append(pt)
-                        page_found += 1
-                if page_found < 20 or len(webobs_all_pts) >= eff_max:
-                    break
-                # Stop early once we have plenty of points and have passed from_jd
-                if len(webobs_recent_pts) >= 200 and webobs_all_pts and webobs_all_pts[-1]["jd"] < from_jd:
-                    break
-            chosen = webobs_recent_pts if len(webobs_recent_pts) >= 10 else webobs_all_pts
-            if chosen:
-                chosen.sort(key=lambda x: x["jd"])
-                raw_points = chosen[-eff_max:]
-                source_used = f"AAVSO Data Search v2 ({len(raw_points)} pts)"
+            q_params = {
+                "DateFormat": "Julian",
+                "RequestedBands": "",
+                "view": "api.delim",
+                "ident": clean_star,
+                "fromjd": f"{from_jd:.4f}",
+                "tojd": f"{now_jd:.4f}",
+                "delimiter": ",",
+            }
+            url = f"https://vsx.aavso.org/index.php?{urllib.parse.urlencode(q_params)}"
+            req = urllib.request.Request(
+                url,
+                headers={
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128.0.0.0 Safari/537.36",
+                    "Accept": "text/plain,text/csv,*/*",
+                },
+            )
+            with cls._urlopen_with_ssl_fallback(req, timeout=18.0) as resp:
+                csv_text = resp.read().decode("utf-8", errors="replace")
+            delim_pts: List[Dict[str, Any]] = []
+            reader = _csv.DictReader(_io.StringIO(csv_text))
+            for row in reader:
+                jd_str = row.get("JD") or row.get("jd")
+                mag_str = str(row.get("Magnitude") or row.get("mag") or "").strip()
+                if not jd_str or not mag_str or mag_str.startswith("<"):
+                    continue
+                try:
+                    jd_v = float(jd_str)
+                    mag_v = float(mag_str)
+                    err_v = float(row.get("Uncertainty") or row.get("uncert") or 0.02)
+                    band_v = str(row.get("Band") or row.get("band") or "V").strip()
+                    obs_v = str(row.get("Observer Code") or row.get("obscode") or "").strip().upper()
+                    delim_pts.append({
+                        "jd": round(jd_v, 6),
+                        "mag": round(mag_v, 4),
+                        "merr": round(err_v, 4),
+                        "band": band_map.get(band_v, band_v),
+                        "obscode": obs_v,
+                        "source": "AAVSO_DELIM",
+                        "utc": cls.jd_to_utc_str(jd_v),
+                    })
+                except Exception:
+                    continue
+            if delim_pts:
+                delim_pts.sort(key=lambda x: x["jd"])
+                raw_points = delim_pts[-eff_max:]
+                source_used = f"AAVSO AID (api.delim, {len(raw_points)}/{len(delim_pts)} latest pts)"
         except Exception as e:
-            network_errors.append(f"AAVSO Data Search v2: {e}")
-            AstroLabDiagnosticLogger.log_event("WARN", "AAVSO_SEARCH_V2", f"Channel 1 failed for {clean_star}: {e}")
+            network_errors.append(f"AAVSO AID api.delim: {e}")
+            AstroLabDiagnosticLogger.log_event("WARN", "AAVSO_DELIM", f"Channel 1 failed for {clean_star}: {e}")
 
-        # Канал 2 (резерв): AAVSO REST API v2 с пагинацией
+        # Канал 2 (резерв, если api.delim не ответил или задан токен): AAVSO REST API v2 с пагинацией
         if len(raw_points) < 20:
             try:
                 q = urllib.parse.urlencode({"target": clean_star, "page_size": "200"})
@@ -2450,7 +2387,7 @@ class AavsoNativeAndStorageService:
                 pages_fetched = 0
                 while next_url and pages_fetched < 6 and len(api_pts) < eff_max:
                     req = urllib.request.Request(next_url, headers=req_headers)
-                    with cls._urlopen_with_ssl_fallback(req, timeout=6.0) as resp:
+                    with cls._urlopen_with_ssl_fallback(req, timeout=8.0) as resp:
                         data = json.loads(resp.read().decode("utf-8", errors="replace"))
                     pages_fetched += 1
                     for item in (data.get("results") or []):
@@ -2481,51 +2418,7 @@ class AavsoNativeAndStorageService:
                     source_used = f"AAVSO API v2 ({len(raw_points)} pts, {pages_fetched} pages)"
             except Exception as e:
                 network_errors.append(f"AAVSO API v2: {e}")
-                AstroLabDiagnosticLogger.log_event("WARN", "AAVSO_API_V2", f"Channel failed for {clean_star}: {e}")
-
-        # Канал 3 (резерв): AAVSO AID api.delim (CSV/HTML, newest tail)
-        if len(raw_points) < 20:
-            try:
-                q_params = {
-                    "DateFormat": "Julian",
-                    "RequestedBands": "",
-                    "view": "api.delim",
-                    "ident": clean_star,
-                    "fromjd": f"{from_jd:.4f}",
-                    "tojd": f"{now_jd:.4f}",
-                    "delimiter": ",",
-                }
-                url = f"https://vsx.aavso.org/index.php?{urllib.parse.urlencode(q_params)}"
-                req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
-                with cls._urlopen_with_ssl_fallback(req, timeout=8.0) as resp:
-                    csv_text = resp.read().decode("utf-8", errors="replace")
-                delim_pts: List[Dict[str, Any]] = []
-                reader = _csv.DictReader(_io.StringIO(csv_text))
-                for row in reader:
-                    jd_str = row.get("JD") or row.get("jd")
-                    mag_str = str(row.get("Magnitude") or row.get("mag") or "").strip()
-                    if not jd_str or not mag_str or mag_str.startswith("<"):
-                        continue
-                    try:
-                        jd_v = float(jd_str)
-                        mag_v = float(mag_str)
-                        err_v = float(row.get("Uncertainty") or row.get("uncert") or 0.02)
-                        band_v = str(row.get("Band") or row.get("band") or "V").strip()
-                        obs_v = str(row.get("Observer Code") or row.get("obscode") or "").strip().upper()
-                        delim_pts.append({
-                            "jd": round(jd_v, 6), "mag": round(mag_v, 4), "merr": round(err_v, 4),
-                            "band": band_v, "obscode": obs_v,
-                            "source": "AAVSO_AID_DELIM", "utc": cls.jd_to_utc_str(jd_v),
-                        })
-                    except Exception:
-                        continue
-                if len(delim_pts) > len(raw_points):
-                    delim_pts.sort(key=lambda x: x["jd"])
-                    raw_points = delim_pts[-eff_max:]
-                    source_used = f"AAVSO AID (api.delim, {len(raw_points)}/{len(delim_pts)} latest pts)"
-            except Exception as e:
-                network_errors.append(f"AAVSO AID api.delim: {e}")
-                AstroLabDiagnosticLogger.log_event("WARN", "AAVSO_DELIM", f"Channel failed for {clean_star}: {e}")
+                AstroLabDiagnosticLogger.log_event("WARN", "AAVSO_API_V2", f"Channel 2 failed for {clean_star}: {e}")
 
         raw_points.sort(key=lambda x: x["jd"])
         other_pts = [p for p in raw_points if not u_obs or p.get("obscode") != u_obs]

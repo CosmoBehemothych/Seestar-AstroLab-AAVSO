@@ -6642,9 +6642,11 @@ function revealAndFocusField(inputId) {
         STATE.catalogRa = null;
         STATE.catalogDec = null;
         activeRadarReferenceStar = "";
-        STATE_CURVES.aavsoHasEnoughData = false;
-        STATE_CURVES.aavsoOtherPoints = [];
-        STATE_CURVES.aavsoLoadedForStar = "";
+        if (window._STATE_CURVES) {
+          window._STATE_CURVES.aavsoHasEnoughData = false;
+          window._STATE_CURVES.aavsoOtherPoints = [];
+          window._STATE_CURVES.aavsoLoadedForStar = "";
+        }
         setFieldStatus("starid", "staridHint", null, "");
         updateEmptyStateSimbadPill();
         updateV6RadarActiveSelectionFast("");
@@ -6666,14 +6668,16 @@ function revealAndFocusField(inputId) {
         STATE.catalogRa = null;
         STATE.catalogDec = null;
         STATE.dismissedMismatchSig = "";
-        STATE_CURVES.aavsoHasEnoughData = false;
-        STATE_CURVES.aavsoOtherPoints = [];
-        STATE_CURVES.aavsoLoadedForStar = "";
-        STATE_CURVES.aavsoUserPoints = [];
+        if (window._STATE_CURVES) {
+          window._STATE_CURVES.aavsoHasEnoughData = false;
+          window._STATE_CURVES.aavsoOtherPoints = [];
+          window._STATE_CURVES.aavsoLoadedForStar = "";
+          window._STATE_CURVES.aavsoUserPoints = [];
+        }
         window._fpPhaseModeActive = false;
         window._fpDetectedPeriodDays = 0;
-        if (CHART_ZOOM_STATE && CHART_ZOOM_STATE.fullPageLightCurveCanvas) {
-          CHART_ZOOM_STATE.fullPageLightCurveCanvas = { scale: 1.0, offsetX: 0, offsetY: 0, isDragging: false, dragStartX: 0, dragStartY: 0 };
+        if (window._CHART_ZOOM_STATE && window._CHART_ZOOM_STATE.fullPageLightCurveCanvas) {
+          window._CHART_ZOOM_STATE.fullPageLightCurveCanvas = { scale: 1.0, offsetX: 0, offsetY: 0, isDragging: false, dragStartX: 0, dragStartY: 0 };
         }
         const _stalePanel = document.getElementById("lcAnalysisResultPanel");
         if (_stalePanel) _stalePanel.style.display = "none";
@@ -7101,7 +7105,7 @@ function revealAndFocusField(inputId) {
       }
     } catch (_) {}
 
-    const nowStr = new Date().toLocaleTimeString(currentLang === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    const nowStr = new Date().toLocaleTimeString(((typeof currentLang !== "undefined" ? currentLang : (window.STATE?.lang || "ru")) === "ru" ? "ru-RU" : "en-GB"), { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     if (urgentLastUpdateText) {
       urgentLastUpdateText.innerHTML = t("urgentSyncDoneFmt")
         .replace("{count}", AAVSO_URGENT_CATALOGUE.length)
@@ -8111,7 +8115,7 @@ function revealAndFocusField(inputId) {
       const raw = safeGetStorage(RECENT_ACTIONS_KEY, null);
       if (raw) list = JSON.parse(raw) || [];
     } catch (_) {}
-    const timeStr = new Date().toLocaleTimeString(currentLang === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit" });
+    const timeStr = new Date().toLocaleTimeString(((typeof currentLang !== "undefined" ? currentLang : (window.STATE?.lang || "ru")) === "ru" ? "ru-RU" : "en-GB"), { hour: "2-digit", minute: "2-digit" });
     list.unshift({ time: timeStr, key: actionKey, params: replacements });
     list = list.slice(0, 6);
     safeSetStorage(RECENT_ACTIONS_KEY, JSON.stringify(list));
@@ -11783,9 +11787,22 @@ function revealAndFocusField(inputId) {
     });
   });
 
-  document.getElementById("btnReloadAavsoCurve")?.addEventListener("click", () => {
-    const st = (document.getElementById("starid")?.value || STATE_CURVES.star || "").trim();
-    window.renderAavsoAndContributionWidget(st, true);
+  document.getElementById("btnReloadAavsoCurve")?.addEventListener("click", async () => {
+    const st = (document.getElementById("starid")?.value || window.STATE?.catalogStarName || STATE_CURVES.star || "").trim();
+    if (!st) {
+      if (typeof showIosNotification === "function") {
+        showIosNotification("🔄 AAVSO", "Сначала выберите или введите название звезды.", "", "warn");
+      }
+      return;
+    }
+    if (window._aavsoCurveMemoryCache) window._aavsoCurveMemoryCache.clear();
+    STATE_CURVES.aavsoLoadedForStar = "";
+    const dssWrapEl = document.getElementById("dssViewportWrap");
+    const emptyEl = document.getElementById("aavsoCurveEmptyState");
+    if (emptyEl) emptyEl.style.display = "none";
+    if (dssWrapEl) dssWrapEl.style.display = "block";
+    if (window.AstroLabDiagBridge) window.AstroLabDiagBridge.log("INFO", "UI_ACTION", "Clicked btnReloadAavsoCurve", { star: st });
+    await window.renderAavsoAndContributionWidget(st, true);
   });
 
   document.getElementById("btnOpenStorageFolderTop")?.addEventListener("click", async () => {
@@ -12226,7 +12243,7 @@ function revealAndFocusField(inputId) {
   // 14.3. ПУНКТ 7: Свободное перемещение (панорамирование ЛКМ) по всем графикам
   //       на ЛЮБОМ масштабе (включая 100%) + масштабирование колесом мыши
   // --------------------------------------------------------------------------
-  const CHART_ZOOM_STATE = {
+  const CHART_ZOOM_STATE = window._CHART_ZOOM_STATE = {
     lightCurveCanvas: { scale: 1.0, offsetX: 0, offsetY: 0, isDragging: false, dragStartX: 0, dragStartY: 0 },
     dssFallbackCanvas: { scale: 1.0, offsetX: 0, offsetY: 0, isDragging: false, dragStartX: 0, dragStartY: 0 },
     fullPageLightCurveCanvas: { scale: 1.0, offsetX: 0, offsetY: 0, isDragging: false, dragStartX: 0, dragStartY: 0 }
@@ -21205,7 +21222,7 @@ function revealAndFocusField(inputId) {
         try {
           const syncRes = await window._syncLiveAavsoOnlineTargets();
           if (typeof updateCatalogStatusCardTelemetry === "function") updateCatalogStatusCardTelemetry();
-          const nowStr = new Date().toLocaleTimeString(currentLang === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+          const nowStr = new Date().toLocaleTimeString(((typeof currentLang !== "undefined" ? currentLang : (window.STATE?.lang || "ru")) === "ru" ? "ru-RU" : "en-GB"), { hour: "2-digit", minute: "2-digit", second: "2-digit" });
           if (syncRes && syncRes.targetToolOk) {
             showIosNotification(
               t("toastRadarRefreshedTitle"),
@@ -21381,7 +21398,7 @@ function revealAndFocusField(inputId) {
       _btnRadarApi.textContent = "⏳ API...";
       try {
         const res = await window._syncLiveAavsoOnlineTargets();
-        const nowStr = new Date().toLocaleTimeString(currentLang === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        const nowStr = new Date().toLocaleTimeString(((typeof currentLang !== "undefined" ? currentLang : (window.STATE?.lang || "ru")) === "ru" ? "ru-RU" : "en-GB"), { hour: "2-digit", minute: "2-digit", second: "2-digit" });
         if (res && res.targetToolOk) {
           showIosNotification(
             t("toastRadarRefreshedTitle"),
@@ -22020,7 +22037,8 @@ function revealAndFocusField(inputId) {
     const scrollContainer = document.getElementById("fullPageLcScrollContainer");
     const innerWrap = document.getElementById("fullPageLcInnerWrap");
     if (fpCanvas && scrollContainer && innerWrap) {
-      const phZoom = parseFloat(document.getElementById("fullPageZoomSelect")?.value || "1") || 1;
+      const wheelZoom = (window._CHART_ZOOM_STATE && window._CHART_ZOOM_STATE.fullPageLightCurveCanvas && window._CHART_ZOOM_STATE.fullPageLightCurveCanvas.scale) ? window._CHART_ZOOM_STATE.fullPageLightCurveCanvas.scale : 1;
+      const phZoom = Math.min(8, Math.max(1, (parseFloat(document.getElementById("fullPageZoomSelect")?.value || "1") || 1) * wheelZoom));
       const w = Math.min(4800, Math.round(Math.max(720, (scrollContainer.clientWidth || 1060) - 16) * phZoom));
       const h = Math.max(460, (scrollContainer.clientHeight || 540) - 16);
       innerWrap.style.width = `${w}px`;
@@ -23177,6 +23195,94 @@ function revealAndFocusField(inputId) {
 
   if (typeof applyI18n === "function") {
     try { applyI18n(); } catch (_e) {}
+  }
+})();
+
+
+// ============================================================================
+// v1.4.0-alpha Hotfix8:
+//   1) City Search Live Dropdown + Enter key (Points 1 & 2)
+//   2) Always-Visible VSP Loading Progress Banner outside collapsed section (Point 7)
+//   3) Full User-Action Breadcrumb Logger [UI_ACTION] (Point 8)
+// ============================================================================
+(function initHotfix8UxAndTelemetry() {
+  // --- Points 1 & 2: Enter key + live debounced dropdown on #siteCitySearchInput ---
+  const cityInput = document.getElementById("siteCitySearchInput");
+  const cityBtn = document.getElementById("btnSiteCitySearch");
+  const cityRes = document.getElementById("siteCitySearchResults");
+  if (cityInput && cityBtn) {
+    let _cityTimer = null;
+    if (cityRes) {
+      cityRes.style.border = "1px solid rgba(56,189,248,0.28)";
+      cityRes.style.borderRadius = "8px";
+      cityRes.style.background = "rgba(15,23,42,0.85)";
+      cityRes.style.padding = "4px";
+      cityRes.style.display = "none";
+    }
+    cityInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (_cityTimer) clearTimeout(_cityTimer);
+        if (cityRes) cityRes.style.display = "flex";
+        cityBtn.click();
+      }
+    });
+    cityInput.addEventListener("input", () => {
+      const q = cityInput.value.trim();
+      if (_cityTimer) clearTimeout(_cityTimer);
+      if (q.length < 2) {
+        if (cityRes) { cityRes.innerHTML = ""; cityRes.style.display = "none"; }
+        return;
+      }
+      _cityTimer = setTimeout(() => {
+        if (cityRes) cityRes.style.display = "flex";
+        cityBtn.click();
+      }, 320);
+    });
+    cityBtn.addEventListener("click", () => {
+      if (cityRes) cityRes.style.display = "flex";
+    });
+  }
+
+  // --- Point 7: Move #vspLoadingBanner out of collapsed details so progress is ALWAYS visible ---
+  try {
+    const vspBanner = document.getElementById("vspLoadingBanner");
+    const fetchBtn = document.getElementById("btnFetchAll");
+    if (vspBanner && fetchBtn) {
+      const fetchRow = fetchBtn.closest(".grid-2, .field-group, div") || fetchBtn.parentElement;
+      if (fetchRow && fetchRow.parentElement) {
+        fetchRow.parentElement.insertBefore(vspBanner, fetchRow.nextSibling);
+      }
+    }
+  } catch (_e) {}
+
+  // --- Point 8: Full User-Action Breadcrumb Logging ([UI_ACTION]) ---
+  if (!window._ASTROLAB_ACTION_LOG_HOOKED) {
+    window._ASTROLAB_ACTION_LOG_HOOKED = true;
+    const isSensitiveEl = (el) => {
+      if (!el) return false;
+      const t = String(el.type || "").toLowerCase();
+      const id = String(el.id || "").toLowerCase();
+      return t === "password" || id.includes("apikey") || id.includes("token") || id.includes("secret");
+    };
+    document.addEventListener("click", (ev) => {
+      const btn = ev.target && ev.target.closest ? ev.target.closest("button, [role='button'], summary") : null;
+      if (!btn || !window.AstroLabDiagBridge) return;
+      const id = btn.id || btn.getAttribute("data-i18n") || btn.tagName;
+      const txt = String(btn.textContent || "").replace(/\s+/g, " ").trim().slice(0, 60);
+      window.AstroLabDiagBridge.log("INFO", "UI_ACTION", `CLICK #${id} ("${txt}")`);
+    }, true);
+
+    document.addEventListener("change", (ev) => {
+      const el = ev.target;
+      if (!el || !window.AstroLabDiagBridge || isSensitiveEl(el)) return;
+      const id = el.id || el.name || el.tagName;
+      let val = "";
+      if (el.type === "checkbox") val = el.checked ? "checked" : "unchecked";
+      else if (el.type === "file") val = el.files && el.files[0] ? `file:${el.files[0].name} (${el.files[0].size}B)` : "no-file";
+      else val = String(el.value || "").slice(0, 80);
+      window.AstroLabDiagBridge.log("INFO", "UI_ACTION", `CHANGE #${id} -> ${val}`);
+    }, true);
   }
 })();
 
