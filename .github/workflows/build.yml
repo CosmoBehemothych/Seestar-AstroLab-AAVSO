@@ -145,7 +145,7 @@ jobs:
         run: |
           if (-not $env:CERT_THUMBPRINT) { Write-Host "Skipping: no certificate."; exit 0 }
           $signtool = Get-ChildItem -Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Filter "signtool.exe" -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.FullName -match "x64" } | Select-Object -First 1 -ExpandProperty FullName
-          $setupExe = "$PWD\dist_installer\Seestar_AstroLab_Setup_v1.4.0-alpha.exe"
+          $setupExe = "$PWD\dist_installer\Seestar_AstroLab_Setup_v1.4.0.exe"
           if ($signtool -and (Test-Path $setupExe)) {
             & $signtool sign /fd SHA256 /sha1 $env:CERT_THUMBPRINT /tr "http://timestamp.digicert.com" /td SHA256 /d "Seestar AstroLab AAVSO Setup" $setupExe
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -156,15 +156,15 @@ jobs:
         working-directory: Source_and_Build
         shell: pwsh
         run: |
-          $setupFile = "dist_installer/Seestar_AstroLab_Setup_v1.4.0-alpha.exe"
+          $setupFile = "dist_installer/Seestar_AstroLab_Setup_v1.4.0.exe"
           $hash = (Get-FileHash -Path $setupFile -Algorithm SHA256).Hash.ToLower()
-          "$hash  Seestar_AstroLab_Setup_v1.4.0-alpha.exe" | Out-File -FilePath "dist_installer/SHA256SUMS.txt" -Encoding ascii -NoNewline
+          "$hash  Seestar_AstroLab_Setup_v1.4.0.exe" | Out-File -FilePath "dist_installer/SHA256SUMS.txt" -Encoding ascii -NoNewline
           "`n" | Out-File -FilePath "dist_installer/SHA256SUMS.txt" -Encoding ascii -Append -NoNewline
           if (Test-Path "../VERIFY.txt") {
             Copy-Item "../VERIFY.txt" "dist_installer/VERIFY.txt" -Force
           }
           "SETUP_SHA256=$hash" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-          Write-Host "SHA256(Seestar_AstroLab_Setup_v1.4.0-alpha.exe) = $hash"
+          Write-Host "SHA256(Seestar_AstroLab_Setup_v1.4.0.exe) = $hash"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -180,26 +180,26 @@ jobs:
         shell: pwsh
         run: |
           $tag = "${{ github.ref_name }}"
-          if (-not ($tag -match "^v\d")) { $tag = "v1.4.0-alpha" }
+          if (-not ($tag -match "^v\d")) { $tag = "v1.4.0" }
 
           $files = @(
-            "Source_and_Build/dist_installer/Seestar_AstroLab_Setup_v1.4.0-alpha.exe",
+            "Source_and_Build/dist_installer/Seestar_AstroLab_Setup_v1.4.0.exe",
             "Source_and_Build/dist_installer/SHA256SUMS.txt",
             "Source_and_Build/dist_installer/VERIFY.txt"
           )
 
           $notes = @"
           ### Windows Installer Only
-          Starting with ``$tag``, Seestar AstroLab AAVSO is distributed exclusively as a standalone Windows Installer (``Seestar_AstroLab_Setup_v1.4.0-alpha.exe``). Portable builds are discontinued.
+          Starting with ``$tag``, Seestar AstroLab AAVSO is distributed exclusively as a standalone Windows Installer (``Seestar_AstroLab_Setup_v1.4.0.exe``). Portable builds are discontinued.
 
           ### Release Integrity (SHA-256)
           ``````text
-          $($env:SETUP_SHA256)  Seestar_AstroLab_Setup_v1.4.0-alpha.exe
+          $($env:SETUP_SHA256)  Seestar_AstroLab_Setup_v1.4.0.exe
           ``````
 
           Verify on Windows PowerShell before running:
           ``````powershell
-          Get-FileHash .\Seestar_AstroLab_Setup_v1.4.0-alpha.exe -Algorithm SHA256
+          Get-FileHash .\Seestar_AstroLab_Setup_v1.4.0.exe -Algorithm SHA256
           ``````
           See ``VERIFY.txt``, [SECURITY.md](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/blob/main/SECURITY.md), and [BUILD.md](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/blob/main/BUILD.md) for independent verification and reproducible build steps.
           "@

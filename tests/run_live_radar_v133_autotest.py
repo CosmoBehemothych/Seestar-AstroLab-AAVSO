@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Mandatory v1.4.0-alpha Regression Autotest:
+Mandatory v1.4.0 Regression Autotest:
   1. Backend Option 1 (Public Live AAVSO Alert Notices -> star extraction + SIMBAD TAP resolution)
   2. Backend Option 2 (Official AAVSO Target Tool API v1.0.0 with HTTP Basic Auth api_key:api_token,
      rate-limit header, 401/429 error handling)
   3. Frontend Settings API Key UI (#settingsAavsoApiKeyInput, #btnSaveAavsoApiKey, #btnClearAavsoApiKey,
      #btnOpenApiKeyGuideModal) + localized #aavsoApiKeyGuideModal (RU & EN)
   4. Dynamic Target Radar catalog merge beyond 246 baseline + dynamic header/filter counters + LIVE badges
-  5. v1.4.0-alpha version & Trust Infrastructure consistency (Zenodo Concept DOI, no Portable/SignPath)
+  5. v1.4.0 version & Trust Infrastructure consistency (Zenodo Concept DOI, no Portable/SignPath)
 """
 
 import base64
@@ -237,7 +237,7 @@ def test_frontend_settings_modal_and_dynamic_radar():
       // Reset to baseline and verify
       window.resetLiveAavsoTargetsToBaseline();
       const resetHeader = headerEl ? headerEl.textContent : "";
-      // v1.4.0-alpha: verify S30PLUS tab & specs
+      // v1.4.0: verify S30PLUS tab & specs
       const s30PlusTab = document.querySelector('.v6-scope-tab[data-scope-tab="S30PLUS"]');
       if (s30PlusTab) s30PlusTab.click();
       const s30PlusSpecs = (document.getElementById("v6ScopeSpecsLine")?.textContent || "");
@@ -290,7 +290,7 @@ def test_frontend_settings_modal_and_dynamic_radar():
 
 
 def test_version_and_policy_consistency():
-    print("[4/5] Version 1.4.0-alpha & Trust Infrastructure policy consistency...")
+    print("[4/5] Version 1.4.0 & Trust Infrastructure policy consistency...")
     files_must_have_133 = [
         "README.md",
         "Source_and_Build/README.md",
@@ -304,7 +304,7 @@ def test_version_and_policy_consistency():
     ]
     for rel in files_must_have_133:
         txt = open(os.path.join(REPO_ROOT, rel), "r", encoding="utf-8").read()
-        assert "1.4.0-alpha" in txt, f"Version 1.4.0-alpha missing in {rel}"
+        assert "1.4.0" in txt, f"Version 1.4.0 missing in {rel}"
 
     readme = open(os.path.join(REPO_ROOT, "README.md"), "r", encoding="utf-8").read()
     assert "10.5281/zenodo.24402803" in readme, "Zenodo Concept DOI missing in README.md"
@@ -344,16 +344,16 @@ def test_version_and_policy_consistency():
     assert len(ci_tests) >= 5, f"Expected >=5 CI autotests in build.yml, found {ci_tests}"
     for t_rel in ci_tests:
         assert os.path.isfile(os.path.join(REPO_ROOT, t_rel)), f"CI workflow references missing test file: {t_rel}"
-    print(f"  PASS: All core files at v1.4.0-alpha, Zenodo DOI preserved, CI-to-Repo parity OK ({len(ci_tests)} CI tests)")
+    print(f"  PASS: All core files at v1.4.0, Zenodo DOI preserved, CI-to-Repo parity OK ({len(ci_tests)} CI tests)")
 
 
 def main():
-    print("=== Seestar AstroLab AAVSO v1.4.0-alpha Live Radar & API Key Autotest ===")
+    print("=== Seestar AstroLab AAVSO v1.4.0 Live Radar & API Key Autotest ===")
     test_backend_live_campaign_parser_and_simbad()
     test_backend_target_tool_api_v1()
     test_frontend_settings_modal_and_dynamic_radar()
     test_version_and_policy_consistency()
-    print("[5/5] ALL v1.4.0-alpha LIVE RADAR & API KEY CHECKS PASSED!")
+    print("[5/5] ALL v1.4.0 LIVE RADAR & API KEY CHECKS PASSED!")
 
 
 if __name__ == "__main__":

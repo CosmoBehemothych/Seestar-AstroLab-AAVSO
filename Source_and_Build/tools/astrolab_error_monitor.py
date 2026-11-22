@@ -21,7 +21,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-APP_MONITOR_VERSION = "1.4.0-alpha"
+APP_MONITOR_VERSION = "1.4.0"
 
 SECRET_PATTERNS = [
     (re.compile(r"(ghp_[A-Za-z0-9_]{16,}|github_pat_[A-Za-z0-9_]{20,})"), "***GITHUB_TOKEN_REDACTED***"),
@@ -202,7 +202,7 @@ def export_full_error_report(probe_results=None, captured_lines=None, out_dir=No
         except Exception as e:
             log_lines = [f"[Ошибка чтения лога: {e}]\n"]
     else:
-        log_lines = [f"[Файл лога пока не создан: {log_path} — запустите конвертор v1.4.0-alpha Hotfix3+]\n"]
+        log_lines = [f"[Файл лога пока не создан: {log_path} — запустите конвертор v1.4.0 Hotfix3+]\n"]
 
     certifi_info = "not-installed"
     try:

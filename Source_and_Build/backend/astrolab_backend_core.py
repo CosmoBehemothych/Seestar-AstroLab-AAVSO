@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ================================================================================
-Seestar AstroLab AAVSO v1.4.0-alpha — Unified Python Backend Core (Single Source of Truth)
+Seestar AstroLab AAVSO v1.4.0 — Unified Python Backend Core (Single Source of Truth)
 Author: CosmoBehemothych (https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO)
 ================================================================================
 Централизованное серверное/бэкенд-ядро бизнес-логики приложения:
@@ -42,11 +42,11 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-APP_VERSION = "1.4.0-alpha"
+APP_VERSION = "1.4.0"
 
 
 # =============================================================================
-# BUILT-IN DIAGNOSTIC LOGGER (v1.4.0-alpha Hotfix3) — Secret-Safe Live Telemetry
+# BUILT-IN DIAGNOSTIC LOGGER (v1.4.0 Hotfix3) — Secret-Safe Live Telemetry
 # =============================================================================
 import logging as _logging
 from logging.handlers import RotatingFileHandler as _RotatingFileHandler

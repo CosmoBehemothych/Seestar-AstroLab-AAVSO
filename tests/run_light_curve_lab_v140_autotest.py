@@ -181,7 +181,7 @@ def test_frontend_real_clicks_zero_errors_and_scientific_lab():
       }
       const starInp = document.getElementById("starid"); if (starInp) starInp.value = "SZ Lyn";
       window._STATE_CURVES.star = "SZ Lyn";
-      window._STATE_CURVES.aavsoLoadedForStar = "sz lyn";
+      window._STATE_CURVES.aavsoLoadedForStar = "SZ Lyn";
       window._STATE_CURVES.fullPageMode = "aavso_combined";
       window._STATE_CURVES.aavsoOtherPoints = pulsPts;
       window._STATE_CURVES.aavsoHasEnoughData = true;
@@ -213,7 +213,7 @@ def test_frontend_real_clicks_zero_errors_and_scientific_lab():
       bandSel.value = "TG";
       bandSel.dispatchEvent(new Event("change", { bubbles: true }));
       const binSel = document.getElementById("fpBinningSelect");
-      binSel.value = "10";
+      binSel.value = "30";
       binSel.dispatchEvent(new Event("change", { bubbles: true }));
       const clipChk = document.getElementById("chkFpSigmaClip");
       clipChk.checked = true;
@@ -303,6 +303,154 @@ def test_frontend_real_clicks_zero_errors_and_scientific_lab():
     print("[3/3] ALL v1.4.0 ZERO-ERROR REAL-CLICK E2E & SCIENTIFIC LAB CHECKS PASSED!")
 
 
+
+
+def test_v140_stable_regressions():
+    """Verify 6 mandatory v1.4.0 E2E regressions:
+    1. No duplicate fullscreen buttons; both mini-charts have Variant 2 Lab CTA pills.
+    2. #fpBandFilterSelect defaults to TG; preprocessPoints preserves layer/label/utc/idx/isUser.
+    3. 1200px height Y-axis sticky column syncs translateY with #fullPageLcScrollContainer.scrollTop.
+    4. Light theme .lc-metric-pill uses proper light-theme contrast (not black).
+    5. #obsTrackerModal 2 tabs (Sessions + By Star) aggregate per star and open Lab on click.
+    6. Closing #fullPageLightCurveModal clears html.modal-open / body.modal-open scroll lock.
+    """
+    print("[4/4] Running v1.4.0 Stable 6-point E2E regression suite...")
+    pwa = os.path.join(REPO_ROOT, "Source_and_Build", "pwa_mobile_and_electron")
+    html = open(os.path.join(pwa, "index.html"), encoding="utf-8").read()
+    css = open(os.path.join(pwa, "astrolab_styles.css"), encoding="utf-8").read()
+    tpl = open(os.path.join(pwa, "astrolab_view_template.js"), encoding="utf-8").read()
+    eng = open(os.path.join(pwa, "astrolab_engine_bridge.js"), encoding="utf-8").read()
+    bundled = re.sub(r'<link[^>]+astrolab_styles\.css[^>]*>', lambda m: f'<style>{css}</style>', html)
+    bundled = re.sub(r'<script[^>]+astrolab_view_template\.js[^>]*></script>', lambda m: f'<script>{tpl}</script>', bundled)
+    bundled = re.sub(r'<script[^>]+astrolab_engine_bridge\.js[^>]*></script>', lambda m: f'<script>{eng}</script>', bundled)
+
+    js = r"""
+    (async () => {
+      const jsErrs = []; window.addEventListener("error", e => jsErrs.push(e.message));
+      const noDupUserBtn = !document.getElementById("btnExpandLcFullPage");
+      const noDupAavsoBtn = !document.getElementById("btnExpandAavsoCurveFullPage");
+      const hasUserCta = Boolean(document.getElementById("btnLabCtaPillUserChart"));
+      const hasAavsoCta = Boolean(document.getElementById("btnLabCtaPillMiniChart"));
+      const defaultBand = document.getElementById("fpBandFilterSelect")?.value || "";
+
+      // Check preprocessPoints preserves layer, label, utc, idx, isUser
+      const samplePts = [
+        { jd: 2461000.1, mag: 11.2, merr: 0.01, filt: "TG", layer: "current", label: "★ 2026-11-22", utc: "2026-11-22 10:00", idx: 1, isUser: true },
+        { jd: 2461000.11, mag: 11.22, merr: 0.01, band: "TG", layer: "current", label: "★ 2026-11-22", utc: "2026-11-22 10:15", idx: 2, isUser: true },
+        { jd: 2461000.12, mag: 11.21, merr: 0.01, band: "TG", layer: "current", label: "★ 2026-11-22", utc: "2026-11-22 10:30", idx: 3, isUser: true },
+        { jd: 2461000.13, mag: 11.23, merr: 0.01, band: "TG", layer: "current", label: "★ 2026-11-22", utc: "2026-11-22 10:45", idx: 4, isUser: true }
+      ];
+      const prepTg = window.AstroLabLightCurveLab.preprocessPoints(samplePts, { band: "TG", binMinutes: 30, sigmaClip: true });
+      const layerPreserved = prepTg.length > 0 && prepTg[0].layer === "current" && prepTg[0].isUser === true && prepTg[0].label === "★ 2026-11-22";
+
+      // Light theme metric pill color check
+      document.getElementById("btnCloseSplash")?.click();
+      await new Promise(r => setTimeout(r, 80));
+      document.body.setAttribute("data-theme", "light");
+      const starInp = document.getElementById("starid"); if (starInp) starInp.value = "SZ Lyn";
+      if (window._STATE_CURVES) {
+        window._STATE_CURVES.star = "SZ Lyn";
+        window._STATE_CURVES.aavsoLoadedForStar = "SZ Lyn";
+        window._STATE_CURVES.aavsoOtherPoints = samplePts;
+        window._STATE_CURVES.aavsoHasEnoughData = true;
+      }
+      document.getElementById("btnLabCtaPillMiniChart")?.click();
+      await new Promise(r => setTimeout(r, 80));
+      if (typeof window.renderFullPageScrollableChart === "function") window.renderFullPageScrollableChart();
+      await new Promise(r => setTimeout(r, 150));
+      // Drag canvas with LMB first (at auto height) and verify X-axis strip pixels move!
+      const hSel = document.getElementById("fullPageHeightSelect");
+      await new Promise(r => setTimeout(r, 100));
+      const cv = document.getElementById("fullPageLightCurveCanvas");
+      let xAxisMovedOnDrag = false, dragDebug = {};
+      if (cv) {
+        const ctx = cv.getContext("2d");
+        const stripH = Math.min(90, cv.height);
+        const offBefore = window._CHART_ZOOM_STATE?.fullPageLightCurveCanvas?.offsetX;
+        const pt0Before = (window._lastFullPageScreenPts && window._lastFullPageScreenPts[0]) ? window._lastFullPageScreenPts[0].x : null;
+        const urlBefore = cv.toDataURL();
+        const beforeData = ctx.getImageData(0, Math.max(0, cv.height - stripH), cv.width, stripH).data;
+        cv.dispatchEvent(new MouseEvent("mousedown", { button: 0, clientX: 300, clientY: 200, bubbles: true }));
+        window.dispatchEvent(new MouseEvent("mousemove", { clientX: 420, clientY: 200, bubbles: true }));
+        window.dispatchEvent(new MouseEvent("mouseup", { button: 0, clientX: 420, clientY: 200, bubbles: true }));
+        await new Promise(r => setTimeout(r, 80));
+        dragDebug.offRightAfterUp = window._CHART_ZOOM_STATE?.fullPageLightCurveCanvas?.offsetX;
+        const offAfter = window._CHART_ZOOM_STATE?.fullPageLightCurveCanvas?.offsetX;
+        dragDebug = { offBefore, offAfter, w: cv.width, h: cv.height, ptsLen: (window._lastFullPageScreenPts || []).length, phase: Boolean(window._fpPhaseModeActive) };
+        const urlAfter = cv.toDataURL();
+        const pt0After = (window._lastFullPageScreenPts && window._lastFullPageScreenPts[0]) ? window._lastFullPageScreenPts[0].x : null;
+        dragDebug.urlChanged = (urlBefore !== urlAfter); dragDebug.pt0Before = pt0Before; dragDebug.pt0After = pt0After; dragDebug.fpMode = window._STATE_CURVES?.fullPageMode; window.renderFullPageScrollableChart(); dragDebug.pt0AfterManual = window._lastFullPageScreenPts?.[0]?.x; dragDebug.loadedFor = window._STATE_CURVES?.aavsoLoadedForStar; dragDebug.offAfterManual = window._CHART_ZOOM_STATE?.fullPageLightCurveCanvas?.offsetX;
+        const afterData = ctx.getImageData(0, Math.max(0, cv.height - stripH), cv.width, stripH).data;
+        for (let i = 0; i < beforeData.length; i += 4) {
+          if (beforeData[i] !== afterData[i] || beforeData[i+1] !== afterData[i+1] || beforeData[i+2] !== afterData[i+2]) {
+            xAxisMovedOnDrag = true;
+            break;
+          }
+        }
+      }
+
+      window.runFullPageLightCurveAnalysis(samplePts);
+      await new Promise(r => setTimeout(r, 100));
+      const pill = document.querySelector("#lcAnalysisResultPanel .lc-metric-pill");
+      const pillColor = pill ? getComputedStyle(pill).color : "";
+
+      // 1200px height Y-axis scroll sync check
+      if (hSel) {
+        hSel.value = "1200";
+        hSel.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      await new Promise(r => setTimeout(r, 120));
+      const sc = document.getElementById("fullPageLcScrollContainer");
+      if (sc) {
+        sc.scrollTop = 320;
+        sc.dispatchEvent(new Event("scroll"));
+      }
+      await new Promise(r => setTimeout(r, 80));
+      const stickyTransform = document.getElementById("fullPageStickyYAxis")?.style.transform || "";
+
+      // Close modal & verify scroll lock cleared
+      document.getElementById("btnCloseFullPageLc")?.click();
+      await new Promise(r => setTimeout(r, 80));
+      const modalClosedClean = !document.documentElement.classList.contains("modal-open") && !document.body.classList.contains("modal-open");
+
+      // Check ObsTracker 2 tabs & By Star aggregation
+      window.getObsTrackerRecords().push(
+        { id: "r1", star: "SZ Lyn", date: "2026-11-20", durationMin: 45, frames: 90, filter: "TG", scope: "S50" },
+        { id: "r2", star: "SZ Lyn", date: "2026-11-22", durationMin: 60, frames: 120, filter: "TG", scope: "S50" }
+      );
+      document.getElementById("btnOpenObsTracker")?.click();
+      await new Promise(r => setTimeout(r, 120));
+      document.getElementById("btnObsTabByStar")?.click();
+      await new Promise(r => setTimeout(r, 100));
+      const byStarRows = document.querySelectorAll("#obsByStarTableBody tr[data-star-name]").length;
+      const byStarBtn = document.querySelector("#obsByStarTableBody .btn-obs-open-chart");
+      if (byStarBtn) byStarBtn.click();
+      await new Promise(r => setTimeout(r, 150));
+      const labOpenedFromByStar = document.getElementById("fullPageLightCurveModal")?.classList.contains("open");
+
+      return JSON.stringify({
+        noDupUserBtn, noDupAavsoBtn, hasUserCta, hasAavsoCta, defaultBand,
+        layerPreserved, pillColor, stickyTransform, xAxisMovedOnDrag, dragDebug, jsErrs, modalClosedClean,
+        byStarRows, labOpenedFromByStar
+      });
+    })()
+    """
+    raw = loc.eval_in_browser(bundled, js, port=9296, await_promise=True, wait_ms=1200)
+    res = json.loads(raw)
+    print(f"  v1.4.0 Regression Results: {res}")
+    assert res["noDupUserBtn"] and res["noDupAavsoBtn"], f"Duplicate fullscreen buttons remain: {res}"
+    assert res["hasUserCta"] and res["hasAavsoCta"], f"Missing Variant 2 Lab CTA pills: {res}"
+    assert res["defaultBand"] == "TG", f"Expected default band TG, got {res['defaultBand']}"
+    assert res["layerPreserved"] is True, f"preprocessPoints dropped layer/isUser/label: {res}"
+    assert res["pillColor"] == "rgb(12, 74, 110)", f"Light theme pill color mismatch: {res['pillColor']}"
+    assert "translateY(-" in res["stickyTransform"] and res["stickyTransform"] != "translateY(-0px)", f"Sticky Y-axis did not sync scrollTop: {res['stickyTransform']}"
+    assert res["xAxisMovedOnDrag"] is True, "X-axis ticks/labels did not move on LMB drag"
+    assert res["modalClosedClean"] is True, f"Scroll lock stuck after closing modal: {res}"
+    assert res["byStarRows"] == 1 and res["labOpenedFromByStar"] is True, f"ObsTracker By Star tab failed: {res}"
+    print("[4/4] ALL 6 v1.4.0 STABLE REGRESSION CHECKS PASSED!")
+
+
 if __name__ == "__main__":
     test_backend_aavso_aid_api_v2_and_delim_tail()
     test_frontend_real_clicks_zero_errors_and_scientific_lab()
+    test_v140_stable_regressions()
