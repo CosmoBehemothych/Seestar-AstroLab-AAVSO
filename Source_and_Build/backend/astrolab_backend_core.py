@@ -848,6 +848,7 @@ class PhotometryBackendEngine:
             }
 
         points = []
+        detected_delim = cls.detect_csv_delimiter(csv_text)
         for idx, raw_line in enumerate((csv_text or "").splitlines()):
             line = raw_line.strip()
             if not line or (idx == 0 and line.lower().startswith("name,")):
@@ -916,6 +917,10 @@ class PhotometryBackendEngine:
         catalog_star: str = "",
         catalog_ra: Optional[float] = None,
         catalog_dec: Optional[float] = None,
+        calc_amass: bool = False,
+        site_lat: Optional[float] = None,
+        site_lon: Optional[float] = None,
+        clip_outliers_3sigma: bool = False,
     ) -> Dict[str, Any]:
         """
         Конвертирует сырой CSV фотометрии Seestar в стандарт AAVSO Extended (#OBSTYPE=DSLR).

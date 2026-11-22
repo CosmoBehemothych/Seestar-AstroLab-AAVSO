@@ -51,21 +51,17 @@ def test_backend_aavso_aid_api_v2_and_delim_tail():
     # 1a. Channel 1 (API v2): verify NO invalid fromjd/tojd query params & multi-page pagination
     seen_urls = []
 
-    # 1d. Channel 1 (Public AAVSO WebObs Results HTML table): verify real column extraction without token
-    wo_html = """<table>
-      <tr><th>Star</th><th>JD</th><th>Calendar Date</th><th>Magnitude</th><th>Error</th><th>Units</th><th>Filter</th><th>Observer</th></tr>
-      <tr><td>SZ Lyn</td><td>2461360.4150</td><td>2026-11-20 21:57</td><td>9.142</td><td>0.014</td><td>Mag</td><td>TG</td><td>APPA</td></tr>
-      <tr><td>SZ Lyn</td><td>2461360.4250</td><td>2026-11-20 22:12</td><td>9.085</td><td>0.012</td><td>Mag</td><td>V</td><td>HMB</td></tr>
-    </table>"""
-    with patch("urllib.request.urlopen", return_value=_FakeResp(wo_html)):
+    # 1d. Channel 1 (Primary fast vsx.aavso.org api.delim, no token): verify real column extraction
+    wo_csv = "JD,Magnitude,Uncertainty,Band,Observer Code\n2461360.4150,9.142,0.014,TG,APPA\n2461360.4250,9.085,0.012,V,HMB\n"
+    with patch("urllib.request.urlopen", return_value=_FakeResp(wo_csv)):
         res_wo = Svc.fetch_aavso_light_curve("SZ Lyn", days_back=3650)
-    assert res_wo["ok"] is True and res_wo["totalAavsoPoints"] == 2, f"WebObs HTML parser failed: {res_wo}"
+    assert res_wo["ok"] is True and res_wo["totalAavsoPoints"] == 2, f"Primary api.delim parser failed: {res_wo}"
     assert res_wo["otherObserversPoints"][0]["band"] == "TG" and res_wo["otherObserversPoints"][1]["band"] == "V"
 
     def _fake_api_v2(req, timeout=6.0, context=None):
         u = req.full_url if hasattr(req, "full_url") else str(req)
         seen_urls.append(u)
-        if "app.aavso.org/webobs/results" in u:
+        if "vsx.aavso.org" in u:
             return _FakeResp("<html></html>")
         assert "fromjd=" not in u and "tojd=" not in u, f"API v2 must NOT pass invalid fromjd/tojd params: {u}"
         if "page=2" not in u:
@@ -87,8 +83,8 @@ def test_backend_aavso_aid_api_v2_and_delim_tail():
 
     def _fake_fallback(req, timeout=9.0, context=None):
         u = req.full_url if hasattr(req, "full_url") else str(req)
-        if "app.aavso.org/webobs/results" in u:
-            return _FakeResp("<html></html>")
+        if "view=api.delim" in u:
+            return _FakeResp(big_csv)
         if "apps.aavso.org/v2/api/observations" in u:
             return _FakeResp(json.dumps({"results": [], "next": None}))
         return _FakeResp(big_csv)
@@ -106,8 +102,8 @@ def test_backend_aavso_aid_api_v2_and_delim_tail():
     small_csv = "JD,Magnitude,Uncertainty,Band,Observer Code\n2461300.1,11.2,0.02,V,ABC\n2461301.2,11.4,0.02,V,DEF\n"
     def _fake_small(req, timeout=9.0, context=None):
         u = req.full_url if hasattr(req, "full_url") else str(req)
-        if "app.aavso.org/webobs/results" in u:
-            return _FakeResp("<html></html>")
+        if "view=api.delim" in u:
+            return _FakeResp(small_csv)
         if "apps.aavso.org/v2/api/observations" in u:
             return _FakeResp(json.dumps({"results": [], "next": None}))
         return _FakeResp(small_csv)
