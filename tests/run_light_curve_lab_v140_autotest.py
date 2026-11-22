@@ -423,6 +423,11 @@ def test_v140_stable_regressions():
       document.getElementById("btnObsTabByStar")?.click();
       await new Promise(r => setTimeout(r, 100));
       const byStarRows = document.querySelectorAll("#obsByStarTableBody tr[data-star-name]").length;
+      document.getElementById("btnObsTabSessions")?.click();
+      await new Promise(r => setTimeout(r, 120));
+      const obsCv = document.getElementById("obsActivityChartCanvas");
+      const obsDpr = Math.max(2, window.devicePixelRatio || 2);
+      const obsChartNotStretched = Boolean(obsCv && obsCv.clientWidth > 0 && Math.abs(obsCv.width - Math.round(obsCv.clientWidth * obsDpr)) <= 2);
       const byStarBtn = document.querySelector("#obsByStarTableBody .btn-obs-open-chart");
       if (byStarBtn) byStarBtn.click();
       await new Promise(r => setTimeout(r, 150));
@@ -431,7 +436,7 @@ def test_v140_stable_regressions():
       return JSON.stringify({
         noDupUserBtn, noDupAavsoBtn, hasUserCta, hasAavsoCta, defaultBand,
         layerPreserved, pillColor, stickyTransform, xAxisMovedOnDrag, dragDebug, jsErrs, modalClosedClean,
-        byStarRows, labOpenedFromByStar
+        byStarRows, obsChartNotStretched, labOpenedFromByStar
       });
     })()
     """
@@ -446,6 +451,7 @@ def test_v140_stable_regressions():
     assert "translateY(-" in res["stickyTransform"] and res["stickyTransform"] != "translateY(-0px)", f"Sticky Y-axis did not sync scrollTop: {res['stickyTransform']}"
     assert res["xAxisMovedOnDrag"] is True, "X-axis ticks/labels did not move on LMB drag"
     assert res["modalClosedClean"] is True, f"Scroll lock stuck after closing modal: {res}"
+    assert res["obsChartNotStretched"] is True, f"ObsTracker activity chart stretched after tab switch: {res}"
     assert res["byStarRows"] == 1 and res["labOpenedFromByStar"] is True, f"ObsTracker By Star tab failed: {res}"
     print("[4/4] ALL 6 v1.4.0 STABLE REGRESSION CHECKS PASSED!")
 

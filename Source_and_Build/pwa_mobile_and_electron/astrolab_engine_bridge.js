@@ -8205,7 +8205,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
 
-    const cssW = Math.max(480, canvas.clientWidth || 760);
+    if (!canvas.clientWidth) return;
+    const cssW = Math.max(480, canvas.clientWidth);
     const cssH = Math.max(190, canvas.clientHeight || 220);
     const dpr = Math.max(2, window.devicePixelRatio || 2);
     if (canvas.width !== Math.round(cssW * dpr) || canvas.height !== Math.round(cssH * dpr)) {
@@ -24196,7 +24197,13 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
       if (btnTabStar) { btnTabStar.classList.toggle("active", isStar); btnTabStar.setAttribute("aria-selected", String(isStar)); }
       if (paneSess) paneSess.style.display = isStar ? "none" : "block";
       if (paneStar) paneStar.style.display = isStar ? "block" : "none";
-      if (isStar) _renderObsByStarTab();
+      if (isStar) {
+        _renderObsByStarTab();
+      } else {
+        requestAnimationFrame(() => {
+          if (typeof renderObsTrackerModal === "function") renderObsTrackerModal();
+        });
+      }
     };
     btnTabSess?.addEventListener("click", () => setObsTab("sessions"));
     btnTabStar?.addEventListener("click", () => setObsTab("by_star"));
