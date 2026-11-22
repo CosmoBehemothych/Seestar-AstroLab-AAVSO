@@ -227,8 +227,9 @@ def test_frontend_real_clicks_zero_errors_and_scientific_lab():
 
       // Click Pro Help button -> verify #lcProHelpPanel opens with guide text
       document.getElementById("btnOpenLcHelpModal").click();
-      const helpEl = document.getElementById("lcProHelpPanel");
-      const helpVisible = Boolean(helpEl && helpEl.style.display !== "none" && helpEl.textContent.length > 100);
+      const helpModal = document.getElementById("lcLabHelpModal");
+      const helpBody = document.getElementById("lcLabHelpModalBody");
+      const helpVisible = Boolean(helpModal && helpModal.classList.contains("open") && helpBody && helpBody.textContent.length > 100);
       fpModal.classList.remove("open");
 
       // 4. Verify all 4 scientific triggers

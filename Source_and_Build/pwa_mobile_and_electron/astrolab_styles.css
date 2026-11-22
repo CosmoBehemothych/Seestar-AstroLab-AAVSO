@@ -8115,3 +8115,156 @@ body[data-theme="light"] #fullPageStickyYCol {
   overflow-y: auto !important;
 }
 
+
+/* === HOTFIX10_UI_STYLES === */
+#dssViewportWrap {
+  position: relative !important;
+  min-height: 240px;
+}
+.lab-cta-pill-v2 {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(96, 165, 250, 0.58);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.86), rgba(14, 165, 233, 0.82));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #ffffff !important;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+}
+.lab-cta-pill-v2:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(37, 99, 235, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  filter: brightness(1.08);
+}
+body[data-theme="light"] .lab-cta-pill-v2 {
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.92), rgba(2, 132, 199, 0.90));
+  border-color: rgba(37, 99, 235, 0.65);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28);
+}
+.lc-trigger-card.clickable-audit,
+.lc-metric-pill.clickable-audit {
+  cursor: pointer;
+  transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+}
+.lc-trigger-card.clickable-audit:hover {
+  transform: translateY(-1px);
+  border-color: rgba(96, 165, 250, 0.85) !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.22);
+}
+.lc-metric-pill.clickable-audit:hover {
+  border-color: rgba(96, 165, 250, 0.85);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.22);
+}
+.lc-smart-hint-banner {
+  margin-top: 8px;
+  padding: 8px 11px;
+  border-radius: 9px;
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  background: rgba(245, 158, 11, 0.12);
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ios-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+#obsTrackerTableBody tr.obs-clickable-row {
+  cursor: pointer;
+  transition: background-color 0.14s ease;
+}
+#obsTrackerTableBody tr.obs-clickable-row:hover {
+  background: rgba(56, 189, 248, 0.12) !important;
+}
+.btn-obs-open-chart {
+  width: auto !important;
+  padding: 4px 9px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  margin-right: 4px;
+  background: linear-gradient(135deg, rgba(37,99,235,0.22), rgba(14,165,233,0.22)) !important;
+  border-color: rgba(56, 189, 248, 0.5) !important;
+  color: #7dd3fc !important;
+}
+body[data-theme="light"] .btn-obs-open-chart {
+  color: #0369a1 !important;
+  background: rgba(14, 165, 233, 0.12) !important;
+}
+.hotfix10-wide-modal {
+  max-width: 860px !important;
+  width: 94vw !important;
+  max-height: 88vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+.hotfix10-modal-scroll {
+  overflow-y: auto;
+  max-height: 68vh;
+  padding: 6px 4px;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.hotfix10-modal-footer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ios-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.math-audit-card {
+  border: 1px solid var(--ios-border);
+  border-radius: 10px;
+  padding: 11px 13px;
+  margin-bottom: 10px;
+  background: rgba(148, 163, 184, 0.06);
+}
+.math-audit-card h4 {
+  margin: 0 0 6px 0;
+  font-size: 13px;
+  color: var(--ios-cyan, #38bdf8);
+}
+.math-formula-box {
+  font-family: var(--font-mono, monospace);
+  font-size: 11.5px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  margin: 6px 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+body[data-theme="light"] .math-formula-box {
+  background: rgba(226, 232, 240, 0.72);
+  color: #0f172a;
+}
+.calib-guard-inline-banner {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(245, 158, 11, 0.55);
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--ios-text);
+}
+.calib-guard-issue-card {
+  padding: 10px 12px;
+  border-radius: 9px;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  background: rgba(245, 158, 11, 0.09);
+  margin-bottom: 8px;
+}

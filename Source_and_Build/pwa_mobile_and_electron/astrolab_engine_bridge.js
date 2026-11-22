@@ -5382,7 +5382,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     showIosNotification(t("btnClearAll"), t("msgClearDone"), t("msgClearExplain"), "info");
   });
 
-  document.getElementById("btnLoadDemo").addEventListener("click", () => {
+  document.getElementById("btnLoadDemo")?.addEventListener("click", () => {
     // ПУНКТ 8: Загрузка файла Seestar (включая Демо CSV) НЕ заполняет поля каталога SIMBAD!
     // Данные каталога SIMBAD заполняются только при нажатии «🔭 Загрузить SIMBAD + VSP» или выборе цели в Радаре.
     const pillEl = document.getElementById("selectedFileNamePill");
@@ -11837,7 +11837,13 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     if (emptyEl) emptyEl.style.display = "none";
     if (dssWrapEl) dssWrapEl.style.display = "block";
     if (window.AstroLabDiagBridge) window.AstroLabDiagBridge.log("INFO", "UI_ACTION", "Clicked btnReloadAavsoCurve", { star: st });
-    await window.renderAavsoAndContributionWidget(st, true);
+    const _reloadDays = String(document.getElementById("fpDaysBackSelect")?.value || "180");
+    if (window.AstroLabCurveLoaderV2) window.AstroLabCurveLoaderV2.start(st, _reloadDays);
+    try {
+      await window.renderAavsoAndContributionWidget(st, true);
+    } finally {
+      if (window.AstroLabCurveLoaderV2) window.AstroLabCurveLoaderV2.stop();
+    }
   });
 
   document.getElementById("btnOpenStorageFolderTop")?.addEventListener("click", async () => {
@@ -23326,3 +23332,896 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   }
 })();
 
+
+
+// === HOTFIX10_ALL_10_FEATURES_MODULE ===
+(function initHotfix10AllFeatures() {
+  if (window.__HOTFIX10_INITIALIZED__) return;
+  window.__HOTFIX10_INITIALIZED__ = true;
+
+  // --------------------------------------------------------------------------
+  // 1. 8-LANGUAGE I18N DICTIONARY FOR ALL HOTFIX10 CONTROLS & MODALS
+  // --------------------------------------------------------------------------
+  const H10_I18N = {
+    en: {
+      lblEnableDiagLog: "📝 Enable diagnostic error logging",
+      btnLabCtaPill: "🔬 Open Lab (Phase • 3σ) →",
+      tipLabCtaPill: "Open full-screen Light Curve Lab (Phase Plot, Auto-Analysis, 3σ)",
+      lblExportClip3Sigma: "✂ Remove outliers (>3σ) on export",
+      tipExport3SigmaHelpBtn: "How 3σ MAD outlier filtering works & scientific risks",
+      export3SigmaModalTitle: "✂ Export Outlier Filtering (>3σ MAD)",
+      btnFpBackToObs: "← My Observations",
+      btnObsOpenChart: "📈 Chart",
+      lcLabHelpModalTitle: "📖 Light Curve Lab — Algorithms & Scientific Guide",
+      lcMathAuditModalTitle: "📐 Mathematical Calculation Protocol",
+      btnCopyMathProtocol: "📋 Copy Protocol",
+      calibGuardInlineTitle: "🛡️ Calibration Guard: verification required before export",
+      calibGuardModalTitle: "🛡️ Calibration Guard — Check Your Data Before AAVSO Upload",
+      btnCalibGuardOpenLab: "🔬 Inspect on Chart in Lab",
+      btnCalibGuardDetails: "📋 Details",
+      lblCalibGuardConfirm: "I inspected the data in the Lab and verified the calibration (or confirmed a real outburst) — allow export",
+      noFileSelected: "No file selected yet (click the button above)",
+      lcEmptyDesc: "Load a Seestar photometry CSV file to build your light curve and compare it with previously converted files in Converted_Photometry_Storage."
+    },
+    ru: {
+      lblEnableDiagLog: "📝 Включить запись лога ошибок",
+      btnLabCtaPill: "🔬 Открыть лабораторию (Фаза • 3σ) →",
+      tipLabCtaPill: "Открыть полноэкранную Лабораторию кривой блеска (Фаза, Автоанализ, 3σ)",
+      lblExportClip3Sigma: "✂ Удалять выбросы (>3σ) при экспорте",
+      tipExport3SigmaHelpBtn: "Как работает фильтр выбросов 3σ (MAD) и какие есть риски",
+      export3SigmaModalTitle: "✂ Удаление выбросов (>3σ MAD) при экспорте",
+      btnFpBackToObs: "← К моим наблюдениям",
+      btnObsOpenChart: "📈 График",
+      lcLabHelpModalTitle: "📖 Справка по Лаборатории кривых блеска и алгоритмам анализа",
+      lcMathAuditModalTitle: "📐 Протокол математического расчёта",
+      btnCopyMathProtocol: "📋 Скопировать протокол",
+      calibGuardInlineTitle: "🛡️ Калибровочный сторож: требуется проверка перед экспортом",
+      calibGuardModalTitle: "🛡️ Калибровочный сторож — проверьте данные перед загрузкой в AAVSO",
+      btnCalibGuardOpenLab: "🔬 Проверить на графике в Лаборатории",
+      btnCalibGuardDetails: "📋 Подробнее",
+      lblCalibGuardConfirm: "Я сверил данные в Лаборатории и проверил калибровку (или это реальная вспышка) — разрешить конвертацию",
+      noFileSelected: "Файл ещё не выбран (нажмите кнопку выше)",
+      lcEmptyDesc: "Загрузите CSV-файл фотометрии Seestar, чтобы построить кривую блеска ваших текущих измерений и ранее сконвертированных файлов из папки Converted_Photometry_Storage."
+    },
+    es: {
+      lblEnableDiagLog: "📝 Activar registro de diagnóstico",
+      btnLabCtaPill: "🔬 Abrir Laboratorio (Fase • 3σ) →",
+      tipLabCtaPill: "Abrir el Laboratorio de curvas de luz a pantalla completa (Fase, Autoanálisis, 3σ)",
+      lblExportClip3Sigma: "✂ Eliminar valores atípicos (>3σ) al exportar",
+      tipExport3SigmaHelpBtn: "Cómo funciona el filtro MAD 3σ y sus riesgos científicos",
+      export3SigmaModalTitle: "✂ Eliminación de atípicos (>3σ MAD) al exportar",
+      btnFpBackToObs: "← Mis observaciones",
+      btnObsOpenChart: "📈 Gráfico",
+      lcLabHelpModalTitle: "📖 Guía del Laboratorio de Curvas de Luz y Algoritmos",
+      lcMathAuditModalTitle: "📐 Protocolo de Cálculo Matemático",
+      btnCopyMathProtocol: "📋 Copiar protocolo",
+      calibGuardInlineTitle: "🛡️ Guardia de Calibración: verificación requerida antes de exportar",
+      calibGuardModalTitle: "🛡️ Guardia de Calibración — Revisa tus datos antes de subir a AAVSO",
+      btnCalibGuardOpenLab: "🔬 Revisar en el Laboratorio",
+      btnCalibGuardDetails: "📋 Detalles",
+      lblCalibGuardConfirm: "Revisé los datos en el Laboratorio y verifiqué la calibración (o es una erupción real) — permitir exportación",
+      noFileSelected: "Ningún archivo seleccionado todavía (haz clic arriba)",
+      lcEmptyDesc: "Carga un archivo CSV de fotometría Seestar para graficar tu curva de luz junto con tus archivos convertidos."
+    },
+    de: {
+      lblEnableDiagLog: "📝 Fehlerprotokollierung aktivieren",
+      btnLabCtaPill: "🔬 Labor öffnen (Phase • 3σ) →",
+      tipLabCtaPill: "Vollbild-Lichtkurvenlabor öffnen (Phasenplot, Auto-Analyse, 3σ)",
+      lblExportClip3Sigma: "✂ Ausreißer (>3σ) beim Export entfernen",
+      tipExport3SigmaHelpBtn: "Wie der 3σ-MAD-Filter funktioniert & wissenschaftliche Risiken",
+      export3SigmaModalTitle: "✂ Ausreißer-Filterung (>3σ MAD) beim Export",
+      btnFpBackToObs: "← Meine Beobachtungen",
+      btnObsOpenChart: "📈 Diagramm",
+      lcLabHelpModalTitle: "📖 Lichtkurvenlabor — Algorithmen & Leitfaden",
+      lcMathAuditModalTitle: "📐 Mathematisches Berechnungsprotokoll",
+      btnCopyMathProtocol: "📋 Protokoll kopieren",
+      calibGuardInlineTitle: "🛡️ Kalibrierungswächter: Prüfung vor dem Export erforderlich",
+      calibGuardModalTitle: "🛡️ Kalibrierungswächter — Daten vor AAVSO-Upload prüfen",
+      btnCalibGuardOpenLab: "🔬 Im Labor prüfen",
+      btnCalibGuardDetails: "📋 Einzelheiten",
+      lblCalibGuardConfirm: "Ich habe die Daten im Labor geprüft und die Kalibrierung bestätigt (oder es ist ein echter Ausbruch) — Export freigeben",
+      noFileSelected: "Noch keine Datei ausgewählt (oben klicken)",
+      lcEmptyDesc: "Laden Sie eine Seestar-Photometrie-CSV-Datei, um Ihre Lichtkurve mit früheren Sitzungen darzustellen."
+    },
+    fr: {
+      lblEnableDiagLog: "📝 Activer le journal de diagnostic",
+      btnLabCtaPill: "🔬 Ouvrir le Laboratoire (Phase • 3σ) →",
+      tipLabCtaPill: "Ouvrir le Laboratoire plein écran (Phase, Auto-analyse, 3σ)",
+      lblExportClip3Sigma: "✂ Supprimer les valeurs aberrantes (>3σ) à l'export",
+      tipExport3SigmaHelpBtn: "Fonctionnement du filtre MAD 3σ et risques scientifiques",
+      export3SigmaModalTitle: "✂ Filtrage des valeurs aberrantes (>3σ MAD)",
+      btnFpBackToObs: "← Mes observations",
+      btnObsOpenChart: "📈 Courbe",
+      lcLabHelpModalTitle: "📖 Guide du Laboratoire de Courbes de Lumière",
+      lcMathAuditModalTitle: "📐 Protocole de Calcul Mathématique",
+      btnCopyMathProtocol: "📋 Copier le protocole",
+      calibGuardInlineTitle: "🛡️ Garde de Calibration : vérification requise avant export",
+      calibGuardModalTitle: "🛡️ Garde de Calibration — Vérifiez vos données avant l'envoi AAVSO",
+      btnCalibGuardOpenLab: "🔬 Vérifier dans le Laboratoire",
+      btnCalibGuardDetails: "📋 Détails",
+      lblCalibGuardConfirm: "J'ai vérifié les données dans le Laboratoire et confirmé la calibration (ou une éruption réelle) — autoriser l'export",
+      noFileSelected: "Aucun fichier sélectionné (cliquez ci-dessus)",
+      lcEmptyDesc: "Chargez un fichier CSV de photométrie Seestar pour tracer votre courbe de lumière et la comparer avec vos sessions précédentes."
+    },
+    zh: {
+      lblEnableDiagLog: "📝 启用诊断错误日志记录",
+      btnLabCtaPill: "🔬 打开光变实验室 (相位 • 3σ) →",
+      tipLabCtaPill: "打开全屏光变曲线实验室（相位图、自动分析、3σ）",
+      lblExportClip3Sigma: "✂ 导出时剔除离群点 (>3σ)",
+      tipExport3SigmaHelpBtn: "3σ MAD 离群点过滤原理及科学风险说明",
+      export3SigmaModalTitle: "✂ 导出离群点过滤 (>3σ MAD)",
+      btnFpBackToObs: "← 我的观测记录",
+      btnObsOpenChart: "📈 光变图",
+      lcLabHelpModalTitle: "📖 光变曲线实验室算法与科学指南",
+      lcMathAuditModalTitle: "📐 数学计算审计协议",
+      btnCopyMathProtocol: "📋 复制计算协议",
+      calibGuardInlineTitle: "🛡️ 定标守卫：导出前需要核对数据",
+      calibGuardModalTitle: "🛡️ 定标守卫 — 上传 AAVSO 前请核对数据",
+      btnCalibGuardOpenLab: "🔬 在实验室中核对曲线",
+      btnCalibGuardDetails: "📋 详情",
+      lblCalibGuardConfirm: "我已在实验室核对曲线并确认定标无误（或确认系真实爆发）— 允许导出",
+      noFileSelected: "尚未选择文件（请点击上方按钮）",
+      lcEmptyDesc: "请加载 Seestar 测光 CSV 文件以绘制您的光变曲线并与历史转换记录对比。"
+    },
+    cs: {
+      lblEnableDiagLog: "📝 Povolit záznam diagnostického logu",
+      btnLabCtaPill: "🔬 Otevřít laboratoř (Fáze • 3σ) →",
+      tipLabCtaPill: "Otevřít celoobrazovkovou Laboratoř světelné křivky (Fáze, Autoanalýza, 3σ)",
+      lblExportClip3Sigma: "✂ Odstranit odlehlé body (>3σ) při exportu",
+      tipExport3SigmaHelpBtn: "Jak funguje filtr MAD 3σ a vědecká rizika",
+      export3SigmaModalTitle: "✂ Odstranění odlehlých hodnot (>3σ MAD)",
+      btnFpBackToObs: "← Moje pozorování",
+      btnObsOpenChart: "📈 Graf",
+      lcLabHelpModalTitle: "📖 Nápověda Laboratoře světelných křivek a algoritmů",
+      lcMathAuditModalTitle: "📐 Protokol matematického výpočtu",
+      btnCopyMathProtocol: "📋 Kopírovat protokol",
+      calibGuardInlineTitle: "🛡️ Kalibrační strážce: před exportem je nutné ověření",
+      calibGuardModalTitle: "🛡️ Kalibrační strážce — zkontrolujte data před nahráním do AAVSO",
+      btnCalibGuardOpenLab: "🔬 Zkontrolovat v Laboratoři",
+      btnCalibGuardDetails: "📋 Podrobnosti",
+      lblCalibGuardConfirm: "Zkontroloval jsem data v Laboratoři a ověřil kalibraci (nebo jde o reálné vzplanutí) — povolit export",
+      noFileSelected: "Zatím není vybrán žádný soubor (klikněte výše)",
+      lcEmptyDesc: "Načtěte CSV soubor fotometrie Seestar pro vykreslení světelné křivky a porovnání s předchozími měřeními."
+    },
+    ber: {
+      lblEnableDiagLog: "📝 Включить запись лога ошибок (Диагностика)",
+      btnLabCtaPill: "🔬 Открыть лабораторию (Фаза • 3σ) →",
+      tipLabCtaPill: "Открыть полноэкранную Лабораторию кривой блеска (Фаза, Автоанализ, 3σ)",
+      lblExportClip3Sigma: "✂ Убрать выбросы (>3σ) при экспорте",
+      tipExport3SigmaHelpBtn: "Как работает фильтр выбросов 3σ (MAD) и какие есть риски",
+      export3SigmaModalTitle: "✂ Удаление выбросов (>3σ MAD) при экспорте",
+      btnFpBackToObs: "← Мои наблюдения",
+      btnObsOpenChart: "📈 График",
+      lcLabHelpModalTitle: "📖 Справка по Лаборатории кривых блеска и алгоритмам",
+      lcMathAuditModalTitle: "📐 Протокол математического расчёта",
+      btnCopyMathProtocol: "📋 Скопировать протокол",
+      calibGuardInlineTitle: "🛡️ Калибровочный сторож: проверь данные перед экспортом",
+      calibGuardModalTitle: "🛡️ Калибровочный сторож — сверь данные перед отправкой в AAVSO",
+      btnCalibGuardOpenLab: "🔬 Сверить на графике в Лаборатории",
+      btnCalibGuardDetails: "📋 Подробнее",
+      lblCalibGuardConfirm: "Я сверил данные в Лаборатории и проверил калибровку (или это реальная вспышка) — разрешить экспорт",
+      noFileSelected: "Файл пока не выбран (нажми кнопку выше)",
+      lcEmptyDesc: "Загрузи CSV-файл фотометрии Seestar, чтобы построить кривую блеска своих замеров и сравнить их с прошлыми сессиями."
+    }
+  };
+
+  if (typeof I18N !== "undefined") {
+    Object.keys(H10_I18N).forEach(lc => {
+      if (I18N[lc]) Object.assign(I18N[lc], H10_I18N[lc]);
+    });
+  }
+  const _getLang = () => (typeof window.currentLang !== "undefined" && window.currentLang) ? window.currentLang : (typeof currentLang !== "undefined" ? currentLang : "ru");
+  const _isRu = () => { const l = _getLang(); return l === "ru" || l === "ber"; };
+
+  // --------------------------------------------------------------------------
+  // 2. ITEM 1: SETTINGS DIAGNOSTIC LOGGING TOGGLE (#chkEnableDiagnosticLogging)
+  // --------------------------------------------------------------------------
+  const DIAG_PREF_KEY = "astrolab_diag_log_enabled_v1";
+  const chkDiag = document.getElementById("chkEnableDiagnosticLogging");
+  let _diagEnabled = false;
+  try { _diagEnabled = localStorage.getItem(DIAG_PREF_KEY) === "1"; } catch (_) {}
+
+  async function _syncDiagToggleFromBackend() {
+    try {
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_get_diagnostic_logging_enabled === "function") {
+        const r = await window.pywebview.api.backend_get_diagnostic_logging_enabled();
+        if (r && r.ok) _diagEnabled = Boolean(r.enabled);
+      }
+    } catch (_) {}
+    if (chkDiag) chkDiag.checked = _diagEnabled;
+    window._ASTROLAB_DIAG_LOGGING_ENABLED = _diagEnabled;
+  }
+  _syncDiagToggleFromBackend();
+
+  if (window.AstroLabDiagBridge && typeof window.AstroLabDiagBridge.log === "function") {
+    const _origLog = window.AstroLabDiagBridge.log.bind(window.AstroLabDiagBridge);
+    window.AstroLabDiagBridge.log = function(level, category, message, details) {
+      if (!window._ASTROLAB_DIAG_LOGGING_ENABLED && level !== "ERROR" && level !== "CRITICAL") return;
+      return _origLog(level, category, message, details);
+    };
+  }
+
+  chkDiag?.addEventListener("change", async () => {
+    _diagEnabled = Boolean(chkDiag.checked);
+    window._ASTROLAB_DIAG_LOGGING_ENABLED = _diagEnabled;
+    try { localStorage.setItem(DIAG_PREF_KEY, _diagEnabled ? "1" : "0"); } catch (_) {}
+    try {
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_set_diagnostic_logging_enabled === "function") {
+        await window.pywebview.api.backend_set_diagnostic_logging_enabled({ enabled: _diagEnabled });
+      }
+    } catch (_) {}
+  });
+
+  // --------------------------------------------------------------------------
+  // 3. ITEM 5: VARIANT 2 LAB CTA PILL + DOUBLE-CLICK ON MINI-CHART
+  // --------------------------------------------------------------------------
+  const openCombinedLab = () => {
+    if (typeof window.openFullPageLightCurveModal === "function") {
+      window.openFullPageLightCurveModal("aavso_combined");
+    } else {
+      document.getElementById("btnExpandAavsoCurveFullPage")?.click();
+    }
+  };
+  document.getElementById("btnLabCtaPillMiniChart")?.addEventListener("click", (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    openCombinedLab();
+  });
+  document.getElementById("aavsoPlotArea")?.addEventListener("dblclick", () => {
+    openCombinedLab();
+  });
+
+  // --------------------------------------------------------------------------
+  // 4. ITEM 8: EXPORT >3σ DEFAULT ON + ? HELP MODAL
+  // --------------------------------------------------------------------------
+  const chkExport3s = document.getElementById("chkExportClipOutliers3Sigma");
+  if (chkExport3s) chkExport3s.checked = true;
+
+  function _openExport3SigmaHelpModal() {
+    const modal = document.getElementById("export3SigmaHelpModal");
+    const body = document.getElementById("export3SigmaHelpBody");
+    if (!modal || !body) return;
+    body.innerHTML = _isRu() ? `
+      <div class="math-audit-card">
+        <h4>📐 Как работает фильтр выбросов (&gt;3σ MAD)</h4>
+        <p style="margin:0;">Алгоритм вычисляет <strong>медиану</strong> блеска внутри загруженного CSV и робастное отклонение <code>σ = 1.4826 × MAD</code> (медианное абсолютное отклонение). В отличие от обычного среднего, один испорченный кадр не искажает расчёт порога. Отбрасываются только точки, отстоящие от медианы дальше <code>max(0.06 mag, 3 × σ)</code>.</p>
+      </div>
+      <div class="math-audit-card">
+        <h4>✅ Почему опция включена по умолчанию</h4>
+        <p style="margin:0;">При съёмке на Seestar в серию регулярно попадают единичные бракованные кадры: пролёт спутника или самолёта, проходящее облако, срыв ведения или космический луч. Включённый фильтр автоматически очищает такие «иголки» до экспорта, защищая научную базу AAVSO WebObs от случайного мусора.</p>
+      </div>
+      <div class="math-audit-card" style="border-color:rgba(245,158,11,0.5); background:rgba(245,158,11,0.08);">
+        <h4 style="color:#fbbf24;">⚠️ Риски и когда лучше выключить</h4>
+        <ul style="margin:4px 0 0 18px; padding:0;">
+          <li><strong>Вспыхивающие звёзды (UV Cet, быстрые вспышки CV):</strong> реальный резкий пик блеска на 2–5 кадрах может быть принят за выброс и удалён.</li>
+          <li><strong>Очень глубокие и быстрые затмения:</strong> если затмение занимает малую долю серии, нижние точки минимума могут отсечься.</li>
+          <li><strong>Короткие серии (&lt;10–15 кадров):</strong> статистика ненадёжна — лучше просмотреть точки вручную в Лаборатории.</li>
+        </ul>
+      </div>
+    ` : `
+      <div class="math-audit-card">
+        <h4>📐 How the &gt;3σ MAD Outlier Filter Works</h4>
+        <p style="margin:0;">The algorithm computes the session <strong>median</strong> magnitude and robust dispersion <code>σ = 1.4826 × MAD</code> (Median Absolute Deviation), so a single defective frame cannot skew the threshold. Only points farther than <code>max(0.06 mag, 3 × σ)</code> from the median are excluded.</p>
+      </div>
+      <div class="math-audit-card">
+        <h4>✅ Why It Is Enabled by Default</h4>
+        <p style="margin:0;">Smart-telescope time series often contain isolated artifacts from satellite trails, passing clouds, tracking glitches, or cosmic rays. Keeping this filter ON protects the AAVSO WebObs database from accidental bad points.</p>
+      </div>
+      <div class="math-audit-card" style="border-color:rgba(245,158,11,0.5); background:rgba(245,158,11,0.08);">
+        <h4 style="color:#fbbf24;">⚠️ Scientific Risks — When to Turn It OFF</h4>
+        <ul style="margin:4px 0 0 18px; padding:0;">
+          <li><strong>Flare stars (UV Cet) & rapid cataclysmic outbursts:</strong> a genuine short-lived spike across a few frames could be clipped as an outlier.</li>
+          <li><strong>Deep, rapid eclipses:</strong> if the eclipse occupies only a small fraction of the session, minimum points may be trimmed.</li>
+          <li><strong>Very short series (&lt;10–15 frames):</strong> inspect points manually in the Light Curve Lab instead.</li>
+        </ul>
+      </div>
+    `;
+    modal.classList.add("open");
+  }
+
+  document.getElementById("btnExport3SigmaHelp")?.addEventListener("click", (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    _openExport3SigmaHelpModal();
+  });
+  ["btnCloseExport3SigmaHelp", "btnAckExport3SigmaHelp"].forEach(id => {
+    document.getElementById(id)?.addEventListener("click", () => {
+      document.getElementById("export3SigmaHelpModal")?.classList.remove("open");
+    });
+  });
+
+  // --------------------------------------------------------------------------
+  // 5. ITEM 4: DEDICATED FULL-SCREEN / CENTERED HELP MODAL IN LIGHT CURVE LAB
+  // --------------------------------------------------------------------------
+  window.toggleLcProHelpPanel = function() {
+    const modal = document.getElementById("lcLabHelpModal");
+    const body = document.getElementById("lcLabHelpModalBody");
+    const inlineP = document.getElementById("lcProHelpPanel");
+    if (inlineP) inlineP.style.display = "none";
+    if (!modal || !body) return;
+    body.innerHTML = _isRu() ? `
+      <div class="math-audit-card">
+        <h4>1. Фильтр полосы (Полоса: V / TG / CV / All)</h4>
+        <p style="margin:0;">Разные фотометрические полосы дают разный нуль-пункт блеска (например, звезда в полосе <code>I</code> или <code>R</code> часто на 0.5–1.5 mag ярче, чем в <code>V</code>). Для точного автоанализа, поиска транзитов и фазовой свёртки <strong>всегда выбирайте одну полосу</strong> (чаще всего <code>V</code> или <code>TG</code>), а не <code>All</code>.</p>
+      </div>
+      <div class="math-audit-card">
+        <h4>2. Отсечение выбросов MAD (✂️ 3σ)</h4>
+        <p style="margin:0;">Используется робастная статистика: <code>σ_MAD = 1.4826 × median(|mᵢ − med|)</code>. Точки, отклоняющиеся от медианы больше чем на <code>3 × σ_MAD</code>, скрываются из графика и расчётов — это убирает единичные промахи облаков, спутников и ошибочных оценок других наблюдателей.</p>
+      </div>
+      <div class="math-audit-card">
+        <h4>3. Взвешенное усреднение (Binning: 2m – 30d)</h4>
+        <p style="margin:0;">Объединяет близкие по времени точки в один бин с весами, обратно пропорциональными квадрату погрешности (<code>wᵢ = 1 / errᵢ²</code>). Уменьшает случайный шум в <code>√N</code> раз и помогает разглядеть слабые транзиты экзопланет или пульсации малой амплитуды.</p>
+      </div>
+      <div class="math-audit-card">
+        <h4>4. Периодограмма Ломба–Скаргла (Lomb–Scargle)</h4>
+        <p style="margin:0;">Математический метод поиска скрытой периодичности в <strong>неравномерно распределённых по времени</strong> астрономических рядах. Находит главный период <code>P</code> и его нормализованную спектральную мощность (%). Высокая мощность (&gt;35–40%) указывает на устойчивые регулярные колебания.</p>
+      </div>
+      <div class="math-audit-card">
+        <h4>5. Поиск транзитов экзопланет (BLS — Box Least Squares)</h4>
+        <p style="margin:0;">Ищет на кривой блеска неглубокий <strong>П-образный провал</strong> с плоским дном, характерный для прохождения планеты перед диском звезды. Вычисляет глубину провала <code>δ</code> (в милливеличинах, mmag), отношение сигнал/шум <code>SNR</code> и середину транзита <code>T₀</code>.</p>
+      </div>
+      <div class="math-audit-card">
+        <h4>6. Фазовая кривая (Фаза 0.00 – 2.00)</h4>
+        <p style="margin:0;">Сворачивает все ночи наблюдений в один цикл по формуле <code>φ = ((JD − T₀) / P) mod 1</code> и дублирует его на интервал <code>0.00–2.00</code>, чтобы форма минимума и максимума не разрывалась на границе. Позволяет наглядно проверить, действительно ли найденный период <code>P</code> верен.</p>
+      </div>
+      <div class="math-audit-card">
+        <h4>7. Четыре диагностических триггера автоанализа</h4>
+        <ul style="margin:4px 0 0 18px; padding:0;">
+          <li><strong>🪐 Транзит экзопланеты (EP):</strong> неглубокий П-образный провал BLS с высоким SNR.</li>
+          <li><strong>⚙️ Затменная двойная (EA / EB / EW):</strong> выраженный провал вниз от плато с положительной асимметрией.</li>
+          <li><strong>💓 Пульсирующая переменная (HADS / RR Lyr / δ Sct / Cep):</strong> сильный пик Ломба–Скаргла и плавная цикличность.</li>
+          <li><strong>💥 Вспышка / катаклизмическая переменная (UG / CV / UV):</strong> резкий подъём яркости вверх над спокойным плато.</li>
+        </ul>
+        <p style="margin:6px 0 0 0; color:var(--ios-text-secondary);">💡 Совет: кликните по любой карточке результата автоанализа, чтобы открыть <strong>«📐 Протокол математического расчёта»</strong> с точными формулами и подставленными числами.</p>
+      </div>
+    ` : `
+      <div class="math-audit-card">
+        <h4>1. Photometric Band Filter (V / TG / CV / All)</h4>
+        <p style="margin:0;">Different bands have different zero-points (e.g., a star in <code>I</code> or <code>R</code> can appear 0.5–1.5 mag brighter than in <code>V</code>). Always select a <strong>single band</strong> (such as <code>V</code> or <code>TG</code>) before running Auto-Analysis or Phase Folding.</p>
+      </div>
+      <div class="math-audit-card">
+        <h4>2. Robust MAD 3σ Outlier Clipping</h4>
+        <p style="margin:0;">Uses <code>σ_MAD = 1.4826 × median(|mᵢ − med|)</code> to hide isolated cloud, satellite, or defective points exceeding <code>3 × σ_MAD</code> without distorting the baseline.</p>
+      </div>
+      <div class="math-audit-card">
+        <h4>3. Inverse-Variance Weighted Binning (2m – 30d)</h4>
+        <p style="margin:0;">Combines nearby points using weights <code>wᵢ = 1 / errᵢ²</code>, reducing random scatter by <code>√N</code> to reveal shallow transits and low-amplitude pulsations.</p>
+      </div>
+      <div class="math-audit-card">
+        <h4>4. Lomb–Scargle Periodogram & BLS Transit Search</h4>
+        <p style="margin:0;"><strong>Lomb–Scargle</strong> finds dominant periods <code>P</code> and normalized power (%) in unevenly sampled time series. <strong>BLS (Box Least Squares)</strong> detects flat-bottomed exoplanet transits (depth <code>δ</code> in mmag, <code>SNR</code>, mid-transit <code>T₀</code>).</p>
+      </div>
+      <div class="math-audit-card">
+        <h4>5. Double-Cycle Phase Plot (0.00 – 2.00) & 4 Triggers</h4>
+        <p style="margin:0;">Folds observations via <code>φ = ((JD − T₀) / P) mod 1</code> across two full cycles. Click any Auto-Analysis trigger card or metric chip to open the <strong>📐 Mathematical Calculation Protocol</strong> with exact formulas and live substituted numbers.</p>
+      </div>
+    `;
+    modal.classList.add("open");
+  };
+  ["btnCloseLcLabHelpModal", "btnAckLcLabHelpModal"].forEach(id => {
+    document.getElementById(id)?.addEventListener("click", () => {
+      document.getElementById("lcLabHelpModal")?.classList.remove("open");
+    });
+  });
+
+  // --------------------------------------------------------------------------
+  // 6. ITEMS 3 & 7: SMART SCIENTIFIC HINT + CLICKABLE CALCULATION AUDIT MODAL
+  // --------------------------------------------------------------------------
+  function _buildMathAuditPlainText(audit) {
+    if (!audit || !audit.res) return "";
+    const r = audit.res;
+    const st = r.stats || {};
+    const ls = r.ls || {};
+    const bls = r.bls || {};
+    const lines = [
+      `=== Seestar AstroLab AAVSO — Mathematical Calculation Protocol ===`,
+      `Star: ${audit.activeStar || "N/A"}`,
+      `Band Filter: ${audit.band} | 3-Sigma MAD Clip: ${audit.sigmaClip ? "ON" : "OFF"} | Binning: ${audit.binMinutes > 0 ? audit.binMinutes + " min" : "OFF"}`,
+      `Sample Size: N_used = ${r.count} (from N_raw = ${audit.rawCount}, filtered out = ${Math.max(0, audit.rawCount - r.count)})`,
+      `Time Span: JD ${audit.jdMin ? audit.jdMin.toFixed(5) : "—"} .. ${audit.jdMax ? audit.jdMax.toFixed(5) : "—"} (Δt = ${audit.spanDays.toFixed(3)} d)`,
+      ``,
+      `[1] Photometric Statistics:`,
+      `  Median mag = ${st.medianMag != null ? st.medianMag.toFixed(4) : "—"}`,
+      `  Amplitude Δm = max(m) - min(m) = ${st.amplitudeMag != null ? st.amplitudeMag.toFixed(4) : "—"} mag`,
+      `  RMS = sqrt(sum((m_i - mean)^2) / N) = ${st.rmsMag != null ? st.rmsMag.toFixed(4) : "—"} mag`,
+      `  Asymmetry (dip vs flare) = ${st.asymmetry != null ? st.asymmetry.toFixed(3) : "—"}`,
+      `  Minimum epoch T_min = JD ${st.tMinJd != null ? st.tMinJd.toFixed(5) : "—"}`,
+      ``,
+      `[2] Lomb-Scargle Periodogram:`,
+      `  Best Period P = ${ls.bestPeriodDays > 0 ? ls.bestPeriodDays.toFixed(5) + " d (" + ls.bestPeriodHours.toFixed(3) + " h)" : "—"}`,
+      `  Best Frequency f = 1/P = ${ls.bestPeriodDays > 0 ? (1 / ls.bestPeriodDays).toFixed(5) + " c/d" : "—"}`,
+      `  Normalized Peak Power = ${ls.peakPower != null ? (ls.peakPower * 100).toFixed(2) + "%" : "—"}`,
+      ``,
+      `[3] Box Least Squares (BLS) Transit Search:`,
+      `  Transit Depth δ = ${bls.depthMag != null ? (bls.depthMag * 1000).toFixed(2) + " mmag (" + bls.depthMag.toFixed(4) + " mag)" : "—"}`,
+      `  Signal-to-Noise SNR = ${bls.snr != null ? bls.snr.toFixed(2) : "—"}`,
+      `  Mid-Transit T0 = JD ${bls.midJd != null ? bls.midJd.toFixed(5) : "—"}`,
+      ``,
+      `[4] Diagnostic Classification Scoring:`
+    ];
+    (r.triggers || []).forEach((tr, idx) => {
+      lines.push(`  #${idx + 1} ${tr.title} — ${tr.confidence}% | ${tr.reason}`);
+    });
+    return lines.join("\n");
+  }
+
+  window.openLcMathAuditModal = function() {
+    const audit = window._lastLcAnalysisAudit;
+    const modal = document.getElementById("lcMathAuditModal");
+    const body = document.getElementById("lcMathAuditModalBody");
+    if (!modal || !body || !audit || !audit.res) return;
+    const r = audit.res;
+    const st = r.stats || {};
+    const ls = r.ls || {};
+    const bls = r.bls || {};
+    const ru = _isRu();
+    const removed = Math.max(0, (audit.rawCount || 0) - (r.count || 0));
+
+    body.innerHTML = `
+      <div class="math-audit-card">
+        <h4>1. ${ru ? "Входная выборка и предобработка" : "Input Sample & Preprocessing"} — ${escapeHtml(audit.activeStar || "")}</h4>
+        <div class="math-formula-box">${ru ? "Полоса" : "Band"} = ${escapeHtml(audit.band)}  |  3σ MAD = ${audit.sigmaClip ? "ON" : "OFF"}  |  ${ru ? "Усреднение" : "Binning"} = ${audit.binMinutes > 0 ? audit.binMinutes + " min" : "OFF"}
+N_raw = ${audit.rawCount}  →  N_used = ${r.count}  (${ru ? "отфильтровано" : "filtered"}: ${removed})
+JD_min = ${audit.jdMin ? audit.jdMin.toFixed(5) : "—"}  ..  JD_max = ${audit.jdMax ? audit.jdMax.toFixed(5) : "—"}  (Δt = ${audit.spanDays.toFixed(3)} d)</div>
+      </div>
+
+      <div class="math-audit-card">
+        <h4>2. ${ru ? "Базовая фотометрическая статистика" : "Photometric Statistics"}</h4>
+        <div class="math-formula-box">med(m) = ${st.medianMag != null ? st.medianMag.toFixed(4) + " mag" : "—"}
+Δm = m_max − m_min = ${st.amplitudeMag != null ? st.amplitudeMag.toFixed(4) + " mag" : "—"}
+RMS = √( (1/N) · Σ (mᵢ − m̄)² ) = ${st.rmsMag != null ? st.rmsMag.toFixed(4) + " mag" : "—"}
+${ru ? "Асимметрия" : "Asymmetry"} = (m_95 − med) / (med − m_05) ≈ ${st.asymmetry != null ? st.asymmetry.toFixed(3) : "—"}
+T_min (parabolic/min) = JD ${st.tMinJd != null ? st.tMinJd.toFixed(5) : "—"}</div>
+      </div>
+
+      <div class="math-audit-card">
+        <h4>3. ${ru ? "Периодограмма Ломба–Скаргла (Lomb–Scargle)" : "Lomb–Scargle Periodogram"}</h4>
+        <div class="math-formula-box">P(ω) = [ (Σ yᵢ cos ω(tᵢ−τ))² / Σ cos² ω(tᵢ−τ) + (Σ yᵢ sin ω(tᵢ−τ))² / Σ sin² ω(tᵢ−τ) ] / (2 · σ²)
+${ru ? "Найденный период" : "Best Period"} P = ${ls.bestPeriodDays > 0 ? ls.bestPeriodDays.toFixed(5) + " d  (" + ls.bestPeriodHours.toFixed(3) + " h)" : "—"}
+${ru ? "Частота" : "Frequency"} f = 1/P = ${ls.bestPeriodDays > 0 ? (1 / ls.bestPeriodDays).toFixed(5) + " cycles/day" : "—"}
+${ru ? "Нормализованная мощность пика" : "Normalized Peak Power"} = ${ls.peakPower != null ? (ls.peakPower * 100).toFixed(2) + "%" : "—"}</div>
+      </div>
+
+      <div class="math-audit-card">
+        <h4>4. ${ru ? "Поиск П-образного транзита (BLS — Box Least Squares)" : "Box Least Squares (BLS) Transit Search"}</h4>
+        <div class="math-formula-box">δ = m_in_transit − m_out_of_transit = ${bls.depthMag != null ? (bls.depthMag * 1000).toFixed(2) + " mmag  (" + bls.depthMag.toFixed(4) + " mag)" : "—"}
+SNR = δ / (σ_out / √N_in) = ${bls.snr != null ? bls.snr.toFixed(2) : "—"}
+T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${bls.midJd != null ? bls.midJd.toFixed(5) : "—"}</div>
+      </div>
+
+      <div class="math-audit-card">
+        <h4>5. ${ru ? "Итоговое распределение оценок по классам" : "Transparent Hypothesis Scoring Breakdown"}</h4>
+        ${(r.triggers || []).map((tr, i) => `
+          <div style="padding:6px 8px; margin-top:5px; border-radius:7px; background:rgba(148,163,184,0.08); display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+            <div><strong>#${i + 1} ${tr.icon || ""} ${escapeHtml(tr.title)}</strong><div style="font-size:11.5px; color:var(--ios-text-secondary); margin-top:2px;">${escapeHtml(tr.reason)}</div></div>
+            <strong style="color:#4ade80; white-space:nowrap;">${tr.confidence}%</strong>
+          </div>
+        `).join("")}
+      </div>
+    `;
+    modal.classList.add("open");
+  };
+
+  ["btnCloseLcMathAuditModal", "btnAckLcMathAuditModal"].forEach(id => {
+    document.getElementById(id)?.addEventListener("click", () => {
+      document.getElementById("lcMathAuditModal")?.classList.remove("open");
+    });
+  });
+  document.getElementById("btnCopyMathAuditProtocol")?.addEventListener("click", async () => {
+    const txt = _buildMathAuditPlainText(window._lastLcAnalysisAudit);
+    if (!txt) return;
+    try {
+      await navigator.clipboard.writeText(txt);
+    } catch (_) {
+      const ta = document.createElement("textarea");
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch (__) {}
+      document.body.removeChild(ta);
+    }
+    if (typeof showIosNotification === "function") {
+      showIosNotification("📐 " + (_isRu() ? "Протокол скопирован" : "Protocol Copied"), _isRu() ? "Формулы и подставленные числа скопированы в буфер обмена." : "Formulas and live numbers copied to clipboard.", "", "success");
+    }
+  });
+
+  // Wrap runFullPageLightCurveAnalysis to inject Smart Hint (Item 3) + Clickable Audit Modal (Item 7)
+  if (typeof window.runFullPageLightCurveAnalysis === "function") {
+    const _origRunAnalysis = window.runFullPageLightCurveAnalysis;
+    window.runFullPageLightCurveAnalysis = function(customPoints = null) {
+      const res = _origRunAnalysis.apply(this, arguments);
+      try {
+        const panel = document.getElementById("lcAnalysisResultPanel");
+        const sc = window._STATE_CURVES || {};
+        const activeStar = (sc.star || document.getElementById("starid")?.value || "").trim();
+        const rawPts = customPoints || [
+          ...(Array.isArray(sc.aavsoOtherPoints) ? sc.aavsoOtherPoints : []),
+          ...(Array.isArray(sc.aavsoUserPoints) ? sc.aavsoUserPoints : []),
+          ...(Array.isArray(sc.userPoints) ? sc.userPoints : [])
+        ];
+        const jds = rawPts.map(p => Number(p.jd || p.x)).filter(v => Number.isFinite(v) && v > 0);
+        const jdMin = jds.length ? Math.min(...jds) : 0;
+        const jdMax = jds.length ? Math.max(...jds) : 0;
+        const band = document.getElementById("fpBandFilterSelect")?.value || "ALL";
+        const binMinutes = Number(document.getElementById("fpBinningSelect")?.value || "0");
+        const sigmaClip = Boolean(document.getElementById("chkFpSigmaClip")?.checked);
+
+        window._lastLcAnalysisAudit = {
+          activeStar, res, rawCount: rawPts.length, band, binMinutes, sigmaClip,
+          jdMin, jdMax, spanDays: (jdMax > jdMin ? jdMax - jdMin : 0)
+        };
+
+        if (panel && panel.style.display !== "none") {
+          // Make all trigger cards and metric pills clickable to open the Math Audit Modal
+          const tipTxt = _isRu() ? "Нажмите, чтобы открыть протокол математического расчёта и сверить формулы" : "Click to inspect the step-by-step mathematical calculation protocol";
+          panel.querySelectorAll(".lc-trigger-card, .lc-metric-pill").forEach(el => {
+            el.classList.add("clickable-audit");
+            el.setAttribute("title", tipTxt);
+            el.addEventListener("click", () => window.openLcMathAuditModal());
+          });
+          // Add explicit "📐 Формулы" button next to close button
+          const closeBtn = document.getElementById("btnCloseLcAnalysisPanel");
+          if (closeBtn && !document.getElementById("btnOpenMathAuditInline")) {
+            const auditBtn = document.createElement("button");
+            auditBtn.type = "button";
+            auditBtn.id = "btnOpenMathAuditInline";
+            auditBtn.className = "ios-btn secondary tiny";
+            auditBtn.style.cssText = "width:auto; padding:3px 10px; font-size:11px; font-weight:700;";
+            auditBtn.textContent = _isRu() ? "📐 Расчёт" : "📐 Math";
+            auditBtn.title = tipTxt;
+            auditBtn.addEventListener("click", () => window.openLcMathAuditModal());
+            closeBtn.parentElement.insertBefore(auditBtn, closeBtn);
+          }
+
+          // Item 3: Smart Scientific Hint when Band=ALL or 3σ Clip is OFF
+          if ((band === "ALL" || !sigmaClip) && !document.getElementById("lcSmartScientificHintBanner")) {
+            const reasons = [];
+            if (band === "ALL") reasons.push(_isRu() ? "выбрана <strong>Полоса: All</strong> (смешаны фильтры с разным нуль-пунктом)" : "<strong>Band: All</strong> is selected (mixed filters shift zero-points)");
+            if (!sigmaClip) reasons.push(_isRu() ? "выключено <strong>Убрать выбросы (3σ)</strong> (единичные промахи искажают амплитуду)" : "<strong>3σ outlier clip</strong> is OFF (isolated spikes skew amplitude)");
+            const hint = document.createElement("div");
+            hint.id = "lcSmartScientificHintBanner";
+            hint.className = "lc-smart-hint-banner";
+            hint.innerHTML = `
+              <span>💡 ${_isRu() ? "Научная рекомендация:" : "Scientific Tip:"} ${reasons.join(_isRu() ? " и " : " and ")}.</span>
+              <button type="button" class="ios-btn tiny" id="btnApplySmartSciClean" style="width:auto; padding:4px 10px; font-size:11px; font-weight:700;">✨ ${_isRu() ? "Включить оптимальный фильтр (V + 3σ)" : "Apply Optimal Filter (V + 3σ)"}</button>
+            `;
+            panel.appendChild(hint);
+            document.getElementById("btnApplySmartSciClean")?.addEventListener("click", () => {
+              const bSel = document.getElementById("fpBandFilterSelect");
+              const cSig = document.getElementById("chkFpSigmaClip");
+              if (bSel && bSel.value === "ALL") {
+                const opts = Array.from(bSel.options).map(o => o.value);
+                if (opts.includes("V")) bSel.value = "V";
+                else if (opts.includes("TG")) bSel.value = "TG";
+              }
+              if (cSig) cSig.checked = true;
+              window.runFullPageLightCurveAnalysis();
+              if (typeof window._renderFpPhaseOrTime === "function") window._renderFpPhaseOrTime();
+            });
+          }
+        }
+      } catch (_) {}
+      return res;
+    };
+  }
+
+  // --------------------------------------------------------------------------
+  // 7. ITEM 9: «📓 МОИ НАБЛЮДЕНИЯ» VARIANT 1 (OPEN PAST OBSERVATION IN LAB)
+  // --------------------------------------------------------------------------
+  function _pickAavsoDaysForDate(dateStr) {
+    try {
+      const m = String(dateStr || "").match(/(\d{4})[-./](\d{2})[-./](\d{2})/);
+      if (!m) return "365";
+      const dt = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+      const diffDays = Math.ceil((Date.now() - dt.getTime()) / 86400000);
+      if (diffDays <= 25) return "30";
+      if (diffDays <= 80) return "90";
+      if (diffDays <= 170) return "180";
+      if (diffDays <= 350) return "365";
+      return "1095";
+    } catch (_) {
+      return "365";
+    }
+  }
+
+  window.openPastObservationInLightCurveLab = async function(rec) {
+    if (!rec || !rec.star) return;
+    const starName = String(rec.star).trim();
+    document.getElementById("obsTrackerModal")?.classList.remove("open");
+    window._fpOpenedFromObsTracker = true;
+    const backBtn = document.getElementById("btnFpBackToObsTracker");
+    if (backBtn) backBtn.style.display = "inline-flex";
+
+    // Set active star and auto-pick AAVSO window covering the observation date
+    const starInp = document.getElementById("starid");
+    if (starInp) starInp.value = starName;
+    const daysSel = document.getElementById("fpDaysBackSelect");
+    const targetDays = _pickAavsoDaysForDate(rec.date);
+    if (daysSel) daysSel.value = targetDays;
+
+    if (window._STATE_CURVES) {
+      window._STATE_CURVES.star = starName;
+      window._STATE_CURVES.aavsoLoadedForStar = "";
+    }
+    if (window._aavsoCurveMemoryCache) window._aavsoCurveMemoryCache.clear();
+
+    // Open full-screen Light Curve Lab immediately with Variant 2 loader
+    if (typeof window.openFullPageLightCurveModal === "function") {
+      window.openFullPageLightCurveModal("aavso_combined");
+    }
+    if (window.AstroLabCurveLoaderV2) window.AstroLabCurveLoaderV2.start(starName, targetDays);
+    try {
+      if (typeof window.renderAavsoAndContributionWidget === "function") {
+        await window.renderAavsoAndContributionWidget(starName, true);
+      }
+      if (typeof window._renderFpPhaseOrTime === "function") {
+        window._renderFpPhaseOrTime();
+      }
+    } finally {
+      if (window.AstroLabCurveLoaderV2) window.AstroLabCurveLoaderV2.stop();
+    }
+  };
+
+  document.getElementById("btnFpBackToObsTracker")?.addEventListener("click", () => {
+    document.getElementById("fullPageLightCurveModal")?.classList.remove("open");
+    const backBtn = document.getElementById("btnFpBackToObsTracker");
+    if (backBtn) backBtn.style.display = "none";
+    window._fpOpenedFromObsTracker = false;
+    document.getElementById("obsTrackerModal")?.classList.add("open");
+  });
+
+  // Hide back button when user closes Lab normally
+  document.getElementById("btnCloseFullPageLc")?.addEventListener("click", () => {
+    const backBtn = document.getElementById("btnFpBackToObsTracker");
+    if (backBtn) backBtn.style.display = "none";
+    window._fpOpenedFromObsTracker = false;
+  });
+
+  // Enhance #obsTrackerTableBody rows via MutationObserver so every rendered row gets 📈 Chart + clickable row
+  const obsTbody = document.getElementById("obsTrackerTableBody");
+  if (obsTbody) {
+    const _enhanceObsRows = () => {
+      obsTbody.querySelectorAll("tr[data-obs-id]").forEach(tr => {
+        if (tr.dataset.h10Enhanced === "1") return;
+        tr.dataset.h10Enhanced = "1";
+        tr.classList.add("obs-clickable-row");
+        const starText = (tr.children[0]?.textContent || "").trim();
+        const dateText = (tr.children[1]?.textContent || "").trim();
+        const recObj = { id: tr.getAttribute("data-obs-id") || "", star: starText, date: dateText };
+        const actionCell = tr.children[5];
+        if (actionCell && !actionCell.querySelector(".btn-obs-open-chart")) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "ios-btn secondary tiny btn-obs-open-chart";
+          btn.textContent = (typeof t === "function" ? t("btnObsOpenChart") : "📈 График");
+          btn.title = _isRu() ? "Открыть кривую блеска в Лаборатории вместе с данными AAVSO" : "Open light curve in Lab with AAVSO data";
+          btn.addEventListener("click", (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            window.openPastObservationInLightCurveLab(recObj);
+          });
+          actionCell.insertBefore(btn, actionCell.firstChild);
+        }
+        tr.addEventListener("click", (ev) => {
+          if (ev.target && ev.target.closest("button")) return;
+          window.openPastObservationInLightCurveLab(recObj);
+        });
+      });
+    };
+    const obsMo = new MutationObserver(_enhanceObsRows);
+    obsMo.observe(obsTbody, { childList: true });
+    _enhanceObsRows();
+  }
+
+  // --------------------------------------------------------------------------
+  // 8. ITEM 10: «🛡️ КАЛИБРОВОЧНЫЙ СТОРОЖ» (3 CHECKS + MODAL + LAB + SOFT-LOCK)
+  // --------------------------------------------------------------------------
+  const _cgState = {
+    active: false,
+    confirmed: false,
+    issues: [],
+    lastFileSignature: "",
+    modalShownForSig: ""
+  };
+
+  function _syncCalibrationGuardUi(autoOpenModal = false) {
+    const banner = document.getElementById("calibrationGuardInlineBanner");
+    const summaryEl = document.getElementById("calibGuardInlineSummary");
+    const chkInline = document.getElementById("chkCalibrationGuardInlineConfirm");
+    const chkModal = document.getElementById("chkCalibrationGuardModalConfirm");
+    const btnConv = document.getElementById("btnConvert");
+
+    if (!_cgState.active || !_cgState.issues.length) {
+      if (banner) banner.style.display = "none";
+      if (btnConv && btnConv.dataset.calibGuardLocked === "1") {
+        btnConv.disabled = false;
+        delete btnConv.dataset.calibGuardLocked;
+      }
+      return;
+    }
+
+    if (chkInline) chkInline.checked = _cgState.confirmed;
+    if (chkModal) chkModal.checked = _cgState.confirmed;
+    if (banner) banner.style.display = "block";
+    if (summaryEl) {
+      summaryEl.innerHTML = _cgState.issues.map(it => `<div>• <strong>${escapeHtml(it.title)}:</strong> ${escapeHtml(it.detail)}</div>`).join("");
+    }
+    if (btnConv) {
+      if (!_cgState.confirmed) {
+        btnConv.disabled = true;
+        btnConv.dataset.calibGuardLocked = "1";
+      } else if (btnConv.dataset.calibGuardLocked === "1") {
+        btnConv.disabled = false;
+        delete btnConv.dataset.calibGuardLocked;
+      }
+    }
+    if (autoOpenModal && _cgState.modalShownForSig !== _cgState.lastFileSignature) {
+      _cgState.modalShownForSig = _cgState.lastFileSignature;
+      _openCalibrationGuardModal();
+    }
+  }
+
+  function _openCalibrationGuardModal() {
+    const modal = document.getElementById("calibrationGuardModal");
+    const body = document.getElementById("calibGuardModalBody");
+    if (!modal || !body) return;
+    const ru = _isRu();
+    body.innerHTML = `
+      <p style="margin:0 0 10px 0;">${ru
+        ? "При проверке сырого CSV-файла Seestar обнаружены потенциальные аномалии калибровки. Перед загрузкой данных в базу AAVSO рекомендуем открыть график в Лаборатории и визуально сверить ваши точки с наблюдениями других астрономов:"
+        : "Potential calibration anomalies were detected in your raw Seestar CSV file. Before uploading to AAVSO, we recommend inspecting your points overlaid on other observers' AAVSO data in the Light Curve Lab:"}</p>
+      ${_cgState.issues.map(it => `
+        <div class="calib-guard-issue-card">
+          <div style="font-weight:800; font-size:12.5px;">${it.icon} ${escapeHtml(it.title)}</div>
+          <div style="margin-top:4px; font-size:12px;">${escapeHtml(it.detail)}</div>
+          <div style="margin-top:4px; font-size:11.5px; color:var(--ios-text-secondary);">${escapeHtml(it.advice)}</div>
+        </div>
+      `).join("")}
+    `;
+    modal.classList.add("open");
+  }
+
+  window.AstroLabCalibrationGuard = {
+    reset() {
+      _cgState.active = false;
+      _cgState.confirmed = false;
+      _cgState.issues = [];
+      _cgState.lastFileSignature = "";
+      _cgState.modalShownForSig = "";
+      _syncCalibrationGuardUi(false);
+    },
+    evaluateFromCsvText(csvText, fileName = "") {
+      if (!csvText || typeof csvText !== "string") {
+        this.reset();
+        return;
+      }
+      const sig = `${fileName}:${csvText.length}`;
+      if (sig !== _cgState.lastFileSignature) {
+        _cgState.confirmed = false;
+        _cgState.lastFileSignature = sig;
+      }
+      const mags = [];
+      const refs = [];
+      const exps = [];
+      for (const rawLine of csvText.split(/\r?\n/)) {
+        const ln = rawLine.trim();
+        if (!ln || ln.toLowerCase().startsWith("name")) continue;
+        const delim = (ln.split(";").length > ln.split(",").length) ? ";" : ",";
+        const cols = ln.split(delim).map(s => s.trim().replace(/^"|"$/g, ""));
+        if (cols.length >= 19 && cols[1].toLowerCase() === "non-reference star") {
+          const mv = parseFloat(cols[6].replace(",", "."));
+          if (Number.isFinite(mv)) mags.push(mv);
+          const rf = parseInt(cols[4], 10);
+          if (Number.isFinite(rf) && rf >= 0) refs.push(rf);
+          const ev = parseFloat(String(cols[10]).toLowerCase().replace("s", "").replace(",", "."));
+          if (Number.isFinite(ev) && ev > 0) exps.push(ev);
+        }
+      }
+      if (!mags.length) { this.reset(); return; }
+
+      const med = arr => { const s = [...arr].sort((a, b) => a - b); const n = s.length; return n % 2 ? s[n >> 1] : 0.5 * (s[(n >> 1) - 1] + s[n >> 1]); };
+      const medMag = med(mags);
+      const medRef = refs.length ? Math.round(med(refs)) : null;
+      const minRef = refs.length ? Math.min(...refs) : null;
+      const medExp = exps.length ? med(exps) : null;
+      const ru = _isRu();
+      const issues = [];
+
+      // Check 1: Zero-point offset (> 0.40 mag) against AAVSO corridor (band-aware) or catalog V mag
+      const sc = window._STATE_CURVES || {};
+      const aavsoPts = Array.isArray(sc.aavsoOtherPoints) ? sc.aavsoOtherPoints : [];
+      const aavsoMags = aavsoPts.map(p => Number(p.mag ?? p.y)).filter(v => Number.isFinite(v));
+      if (aavsoMags.length >= 5) {
+        const sortedA = [...aavsoMags].sort((a, b) => a - b);
+        const q05 = sortedA[Math.floor(sortedA.length * 0.05)];
+        const q95 = sortedA[Math.min(sortedA.length - 1, Math.floor(sortedA.length * 0.95))];
+        if (medMag < q05 - 0.40 || medMag > q95 + 0.40) {
+          const delta = medMag < q05 ? (q05 - medMag) : (medMag - q95);
+          const dir = medMag < q05 ? (ru ? "ярче" : "brighter") : (ru ? "слабее" : "fainter");
+          issues.push({
+            icon: "⚖️",
+            title: ru ? "Аномальный сдвиг блеска (Zero-Point)" : "Abnormal Magnitude Offset (Zero-Point)",
+            detail: ru
+              ? `Медиана вашего CSV (${medMag.toFixed(2)}m) на ${delta.toFixed(2)} mag ${dir} обычного коридора звезды в AAVSO (${q05.toFixed(2)}m – ${q95.toFixed(2)}m).`
+              : `Your CSV median (${medMag.toFixed(2)}m) is ${delta.toFixed(2)} mag ${dir} than the typical AAVSO envelope (${q05.toFixed(2)}m – ${q95.toFixed(2)}m).`,
+            advice: ru
+              ? "Возможные причины: другая полоса/LP-фильтр Seestar, ошибка ансамбля звёзд сравнения, пересвет или реальная вспышка переменной."
+              : "Likely causes: LP/band mismatch, comparison-star offset, saturation, or a genuine astrophysical outburst."
+          });
+        }
+      }
+
+      // Check 2: Saturation risk (mag + exposure)
+      const satLimit = (medExp != null && medExp > 20) ? 8.3 : ((medExp != null && medExp > 10) ? 7.8 : 7.0);
+      if (medMag < satLimit) {
+        issues.push({
+          icon: "☀️",
+          title: ru ? "Риск перенасыщения матрицы (Saturation)" : "Sensor Saturation Risk",
+          detail: ru
+            ? `Медиана блеска ${medMag.toFixed(2)}m ярче безопасного порога линейности Seestar (${satLimit.toFixed(1)}m${medExp ? " при выдержке " + medExp.toFixed(0) + "s" : ""}).`
+            : `Median magnitude ${medMag.toFixed(2)}m is brighter than the Seestar linearity threshold (${satLimit.toFixed(1)}m${medExp ? " at " + medExp.toFixed(0) + "s exposure" : ""}).`,
+          advice: ru
+            ? "При пересвете пиксели матрицы упираются в потолок, и измеренная величина может быть систематически искажена."
+            : "Saturated pixels clip the star profile and can produce systematically biased magnitudes."
+        });
+      }
+
+      // Check 3: Small comparison-star ensemble (RefStars < 3)
+      if ((medRef !== null && medRef < 3) || (minRef !== null && minRef < 3)) {
+        issues.push({
+          icon: "⭐",
+          title: ru ? "Малый ансамбль звёзд сравнения (RefStars)" : "Small Comparison-Star Ensemble (RefStars)",
+          detail: ru
+            ? `В сыром CSV Seestar использовано слишком мало опорных звёзд: медиана ${medRef ?? "—"}, минимум ${minRef ?? "—"} (рекомендуется ≥ 3).`
+            : `Seestar used too few comparison stars in this CSV: median ${medRef ?? "—"}, min ${minRef ?? "—"} (recommended ≥ 3).`,
+          advice: ru
+            ? "При 1–2 звёздах сравнения любая помеха или переменность опорной звезды сдвигает всю вашу кривую блеска."
+            : "With only 1–2 comparison stars, a single noisy or variable comp star shifts the entire light curve."
+        });
+      }
+
+      _cgState.issues = issues;
+      _cgState.active = issues.length > 0;
+      _syncCalibrationGuardUi(issues.length > 0);
+    }
+  };
+
+  function _onGuardConfirmChanged(checked) {
+    _cgState.confirmed = Boolean(checked);
+    _syncCalibrationGuardUi(false);
+  }
+  document.getElementById("chkCalibrationGuardInlineConfirm")?.addEventListener("change", e => _onGuardConfirmChanged(e.target.checked));
+  document.getElementById("chkCalibrationGuardModalConfirm")?.addEventListener("change", e => _onGuardConfirmChanged(e.target.checked));
+  ["btnCloseCalibGuardModal", "btnAckCalibGuardModal"].forEach(id => {
+    document.getElementById(id)?.addEventListener("click", () => {
+      document.getElementById("calibrationGuardModal")?.classList.remove("open");
+    });
+  });
+  ["btnCalibGuardOpenLabModal", "btnCalibGuardInlineOpenLab"].forEach(id => {
+    document.getElementById(id)?.addEventListener("click", () => {
+      document.getElementById("calibrationGuardModal")?.classList.remove("open");
+      openCombinedLab();
+    });
+  });
+  document.getElementById("btnCalibGuardInlineDetails")?.addEventListener("click", () => {
+    _openCalibrationGuardModal();
+  });
+
+  // Hook into CSV file input change to trigger Calibration Guard automatically
+  document.getElementById("csvFile")?.addEventListener("change", (ev) => {
+    const file = ev.target && ev.target.files && ev.target.files[0];
+    if (!file) { window.AstroLabCalibrationGuard.reset(); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setTimeout(() => {
+        window.AstroLabCalibrationGuard.evaluateFromCsvText(String(reader.result || ""), file.name || "");
+      }, 350);
+    };
+    reader.readAsText(file);
+  });
+
+  // Re-apply translations so all new Hotfix10 keys render immediately
+  if (typeof applyTranslations === "function") {
+    try { applyTranslations(); } catch (_) {}
+  } else if (typeof applyI18n === "function") {
+    try { applyI18n(); } catch (_) {}
+  }
+})();

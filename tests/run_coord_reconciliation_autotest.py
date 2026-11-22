@@ -61,7 +61,7 @@ def main():
       const modalDisplay = document.getElementById("lowAltWarningModal")?.style?.display || "";
       window.closeLowAltWarningModal();
 
-      document.getElementById("btnLoadDemo").click();
+      const demoBtnRemoved = !document.getElementById("btnLoadDemo");
       const demoRows = [...document.querySelectorAll("#previewTable tbody tr")].map(tr =>
         [...tr.querySelectorAll("td")].map(td => td.textContent.trim())
       );
@@ -70,6 +70,7 @@ def main():
         uiKname,
         uiKmag,
         modalOpenedOnCityMismatch: modalDisplay === "flex",
+        demoBtnRemoved,
         demoRows
       }, null, 2);
     })()

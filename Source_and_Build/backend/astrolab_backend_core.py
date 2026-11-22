@@ -98,6 +98,37 @@ class AstroLabDiagnosticLogger:
         return os.path.join(cls.get_log_dir(), "astrolab_debug.log")
 
     @classmethod
+    def get_config_file_path(cls) -> str:
+        return os.path.join(cls.get_log_dir(), "diag_config.json")
+
+    @classmethod
+    def is_enabled(cls) -> bool:
+        """Проверяет, включена ли запись диагностического лога (по умолчанию выключена)."""
+        if os.environ.get("ASTROLAB_FORCE_DIAG_LOG", "").strip() in ("1", "true", "TRUE"):
+            return True
+        cfg_path = cls.get_config_file_path()
+        try:
+            if os.path.isfile(cfg_path):
+                with open(cfg_path, "r", encoding="utf-8") as cf:
+                    data = json.load(cf)
+                return bool(data.get("enabled", False))
+        except Exception:
+            pass
+        return False
+
+    @classmethod
+    def set_enabled(cls, enabled: bool) -> Dict[str, Any]:
+        cfg_path = cls.get_config_file_path()
+        try:
+            with cls._lock:
+                os.makedirs(os.path.dirname(cfg_path), exist_ok=True)
+                with open(cfg_path, "w", encoding="utf-8") as cf:
+                    json.dump({"enabled": bool(enabled)}, cf)
+            return {"ok": True, "enabled": bool(enabled)}
+        except Exception as e:
+            return {"ok": False, "enabled": bool(enabled), "error": str(e)}
+
+    @classmethod
     def _ensure_logger(cls):
         if cls._logger is not None:
             return cls._logger
@@ -151,6 +182,8 @@ class AstroLabDiagnosticLogger:
     @classmethod
     def log_event(cls, level: str, category: str, message: str, details: Any = None) -> None:
         try:
+            if not cls.is_enabled():
+                return
             lg = cls._ensure_logger()
             lvl_name = str(level or "INFO").upper()
             lvl_map = {
@@ -818,6 +851,78 @@ class PhotometryBackendEngine:
         limit = max(0.06, 3.0 * (mad if mad > 0 else 0.05))
         bad_idx = {i for i, m in enumerate(mags) if abs(m - med) > limit}
         return {"count": len(bad_idx), "indices": bad_idx, "median": round(med, 4), "limit": round(limit, 4)}
+
+    @classmethod
+    def compute_calibration_guard_metrics(cls, csv_text: str) -> Dict[str, Any]:
+        """Извлекает из сырого CSV Seestar метрики для «Калибровочного сторожа»:
+        медианный блеск, выдержку (EXP, сек), число опорных звёзд (RefStars) и флаги рисков."""
+        mags: List[float] = []
+        ref_stars_list: List[int] = []
+        exp_secs: List[float] = []
+        detected_delim = cls.detect_csv_delimiter(csv_text)
+        for idx, raw_line in enumerate((csv_text or "").splitlines()):
+            line = raw_line.strip()
+            if not line or (idx == 0 and line.lower().startswith("name")):
+                continue
+            cols = cls.split_csv_row(line, detected_delim)
+            if len(cols) >= 19 and cols[1].lower() == "non-reference star":
+                try:
+                    mv = float(cols[6].replace(",", "."))
+                    if math.isfinite(mv):
+                        mags.append(mv)
+                except (ValueError, TypeError):
+                    pass
+                try:
+                    rf_raw = str(cols[4]).strip()
+                    if rf_raw:
+                        rf_val = int(float(rf_raw.replace(",", ".")))
+                        if rf_val >= 0:
+                            ref_stars_list.append(rf_val)
+                except (ValueError, TypeError):
+                    pass
+                try:
+                    exp_raw = str(cols[10]).strip().lower().replace("s", "").replace(",", ".")
+                    if exp_raw:
+                        ev = float(exp_raw)
+                        if math.isfinite(ev) and ev > 0:
+                            exp_secs.append(ev)
+                except (ValueError, TypeError):
+                    pass
+
+        def _median(arr):
+            if not arr:
+                return None
+            s = sorted(arr)
+            n = len(s)
+            return s[n // 2] if n % 2 == 1 else 0.5 * (s[n // 2 - 1] + s[n // 2])
+
+        med_mag = _median(mags)
+        med_ref = _median(ref_stars_list)
+        min_ref = min(ref_stars_list) if ref_stars_list else None
+        med_exp = _median(exp_secs)
+
+        # Порог риска перенасыщения матрицы Seestar (IMX462/IMX585) в зависимости от выдержки
+        sat_limit = 7.0
+        if med_exp is not None:
+            if med_exp > 20.0:
+                sat_limit = 8.3
+            elif med_exp > 10.0:
+                sat_limit = 7.8
+            else:
+                sat_limit = 7.0
+
+        saturation_risk = bool(med_mag is not None and med_mag < sat_limit)
+        small_ensemble_risk = bool((med_ref is not None and med_ref < 3) or (min_ref is not None and min_ref < 3))
+
+        return {
+            "medianMag": round(med_mag, 4) if med_mag is not None else None,
+            "medianRefStars": int(round(med_ref)) if med_ref is not None else None,
+            "minRefStars": int(min_ref) if min_ref is not None else None,
+            "medianExpSec": round(med_exp, 1) if med_exp is not None else None,
+            "saturationThresholdMag": sat_limit,
+            "saturationRisk": saturation_risk,
+            "smallEnsembleRisk": small_ensemble_risk,
+        }
 
     @classmethod
     def preview_and_verify_csv(

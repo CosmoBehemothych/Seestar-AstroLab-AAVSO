@@ -406,6 +406,17 @@ class AstroLabDiskBridge:
                 return {"ok": False, "hasAavsoData": False, "error": str(e), "otherObserversPoints": [], "userAavsoPoints": []}
         return {"ok": False, "hasAavsoData": False, "otherObserversPoints": [], "userAavsoPoints": []}
 
+    def backend_get_diagnostic_logging_enabled(self):
+        if AstroLabDiagnosticLogger:
+            return {"ok": True, "enabled": AstroLabDiagnosticLogger.is_enabled()}
+        return {"ok": True, "enabled": False}
+
+    def backend_set_diagnostic_logging_enabled(self, payload=None):
+        if AstroLabDiagnosticLogger:
+            en = bool((payload or {}).get("enabled", False)) if isinstance(payload, dict) else bool(payload)
+            return AstroLabDiagnosticLogger.set_enabled(en)
+        return {"ok": False, "enabled": False}
+
     def backend_log_frontend_event(self, payload=None):
         if AstroLabDiagnosticLogger and isinstance(payload, dict):
             AstroLabDiagnosticLogger.log_event(
