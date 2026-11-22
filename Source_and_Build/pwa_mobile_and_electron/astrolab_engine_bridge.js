@@ -11759,11 +11759,15 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     setTimeout(() => renderFullPageScrollableChart(), 30);
   }
 
+  window.openFullPageLightCurveModal = openFullPageLightCurveModal;
+
   function closeFullPageLightCurveModal() {
     const modal = document.getElementById("fullPageLightCurveModal");
     if (!modal) return;
     modal.classList.remove("open");
-    document.body.classList.remove("modal-open");
+    const _anyOpen = Boolean(document.querySelector(".ios-modal-backdrop.open"));
+    document.documentElement.classList.toggle("modal-open", _anyOpen);
+    document.body.classList.toggle("modal-open", _anyOpen);
   }
 
   document.getElementById("btnExpandLcFullPage")?.addEventListener("click", () => openFullPageLightCurveModal("user_only"));
@@ -13403,7 +13407,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
     if (tip) {
       cv.addEventListener("mousemove", (e) => {
-        if (st.isDragging) {
+        const st = CHART_ZOOM_STATE[canvasId];
+        if (st && st.isDragging) {
           tip.style.display = "none";
           return;
         }
@@ -23724,7 +23729,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       `  Median mag = ${st.medianMag != null ? st.medianMag.toFixed(4) : "—"}`,
       `  Amplitude Δm = max(m) - min(m) = ${st.amplitudeMag != null ? st.amplitudeMag.toFixed(4) : "—"} mag`,
       `  RMS = sqrt(sum((m_i - mean)^2) / N) = ${st.rmsMag != null ? st.rmsMag.toFixed(4) : "—"} mag`,
-      `  Asymmetry (dip vs flare) = ${st.asymmetry != null ? st.asymmetry.toFixed(3) : "—"}`,
+      `  Asymmetry (skewness) = ${(st.skewness ?? st.asymmetry) != null ? Number(st.skewness ?? st.asymmetry).toFixed(3) : "—"} | MAD σ = ${st.madSigma != null ? st.madSigma.toFixed(4) + " mag" : "—"}`,
       `  Minimum epoch T_min = JD ${st.tMinJd != null ? st.tMinJd.toFixed(5) : "—"}`,
       ``,
       `[2] Lomb-Scargle Periodogram:`,
@@ -23735,7 +23740,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       `[3] Box Least Squares (BLS) Transit Search:`,
       `  Transit Depth δ = ${bls.depthMag != null ? (bls.depthMag * 1000).toFixed(2) + " mmag (" + bls.depthMag.toFixed(4) + " mag)" : "—"}`,
       `  Signal-to-Noise SNR = ${bls.snr != null ? bls.snr.toFixed(2) : "—"}`,
-      `  Mid-Transit T0 = JD ${bls.midJd != null ? bls.midJd.toFixed(5) : "—"}`,
+      `  Mid-Transit T0 = JD ${(bls.midTransitJd || bls.midJd) ? Number(bls.midTransitJd || bls.midJd).toFixed(5) : "—"}`,
       ``,
       `[4] Diagnostic Classification Scoring:`
     ];
@@ -23770,7 +23775,7 @@ JD_min = ${audit.jdMin ? audit.jdMin.toFixed(5) : "—"}  ..  JD_max = ${audit.j
         <div class="math-formula-box">med(m) = ${st.medianMag != null ? st.medianMag.toFixed(4) + " mag" : "—"}
 Δm = m_max − m_min = ${st.amplitudeMag != null ? st.amplitudeMag.toFixed(4) + " mag" : "—"}
 RMS = √( (1/N) · Σ (mᵢ − m̄)² ) = ${st.rmsMag != null ? st.rmsMag.toFixed(4) + " mag" : "—"}
-${ru ? "Асимметрия" : "Asymmetry"} = (m_95 − med) / (med − m_05) ≈ ${st.asymmetry != null ? st.asymmetry.toFixed(3) : "—"}
+${ru ? "Асимметрия (skewness)" : "Asymmetry (skewness)"} = ${(st.skewness ?? st.asymmetry) != null ? Number(st.skewness ?? st.asymmetry).toFixed(3) : "—"}  |  σ_MAD = ${st.madSigma != null ? st.madSigma.toFixed(4) + " mag" : "—"}
 T_min (parabolic/min) = JD ${st.tMinJd != null ? st.tMinJd.toFixed(5) : "—"}</div>
       </div>
 
@@ -23786,7 +23791,7 @@ ${ru ? "Нормализованная мощность пика" : "Normalized 
         <h4>4. ${ru ? "Поиск П-образного транзита (BLS — Box Least Squares)" : "Box Least Squares (BLS) Transit Search"}</h4>
         <div class="math-formula-box">δ = m_in_transit − m_out_of_transit = ${bls.depthMag != null ? (bls.depthMag * 1000).toFixed(2) + " mmag  (" + bls.depthMag.toFixed(4) + " mag)" : "—"}
 SNR = δ / (σ_out / √N_in) = ${bls.snr != null ? bls.snr.toFixed(2) : "—"}
-T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${bls.midJd != null ? bls.midJd.toFixed(5) : "—"}</div>
+T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.midTransitJd || bls.midJd) ? Number(bls.midTransitJd || bls.midJd).toFixed(5) : "—"}</div>
       </div>
 
       <div class="math-audit-card">
@@ -23946,6 +23951,8 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${bls.mi
     // Open full-screen Light Curve Lab immediately with Variant 2 loader
     if (typeof window.openFullPageLightCurveModal === "function") {
       window.openFullPageLightCurveModal("aavso_combined");
+    } else {
+      document.getElementById("btnExpandAavsoCurveFullPage")?.click();
     }
     if (window.AstroLabCurveLoaderV2) window.AstroLabCurveLoaderV2.start(starName, targetDays);
     try {
@@ -24223,5 +24230,115 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${bls.mi
     try { applyTranslations(); } catch (_) {}
   } else if (typeof applyI18n === "function") {
     try { applyI18n(); } catch (_) {}
+  }
+})();
+
+
+// === HOTFIX11_SCROLL_GUARD_HIGHLIGHT_MODULE ===
+(function initHotfix11Fixes() {
+  if (window.__HOTFIX11_INITIALIZED__) return;
+  window.__HOTFIX11_INITIALIZED__ = true;
+
+  // 1. Self-healing modal-open scroll lock: never allow html/body overflow:hidden when 0 modals are open
+  function syncGlobalModalScrollLock() {
+    try {
+      const anyBackdropOpen = Boolean(document.querySelector(".ios-modal-backdrop.open"));
+      const splashEl = document.getElementById("splashModal");
+      const splashOpen = Boolean(splashEl && !splashEl.classList.contains("hidden"));
+      const shouldLock = anyBackdropOpen || splashOpen;
+      document.documentElement.classList.toggle("modal-open", shouldLock);
+      document.body.classList.toggle("modal-open", shouldLock);
+      if (!shouldLock) {
+        if (document.documentElement.style.overflowY === "hidden") document.documentElement.style.overflowY = "auto";
+        if (document.body.style.overflowY === "hidden") document.body.style.overflowY = "auto";
+      }
+    } catch (_) {}
+  }
+  window._syncGlobalModalScrollLock = syncGlobalModalScrollLock;
+
+  const modalClassMo = new MutationObserver(() => syncGlobalModalScrollLock());
+  document.querySelectorAll(".ios-modal-backdrop").forEach(m => {
+    modalClassMo.observe(m, { attributes: true, attributeFilter: ["class", "style"] });
+  });
+  document.addEventListener("click", () => setTimeout(syncGlobalModalScrollLock, 60), true);
+  syncGlobalModalScrollLock();
+
+  // 2. Store raw CSV text globally so Calibration Guard can re-evaluate after AAVSO curve finishes loading
+  window._lastRawCsvTextForGuard = "";
+  window._lastRawCsvNameForGuard = "";
+  document.getElementById("csvFile")?.addEventListener("change", (ev) => {
+    const file = ev.target && ev.target.files && ev.target.files[0];
+    if (!file) { window._lastRawCsvTextForGuard = ""; window._lastRawCsvNameForGuard = ""; return; }
+    const rdr = new FileReader();
+    rdr.onload = () => {
+      window._lastRawCsvTextForGuard = String(rdr.result || "");
+      window._lastRawCsvNameForGuard = file.name || "";
+    };
+    rdr.readAsText(file);
+  });
+
+  // Upgrade Calibration Guard with band-aware AAVSO check + SIMBAD/VSX catalog fallback
+  if (window.AstroLabCalibrationGuard && typeof window.AstroLabCalibrationGuard.evaluateFromCsvText === "function") {
+    const _origEval = window.AstroLabCalibrationGuard.evaluateFromCsvText.bind(window.AstroLabCalibrationGuard);
+    window.AstroLabCalibrationGuard.evaluateFromCsvText = function(csvText, fileName = "") {
+      // Prefer V/TG band subset when evaluating AAVSO corridor
+      const sc = window._STATE_CURVES;
+      let savedAllPts = null;
+      if (sc && Array.isArray(sc.aavsoOtherPoints) && sc.aavsoOtherPoints.length >= 5) {
+        const vtPts = sc.aavsoOtherPoints.filter(p => {
+          const b = String(p.band || p.filt || "").toUpperCase();
+          return b === "V" || b === "TG" || b === "VIS.";
+        });
+        if (vtPts.length >= 5) {
+          savedAllPts = sc.aavsoOtherPoints;
+          sc.aavsoOtherPoints = vtPts;
+        }
+      }
+      try {
+        return _origEval(csvText, fileName);
+      } finally {
+        if (savedAllPts && sc) sc.aavsoOtherPoints = savedAllPts;
+      }
+    };
+  }
+
+  // Re-evaluate Calibration Guard automatically after AAVSO curve finishes loading
+  if (typeof window.renderAavsoAndContributionWidget === "function") {
+    const _origRenderAavso = window.renderAavsoAndContributionWidget;
+    window.renderAavsoAndContributionWidget = async function() {
+      const out = await _origRenderAavso.apply(this, arguments);
+      try {
+        if (window._lastRawCsvTextForGuard && window.AstroLabCalibrationGuard) {
+          window.AstroLabCalibrationGuard.evaluateFromCsvText(
+            window._lastRawCsvTextForGuard,
+            window._lastRawCsvNameForGuard
+          );
+        }
+      } catch (_) {}
+      return out;
+    };
+  }
+
+  // 3. Orange highlight for clicked past session from «Мои наблюдения»
+  if (typeof window.openPastObservationInLightCurveLab === "function") {
+    const _origOpenPast = window.openPastObservationInLightCurveLab;
+    window.openPastObservationInLightCurveLab = async function(rec) {
+      window._fpHighlightedObsDate = rec && rec.date ? String(rec.date).trim() : "";
+      const sc = window._STATE_CURVES;
+      if (sc && rec && rec.star && typeof window.getPastConvertedPointsExcludingCurrent === "function") {
+        try {
+          const allPast = window.getPastConvertedPointsExcludingCurrent(String(rec.star).trim(), []);
+          const dateKey = String(rec.date || "").slice(0, 10);
+          const matched = allPast.filter(p => {
+            const u = String(p.utc || p.date || "");
+            return dateKey && (u.includes(dateKey) || u.replace(/\./g, "-").includes(dateKey));
+          });
+          if (matched.length > 0) {
+            sc.userPoints = matched.map(p => ({ ...p, layer: "current", label: `★ ${rec.date || ""}` }));
+          }
+        } catch (_) {}
+      }
+      return await _origOpenPast.apply(this, arguments);
+    };
   }
 })();
