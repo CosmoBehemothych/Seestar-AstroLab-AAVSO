@@ -324,6 +324,10 @@ class AstroLabDiskBridge:
                 catalog_star=payload.get("catalogStar", ""),
                 catalog_ra=payload.get("catalogRa"),
                 catalog_dec=payload.get("catalogDec"),
+                calc_amass=bool(payload.get("calcAmass", False)),
+                site_lat=payload.get("siteLat"),
+                site_lon=payload.get("siteLon"),
+                clip_outliers_3sigma=bool(payload.get("clipOutliers3Sigma", False)),
             )
         return {}
 

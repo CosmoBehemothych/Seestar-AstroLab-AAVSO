@@ -668,6 +668,9 @@ class PhotometryBackendEngine:
 
     @classmethod
     def extract_first_seestar_row(cls, csv_text: str) -> Optional[Dict[str, Any]]:
+        detected_delim = cls.detect_csv_delimiter(csv_text)
+        detected_site_coords = cls.detect_site_coords_in_csv(csv_text, detected_delim)
+        raw_preview_mags: List[float] = []
         for idx, raw_line in enumerate((csv_text or "").splitlines()):
             line = raw_line.strip()
             if not line:
@@ -693,6 +696,129 @@ class PhotometryBackendEngine:
                     continue
         return None
 
+    @staticmethod
+    def detect_csv_delimiter(csv_text: str) -> str:
+        """Автоопределение разделителя CSV (',' / ';' / '\\t') для Excel и Siril."""
+        for raw_line in (csv_text or "").splitlines():
+            ln = raw_line.strip()
+            if not ln or ln.startswith("#"):
+                continue
+            sc = ln.count(";")
+            cm = ln.count(",")
+            tb = ln.count("\t")
+            if sc > cm and sc >= 3:
+                return ";"
+            if tb > cm and tb >= 3:
+                return "\t"
+            return ","
+        return ","
+
+    @staticmethod
+    def split_csv_row(line: str, delimiter: str) -> List[str]:
+        if delimiter == ",":
+            return [c.strip() for c in line.split(",")]
+        return [c.strip() for c in next(_csv.reader([line], delimiter=delimiter))]
+
+    @staticmethod
+    def detect_site_coords_in_csv(csv_text: str, delimiter: str = ",") -> Optional[Dict[str, Any]]:
+        """Вариант В (AMASS): автообнаружение координат места съёмки SITELAT/SITELONG в заголовке или колонках CSV."""
+        lines = (csv_text or "").splitlines()
+        lat_found, lon_found = None, None
+        for ln in lines[:15]:
+            s = ln.strip()
+            m_lat = re.search(r"(?i)\b(?:SITELAT|OBS_LAT|LATITUDE)\s*[:=]\s*([+-]?\d+(?:\.\d+)?)", s)
+            m_lon = re.search(r"(?i)\b(?:SITELONG|SITELON|OBS_LON|LONGITUDE)\s*[:=]\s*([+-]?\d+(?:\.\d+)?)", s)
+            if m_lat:
+                lat_found = float(m_lat.group(1))
+            if m_lon:
+                lon_found = float(m_lon.group(1))
+        if lat_found is not None and lon_found is not None and -90.0 <= lat_found <= 90.0 and -180.0 <= lon_found <= 180.0:
+            return {"lat": round(lat_found, 5), "lon": round(lon_found, 5), "source": "header"}
+
+        # Check column names in header row
+        header_idx = -1
+        header_cols = []
+        for idx, ln in enumerate(lines[:10]):
+            s = ln.strip()
+            if not s or s.startswith("#"):
+                continue
+            cols = [c.strip().upper() for c in PhotometryBackendEngine.split_csv_row(s, delimiter)]
+            if any(k in cols for k in ("SITELAT", "OBS_LAT", "LAT")) and any(k in cols for k in ("SITELONG", "SITELON", "OBS_LON", "LON")):
+                header_idx = idx
+                header_cols = cols
+                break
+        if header_idx >= 0 and header_idx + 1 < len(lines):
+            lat_i = next((i for i, c in enumerate(header_cols) if c in ("SITELAT", "OBS_LAT", "LAT")), -1)
+            lon_i = next((i for i, c in enumerate(header_cols) if c in ("SITELONG", "SITELON", "OBS_LON", "LON")), -1)
+            for row_ln in lines[header_idx + 1:header_idx + 6]:
+                if not row_ln.strip():
+                    continue
+                rc = PhotometryBackendEngine.split_csv_row(row_ln.strip(), delimiter)
+                if lat_i >= 0 and lon_i >= 0 and max(lat_i, lon_i) < len(rc):
+                    try:
+                        lv = float(rc[lat_i].replace(",", "."))
+                        lo = float(rc[lon_i].replace(",", "."))
+                        if -90.0 <= lv <= 90.0 and -180.0 <= lo <= 180.0:
+                            return {"lat": round(lv, 5), "lon": round(lo, 5), "source": "csv_column"}
+                    except ValueError:
+                        continue
+        return None
+
+    @staticmethod
+    def compute_airmass_pickering(jd: float, ra_deg: Optional[float], dec_deg: Optional[float], lat_deg: Optional[float], lon_deg: Optional[float]) -> str:
+        """
+        Вычисляет воздушную массу AMASS по формуле Pickering (2002):
+          X = 1 / sin(h + 244 / (165 + 47 * h^1.1))
+        Строгое научное правило AAVSO: если координаты не заданы или высота h <= 5° -> возвращает 'na'.
+        """
+        try:
+            if ra_deg is None or dec_deg is None or lat_deg is None or lon_deg is None:
+                return "na"
+            jd_f = float(jd)
+            ra_f = float(ra_deg)
+            dec_f = float(dec_deg)
+            lat_f = float(lat_deg)
+            lon_f = float(lon_deg)
+            if not all(math.isfinite(v) for v in (jd_f, ra_f, dec_f, lat_f, lon_f)):
+                return "na"
+            if not (-90.0 <= lat_f <= 90.0 and -180.0 <= lon_f <= 180.0):
+                return "na"
+            # GMST in degrees (USNO approximation, accurate to <0.1 arcmin)
+            d_ut = jd_f - 2451545.0
+            gmst = (280.46061837 + 360.98564736629 * d_ut) % 360.0
+            lst = (gmst + lon_f) % 360.0
+            ha_rad = math.radians((lst - ra_f + 540.0) % 360.0 - 180.0)
+            lat_rad = math.radians(lat_f)
+            dec_rad = math.radians(dec_f)
+            sin_alt = math.sin(lat_rad) * math.sin(dec_rad) + math.cos(lat_rad) * math.cos(dec_rad) * math.cos(ha_rad)
+            sin_alt = max(-1.0, min(1.0, sin_alt))
+            alt_deg = math.degrees(math.asin(sin_alt))
+            if alt_deg <= 5.0:
+                return "na"
+            denom = math.sin(math.radians(alt_deg + 244.0 / (165.0 + 47.0 * (alt_deg ** 1.1))))
+            if denom <= 0.0:
+                return "na"
+            amass = 1.0 / denom
+            if not math.isfinite(amass) or amass < 1.0 or amass > 10.0:
+                return "na"
+            return f"{amass:.3f}"
+        except Exception:
+            return "na"
+
+    @staticmethod
+    def detect_mad_3sigma_outliers(mags: List[float]) -> Dict[str, Any]:
+        """Определяет статистические выбросы (> 3 * 1.4826 * MAD) для предупреждения пользователя."""
+        if len(mags) < 6:
+            return {"count": 0, "indices": set(), "median": None, "limit": None}
+        s_mags = sorted(mags)
+        n = len(s_mags)
+        med = s_mags[n // 2] if n % 2 == 1 else 0.5 * (s_mags[n // 2 - 1] + s_mags[n // 2])
+        abs_dev = sorted(abs(m - med) for m in mags)
+        mad = (abs_dev[n // 2] if n % 2 == 1 else 0.5 * (abs_dev[n // 2 - 1] + abs_dev[n // 2])) * 1.4826
+        limit = max(0.06, 3.0 * (mad if mad > 0 else 0.05))
+        bad_idx = {i for i, m in enumerate(mags) if abs(m - med) > limit}
+        return {"count": len(bad_idx), "indices": bad_idx, "median": round(med, 4), "limit": round(limit, 4)}
+
     @classmethod
     def preview_and_verify_csv(
         cls,
@@ -702,6 +828,10 @@ class PhotometryBackendEngine:
         catalog_ra: Optional[float] = None,
         catalog_dec: Optional[float] = None,
         catalog_kmag: Optional[float] = None,
+        calc_amass: bool = False,
+        site_lat: Optional[float] = None,
+        site_lon: Optional[float] = None,
+        clip_outliers_3sigma: bool = False,
     ) -> Dict[str, Any]:
         """
         Выполняет серверный разбор CSV-файла Seestar и строгую сверку с эталоном SIMBAD.
@@ -722,7 +852,7 @@ class PhotometryBackendEngine:
             line = raw_line.strip()
             if not line or (idx == 0 and line.lower().startswith("name,")):
                 continue
-            cols = [c.strip() for c in line.split(",")]
+            cols = cls.split_csv_row(line, detected_delim)
             if len(cols) >= 19 and cols[1].lower() == "non-reference star":
                 try:
                     jd_s = float(cols[12])
@@ -889,6 +1019,14 @@ class PhotometryBackendEngine:
                 if math.isnan(mag_orig) or math.isnan(err_orig) or math.isinf(mag_orig) or math.isinf(err_orig) or err_orig <= 0.0 or err_orig >= 1.0:
                     bad += 1
                     continue
+                if clip_outliers_3sigma and _mad_info.get("median") is not None and _mad_info.get("limit") is not None:
+                    if abs(mag_orig - _mad_info["median"]) > _mad_info["limit"]:
+                        _clipped_3sigma_count += 1
+                        continue
+                if clip_outliers_3sigma and _mad_info.get("median") is not None and _mad_info.get("limit") is not None:
+                    if abs(mag_orig - _mad_info["median"]) > _mad_info["limit"]:
+                        _clipped_3sigma_count += 1
+                        continue
 
                 mag_conv = round(mag_orig, 4)
                 err_conv = round(err_orig, 4)
@@ -903,8 +1041,15 @@ class PhotometryBackendEngine:
                 jd_end_str = cols[15] if cols[15] else cols[12]
                 jd_start = float(jd_start_str)
                 jd_end = float(jd_end_str)
-                from decimal import Decimal, ROUND_HALF_UP
-                jd_mid_dec = ((Decimal(str(jd_start)) + Decimal(str(jd_end))) / Decimal("2")).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
+                from decimal import Decimal, ROUND_HALF_UP, InvalidOperation, InvalidOperation
+                if not (math.isfinite(jd_start) and math.isfinite(jd_end)):
+                    skipped_bad_rows += 1
+                    continue
+                try:
+                    jd_mid_dec = ((Decimal(str(jd_start)) + Decimal(str(jd_end))) / Decimal("2")).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
+                except (InvalidOperation, ValueError):
+                    skipped_bad_rows += 1
+                    continue
                 jd_mid = str(jd_mid_dec)
                 jd_mid_float = float(jd_mid_dec)
 
@@ -1386,7 +1531,7 @@ class AavsoNativeAndStorageService:
                     u_v2,
                     headers={"Authorization": f"Token {tok}", "User-Agent": f"SeestarAstroLab/{APP_VERSION}"},
                 )
-                with urllib.request.urlopen(req, timeout=7.0) as resp:
+                with cls._urlopen_with_ssl_fallback(req, timeout=7.0) as resp:
                     v2_data = json.loads(resp.read().decode("utf-8", errors="replace"))
                 items = v2_data.get("results", v2_data) if isinstance(v2_data, dict) else v2_data
                 if isinstance(items, list) and items:
@@ -1411,7 +1556,7 @@ class AavsoNativeAndStorageService:
                 try:
                     u_vsx = f"https://vsx.aavso.org/index.php?{urllib.parse.urlencode({'view': 'query.votable', 'ident': cand_ident})}"
                     req = urllib.request.Request(u_vsx, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
-                    with urllib.request.urlopen(req, timeout=7.0) as resp:
+                    with cls._urlopen_with_ssl_fallback(req, timeout=7.0) as resp:
                         xml_str = resp.read().decode("utf-8", errors="replace")
                     if "<VOTABLE" in xml_str.upper():
                         root = _ET.fromstring(xml_str)
@@ -1457,7 +1602,7 @@ class AavsoNativeAndStorageService:
         for vu in vsp_urls:
             try:
                 req = urllib.request.Request(vu, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
-                with urllib.request.urlopen(req, timeout=8.0) as resp:
+                with cls._urlopen_with_ssl_fallback(req, timeout=8.0) as resp:
                     vsp_json = json.loads(resp.read().decode("utf-8", errors="replace"))
                 if isinstance(vsp_json, dict) and vsp_json.get("chartid"):
                     result["chartid"] = str(vsp_json.get("chartid") or "")
@@ -1494,7 +1639,7 @@ class AavsoNativeAndStorageService:
                 try:
                     q_str = urllib.parse.urlencode({"request": "doQuery", "lang": "ADQL", "format": "json", "query": adql})
                     req = urllib.request.Request(f"{vm['base']}?{q_str}", headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
-                    with urllib.request.urlopen(req, timeout=7.0) as resp:
+                    with cls._urlopen_with_ssl_fallback(req, timeout=7.0) as resp:
                         vj = json.loads(resp.read().decode("utf-8", errors="replace"))
                     rows = vj.get("data") or []
                     if rows:
@@ -1559,7 +1704,7 @@ class AavsoNativeAndStorageService:
         try:
             vsx_url = f"https://vsx.aavso.org/index.php?view=api.object&ident={urllib.parse.quote(clean_star)}&format=json"
             req = urllib.request.Request(vsx_url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
-            with urllib.request.urlopen(req, timeout=7.0) as resp:
+            with cls._urlopen_with_ssl_fallback(req, timeout=7.0) as resp:
                 data = json.loads(resp.read().decode("utf-8", errors="replace"))
             obj = (data or {}).get("VSXObject")
             if isinstance(obj, dict) and (obj.get("Name") or obj.get("AUID")):
@@ -1584,7 +1729,7 @@ class AavsoNativeAndStorageService:
             try:
                 ses_url = f"{host}/cgi-bin/nph-sesame/-oxp/NSV?{urllib.parse.quote(clean_star)}"
                 req = urllib.request.Request(ses_url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
-                with urllib.request.urlopen(req, timeout=7.0) as resp:
+                with cls._urlopen_with_ssl_fallback(req, timeout=7.0) as resp:
                     xml_text = resp.read().decode("utf-8", errors="replace")
                 root = ET.fromstring(xml_text)
                 for al in root.findall(".//alias"):
@@ -1629,7 +1774,7 @@ class AavsoNativeAndStorageService:
         ):
             try:
                 req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
-                with urllib.request.urlopen(req, timeout=6.0) as resp:
+                with cls._urlopen_with_ssl_fallback(req, timeout=6.0) as resp:
                     raw = resp.read().decode("utf-8", errors="replace")
                 if url.endswith("page_size=10"):
                     j = json.loads(raw)
@@ -1664,6 +1809,29 @@ class AavsoNativeAndStorageService:
         "Sge", "Sgr", "Sco", "Scl", "Sct", "Ser", "Sex", "Tau", "Tel", "Tri",
         "TrA", "Tuc", "UMa", "UMi", "Vel", "Vir", "Vol", "Vul",
     }
+
+    @classmethod
+    def _urlopen_with_ssl_fallback(cls, req_or_url, timeout: float = 8.0):
+        """
+        Унифицированный HTTPS-запрос с двойной защитой SSL:
+        1) Сначала пробует встроенный актуальный комплект корневых сертификатов certifi;
+        2) При ошибке SSLCertVerificationError (например, корпоративный прокси/антивирус с локальным CA)
+           автоматически откатывается на системное хранилище сертификатов Windows.
+        """
+        ssl_ctx = cls._build_ssl_context()
+        try:
+            return urllib.request.urlopen(req_or_url, timeout=timeout, context=ssl_ctx)
+        except urllib.error.URLError as ue:
+            reason = getattr(ue, "reason", None)
+            if isinstance(reason, _ssl.SSLCertVerificationError) or "CERTIFICATE_VERIFY_FAILED" in str(ue):
+                AstroLabDiagnosticLogger.log_event("WARN", "SSL_FALLBACK", f"certifi verify failed ({ue}), retrying with system SSL store")
+                sys_ctx = _ssl.create_default_context()
+                return urllib.request.urlopen(req_or_url, timeout=timeout, context=sys_ctx)
+            raise
+        except _ssl.SSLCertVerificationError as se:
+            AstroLabDiagnosticLogger.log_event("WARN", "SSL_FALLBACK", f"certifi verify failed ({se}), retrying with system SSL store")
+            sys_ctx = _ssl.create_default_context()
+            return urllib.request.urlopen(req_or_url, timeout=timeout, context=sys_ctx)
 
     @staticmethod
     def _build_ssl_context():
@@ -1784,7 +1952,7 @@ class AavsoNativeAndStorageService:
                     f"{endpoint}?{params}",
                     headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"},
                 )
-                with urllib.request.urlopen(req, timeout=7.0, context=ssl_ctx) as resp:
+                with cls._urlopen_with_ssl_fallback(req, timeout=7.0) as resp:
                     j = json.loads(resp.read().decode("utf-8", errors="replace"))
                 meta = [c.get("name") for c in (j.get("metadata") or [])]
                 for row in (j.get("data") or []):
@@ -1830,7 +1998,7 @@ class AavsoNativeAndStorageService:
         ):
             try:
                 req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
-                with urllib.request.urlopen(req, timeout=7.0, context=ssl_ctx) as resp:
+                with cls._urlopen_with_ssl_fallback(req, timeout=7.0) as resp:
                     raw = resp.read().decode("utf-8", errors="replace")
                 if "page_size=" in url:
                     j = json.loads(raw)
@@ -1947,7 +2115,7 @@ class AavsoNativeAndStorageService:
         ssl_ctx = cls._build_ssl_context()
 
         try:
-            with urllib.request.urlopen(req, timeout=12.0, context=ssl_ctx) as resp:
+            with cls._urlopen_with_ssl_fallback(req, timeout=12.0) as resp:
                 raw = resp.read().decode("utf-8", errors="replace")
                 rate_rem = resp.headers.get("X-Rate-Limit-Remaining", "")
         except urllib.error.HTTPError as he:
@@ -2176,7 +2344,7 @@ class AavsoNativeAndStorageService:
                         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                     },
                 )
-                with urllib.request.urlopen(req, timeout=10.0, context=ssl_ctx) as resp:
+                with cls._urlopen_with_ssl_fallback(req, timeout=10.0) as resp:
                     wo_status = getattr(resp, "status", 200)
                     html_txt = resp.read().decode("utf-8", errors="replace")
                 if page_num == 1:
@@ -2282,7 +2450,7 @@ class AavsoNativeAndStorageService:
                 pages_fetched = 0
                 while next_url and pages_fetched < 6 and len(api_pts) < eff_max:
                     req = urllib.request.Request(next_url, headers=req_headers)
-                    with urllib.request.urlopen(req, timeout=6.0, context=ssl_ctx) as resp:
+                    with cls._urlopen_with_ssl_fallback(req, timeout=6.0) as resp:
                         data = json.loads(resp.read().decode("utf-8", errors="replace"))
                     pages_fetched += 1
                     for item in (data.get("results") or []):
@@ -2329,7 +2497,7 @@ class AavsoNativeAndStorageService:
                 }
                 url = f"https://vsx.aavso.org/index.php?{urllib.parse.urlencode(q_params)}"
                 req = urllib.request.Request(url, headers={"User-Agent": f"SeestarAstroLab/{APP_VERSION}"})
-                with urllib.request.urlopen(req, timeout=8.0, context=ssl_ctx) as resp:
+                with cls._urlopen_with_ssl_fallback(req, timeout=8.0) as resp:
                     csv_text = resp.read().decode("utf-8", errors="replace")
                 delim_pts: List[Dict[str, Any]] = []
                 reader = _csv.DictReader(_io.StringIO(csv_text))
@@ -2452,7 +2620,7 @@ class AavsoNativeAndStorageService:
         # Канал 1: лёгкий редирект github.com/.../releases/latest (без жёсткого лимита 60 req/hr API)
         try:
             req = urllib.request.Request(repo_releases_url, headers={"User-Agent": f"SeestarAstroLab/{current_version}"})
-            with urllib.request.urlopen(req, timeout=6.0, context=ssl_ctx) as resp:
+            with cls._urlopen_with_ssl_fallback(req, timeout=6.0) as resp:
                 final_url = resp.geturl() or ""
                 m = re.search(r"/releases/tag/([^/?#]+)", final_url)
                 if m:
@@ -2465,7 +2633,7 @@ class AavsoNativeAndStorageService:
         if not latest_tag:
             try:
                 req = urllib.request.Request(api_url, headers=headers)
-                with urllib.request.urlopen(req, timeout=6.0, context=ssl_ctx) as resp:
+                with cls._urlopen_with_ssl_fallback(req, timeout=6.0) as resp:
                     payload = json.loads(resp.read().decode("utf-8", errors="replace"))
                     latest_tag = str(payload.get("tag_name") or "").strip()
                     release_url = str(payload.get("html_url") or repo_releases_url).strip()

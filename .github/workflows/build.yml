@@ -89,6 +89,8 @@ jobs:
           if (Test-Path "Converted_Photometry_Storage") { $argsList += @("--add-data", "Converted_Photometry_Storage;Converted_Photometry_Storage") }
           if (Test-Path "../Converted_Photometry_Storage") { $argsList += @("--add-data", "../Converted_Photometry_Storage;Converted_Photometry_Storage") }
           if (Test-Path "assets/Seestar_AstroLab.ico") { $argsList += @("--icon", "assets/Seestar_AstroLab.ico") }
+          $argsList += "--exclude-module"
+          $argsList += "tkinter"
           $argsList += "desktop_launcher.py"
           pyinstaller @argsList
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
