@@ -4589,7 +4589,35 @@ function revealAndFocusField(inputId) {
     revealAndFocusField("starid");
   };
 
-  function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
+  
+  window._reconcileAfterSimbadHotfix9 = function() {
+    try {
+      if (typeof currentCsvText === "string" && currentCsvText.trim().length > 20) {
+        const lines = currentCsvText.split(/\r?\n/);
+        if (typeof runCatalogReconciliationCheck === "function") {
+          runCatalogReconciliationCheck(lines, false);
+          return;
+        }
+        if (typeof renderPreviewTable === "function") {
+          renderPreviewTable(lines, false);
+          return;
+        }
+      }
+      // Fallback: if no CSV mismatch remains, ensure convert button is unlocked
+      const firstRow = (typeof currentCsvText === "string" && currentCsvText.trim() && typeof extractFirstDataRow === "function")
+        ? extractFirstDataRow(currentCsvText.split(/\r?\n/))
+        : null;
+      if (firstRow && Number.isFinite(STATE.catalogRa) && Number.isFinite(STATE.catalogDec) && Number.isFinite(firstRow.ra) && Number.isFinite(firstRow.dec)) {
+        const dRa = Math.abs(firstRow.ra - STATE.catalogRa);
+        const dDec = Math.abs(firstRow.dec - STATE.catalogDec);
+        if (dRa <= 0.05 && dDec <= 0.05 && typeof applyCriticalMismatchState === "function") {
+          applyCriticalMismatchState(false, [], false);
+        }
+      }
+    } catch (_e) {}
+  };
+
+function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     STATE.isConversionBlockedByMismatch = Boolean(isCritical);
     STATE.lastMismatchReasons = Array.isArray(reasons) ? reasons : [];
     const sig = isCritical ? STATE.lastMismatchReasons.join("|") : "";
@@ -6677,7 +6705,7 @@ function revealAndFocusField(inputId) {
         window._fpPhaseModeActive = false;
         window._fpDetectedPeriodDays = 0;
         if (window._CHART_ZOOM_STATE && window._CHART_ZOOM_STATE.fullPageLightCurveCanvas) {
-          window._CHART_ZOOM_STATE.fullPageLightCurveCanvas = { scale: 1.0, offsetX: 0, offsetY: 0, isDragging: false, dragStartX: 0, dragStartY: 0 };
+          Object.assign(window._CHART_ZOOM_STATE.fullPageLightCurveCanvas, { scale: 1.0, offsetX: 0, offsetY: 0, isDragging: false, dragStartX: 0, dragStartY: 0 });
         }
         const _stalePanel = document.getElementById("lcAnalysisResultPanel");
         if (_stalePanel) _stalePanel.style.display = "none";
@@ -7549,6 +7577,7 @@ function revealAndFocusField(inputId) {
       navigator.clipboard.writeText(`${raHmsPlain} ${decDmsStr}`).catch(() => {});
     }
     STATE.simbadCatalogLoaded = true;
+      if (typeof window._reconcileAfterSimbadHotfix9 === 'function') window._reconcileAfterSimbadHotfix9();
     STATE.dismissedMismatchSig = "";
 
     // Если файл уже загружен пользователем — пересчитываем сверку с новыми эталонными RA/DEC
@@ -9363,7 +9392,13 @@ function revealAndFocusField(inputId) {
   const btnConvertEl = document.getElementById("btnConvert");
   if (btnConvertEl) {
     btnConvertEl.addEventListener("click", (ev) => {
-      if (window.STATE && window.STATE.isConversionBlockedByMismatch) return;
+      if (window.STATE && window.STATE.isConversionBlockedByMismatch) {
+        if (typeof window._reconcileAfterSimbadHotfix9 === "function") window._reconcileAfterSimbadHotfix9();
+        if (window.STATE.isConversionBlockedByMismatch) {
+          if (typeof applyCriticalMismatchState === "function") applyCriticalMismatchState(true, window.STATE.lastMismatchReasons || [], true);
+          return;
+        }
+      }
 
       const obsEl = document.getElementById("obscode");
       const starEl = document.getElementById("starid");
@@ -12979,9 +13014,9 @@ function revealAndFocusField(inputId) {
     const showAavso = document.getElementById("chkAavsoWidgetOthers")?.checked !== false;
     const showUser = document.getElementById("chkAavsoWidgetUser")?.checked !== false;
 
-    const aavsoPts = (activeStar && showAavso && STATE_CURVES.aavsoHasEnoughData) ? STATE_CURVES.aavsoOtherPoints : [];
-    const userCurPts = (activeStar && showUser) ? currentPts : [];
-    const userPastPts = (activeStar && showUser) ? pastPts : [];
+    const aavsoPts = _applyFullPageLabFiltersToSeries((activeStar && showAavso && STATE_CURVES.aavsoHasEnoughData) ? STATE_CURVES.aavsoOtherPoints : [], canvasId);
+    const userCurPts = _applyFullPageLabFiltersToSeries((activeStar && showUser) ? currentPts : [], canvasId);
+    const userPastPts = _applyFullPageLabFiltersToSeries((activeStar && showUser) ? pastPts : [], canvasId);
     const totalUserCount = currentPts.length + pastPts.length;
     const allToPlot = [...aavsoPts, ...userPastPts, ...userCurPts];
 
@@ -13125,7 +13160,7 @@ function revealAndFocusField(inputId) {
     drawFittedCanvasLegend(
       ctx,
       [
-        { col: aavsoCol, txt: `${trCurve("legAavso")}: ${aavsoPts.length}` },
+        { col: aavsoCol, txt: `${trCurve("legAavso")}: ${aavsoPts.length}` + (canvasId === "fullPageLightCurveCanvas" && STATE_CURVES.aavsoOtherPoints.length !== aavsoPts.length ? ` (из ${STATE_CURVES.aavsoOtherPoints.length})` : "") },
         { col: histCol, txt: `${trCurve("legHistory")}: ${userPastPts.length}` },
         { col: curCol, txt: `${trCurve("legCurrent")}: ${userCurPts.length}` }
       ],
@@ -13289,9 +13324,10 @@ function revealAndFocusField(inputId) {
     const cv = document.getElementById(canvasId);
     const tip = document.getElementById(tooltipId);
     if (!cv) return;
-    const st = CHART_ZOOM_STATE[canvasId];
 
     cv.addEventListener("wheel", (e) => {
+      const st = CHART_ZOOM_STATE[canvasId];
+      if (!st) return;
       e.preventDefault();
       e.stopPropagation();
       const rect = cv.getBoundingClientRect();
@@ -13315,7 +13351,8 @@ function revealAndFocusField(inputId) {
 
     // ПУНКТ 7: Перемещение кликом и удержанием левой кнопки мыши работает ВСЕГДА (даже на масштабе 100%!)
     cv.addEventListener("mousedown", (e) => {
-      if (e.button !== 0) return;
+      const st = CHART_ZOOM_STATE[canvasId];
+      if (!st || e.button !== 0) return;
       e.preventDefault();
       st.isDragging = true;
       st.dragStartX = e.clientX - st.offsetX;
@@ -13331,7 +13368,8 @@ function revealAndFocusField(inputId) {
     });
 
     window.addEventListener("mousemove", (e) => {
-      if (!st.isDragging) return;
+      const st = CHART_ZOOM_STATE[canvasId];
+      if (!st || !st.isDragging) return;
       const rect = cv.getBoundingClientRect();
       const sc = canvasId === "fullPageLightCurveCanvas" ? document.getElementById("fullPageLcScrollContainer") : null;
       if (sc && (sc.scrollWidth > sc.clientWidth + 4 || sc.scrollHeight > sc.clientHeight + 4)) {
@@ -13346,7 +13384,8 @@ function revealAndFocusField(inputId) {
     });
 
     window.addEventListener("mouseup", () => {
-      if (st.isDragging) {
+      const st = CHART_ZOOM_STATE[canvasId];
+      if (st && st.isDragging) {
         st.isDragging = false;
         cv.style.cursor = "grab";
       }
@@ -23098,6 +23137,7 @@ function revealAndFocusField(inputId) {
           document.getElementById("siteManualName").value = h.name;
           document.getElementById("siteManualLat").value = Number(h.latitude).toFixed(4);
           document.getElementById("siteManualLon").value = Number(h.longitude).toFixed(4);
+          resWrap.style.display = "none";
         });
       });
     } catch (_) {
