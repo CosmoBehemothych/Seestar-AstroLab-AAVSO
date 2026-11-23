@@ -11,10 +11,10 @@ Before running the installer, verify that the downloaded file matches the
 official SHA-256 hash published in SHA256SUMS.txt on GitHub Releases.
 
 PowerShell:
-  Get-FileHash .\Seestar_AstroLab_Setup_v1.4.0.exe -Algorithm SHA256
+  Get-FileHash .\Seestar_AstroLab_Setup_v1.5.0-alpha.exe -Algorithm SHA256
 
 Command Prompt (CMD):
-  certutil -hashfile Seestar_AstroLab_Setup_v1.4.0.exe SHA256
+  certutil -hashfile Seestar_AstroLab_Setup_v1.5.0-alpha.exe SHA256
 
 Compare the printed 64-character hex string with SHA256SUMS.txt.
 If the hashes do not match, DO NOT run the file and re-download it from:

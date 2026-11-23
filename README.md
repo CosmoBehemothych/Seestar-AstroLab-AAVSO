@@ -1,4 +1,4 @@
-# 🔭 Seestar AstroLab AAVSO (`v1.4.0`)
+# 🔭 Seestar AstroLab AAVSO (`v1.5.0-alpha`)
 
 [![Build Status](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/actions/workflows/build.yml)
 [![GitHub release](https://img.shields.io/github/v/release/CosmoBehemothych/Seestar-AstroLab-AAVSO?color=38bdf8&style=flat-square)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest)
@@ -10,17 +10,17 @@
 > **Turn your ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`) into a full-featured stellar photometry laboratory: analyze variable stars with built-in mathematical tools, filter out corrupted or saturated frames, and export verified [AAVSO WebObs](https://www.aavso.org/webobs) reports in 15 seconds.**  
 > **Important:** We **do NOT send photos or telescope images** — only brightness measurements (small CSV numbers) are submitted to the [AAVSO International Database (AID)](https://www.aavso.org/aavso-international-database-aid).
 
-**[⬇️ Download Latest Release (`v1.4.0` — Windows Installer)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.4.0)** • **[🛡️ Verify SHA-256 (`VERIFY.txt`)](VERIFY.txt)** • **[🇷🇺 Русская версия ниже](#-русская-версия-russian)**
+**[⬇️ Download Latest Release (`v1.5.0-alpha` — Windows Installer)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0-alpha)** • **[🛡️ Verify SHA-256 (`VERIFY.txt`)](VERIFY.txt)** • **[🇷🇺 Русская версия ниже](#-русская-версия-russian)**
 
 ---
 
 ## 🎬 Quick Demo: Photometry Lab, Live Radar & AAVSO Conversion
 
-![Seestar AstroLab v1.4.0 Demo](screenshots/seestar_conversion_demo.gif)
+![Seestar AstroLab v1.5.0-alpha Demo](screenshots/seestar_conversion_demo.gif)
 
 ---
 
-## 🔬 Built-In Stellar Photometry Laboratory (`v1.4.0`)
+## 🔬 Built-In Stellar Photometry Laboratory (`v1.5.0-alpha`)
 
 In **`v1.4.0`**, Seestar AstroLab evolves from a CSV converter into a **complete photometric analysis laboratory** where you can inspect, clean, and mathematically analyze light curves before submitting data:
 

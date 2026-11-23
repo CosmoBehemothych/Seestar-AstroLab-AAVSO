@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * SEESTAR ASTROLAB AAVSO (v1.4.0) — INTERNATIONAL DEVELOPER DOCUMENTATION
+ * SEESTAR ASTROLAB AAVSO (v1.5.0-alpha) — INTERNATIONAL DEVELOPER DOCUMENTATION
  * ============================================================================
  * [EN] ARCHITECTURE OVERVIEW FOR GLOBAL DEVELOPERS:
  *   This application converts raw photometry CSV logs from ZWO Seestar smart
@@ -34,7 +34,7 @@
  *       observation log tracker with custom 6-language calendar & spline chart.
  *
  * [RU] АРХИТЕКТУРНЫЙ ОБЗОР ДЛЯ РАЗРАБОТЧИКОВ:
- *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.4.0.
+ *   Клиентский мост и контроллер состояния Seestar AstroLab AAVSO v1.5.0-alpha.
  *   Все комментарии в коде продублированы на английском ([EN]) и русском ([RU])
  *   языках для удобства сопровождения разработчиками из любой страны мира.
  * ============================================================================
@@ -79,6 +79,8 @@
   const TELESCOPE_MODELS = Object.freeze({
     S30: Object.freeze({
       id: "S30",
+      apertureMm: 30,
+      t10Max: 8.5, t20Max: 11.5, t30Max: 12.5,
       name: "ZWO Seestar S30",
       shortName: "Seestar S30",
       fovDegW: 1.28,
@@ -97,6 +99,8 @@
     }),
     S30PLUS: Object.freeze({
       id: "S30PLUS",
+      apertureMm: 30,
+      t10Max: 8.8, t20Max: 11.8, t30Max: 12.8,
       name: "ZWO Seestar S30 Plus",
       shortName: "Seestar S30 PLUS",
       fovDegW: 2.66,
@@ -115,6 +119,8 @@
     }),
     S30PRO: Object.freeze({
       id: "S30PRO",
+      apertureMm: 30,
+      t10Max: 9.2, t20Max: 12.2, t30Max: 13.2,
       name: "ZWO Seestar S30 Pro",
       shortName: "Seestar S30PRO",
       fovDegW: 2.10,
@@ -133,6 +139,8 @@
     }),
     S50: Object.freeze({
       id: "S50",
+      apertureMm: 50,
+      t10Max: 9.6, t20Max: 12.5, t30Max: 13.5,
       name: "ZWO Seestar S50",
       shortName: "Seestar S50",
       fovDegW: 0.78,
@@ -151,6 +159,8 @@
     }),
     S50PRO: Object.freeze({
       id: "S50PRO",
+      apertureMm: 50,
+      t10Max: 10.0, t20Max: 13.0, t30Max: 14.0,
       name: "ZWO Seestar S50 Pro",
       shortName: "Seestar S50PRO",
       fovDegW: 1.15,
@@ -221,6 +231,24 @@
   const AstroLabCore = {
     TELESCOPE_MODELS,
 
+    getMoonIlluminationApprox(dateObj) {
+      const d = dateObj instanceof Date ? dateObj : new Date();
+      // Synodic month reference: 2000-01-06 18:14 UTC (JD 2451550.26)
+      const jd = (d.getTime() / 86400000.0) + 2440587.5;
+      const phase = ((jd - 2451550.26) / 29.530588853) % 1;
+      const norm = phase < 0 ? phase + 1 : phase;
+      return 0.5 * (1 - Math.cos(2 * Math.PI * norm));
+    },
+
+    evaluateCompStarColor(bv) {
+      const val = parseFloat(bv);
+      if (!Number.isFinite(val)) return { ok: true, tier: "unknown" };
+      if (val >= 0.35 && val <= 1.05) return { ok: true, tier: "ideal_fk" };
+      if (val > 1.20) return { ok: false, tier: "red_giant_risk" };
+      if (val < 0.10) return { ok: false, tier: "very_blue_risk" };
+      return { ok: true, tier: "acceptable" };
+    },
+
     getScopeProfile(scopeId) {
       const base = TELESCOPE_MODELS[scopeId] || TELESCOPE_MODELS.S50;
       if (typeof currentLang !== "undefined" && currentLang !== "ru") {
@@ -246,10 +274,37 @@
       const refMag = !isNaN(kmag) ? kmag : ((minMag + maxMag) / 2);
 
       const tr = (typeof t === "function") ? t : (k => k);
-      let expRec = tr("exp10_20") !== "exp10_20" ? tr("exp10_20") : "10–20 s";
-      if (refMag < 8.5) expRec = tr("exp10") !== "exp10" ? tr("exp10") : "10 s";
-      else if (refMag > 12.5 && prof.maxExpSec >= 30) expRec = tr("exp20_30") !== "exp20_30" ? tr("exp20_30") : "20–30 s";
-      else if (refMag > 11.5) expRec = tr("exp20") !== "exp20" ? tr("exp20") : "20 s";
+      // v1.5.0: Per-telescope D^2 + sensor discrete Seestar exposure (10s / 20s / 30s / 60s EQ)
+      // with strict saturation guard and Moon-phase / fast-period awareness
+      const moonFrac = (typeof AstroLabCore.getMoonIlluminationApprox === "function")
+        ? AstroLabCore.getMoonIlluminationApprox(new Date())
+        : 0.0;
+      const periodDays = parseFloat((targetItem && (targetItem.periodDays || targetItem.period)) || "");
+      const varTypeStr = String((targetItem && (targetItem.varType || targetItem.type || "")) || "").toUpperCase();
+      const isFastVar = (Number.isFinite(periodDays) && periodDays > 0 && periodDays < 0.22) ||
+        /(HADS|DSCT|EW|EP|TRANSIT|SX PHE)/.test(varTypeStr);
+
+      let expSecNum = 20;
+      let eqSuffix = "";
+      if (minMag < prof.brightLimit || refMag <= prof.t10Max) {
+        expSecNum = 10;
+      } else if (refMag <= prof.t20Max) {
+        expSecNum = 20;
+      } else if (refMag <= prof.t30Max) {
+        expSecNum = 30;
+      } else {
+        expSecNum = isFastVar ? 30 : 60;
+        if (expSecNum === 60) eqSuffix = " (EQ)";
+      }
+
+      // Moon bump ONLY for faint sky-limited stars (never if near brightLimit!)
+      let moonTag = "";
+      if (moonFrac >= 0.70 && minMag >= (prof.brightLimit + 2.0) && refMag > prof.t20Max) {
+        if (expSecNum === 20) { expSecNum = 30; moonTag = " 🌙"; }
+        else if (expSecNum === 30 && !isFastVar) { expSecNum = 60; eqSuffix = " (EQ)"; moonTag = " 🌙"; }
+      }
+
+      let expRec = `${expSecNum} s${eqSuffix}${moonTag}`;
 
       const withinFaintLimit = minMag <= prof.magLimit && (!isNaN(kmag) ? kmag <= prof.magLimit : true);
       const faintDipWarning = maxMag > prof.magLimit;
@@ -547,7 +602,7 @@
       obsEmptyTableMsg: "Записей пока нет. Сконвертируйте CSV-файл фотометрии Seestar — и результат автоматически сохранится в «Мои наблюдения».",
       obsMinUnit: "мин",
       obsFramesUnit: "зап.",
-      actAppStarted: "Запущена сессия Seestar AstroLab v1.4.0",
+      actAppStarted: "Запущена сессия Seestar AstroLab v1.5.0-alpha",
       actCatalogSyncedFmt: "Синхронизация с каталогом: {star}",
       actFileConvertedFmt: "Сконвертирован отчёт AAVSO: {star} ({pts} точек)",
       actObsAddedFmt: "Добавлена запись в Мои наблюдения: {star} ({mins} мин)",
@@ -557,7 +612,7 @@
       errNoObscodeMsg: "Укажите ваш личный код наблюдателя AAVSO (OBSCODE) перед конвертацией данных для загрузки на AAVSO.",
       errNoObscodeExplain: "Стандарт AAVSO Extended требует обязательного указания персонального кода наблюдателя в заголовке #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Версия 1.4.0",
+      appVersionLabel: "Версия 1.5.0-alpha",
       starIdFromCatalogHint: "✓ Каталожный идентификатор звезды (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych • Seestar AstroLab AAVSO • Фотометрия Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
@@ -900,7 +955,7 @@
       obsEmptyTableMsg: "No observation records yet. Convert a Seestar photometry CSV file and your session will be logged here automatically.",
       obsMinUnit: "min",
       obsFramesUnit: "rec.",
-      actAppStarted: "Started Seestar AstroLab v1.4.0 session",
+      actAppStarted: "Started Seestar AstroLab v1.5.0-alpha session",
       actCatalogSyncedFmt: "Synchronized with catalog: {star}",
       actFileConvertedFmt: "Converted AAVSO report: {star} ({pts} pts)",
       actObsAddedFmt: "Added My Observations entry: {star} ({mins} min)",
@@ -910,7 +965,7 @@
       errNoObscodeMsg: "Please enter your personal AAVSO Observer Code (OBSCODE) before converting data for AAVSO upload.",
       errNoObscodeExplain: "The AAVSO Extended format strictly requires a valid personal observer code in the #OBSCODE header.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.4.0",
+      appVersionLabel: "Version 1.5.0-alpha",
       starIdFromCatalogHint: "✓ Canonical Catalog Star ID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Photometry Observatory",
       
@@ -1248,7 +1303,7 @@
       obsEmptyTableMsg: "Aún no hay registros. Convierta un archivo CSV de fotometría Seestar y el resultado se guardará automáticamente en «Mis observaciones».",
       obsMinUnit: "min",
       obsFramesUnit: "cuadros",
-      actAppStarted: "Sesión iniciada Seestar AstroLab v1.4.0",
+      actAppStarted: "Sesión iniciada Seestar AstroLab v1.5.0-alpha",
       actCatalogSyncedFmt: "Sincronizado con catálogo: {star}",
       actFileConvertedFmt: "Informe AAVSO convertido: {star} ({pts} pts)",
       actObsAddedFmt: "Sesión añadida al registro: {star} ({mins} min)",
@@ -1258,7 +1313,7 @@
       errNoObscodeMsg: "Ingrese su código personal de observador AAVSO (OBSCODE) antes de convertir los datos.",
       errNoObscodeExplain: "El formato AAVSO Extended requiere un código de observador válido en el encabezado #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Versión 1.4.0",
+      appVersionLabel: "Versión 1.5.0-alpha",
       starIdFromCatalogHint: "✓ Identificador de catálogo (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatorio Fotométrico Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
@@ -1572,7 +1627,7 @@
       obsEmptyTableMsg: "Noch keine Einträge vorhanden. Konvertieren Sie eine Seestar-Photometrie-CSV-Datei, und das Ergebnis wird automatisch unter „Meine Beobachtungen“ gespeichert.",
       obsMinUnit: "Min",
       obsFramesUnit: "Bilder",
-      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.4.0",
+      actAppStarted: "Sitzung gestartet Seestar AstroLab v1.5.0-alpha",
       actCatalogSyncedFmt: "Mit Katalog synchronisiert: {star}",
       actFileConvertedFmt: "AAVSO-Bericht konvertiert: {star} ({pts} Pkt)",
       actObsAddedFmt: "Beobachtung hinzugefügt: {star} ({mins} Min)",
@@ -1582,7 +1637,7 @@
       errNoObscodeMsg: "Bitte geben Sie Ihren persönlichen AAVSO-Beobachtercode (OBSCODE) vor der Konvertierung ein.",
       errNoObscodeExplain: "Das AAVSO-Extended-Format erfordert zwingend einen gültigen Beobachtercode im Header #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.4.0",
+      appVersionLabel: "Version 1.5.0-alpha",
       starIdFromCatalogHint: "✓ Kanonische Katalog-STARID (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Photometrie-Observatorium",
       
@@ -1885,7 +1940,7 @@
       obsEmptyTableMsg: "Aucun enregistrement pour le moment. Convertissez un fichier CSV de photométrie Seestar et la session sera automatiquement enregistrée dans « Mes observations ».",
       obsMinUnit: "min",
       obsFramesUnit: "images",
-      actAppStarted: "Session démarrée Seestar AstroLab v1.4.0",
+      actAppStarted: "Session démarrée Seestar AstroLab v1.5.0-alpha",
       actCatalogSyncedFmt: "Synchronisé avec le catalogue : {star}",
       actFileConvertedFmt: "Rapport AAVSO converti : {star} ({pts} pts)",
       actObsAddedFmt: "Session ajoutée au journal : {star} ({mins} min)",
@@ -1895,7 +1950,7 @@
       errNoObscodeMsg: "Veuillez saisir votre code observateur AAVSO (OBSCODE) avant de convertir les données.",
       errNoObscodeExplain: "Le standard AAVSO Extended exige un code observateur personnel valide dans l'en-tête #OBSCODE.",
       radarSubTag: "",
-      appVersionLabel: "Version 1.4.0",
+      appVersionLabel: "Version 1.5.0-alpha",
       starIdFromCatalogHint: "✓ Identifiant catalogue canonique (SIMBAD / AAVSO VSX) : {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Observatoire Photométrique Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO",
       
@@ -2197,7 +2252,7 @@
       obsEmptyTableMsg: "暂无观测记录。转换 Seestar 测光 CSV 文件后，观测记录将自动保存在“我的观测”中。",
       obsMinUnit: "分钟",
       obsFramesUnit: "帧",
-      actAppStarted: "已启动 Seestar AstroLab v1.4.0 会话",
+      actAppStarted: "已启动 Seestar AstroLab v1.5.0-alpha 会话",
       actCatalogSyncedFmt: "已同步星表目标: {star}",
       actFileConvertedFmt: "已转换 AAVSO 报告: {star} ({pts} 点)",
       actObsAddedFmt: "已添加观测日志: {star} ({mins} 分钟)",
@@ -2207,7 +2262,7 @@
       errNoObscodeMsg: "请在转换上传至 AAVSO 的数据前填写您的 AAVSO 观测者代码 (OBSCODE)。",
       errNoObscodeExplain: "AAVSO Extended 格式要求在 #OBSCODE 标头中提供有效的个人观测者代码。",
       radarSubTag: "",
-      appVersionLabel: "版本 1.4.0",
+      appVersionLabel: "版本 1.5.0-alpha",
       starIdFromCatalogHint: "✓ 星表标准目标名称 (SIMBAD / AAVSO VSX): {star}",
       brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO 测光天文台",
       
@@ -3475,7 +3530,7 @@
       } else {
         const r = await fetch("http://127.0.0.1:18765/api/rpc", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: getBackendRpcHeaders(),
           body: JSON.stringify({ action: "query_aavso_star", star: cleanTarget, scopeModel: window._currentScopeModel || "S50" }),
           signal: AbortSignal.timeout(6000)
         });
@@ -4630,6 +4685,12 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       btnConvert.disabled = Boolean(isCritical);
       btnConvert.setAttribute("aria-disabled", isCritical ? "true" : "false");
       btnConvert.classList.toggle("btn-locked-critical", Boolean(isCritical));
+    }
+    const btnLabOnly = document.getElementById("btnAnalyzeInLabOnly");
+    if (btnLabOnly) {
+      btnLabOnly.disabled = Boolean(isCritical);
+      btnLabOnly.setAttribute("aria-disabled", isCritical ? "true" : "false");
+      btnLabOnly.classList.toggle("btn-locked-critical", Boolean(isCritical));
     }
 
     if (lockBanner) {
@@ -6929,7 +6990,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     const _lblRec = { ru: "🔭 Рекомендации:", en: "🔭 Imaging Rec.:", es: "🔭 Recomendación:", de: "🔭 Empfehlung:", fr: "🔭 Recommandation :", zh: "🔭 拍摄建议：", cs: "🔭 Doporučení:" }[_lgUrg] || "🔭 Рекомендации:";
     const _btnDossierLbl = { ru: "🔎 Досье и параметры звезды", en: "🔎 Star Dossier & Info", es: "🔎 Dossier de la estrella", de: "🔎 Sterndossier & Infos", fr: "🔎 Dossier de l'étoile", zh: "🔎 恒星完整档案与参数", cs: "🔎 Karta hvězdy a parametry" }[_lgUrg] || "🔎 Досье и параметры звезды";
 
-    // v1.4.0 Performance: O(1) star lookup map + 60-card progressive windowing for 3,000+ live stars
+    // v1.5.0-alpha Performance: O(1) star lookup map + 60-card progressive windowing for 3,000+ live stars
     const _urgPageSize = 60;
     const _urgLimit = (typeof window._urgentVisibleLimit === "number" && window._urgentVisibleLimit >= _urgPageSize)
       ? window._urgentVisibleLimit : _urgPageSize;
@@ -7126,7 +7187,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       }
     } catch (_) {}
 
-    // v1.4.0 FIX: Always run live AAVSO Target Tool API & Alert Notices independently of SIMBAD TAP!
+    // v1.5.0-alpha FIX: Always run live AAVSO Target Tool API & Alert Notices independently of SIMBAD TAP!
     try {
       if (typeof window._syncLiveAavsoOnlineTargets === "function") {
         await window._syncLiveAavsoOnlineTargets();
@@ -7674,7 +7735,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     const radarSortSel = document.getElementById("v6RadarSortSelect");
     const radarSortMode = (radarSortSel && radarSortSel.value) ? radarSortSel.value : "date";
     const sortedAll = sortRadarCatalogItems(filteredAll, radarSortMode);
-    // v1.4.0 Performance: Progressive 60-card windowing + O(1) lookup map for 3,000+ live stars
+    // v1.5.0-alpha Performance: Progressive 60-card windowing + O(1) lookup map for 3,000+ live stars
     const _v6PageSize = 60;
     const _v6MaxWindow = (typeof window._v6VisibleLimit === "number" && window._v6VisibleLimit >= _v6PageSize)
       ? window._v6VisibleLimit : _v6PageSize;
@@ -8398,7 +8459,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
     const sortedDesc = [...filteredList].sort((a, b) => String(b.date).localeCompare(String(a.date)));
     if (!sortedDesc.length) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:18px; color:var(--ios-text-secondary);">${escapeHtml(t("obsEmptyTableMsg"))}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:18px; color:var(--ios-text-secondary);">${escapeHtml(t("obsEmptyTableMsg"))}</td></tr>`;
     } else {
       tbody.innerHTML = sortedDesc.map((rec, rowIdx) => `
         <tr data-obs-id="${escapeHtml(String(rec.id || ""))}">
@@ -8407,7 +8468,17 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
           <td><strong>${Number(rec.durationMin) || 0}</strong> ${escapeHtml(t("obsMinUnit"))}</td>
           <td><strong>${Number(rec.frames) || 0}</strong> ${escapeHtml(t("obsFramesUnit"))} (${escapeHtml(rec.filter || "TG")})</td>
           <td>Seestar ${escapeHtml(rec.scope || "S50")}</td>
-          <td style="text-align:center;">
+          <td>${
+            rec.status === "lab_unsubmitted"
+              ? (rec.aavsoEligible
+                  ? `<span class="obs-qg-badge eligible">${escapeHtml(t("qgEligibleBadge"))}</span>`
+                  : `<span class="obs-qg-badge blocked" title="${escapeHtml(rec.aavsoBlockReason || "")}">${escapeHtml(t("qgBlockedBadge"))}</span>`)
+              : `<span class="obs-qg-badge converted">✓ AAVSO</span>`
+          }</td>
+          <td style="text-align:center; white-space:nowrap;">
+            ${(rec.status === "lab_unsubmitted" && rec.aavsoEligible)
+              ? `<button type="button" class="ios-btn tiny btn-obs-prep-aavso" data-prep-id="${escapeHtml(String(rec.id || ""))}" title="${escapeHtml(t("btnPrepareAavso"))}" style="width:auto; padding:3px 8px; font-size:10.5px; margin-right:4px;">📤</button>`
+              : ""}
             <button type="button" class="ios-btn secondary tiny btn-obs-del"
                     data-del-id="${escapeHtml(String(rec.id || ""))}"
                     data-del-idx="${rowIdx}"
@@ -8426,6 +8497,32 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       `).join("");
     }
 
+    tbody.querySelectorAll(".btn-obs-prep-aavso").forEach(btn => {
+      btn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const prepId = btn.getAttribute("data-prep-id");
+        const rec = obsTrackerRecords.find(r => String(r && r.id || "") === String(prepId));
+        if (!rec) return;
+        if (typeof window.setAstrolabWorkflowMode === "function") window.setAstrolabWorkflowMode("aavso");
+        const starEl = document.getElementById("starid");
+        if (starEl && rec.star) {
+          starEl.value = rec.star;
+          starEl.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        if (Array.isArray(rec.aavsoPoints) && rec.aavsoPoints.length && typeof window._STATE_CURVES === "object") {
+          window._STATE_CURVES.currentSessionPoints = rec.aavsoPoints.map(pt => ({
+            jd: Number(pt[0]), mag: Number(pt[1]), merr: Number(pt[2] || 0.02),
+            band: rec.filter || "TG", source: "LAB_IMPORT", star: rec.star, layer: "current", isUser: true
+          }));
+        }
+        document.getElementById("obsTrackerModal")?.classList.remove("open");
+        document.getElementById("accConvertSection")?.setAttribute("open", "");
+        if (typeof showIosNotification === "function") {
+          showIosNotification("📤 " + (rec.star || ""), t("btnPrepareAavso"), "", "info");
+        }
+      });
+    });
     tbody.querySelectorAll(".btn-obs-del").forEach(btn => {
       btn.addEventListener("click", (ev) => {
         ev.preventDefault();
@@ -8846,7 +8943,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     const decodedText = decodeCosmoBehemothychSeal();
     const proofObj = {
       verified: true,
-      application: "Seestar AstroLab AAVSO v1.4.0",
+      application: "Seestar AstroLab AAVSO v1.5.0-alpha",
       author: "CosmoBehemothych",
       github: "https://github.com/CosmoBehemothych",
       boosty: "https://boosty.to/cosmobehemothych",
@@ -8897,7 +8994,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
 
   // =========================================================================
-  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.4.0 (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
+  // ИНИЦИАЛИЗАЦИЯ НОВЫХ КОМПОНЕНТОВ v1.5.0-alpha (ИСПРАВЛЕНИЕ ВСЕХ 8 ПУНКТОВ)
   // =========================================================================
   window.updateDssFovSvgOverlay = function(scopeModel) {
     const code = scopeModel || window._currentScopeModel || "S50";
@@ -9066,6 +9163,14 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
    ========================================================================== */
 (function initPythonBackendBridge() {
   const BACKEND_RPC_URL = "http://127.0.0.1:18765/api/rpc";
+  function getBackendRpcHeaders() {
+    const h = { "Content-Type": "application/json" };
+    if (typeof window !== "undefined" && window.__ASTROLAB_RPC_TOKEN) {
+      h["X-AstroLab-Token"] = String(window.__ASTROLAB_RPC_TOKEN);
+    }
+    return h;
+  }
+  window.getBackendRpcHeaders = getBackendRpcHeaders;
 
   async function callPythonBackend(action, payload = {}) {
     // 1. Приоритет: прямой нативный вызов через мост pywebview.api
@@ -9089,7 +9194,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     try {
       const resp = await fetch(BACKEND_RPC_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getBackendRpcHeaders(),
         body: JSON.stringify(Object.assign({ action }, payload))
       });
       if (resp.ok) {
@@ -10593,7 +10698,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
           jd: Number(jd.toFixed(6)),
           mag: Number(mag.toFixed(4)),
           merr: isNaN(merr) ? 0.012 : Number(merr.toFixed(4)),
-          band: c[5] ? c[5].trim() : "TG",
+          rawBand: c[5] ? c[5].trim() : "",
+          band: (function(fb){ const u = String(fb || "").trim().toUpperCase(); if (!u || u === "IRCUT" || u === "IR-CUT" || u === "UV/IR" || u === "UV/IR CUT" || u === "LP" || u === "DUO" || u === "G" || u === "GREEN" || u === "NONE") return "TG"; return u; })(c[5]),
           utc: c[11] ? c[11].trim() : "",
           idx: pts.length + 1
         });
@@ -10735,7 +10841,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       } else {
         await fetch("http://127.0.0.1:18765/api/rpc", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: getBackendRpcHeaders(),
           body: JSON.stringify({
             action: "save_converted_session",
             star: starName, obscode: obscode, scopeModel: scopeModel,
@@ -11207,7 +11313,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       } else {
         const r = await fetch("http://127.0.0.1:18765/api/rpc", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: getBackendRpcHeaders(),
           body: JSON.stringify({ action: "fetch_aavso_light_curve", star: cleanStar, daysBack: 240, obscode: userObscode }),
           signal: AbortSignal.timeout(18000)
         });
@@ -11303,7 +11409,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     if (rawAavsoPts.length < 1) {
       return { ok: false, hasEnoughData: false, points: [], errorMsg: aavsoError };
     }
-    // v1.4.0 FIX: Preserve all loaded AAVSO AID observations (up to 3,000 newest points) without slicing to 2 runs!
+    // v1.5.0-alpha FIX: Preserve all loaded AAVSO AID observations (up to 3,000 newest points) without slicing to 2 runs!
     const cleanedAavsoPts = rawAavsoPts.slice(-3000);
     return { ok: true, hasEnoughData: cleanedAavsoPts.length >= 1, points: cleanedAavsoPts };
   }
@@ -11907,7 +12013,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   }, 80);
 
   // ============================================================================
-  // [RU] МОДУЛЬ 14 (v1.4.0 — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
+  // [RU] МОДУЛЬ 14 (v1.5.0-alpha — ИСПРАВЛЕНИЕ ПУНКТОВ 1–10):
   //   1) Кнопка CosmoBehemothych открывает классическое окно донатов автора (#donateModal).
   //   2) Кнопка AAVSO открывает спокойное лаконичное окно поддержки AAVSO (#aavsoDonateModal).
   //   3) Колесо Небесной Лотереи в стиле кадра из дунхуа «Пощади меня, великий господин!»
@@ -17176,7 +17282,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       } else {
         await fetch("http://127.0.0.1:18765/api/rpc", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: getBackendRpcHeaders(),
           body: JSON.stringify({ action: "delete_converted_records", star: recStar, fileName: recFile, obsDate: recDateDash }),
           signal: AbortSignal.timeout(2500)
         });
@@ -17223,7 +17329,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       } else {
         await fetch("http://127.0.0.1:18765/api/rpc", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: getBackendRpcHeaders(),
           body: JSON.stringify({ action: "reset_all_user_data" }),
           signal: AbortSignal.timeout(2500)
         });
@@ -17298,7 +17404,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     try {
       const rpcResp = await fetch("http://127.0.0.1:18765/api/rpc", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getBackendRpcHeaders(),
         body: JSON.stringify({ action: "fetch_live_star_dossier", star: starKey }),
         signal: AbortSignal.timeout(7500)
       });
@@ -19221,43 +19327,43 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     const extraPerLang = {
       en: {
         optFullWindow: "Full Window", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Version 1.4.0"
+        appVersionLabel: "Version 1.5.0-alpha"
       },
       ru: {
         optFullWindow: "Во всё окно", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Версия 1.4.0"
+        appVersionLabel: "Версия 1.5.0-alpha"
       },
       es: {
         optFullWindow: "Ventana completa", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En línea • TTL 1h",
-        appVersionLabel: "Versión 1.4.0"
+        appVersionLabel: "Versión 1.5.0-alpha"
       },
       de: {
         optFullWindow: "Vollbildfenster", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Online • TTL 1 Std.",
         thUI: "Daten aus SIMBAD-Katalog",
-        appVersionLabel: "Version 1.4.0"
+        appVersionLabel: "Version 1.5.0-alpha"
       },
       fr: {
         optFullWindow: "Pleine fenêtre", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "En ligne • TTL 1h",
-        appVersionLabel: "Version 1.4.0"
+        appVersionLabel: "Version 1.5.0-alpha"
       },
       zh: {
         optFullWindow: "全窗口", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "在线 • TTL 1小时",
-        appVersionLabel: "版本 1.4.0"
+        appVersionLabel: "版本 1.5.0-alpha"
       },
       ber: {
         optFullWindow: "Asfaylu ummid", phRa: "122.40188", phDec: "+44.47336",
         bentoSyncBadgeText: "Srad • TTL 1s",
         btnTryUniverseLuck: "Afran agacuran n yitri i wannay-ik",
         tipTryUniverseLuck: "Afran agacuran n yitri azwaru i wannayen-ik ass-a",
-        appVersionLabel: "Taseqqult 1.4.0"
+        appVersionLabel: "Taseqqult 1.5.0-alpha"
       },
       cs: {
         optFullWindow: "Celé okno", phRa: "122.40188", phDec: "+44.47336",
-        appVersionLabel: "Verze 1.4.0",
+        appVersionLabel: "Verze 1.5.0-alpha",
         lblThemePickerSplash: "Barevný motiv",
         brandBarTitle: "🌌 CosmoBehemothych AstroLab • Seestar S30 / S30 PLUS / S30PRO / S50 / S50PRO Fotometrická observatoř",
         btnDonateBadge: "❤️ Podpořit",
@@ -19489,26 +19595,31 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     // Sync all Module 14 & curve labels on initial load for EVERY language (prevents RU leaks in EN mode)
     if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
 
-    // === v1.4.0: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
+    // === v1.5.0-alpha: One-time Startup GitHub Release Update Check (6h cache, remote > local, zero polling, zero auto-download) ===
     const UPDATE_I18N = {
-      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.4.0. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
-      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.4.0. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
-      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.4.0. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
-      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.4.0. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
-      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.4.0. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
-      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.4.0，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
-      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.4.0. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
-      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.4.0. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
+      en: { title: "🚀 New version v{ver} is available on GitHub Releases!", desc: "You are running v1.5.0-alpha. Visit GitHub Releases to download the latest update.", btnOpen: "Open GitHub Releases ↗", btnSkip: "Skip v{ver}", btnClose: "Close" },
+      ru: { title: "🚀 Доступна новая версия v{ver} в релизах GitHub!", desc: "У вас установлена v1.5.0-alpha. Рекомендуем обновиться на странице релизов GitHub.", btnOpen: "Открыть релизы GitHub ↗", btnSkip: "Пропустить v{ver}", btnClose: "Закрыть" },
+      es: { title: "🚀 ¡Nueva versión v{ver} disponible en GitHub Releases!", desc: "Tienes v1.5.0-alpha. Visita GitHub Releases para descargar la actualización.", btnOpen: "Abrir GitHub Releases ↗", btnSkip: "Omitir v{ver}", btnClose: "Cerrar" },
+      de: { title: "🚀 Neue Version v{ver} auf GitHub Releases verfügbar!", desc: "Sie nutzen v1.5.0-alpha. Öffnen Sie GitHub Releases für das Update.", btnOpen: "GitHub Releases öffnen ↗", btnSkip: "v{ver} überspringen", btnClose: "Schließen" },
+      fr: { title: "🚀 Nouvelle version v{ver} disponible sur GitHub Releases !", desc: "Vous utilisez v1.5.0-alpha. Ouvrez GitHub Releases pour mettre à jour.", btnOpen: "Ouvrir GitHub Releases ↗", btnSkip: "Ignorer v{ver}", btnClose: "Fermer" },
+      zh: { title: "🚀 GitHub Releases 已发布新版本 v{ver}！", desc: "当前版本为 v1.5.0-alpha，请前往 GitHub Releases 获取更新。", btnOpen: "打开 GitHub Releases ↗", btnSkip: "跳过 v{ver}", btnClose: "关闭" },
+      cs: { title: "🚀 Na GitHub Releases je dostupná nová verze v{ver}!", desc: "Používáte verzi v1.5.0-alpha. Doporučujeme aktualizovat na GitHub Releases.", btnOpen: "Otevřít GitHub Releases ↗", btnSkip: "Přeskočit v{ver}", btnClose: "Zavřít" },
+      ber: { title: "🚀 Taseqqult tamaynut v{ver} tella deg GitHub Releases!", desc: "Tesseqdaceḍ v1.5.0-alpha. Rzu ɣer GitHub Releases i usnifel.", btnOpen: "Ldi GitHub Releases ↗", btnSkip: "Zgel v{ver}", btnClose: "Mdel" }
     };
 
     window.parseAstroSemver = function(v) {
-      const m = String(v || "").match(/(\d+)\.(\d+)(?:\.(\d+))?/);
-      return m ? [parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3] || "0", 10)] : [0, 0, 0];
+      const s = String(v || "").trim();
+      const m = s.match(/(\d+)\.(\d+)(?:\.(\d+))?(?:-([a-zA-Z]+)\.?(\d+)?)?/);
+      if (!m) return [0, 0, 0, 3, 0];
+      const tag = String(m[4] || "").toLowerCase();
+      const rank = !tag ? 3 : (tag.startsWith("rc") ? 2 : (tag.startsWith("beta") ? 1 : 0));
+      const preNum = parseInt(m[5] || "0", 10);
+      return [parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3] || "0", 10), rank, preNum];
     };
     window.isRemoteVersionNewer = function(remoteVer, localVer) {
       const r = window.parseAstroSemver(remoteVer);
       const l = window.parseAstroSemver(localVer);
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 5; i++) {
         if (r[i] > l[i]) return true;
         if (r[i] < l[i]) return false;
       }
@@ -19570,7 +19681,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         } else {
           const r = await fetch("http://127.0.0.1:18765/api/rpc", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: getBackendRpcHeaders(),
             body: JSON.stringify({ action: "check_github_latest_release", currentVersion: LOCAL_VER }),
             signal: AbortSignal.timeout ? AbortSignal.timeout(4500) : undefined
           });
@@ -20165,7 +20276,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
 
 // ============================================================================
-// v1.4.0: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
+// v1.5.0-alpha: 8-SLIDE AAVSO "HOW TO READ LIGHT CURVES" PRESENTATION GUIDE (8 LANGS)
 // Designer full-canvas layout: high-res real-data visuals, KPI cards, pro tips,
 // reference tables, and verified official AAVSO / JAAVSO self-study links.
 // ============================================================================
@@ -20769,7 +20880,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     else if (e.key === "Escape") window.closeGraphGuideModal();
   });
   // ============================================================================
-  // v1.4.0: LIVE ONLINE AAVSO RADAR (PUBLIC CAMPAIGNS + TARGET TOOL API v1.0.0)
+  // v1.5.0-alpha: LIVE ONLINE AAVSO RADAR (PUBLIC CAMPAIGNS + TARGET TOOL API v1.0.0)
   //         + SETTINGS API KEY CONTROLS + 8-LANGUAGE API KEY GUIDE MODAL
   // ============================================================================
   const V133_I18N_PATCH = {
@@ -21072,7 +21183,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     } catch (_) {}
     const resp = await fetch("http://127.0.0.1:18765/api/rpc", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: getBackendRpcHeaders(),
       body: JSON.stringify(Object.assign({ action: rpcAction }, payload)),
       signal: AbortSignal.timeout(12000)
     });
@@ -21354,7 +21465,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   });
 
   // ============================================================================
-  // v1.4.0: RADAR API FETCH BUTTON + SCIENTIFIC LIGHT CURVE ANALYSIS LAB
+  // v1.5.0-alpha: RADAR API FETCH BUTTON + SCIENTIFIC LIGHT CURVE ANALYSIS LAB
   //         (Lomb-Scargle, BLS, Phase Folding, Kwee-van Woerden, Auto-Triggers)
   // ============================================================================
   const V140_I18N_PATCH = {
@@ -21625,70 +21736,118 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       };
     }
 
-    function computeLombScargle(pts) {
+    function computeBaluevFap(zNorm, mPts, fMax, tVar) {
+      if (mPts < 6 || zNorm <= 0) return 1.0;
+      if (zNorm >= 0.999999) return 0.0;
+      const powSingle = Math.pow(Math.max(1e-12, 1.0 - zNorm), (mPts - 3.0) / 2.0);
+      const W = Math.max(1.0, fMax * Math.sqrt(4.0 * Math.PI * Math.max(1e-6, tVar)));
+      const tau = W * Math.pow(Math.max(1e-12, 1.0 - zNorm), (mPts - 4.0) / 2.0) * Math.sqrt(zNorm);
+      const fap = 1.0 - Math.max(0.0, 1.0 - powSingle) * Math.exp(-tau);
+      return Math.max(0.0, Math.min(1.0, fap));
+    }
+
+    function computeLombScargle(pts, opts = {}) {
       const n = pts.length;
-      if (n < 10) return { bestPeriodDays: 0, bestPeriodHours: 0, peakPower: 0, significant: false };
+      if (n < 10) return { bestPeriodDays: 0, bestPeriodHours: 0, peakPower: 0, baluevFap: 1.0, aliasRisk: false, significant: false };
       const t0 = pts[0].jd;
       const span = pts[n - 1].jd - t0;
-      if (span <= 0.02) return { bestPeriodDays: 0, bestPeriodHours: 0, peakPower: 0, significant: false };
+      if (span <= 0.02) return { bestPeriodDays: 0, bestPeriodHours: 0, peakPower: 0, baluevFap: 1.0, aliasRisk: false, significant: false };
 
-      // Downsample if > 900 pts for < 30ms execution
+      // Downsample if > 900 pts for < 35ms execution
       const step = Math.max(1, Math.floor(n / 900));
-      const ts = [], ys = [];
+      const ts = [], ys = [], ws = [];
+      let wTotal = 0;
       for (let i = 0; i < n; i += step) {
-        ts.push(pts[i].jd - t0);
+        const ti = pts[i].jd - t0;
+        const merr = Math.max(0.002, Number(pts[i].merr || 0.02));
+        const wi = 1.0 / (merr * merr);
+        ts.push(ti);
         ys.push(pts[i].mag);
+        ws.push(wi);
+        wTotal += wi;
       }
       const m = ts.length;
-      const yMean = ys.reduce((a, b) => a + b, 0) / m;
-      let yVar = 0;
-      const yc = ys.map(v => { const d = v - yMean; yVar += d * d; return d; });
-      if (yVar < 1e-9) return { bestPeriodDays: 0, bestPeriodHours: 0, peakPower: 0, significant: false };
+      let yWMean = 0, tWMean = 0;
+      for (let i = 0; i < m; i++) {
+        yWMean += ws[i] * ys[i];
+        tWMean += ws[i] * ts[i];
+      }
+      yWMean /= Math.max(1e-12, wTotal);
+      tWMean /= Math.max(1e-12, wTotal);
+
+      let yVarW = 0, tVar = 0;
+      const yc = new Array(m);
+      for (let i = 0; i < m; i++) {
+        const dy = ys[i] - yWMean;
+        const dt = ts[i] - tWMean;
+        yc[i] = dy;
+        yVarW += ws[i] * dy * dy;
+        tVar += (ws[i] / wTotal) * dt * dt;
+      }
+      if (yVarW < 1e-9) return { bestPeriodDays: 0, bestPeriodHours: 0, peakPower: 0, baluevFap: 1.0, aliasRisk: false, significant: false };
 
       const minP = Math.max(0.03, Math.min(0.08, span / 20));
       const maxP = Math.max(minP * 2, Math.min(span * 1.15, 250.0));
       const fMin = 1.0 / maxP;
       const fMax = 1.0 / minP;
-      const nFreq = Math.min(900, Math.max(220, Math.round(span * 30)));
+      // VanderPlas Sec VII.1: oversample >= 5x peak width 1/T -> df <= 1/(5*span)
+      const nFreqTarget = Math.ceil(5.0 * span * (fMax - fMin));
+      const nFreq = Math.min(1800, Math.max(240, nFreqTarget));
       const df = (fMax - fMin) / nFreq;
 
       let bestPower = 0;
       let bestFreq = fMin;
       const TWO_PI = 2 * Math.PI;
 
+      // Floating-Mean & 1/MERR^2 Weighted Generalized Lomb-Scargle (Zechmeister & Kurster 2009 / VanderPlas VI.1-VI.2)
       for (let k = 0; k <= nFreq; k++) {
         const f = fMin + k * df;
         const w = TWO_PI * f;
-        let s2 = 0, c2 = 0;
+        let C = 0, S = 0, YC = 0, YS = 0, CC = 0, SS = 0, CS = 0;
         for (let i = 0; i < m; i++) {
-          const wt2 = 2 * w * ts[i];
-          s2 += Math.sin(wt2);
-          c2 += Math.cos(wt2);
-        }
-        const tau = Math.atan2(s2, c2) / (2 * w);
-        let ycCos = 0, ycSin = 0, cos2 = 0, sin2 = 0;
-        for (let i = 0; i < m; i++) {
-          const arg = w * (ts[i] - tau);
+          const wn = ws[i] / wTotal;
+          const arg = w * ts[i];
           const ca = Math.cos(arg);
           const sa = Math.sin(arg);
-          ycCos += yc[i] * ca;
-          ycSin += yc[i] * sa;
-          cos2 += ca * ca;
-          sin2 += sa * sa;
+          C += wn * ca;
+          S += wn * sa;
+          YC += wn * yc[i] * ca;
+          YS += wn * yc[i] * sa;
+          CC += wn * ca * ca;
+          SS += wn * sa * sa;
+          CS += wn * ca * sa;
         }
-        const pwr = ((ycCos * ycCos) / Math.max(1e-9, cos2) + (ycSin * ycSin) / Math.max(1e-9, sin2)) / yVar;
+        const YY = yVarW / wTotal;
+        const CCh = CC - C * C;
+        const SSh = SS - S * S;
+        const CSh = CS - C * S;
+        const tau = Math.atan2(2 * CSh, CCh - SSh) / (2 * w);
+        const cosT = Math.cos(w * tau);
+        const sinT = Math.sin(w * tau);
+        const YC_t = YC * cosT + YS * sinT;
+        const YS_t = YS * cosT - YC * sinT;
+        const CC_t = 0.5 * (CCh + SSh) + 0.5 * (CCh - SSh) * Math.cos(2 * w * tau) + CSh * Math.sin(2 * w * tau);
+        const SS_t = (CCh + SSh) - CC_t;
+        const pwr = ((YC_t * YC_t) / Math.max(1e-12, CC_t) + (YS_t * YS_t) / Math.max(1e-12, SS_t)) / Math.max(1e-12, YY);
         if (pwr > bestPower) {
           bestPower = pwr;
           bestFreq = f;
         }
       }
 
-      const bestPeriodDays = 1.0 / bestFreq;
+      const mult = (Number(opts.periodMultiplier) === 2) ? 2.0 : 1.0;
+      const bestPeriodDays = (1.0 / bestFreq) * mult;
+      const peakNorm = Math.min(0.999999, Math.max(0.0, bestPower));
+      const baluevFap = computeBaluevFap(peakNorm, m, fMax, tVar);
+      const aliasRisk = span < bestPeriodDays || (bestPeriodDays > 0.45 && bestPeriodDays < 1.15 && span < 3.0);
+
       return {
         bestPeriodDays,
         bestPeriodHours: bestPeriodDays * 24.0,
-        peakPower: Math.min(1.0, bestPower),
-        significant: bestPower >= 0.32 && m >= 12
+        peakPower: peakNorm,
+        baluevFap,
+        aliasRisk,
+        significant: peakNorm >= 0.30 && baluevFap <= 0.05 && m >= 12
       };
     }
 
@@ -21734,6 +21893,74 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       };
     }
 
+    function computePhotometryMetrics(pts, opts = {}) {
+      const snrs = (pts || []).map(p => 1.0857 / Math.max(0.002, Number(p.merr || 0.02)));
+      const medianSnr = snrs.length ? _median(snrs) : 0;
+      const snrTier = medianSnr >= 100 ? "EXOPLANET" : (medianSnr >= 25 ? "VARIABLE" : "LOW");
+
+      // Mironov P1: Bouguer airmass correlation r(MAG, M(z))
+      const airPts = (pts || []).filter(p => Number.isFinite(Number(p.airmass)) && Number(p.airmass) >= 1.0 && Number(p.airmass) <= 6.0);
+      let bouguerCorr = null;
+      let bouguerWarn = false;
+      if (airPts.length >= 8) {
+        const xs = airPts.map(p => Number(p.airmass));
+        const ys = airPts.map(p => Number(p.mag));
+        const mx = xs.reduce((a, b) => a + b, 0) / xs.length;
+        const my = ys.reduce((a, b) => a + b, 0) / ys.length;
+        let num = 0, dx2 = 0, dy2 = 0;
+        for (let i = 0; i < xs.length; i++) {
+          const dx = xs[i] - mx, dy = ys[i] - my;
+          num += dx * dy; dx2 += dx * dx; dy2 += dy * dy;
+        }
+        if (dx2 > 1e-6 && dy2 > 1e-8) {
+          bouguerCorr = num / Math.sqrt(dx2 * dy2);
+          bouguerWarn = Math.abs(bouguerCorr) >= 0.72;
+        }
+      }
+
+      // Mironov P2: Scintillation warning if EXP < 10 s
+      const expSec = Number(opts.expSec || 0);
+      const scintillationWarn = expSec > 0 && expSec < 10;
+
+      // Budding & Demircan: O-C (Observed minus Calculated)
+      let oMinusCDays = null;
+      let oMinusCMins = null;
+      const catP = Number(opts.catalogPeriodDays || 0);
+      const catE = Number(opts.catalogEpochJd || 0);
+      const obsT = Number(opts.observedExtremumJd || 0);
+      if (catP > 0 && catE > 2400000 && obsT > 2400000) {
+        const E = Math.round((obsT - catE) / catP);
+        oMinusCDays = obsT - (catE + E * catP);
+        oMinusCMins = oMinusCDays * 1440.0;
+      }
+
+      return { medianSnr, snrTier, bouguerCorr, bouguerWarn, scintillationWarn, oMinusCDays, oMinusCMins };
+    }
+
+    // Unified Quality Gate for Lab-Only sessions before allowing AAVSO export/reminders
+    function evaluateSessionAavsoEligibility(rawPts, opts = {}) {
+      const valid = (rawPts || []).filter(p =>
+        p && Number.isFinite(Number(p.jd)) && Number(p.jd) > 2400000 &&
+        Number.isFinite(Number(p.mag)) && Number(p.mag) > -2 && Number(p.mag) < 25 &&
+        Number.isFinite(Number(p.merr || 0.02)) && Number(p.merr || 0.02) > 0 && Number(p.merr || 0.02) <= 0.35
+      );
+      if (valid.length < 5) {
+        return { eligible: false, reasonKey: "qgTooFewPts", reasonFallback: "Too few valid points (< 5)" };
+      }
+      const clean = preprocessPoints(valid, { band: "ALL", sigmaClip: true, binMinutes: 0 });
+      if (clean.length < 5 || (clean.length / valid.length) < 0.45) {
+        return { eligible: false, reasonKey: "qgHighOutliers", reasonFallback: "Excessive outliers (>55% rejected)" };
+      }
+      const metrics = computePhotometryMetrics(clean, opts);
+      if (metrics.medianSnr < 10) {
+        return { eligible: false, reasonKey: "qgLowSnr", reasonFallback: `Low SNR (${metrics.medianSnr.toFixed(0)} < 10)` };
+      }
+      if (opts.calibrationBlocked) {
+        return { eligible: false, reasonKey: "qgCalibFail", reasonFallback: "Calibration Guard failed (saturation / ref stars)" };
+      }
+      return { eligible: true, reasonKey: "qgPass", reasonFallback: "Ready for AAVSO" };
+    }
+
     function analyze(rawPts, opts = {}) {
       const pts = preprocessPoints(rawPts, opts);
       const stats = estimateExtremum(pts);
@@ -21757,7 +21984,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         };
       }
 
-      const ls = computeLombScargle(pts);
+      const ls = computeLombScargle(pts, opts);
+      const metrics = computePhotometryMetrics(pts, Object.assign({}, opts, { observedExtremumJd: stats.tMinJd }));
       const bls = computeBLS(pts, stats);
       const triggers = [];
 
@@ -21831,7 +22059,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       }
 
       triggers.sort((a, b) => b.confidence - a.confidence);
-      return { ok: true, count: pts.length, stats, ls, bls, triggers };
+      return { ok: true, count: pts.length, stats, ls, bls, metrics, triggers };
     }
 
     function renderPhasePlotCanvas(canvas, pts, periodDays, epochJd, width, height) {
@@ -22017,7 +22245,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       ctx.fillText(`Filtered Time Series (${tags.join(" • ")}) — ${cleanPts.length} pts (from ${rawPts.length} raw)`, pad.l, 26);
     }
 
-    return { preprocessPoints, estimateExtremum, computeLombScargle, computeBLS, analyze, renderPhasePlotCanvas, renderFilteredTimeSeriesCanvas };
+    return { preprocessPoints, estimateExtremum, computeLombScargle, computeBLS, computePhotometryMetrics, evaluateSessionAavsoEligibility, analyze, renderPhasePlotCanvas, renderFilteredTimeSeriesCanvas };
   })();
 
   window.AstroLabLightCurveLab = AstroLabLightCurveLab;
@@ -22049,26 +22277,55 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     const binMinutes = Number(document.getElementById("fpBinningSelect")?.value || "0");
     const sigmaClip = Boolean(document.getElementById("chkFpSigmaClip")?.checked);
 
-    const res = AstroLabLightCurveLab.analyze(points, { band, binMinutes, sigmaClip });
+    const vsxItem = activeStar ? AAVSO_URGENT_CATALOGUE.find(it => it.star.toLowerCase() === activeStar.toLowerCase()) : null;
+    const catPeriodDays = vsxItem && Number.isFinite(parseFloat(vsxItem.periodDays)) ? parseFloat(vsxItem.periodDays) : 0;
+    const catEpochJd = vsxItem && Number.isFinite(parseFloat(vsxItem.epochJd)) ? parseFloat(vsxItem.epochJd) : 0;
+    const mult = window._fpPeriodMultiplier === 2 ? 2 : 1;
+
+    const res = AstroLabLightCurveLab.analyze(points, {
+      band, binMinutes, sigmaClip,
+      periodMultiplier: mult,
+      catalogPeriodDays: catPeriodDays,
+      catalogEpochJd: catEpochJd
+    });
     if (res.ls && res.ls.bestPeriodDays > 0) {
       window._fpDetectedPeriodDays = res.ls.bestPeriodDays;
       window._fpDetectedEpochJd = (res.stats && res.stats.tMinJd) ? res.stats.tMinJd : 0;
     }
 
+    if (typeof window.refreshLabUnsubmittedReminderBar === "function") {
+      window.refreshLabUnsubmittedReminderBar(activeStar);
+    }
+
     if (panel) {
       const isRu = ((document.getElementById("langSelect")?.value || window.currentLang || (typeof currentLang !== "undefined" ? currentLang : "ru")) === "ru");
-      const vsxItem = activeStar ? AAVSO_URGENT_CATALOGUE.find(it => it.star.toLowerCase() === activeStar.toLowerCase()) : null;
       const vsxNote = vsxItem
         ? (isRu ? ` • Справка AAVSO VSX: <strong>${escapeHtml(vsxItem.type)}</strong>` : ` • AAVSO VSX Ref: <strong>${escapeHtml(vsxItem.type)}</strong>`)
         : "";
+      const fapPct = (res.ls && typeof res.ls.baluevFap === "number")
+        ? (res.ls.baluevFap < 0.0001 ? "< 0.01%" : `${(res.ls.baluevFap * 100).toFixed(2)}%`)
+        : "";
       const pPill = (res.ls && res.ls.bestPeriodDays > 0)
-        ? `<span class="lc-metric-pill">⏱ P ≈ ${res.ls.bestPeriodDays < 2 ? res.ls.bestPeriodHours.toFixed(2) + " h" : res.ls.bestPeriodDays.toFixed(3) + " d"} (LS ${(res.ls.peakPower * 100).toFixed(0)}%)</span>`
+        ? `<span class="lc-metric-pill">⏱ P${mult === 2 ? "×2" : ""} ≈ ${res.ls.bestPeriodDays < 2 ? res.ls.bestPeriodHours.toFixed(2) + " h" : res.ls.bestPeriodDays.toFixed(3) + " d"} (LS ${(res.ls.peakPower * 100).toFixed(0)}%)</span>` +
+          (fapPct ? `<span class="lc-metric-pill">🎯 Baluev FAP ${fapPct}</span>` : "") +
+          (res.ls.aliasRisk ? `<span class="lc-metric-pill" style="border-color:rgba(245,158,11,0.5);">⚠️ ${isRu ? "Риск сут. алиаса (T < P)" : "Diurnal alias risk (T < P)"}</span>` : "")
+        : "";
+      const m = res.metrics || {};
+      const snrPill = (m.medianSnr > 0)
+        ? `<span class="lc-metric-pill">📶 SNR ~${Math.round(m.medianSnr)}</span>`
+        : "";
+      const ocPill = (typeof m.oMinusCMins === "number" && Number.isFinite(m.oMinusCMins))
+        ? `<span class="lc-metric-pill">🧭 O−C: ${m.oMinusCMins >= 0 ? "+" : ""}${m.oMinusCMins.toFixed(1)} min</span>`
+        : "";
+      const bouguerPill = m.bouguerWarn
+        ? `<span class="lc-metric-pill" style="border-color:rgba(245,158,11,0.5);">🌫️ ${isRu ? "Дрейф по M(z) (Бугер)" : "Airmass drift r=" + m.bouguerCorr.toFixed(2)}</span>`
         : "";
       const stPills = res.stats
         ? `<span class="lc-metric-pill">📊 N = ${res.count}</span>` +
           `<span class="lc-metric-pill">↕ Δm = ${res.stats.amplitudeMag.toFixed(3)} mag</span>` +
           `<span class="lc-metric-pill">📉 RMS = ${res.stats.rmsMag.toFixed(3)} mag</span>` +
-          `<span class="lc-metric-pill">🔻 T_min JD ${res.stats.tMinJd.toFixed(4)}</span>`
+          `<span class="lc-metric-pill">🔻 T_min JD ${res.stats.tMinJd.toFixed(4)}</span>` +
+          snrPill + ocPill + bouguerPill
         : "";
 
       const foldBtn = (res.ls && res.ls.bestPeriodDays > 0)
@@ -22208,7 +22465,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   if (typeof applyTranslations === "function") applyTranslations();
   window._syncRadarApiFetchButton();
 
-  // v1.4.0: Intuitive 8-language labels, tooltips & Pro Light Curve Analysis Help Panel
+  // v1.5.0-alpha: Intuitive 8-language labels, tooltips & Pro Light Curve Analysis Help Panel
   const V140A_I18N_EXTRA = {
     en: {
       lblFpWindow: "📅 AAVSO Period:",
@@ -22217,6 +22474,17 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblFpBin: "📊 Averaging (Bin):",
       lblFpSigmaClip: "✂️ Remove Outliers (3σ)",
       btnFpPhaseView: "🔄 Fold by Period (Phase)",
+      modeExportAavso: "📤 Export to AAVSO",
+      modeLabOnly: "🔬 Lab Only",
+      btnAnalyzeInLabOnly: "🔬 Load & Analyze in Lab",
+      btnFpDoublePeriod: "×2 P",
+      tipFpDoublePeriod: "Check 2x period for eclipsing binaries (EW/EB)",
+      thObsAavsoStatus: "AAVSO Status",
+      qgEligibleBadge: "🔬 Lab (AAVSO Ready)",
+      qgBlockedBadge: "⚠️ Local Only",
+      btnPrepareAavso: "Prepare for AAVSO",
+      labReminderFmt: "ℹ️ {count} Lab session(s) for {star} passed Quality Gate and are not yet sent to AAVSO.",
+
       btnFpTimeView: "📈 Time Series View",
       btnRunLcAnalysis: "🔬 Auto-Analyze Star",
       btnLcProHelp: "❓ Guide",
@@ -22236,6 +22504,17 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblFpBin: "📊 Усреднение:",
       lblFpSigmaClip: "✂️ Убрать выбросы (3σ)",
       btnFpPhaseView: "🔄 Свернуть по периоду (Фаза)",
+      modeExportAavso: "📤 Экспорт в AAVSO",
+      modeLabOnly: "🔬 Только лаборатория",
+      btnAnalyzeInLabOnly: "🔬 Загрузить в Лабораторию и проанализировать",
+      btnFpDoublePeriod: "×2 P",
+      tipFpDoublePeriod: "Проверить двойной период для затменных (EW/EB)",
+      thObsAavsoStatus: "Статус AAVSO",
+      qgEligibleBadge: "🔬 Lab (готово для AAVSO)",
+      qgBlockedBadge: "⚠️ Только локально",
+      btnPrepareAavso: "Подготовить для AAVSO",
+      labReminderFmt: "ℹ️ Локальных сессий для {star}: {count} (прошли проверку и ещё не отправлены в AAVSO).",
+
       btnFpTimeView: "📈 Обычный график (Время)",
       btnRunLcAnalysis: "🔬 Автоанализ звезды",
       btnLcProHelp: "❓ Справка",
@@ -22255,6 +22534,17 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblFpBin: "📊 Promedio (Bin):",
       lblFpSigmaClip: "✂️ Quitar atípicos (3σ)",
       btnFpPhaseView: "🔄 Plegar por periodo (Fase)",
+      modeExportAavso: "📤 Exportar a AAVSO",
+      modeLabOnly: "🔬 Solo laboratorio",
+      btnAnalyzeInLabOnly: "🔬 Cargar y analizar en el laboratorio",
+      btnFpDoublePeriod: "×2 P",
+      tipFpDoublePeriod: "Comprobar periodo doble para binarias eclipsantes (EW/EB)",
+      thObsAavsoStatus: "Estado AAVSO",
+      qgEligibleBadge: "🔬 Lab (apto AAVSO)",
+      qgBlockedBadge: "⚠️ Solo local",
+      btnPrepareAavso: "Preparar para AAVSO",
+      labReminderFmt: "ℹ️ {count} sesión(es) de laboratorio para {star} pasaron el control y aún no se enviaron a AAVSO.",
+
       btnFpTimeView: "📈 Vista temporal",
       btnRunLcAnalysis: "🔬 Autoanálisis",
       btnLcProHelp: "❓ Guía",
@@ -22274,6 +22564,17 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblFpBin: "📊 Mittelung (Bin):",
       lblFpSigmaClip: "✂️ Ausreißer (3σ)",
       btnFpPhaseView: "🔄 Phasenfaltung",
+      modeExportAavso: "📤 AAVSO-Export",
+      modeLabOnly: "🔬 Nur Labor",
+      btnAnalyzeInLabOnly: "🔬 Im Labor laden & analysieren",
+      btnFpDoublePeriod: "×2 P",
+      tipFpDoublePeriod: "Doppelte Periode für Bedeckungsveränderliche prüfen",
+      thObsAavsoStatus: "AAVSO-Status",
+      qgEligibleBadge: "🔬 Labor (AAVSO-bereit)",
+      qgBlockedBadge: "⚠️ Nur lokal",
+      btnPrepareAavso: "Für AAVSO vorbereiten",
+      labReminderFmt: "ℹ️ {count} Laborsitzung(en) für {star} haben die Qualitätsprüfung bestanden und wurden noch nicht an AAVSO gesendet.",
+
       btnFpTimeView: "📈 Zeitreihe",
       btnRunLcAnalysis: "🔬 Auto-Analyse",
       btnLcProHelp: "❓ Anleitung",
@@ -22293,6 +22594,17 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblFpBin: "📊 Moyenne (Bin) :",
       lblFpSigmaClip: "✂️ Filtrer pics (3σ)",
       btnFpPhaseView: "🔄 Plier en phase",
+      modeExportAavso: "📤 Export AAVSO",
+      modeLabOnly: "🔬 Labo seul",
+      btnAnalyzeInLabOnly: "🔬 Charger et analyser au labo",
+      btnFpDoublePeriod: "×2 P",
+      tipFpDoublePeriod: "Vérifier la période double pour binaires à éclipses",
+      thObsAavsoStatus: "Statut AAVSO",
+      qgEligibleBadge: "🔬 Labo (prêt AAVSO)",
+      qgBlockedBadge: "⚠️ Local uniquement",
+      btnPrepareAavso: "Préparer pour AAVSO",
+      labReminderFmt: "ℹ️ {count} session(s) labo pour {star} ont passé le contrôle qualité et n’ont pas encore été envoyées à l’AAVSO.",
+
       btnFpTimeView: "📈 Série temporelle",
       btnRunLcAnalysis: "🔬 Auto-analyse",
       btnLcProHelp: "❓ Guide",
@@ -22312,6 +22624,17 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblFpBin: "📊 时间平均:",
       lblFpSigmaClip: "✂️ 去除噪点 (3σ)",
       btnFpPhaseView: "🔄 按周期折叠(相位)",
+      modeExportAavso: "📤 导出至 AAVSO",
+      modeLabOnly: "🔬 仅实验室",
+      btnAnalyzeInLabOnly: "🔬 加载并在实验室分析",
+      btnFpDoublePeriod: "×2 P",
+      tipFpDoublePeriod: "检查食双星的双倍周期 (EW/EB)",
+      thObsAavsoStatus: "AAVSO 状态",
+      qgEligibleBadge: "🔬 实验室 (可提交 AAVSO)",
+      qgBlockedBadge: "⚠️ 仅限本地",
+      btnPrepareAavso: "准备提交 AAVSO",
+      labReminderFmt: "ℹ️ {star} 有 {count} 条实验室观测已通过质量检查，尚未提交至 AAVSO。",
+
       btnFpTimeView: "📈 时间序列视图",
       btnRunLcAnalysis: "🔬 自动分析恒星",
       btnLcProHelp: "❓ 指南",
@@ -22331,6 +22654,17 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblFpBin: "📊 Průměrování:",
       lblFpSigmaClip: "✂️ Odstranit výkyvy (3σ)",
       btnFpPhaseView: "🔄 Složit do fáze",
+      modeExportAavso: "📤 Export do AAVSO",
+      modeLabOnly: "🔬 Pouze laboratoř",
+      btnAnalyzeInLabOnly: "🔬 Načíst a analyzovat v laboratoři",
+      btnFpDoublePeriod: "×2 P",
+      tipFpDoublePeriod: "Ověřit dvojnásobnou periodu u zákrytových dvojhvězd",
+      thObsAavsoStatus: "Stav AAVSO",
+      qgEligibleBadge: "🔬 Lab (připraveno pro AAVSO)",
+      qgBlockedBadge: "⚠️ Pouze lokálně",
+      btnPrepareAavso: "Připravit pro AAVSO",
+      labReminderFmt: "ℹ️ {count} laboratorní relace pro {star} prošly kontrolou kvality a nebyly odeslány do AAVSO.",
+
       btnFpTimeView: "📈 Časová osa",
       btnRunLcAnalysis: "🔬 Autoanalýza",
       btnLcProHelp: "❓ Nápověda",
@@ -22350,6 +22684,17 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblFpBin: "📊 Asegrew:",
       lblFpSigmaClip: "✂️ Kkes tizgalin (3σ)",
       btnFpPhaseView: "🔄 Sdukkel s tallit",
+      modeExportAavso: "📤 Sifeḍ ɣer AAVSO",
+      modeLabOnly: "🔬 Asudu kan",
+      btnAnalyzeInLabOnly: "🔬 Sali & sfeḍ deg usudu",
+      btnFpDoublePeriod: "×2 P",
+      tipFpDoublePeriod: "Senqed tallit tusligt i yetran",
+      thObsAavsoStatus: "Addad AAVSO",
+      qgEligibleBadge: "🔬 Lab (Yewjed i AAVSO)",
+      qgBlockedBadge: "⚠️ Adigan kan",
+      btnPrepareAavso: "Heggi i AAVSO",
+      labReminderFmt: "ℹ️ {count} n tɣimit(in) i {star} ččurent tarrayt n tɣara werɛad ttwaznent ɣer AAVSO.",
+
       btnFpTimeView: "📈 Asaru n wakud",
       btnRunLcAnalysis: "🔬 Tasleḍt tawurmant",
       btnLcProHelp: "❓ Tallalt",
@@ -22432,7 +22777,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
 
 // ============================================================================
-// v1.4.0 Hotfix3: BUILT-IN FRONTEND DIAGNOSTIC BRIDGE + 8-LANG I18N
+// v1.5.0-alpha Hotfix3: BUILT-IN FRONTEND DIAGNOSTIC BRIDGE + 8-LANG I18N
 // ============================================================================
 (function initAstroLabDiagBridgeV140H3() {
   const DIAG_I18N = {
@@ -22588,7 +22933,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 })();
 
 // ============================================================================
-// v1.4.0 Hotfix5: 8-LANG I18N FOR X-AXIS TIME UNITS
+// v1.5.0-alpha Hotfix5: 8-LANG I18N FOR X-AXIS TIME UNITS
 // ============================================================================
 (function initXAxisUnitI18nV140H5() {
   const XUNIT_I18N = {
@@ -22668,7 +23013,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
 
 // ============================================================================
-// v1.4.0 Hotfix7:
+// v1.5.0-alpha Hotfix7:
 //   1) Variant 2 Full-Canvas Educational Light-Curve Loader (0% -> 100%)
 //   2) 3-Mode AMASS System (Variant A checkbox + Variant B Site Profiles + Variant C CSV auto-detect)
 //   3) Interactive MAD 3-Sigma Outlier Prompt on Raw CSV Load
@@ -23162,7 +23507,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     _renderProfilesList();
   });
   document.getElementById("btnApplyShootingSite")?.addEventListener("click", () => {
-    const name = (document.getElementById("siteManualName")?.value || "").trim() || "Ручная точка";
+    const _trSite = (k, fb) => (typeof t === "function" && t(k) && t(k) !== k) ? t(k) : fb;
+    const name = (document.getElementById("siteManualName")?.value || "").trim() || _trSite("siteManualDefaultName", "Manual site");
     const lat = parseFloat(document.getElementById("siteManualLat")?.value || "");
     const lon = parseFloat(document.getElementById("siteManualLon")?.value || "");
     if (!Number.isFinite(lat) || !Number.isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) return;
@@ -23173,21 +23519,24 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     document.getElementById("shootingSiteModal")?.classList.remove("open");
   });
   document.getElementById("btnSiteCitySearch")?.addEventListener("click", async () => {
+    const _trSite = (k, fb) => (typeof t === "function" && t(k) && t(k) !== k) ? t(k) : fb;
     const q = (document.getElementById("siteCitySearchInput")?.value || "").trim();
     const resWrap = document.getElementById("siteCitySearchResults");
     if (!q || !resWrap) return;
-    resWrap.innerHTML = `<div style="font-size:11px; opacity:0.75;">⏳ Поиск «${q}»...</div>`;
+    const safeQ = escapeHtml(q);
+    resWrap.innerHTML = `<div style="font-size:11px; opacity:0.75;">⏳ ${escapeHtml(_trSite("siteSearchLoading", "Searching"))} «${safeQ}»...</div>`;
     try {
-      const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=ru&format=json`);
+      const geoLang = (typeof currentLang === "string" && ["ru","en","es","de","fr","zh","cs"].includes(currentLang)) ? currentLang : "en";
+      const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=${geoLang}&format=json`);
       const data = await r.json();
       const hits = data && Array.isArray(data.results) ? data.results : [];
       if (!hits.length) {
-        resWrap.innerHTML = `<div style="font-size:11px; opacity:0.75;">Ничего не найдено. Введите координаты вручную ниже.</div>`;
+        resWrap.innerHTML = `<div style="font-size:11px; opacity:0.75;">${escapeHtml(_trSite("siteSearchNotFound", "Nothing found. Enter coordinates manually below."))}</div>`;
         return;
       }
       resWrap.innerHTML = hits.map((h, i) => `
         <button type="button" class="ios-btn secondary tiny" data-city-hit="${i}" style="width:100%; text-align:left; padding:4px 8px; font-size:11.5px;">
-          📍 ${h.name}${h.admin1 ? ", " + h.admin1 : ""}${h.country ? " (" + h.country + ")" : ""} — ${Number(h.latitude).toFixed(3)}, ${Number(h.longitude).toFixed(3)}
+          📍 ${escapeHtml(h.name || "")}${h.admin1 ? ", " + escapeHtml(h.admin1) : ""}${h.country ? " (" + escapeHtml(h.country) + ")" : ""} — ${Number(h.latitude).toFixed(3)}, ${Number(h.longitude).toFixed(3)}
         </button>
       `).join("");
       resWrap.querySelectorAll("[data-city-hit]").forEach(btn => {
@@ -23201,7 +23550,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         });
       });
     } catch (_) {
-      resWrap.innerHTML = `<div style="font-size:11px; opacity:0.75;">Нет связи с геокодером — введите широту и долготу вручную.</div>`;
+      resWrap.innerHTML = `<div style="font-size:11px; opacity:0.75;">${escapeHtml(_trSite("siteSearchNetError", "Geocoder unavailable — enter latitude and longitude manually."))}</div>`;
     }
   });
 
@@ -23240,7 +23589,10 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         const limit = Math.max(0.06, 3.0 * mad);
         const outliers = mags.filter(m => Math.abs(m - med) > limit);
         if (outliers.length > 0) {
-          outText.innerHTML = `⚠️ <strong>Найдено статистических выбросов (> 3σ): ${outliers.length} из ${mags.length} кадров.</strong><br>Это может быть <strong>вспышка звезды или затмение</strong> (важно для науки AAVSO — лучше оставить) либо <strong>пролёт спутника / облако</strong> (помеха — можно удалить). Как поступить при экспорте?`;
+          const _trOut = (k, fb) => (typeof t === "function" && t(k) && t(k) !== k) ? t(k) : fb;
+          const outTitle = escapeHtml(_trOut("csvOutlierTitle", "Statistical outliers (> 3σ) detected")) + `: ${outliers.length} / ${mags.length}`;
+          const outHint = escapeHtml(_trOut("csvOutlierHint", "This could be a stellar flare/eclipse (scientifically valuable for AAVSO — keep) or a satellite/cloud artifact (remove). How should we handle them on export?"));
+          outText.innerHTML = `⚠️ <strong>${outTitle}.</strong><br>${outHint}`;
           outBanner.style.display = "block";
         } else {
           outBanner.style.display = "none";
@@ -23300,7 +23652,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
 
 // ============================================================================
-// v1.4.0 Hotfix8:
+// v1.5.0-alpha Hotfix8:
 //   1) City Search Live Dropdown + Enter key (Points 1 & 2)
 //   2) Always-Visible VSP Loading Progress Banner outside collapsed section (Point 7)
 //   3) Full User-Action Breadcrumb Logger [UI_ACTION] (Point 8)
@@ -24401,6 +24753,8 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
   ["btnCalibGuardOpenLabModal", "btnCalibGuardInlineOpenLab"].forEach(id => {
     document.getElementById(id)?.addEventListener("click", () => {
       document.getElementById("calibrationGuardModal")?.classList.remove("open");
+      const chkUser = document.getElementById("chkAavsoWidgetUser");
+      if (chkUser) chkUser.checked = true;
       openCombinedLab();
     });
   });
@@ -24438,13 +24792,22 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
   // 1. Self-healing modal-open scroll lock: never allow html/body overflow:hidden when 0 modals are open
   function syncGlobalModalScrollLock() {
     try {
-      const anyBackdropOpen = Boolean(document.querySelector(".ios-modal-backdrop.open"));
+      const isElVisible = (el) => {
+        if (!el) return false;
+        const cs = window.getComputedStyle(el);
+        return cs.display !== "none" && cs.visibility !== "hidden" && parseFloat(cs.opacity || "1") > 0;
+      };
+      const anyBackdropOpen = Array.from(document.querySelectorAll(".ios-modal-backdrop.open")).some(isElVisible);
+      const critEl = document.getElementById("criticalMismatchModal");
+      const critOpen = Boolean(critEl && isElVisible(critEl));
       const splashEl = document.getElementById("splashModal");
-      const splashOpen = Boolean(splashEl && !splashEl.classList.contains("hidden"));
-      const shouldLock = anyBackdropOpen || splashOpen;
+      const splashOpen = Boolean(splashEl && !splashEl.classList.contains("hidden") && isElVisible(splashEl));
+      const shouldLock = anyBackdropOpen || critOpen || splashOpen;
       document.documentElement.classList.toggle("modal-open", shouldLock);
       document.body.classList.toggle("modal-open", shouldLock);
       if (!shouldLock) {
+        if (document.documentElement.style.overflow === "hidden") document.documentElement.style.overflow = "";
+        if (document.body.style.overflow === "hidden") document.body.style.overflow = "";
         if (document.documentElement.style.overflowY === "hidden") document.documentElement.style.overflowY = "auto";
         if (document.body.style.overflowY === "hidden") document.body.style.overflowY = "auto";
       }
@@ -24453,10 +24816,13 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
   window._syncGlobalModalScrollLock = syncGlobalModalScrollLock;
 
   const modalClassMo = new MutationObserver(() => syncGlobalModalScrollLock());
-  document.querySelectorAll(".ios-modal-backdrop").forEach(m => {
-    modalClassMo.observe(m, { attributes: true, attributeFilter: ["class", "style"] });
-  });
+  if (document.body) {
+    modalClassMo.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class", "style"] });
+  }
   document.addEventListener("click", () => setTimeout(syncGlobalModalScrollLock, 60), true);
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape") setTimeout(syncGlobalModalScrollLock, 80);
+  }, true);
   syncGlobalModalScrollLock();
 
   // 2. Store raw CSV text globally so Calibration Guard can re-evaluate after AAVSO curve finishes loading
@@ -24538,3 +24904,220 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
     };
   }
 })();
+
+
+  // =========================================================================
+  // v1.5.0-alpha: Mode Switch (Export to AAVSO <-> Lab Only), x2 P & Quality Gate
+  // =========================================================================
+  window._fpPeriodMultiplier = 1;
+
+  window.setAstrolabWorkflowMode = function(mode) {
+    const isLab = (mode === "lab");
+    document.body.classList.toggle("astrolab-lab-only", isLab);
+    const btnAavso = document.getElementById("btnModeExportAavso");
+    const btnLab = document.getElementById("btnModeLabOnly");
+    if (btnAavso) {
+      btnAavso.classList.toggle("active", !isLab);
+      btnAavso.setAttribute("aria-selected", String(!isLab));
+    }
+    if (btnLab) {
+      btnLab.classList.toggle("active", isLab);
+      btnLab.setAttribute("aria-selected", String(isLab));
+    }
+    const labRunBtn = document.getElementById("btnAnalyzeInLabOnly");
+    if (labRunBtn) labRunBtn.style.display = isLab ? "block" : "none";
+    if (isLab) {
+      document.getElementById("accFileSelect")?.setAttribute("open", "");
+      document.getElementById("accConvertSection")?.setAttribute("open", "");
+    }
+  };
+
+  window.refreshLabUnsubmittedReminderBar = function(activeStar) {
+    const bar = document.getElementById("labUnsubmittedReminderBar");
+    if (!bar) return;
+    const starNorm = String(activeStar || "").trim().toLowerCase();
+    const dismissed = window._dismissedLabReminderStars || {};
+    if (!starNorm || dismissed[starNorm]) {
+      bar.style.display = "none";
+      return;
+    }
+    const recs = (typeof window.getObsTrackerRecords === "function") ? window.getObsTrackerRecords() : [];
+    const eligible = recs.filter(r =>
+      r && r.status === "lab_unsubmitted" && r.aavsoEligible === true &&
+      String(r.star || "").trim().toLowerCase() === starNorm
+    );
+    if (!eligible.length) {
+      bar.style.display = "none";
+      return;
+    }
+    const msg = (typeof t === "function" ? t("labReminderFmt") : "")
+      .replace("{count}", eligible.length)
+      .replace("{star}", activeStar);
+    const btnTxt = typeof t === "function" ? t("btnPrepareAavso") : "Prepare for AAVSO";
+    bar.innerHTML = `
+      <span>${escapeHtml(msg)}</span>
+      <div style="display:inline-flex; align-items:center; gap:6px;">
+        <button type="button" class="ios-btn tiny" id="btnLabReminderPrepare" style="width:auto; padding:3px 10px; font-size:11px; font-weight:700;">📤 ${escapeHtml(btnTxt)}</button>
+        <button type="button" class="ios-btn secondary tiny" id="btnLabReminderDismiss" style="width:auto; padding:2px 7px; font-size:11px;">✕</button>
+      </div>
+    `;
+    bar.style.display = "flex";
+    document.getElementById("btnLabReminderPrepare")?.addEventListener("click", () => {
+      window.setAstrolabWorkflowMode("aavso");
+      document.getElementById("fullPageLightCurveModal")?.classList.remove("open");
+      document.documentElement.classList.remove("modal-open");
+      document.body.classList.remove("modal-open");
+      document.getElementById("accConvertSection")?.setAttribute("open", "");
+    });
+    document.getElementById("btnLabReminderDismiss")?.addEventListener("click", () => {
+      window._dismissedLabReminderStars = window._dismissedLabReminderStars || {};
+      window._dismissedLabReminderStars[starNorm] = true;
+      bar.style.display = "none";
+    });
+  };
+
+  (function bindV150Controls() {
+    document.getElementById("btnModeExportAavso")?.addEventListener("click", () => window.setAstrolabWorkflowMode("aavso"));
+    document.getElementById("btnModeLabOnly")?.addEventListener("click", () => window.setAstrolabWorkflowMode("lab"));
+
+    document.getElementById("btnFpDoublePeriod")?.addEventListener("click", () => {
+      window._fpPeriodMultiplier = (window._fpPeriodMultiplier === 2) ? 1 : 2;
+      const btn = document.getElementById("btnFpDoublePeriod");
+      if (btn) btn.classList.toggle("active", window._fpPeriodMultiplier === 2);
+      if (typeof window.runFullPageLightCurveAnalysis === "function") {
+        window.runFullPageLightCurveAnalysis();
+      }
+      if (window._fpPhaseModeActive && typeof window._renderFpPhaseOrTime === "function") {
+        window._renderFpPhaseOrTime();
+      }
+    });
+
+    document.getElementById("btnAnalyzeInLabOnly")?.addEventListener("click", () => {
+      if (typeof STATE !== "undefined" && STATE.isConversionBlockedByMismatch) {
+        if (typeof applyCriticalMismatchState === "function") {
+          applyCriticalMismatchState(true, STATE.lastMismatchReasons || [], true);
+        } else if (typeof showIosNotification === "function") {
+          showIosNotification("⛔", typeof t === "function" ? t("critLockBanner") : "Coordinate mismatch blocked", "", "error");
+        }
+        return;
+      }
+      const pts = (typeof window.parseCurrentCsvPoints === "function") ? window.parseCurrentCsvPoints() : [];
+      if (!pts || !pts.length) {
+        if (typeof showIosNotification === "function") {
+          showIosNotification("ℹ️ CSV", typeof t === "function" ? t("noFileSelected") : "Select a CSV file first", "", "info");
+        }
+        return;
+      }
+      const domStar = (document.getElementById("starid")?.value || "").trim();
+      const starName = domStar || (pts[0] && pts[0].star) || "Unknown Star";
+      const qg = AstroLabLightCurveLab.evaluateSessionAavsoEligibility(pts, {
+        calibrationBlocked: Boolean(window._lastCalibrationGuardBlocked)
+      });
+      const metrics = AstroLabLightCurveLab.computePhotometryMetrics(pts);
+      const minJd = Math.min(...pts.map(p => Number(p.jd)));
+      const maxJd = Math.max(...pts.map(p => Number(p.jd)));
+      const durationMin = Math.max(1, Math.round((maxJd - minJd) * 1440));
+      const scope = document.getElementById("headerScopeSelect")?.value || "S50";
+      const todayIso = new Date().toISOString().slice(0, 10);
+
+      const labRec = {
+        id: "lab_" + Date.now(),
+        star: starName,
+        date: todayIso,
+        durationMin,
+        frames: pts.length,
+        filter: (pts[0] && pts[0].band) || "TG",
+        scope,
+        status: "lab_unsubmitted",
+        aavsoEligible: Boolean(qg.eligible),
+        aavsoBlockReason: qg.eligible ? "" : (qg.reasonFallback || "Quality Gate failed"),
+        snrMedian: Math.round(metrics.medianSnr || 0),
+        aavsoPoints: pts.slice(0, 1500).map(p => [Number(p.jd.toFixed(6)), Number(p.mag.toFixed(4)), Number((p.merr || 0.02).toFixed(4))])
+      };
+
+      if (typeof obsTrackerRecords !== "undefined" && Array.isArray(obsTrackerRecords)) {
+        obsTrackerRecords.push(labRec);
+        if (typeof saveObsTrackerDb === "function") saveObsTrackerDb(obsTrackerRecords);
+      }
+      if (typeof window.openFullPageLightCurveModal === "function") {
+        window.openFullPageLightCurveModal("aavso_combined");
+      }
+      if (typeof window.runFullPageLightCurveAnalysis === "function") {
+        setTimeout(() => window.runFullPageLightCurveAnalysis(), 80);
+      }
+    });
+  })();
+
+  // [SECURITY & I18N FIX v1.5.0-alpha] Site search & 3-sigma outlier strings across all 8 languages
+  (function patchSiteAndOutlierI18n() {
+    if (typeof I18N === "undefined") return;
+    const extra = {
+      en: {
+        siteManualDefaultName: "Manual site",
+        siteSearchLoading: "Searching",
+        siteSearchNotFound: "Nothing found. Enter coordinates manually below.",
+        siteSearchNetError: "Geocoder unavailable — enter latitude and longitude manually.",
+        csvOutlierTitle: "Statistical outliers (> 3σ) detected",
+        csvOutlierHint: "This may be a stellar flare or eclipse (valuable for AAVSO — better to keep) or a satellite/cloud artifact (noise — can remove). How to handle on export?"
+      },
+      ru: {
+        siteManualDefaultName: "Ручная точка",
+        siteSearchLoading: "Поиск",
+        siteSearchNotFound: "Ничего не найдено. Введите координаты вручную ниже.",
+        siteSearchNetError: "Нет связи с геокодером — введите широту и долготу вручную.",
+        csvOutlierTitle: "Найдено статистических выбросов (> 3σ)",
+        csvOutlierHint: "Это может быть вспышка звезды или затмение (важно для науки AAVSO — лучше оставить) либо пролёт спутника / облако (помеха — можно удалить). Как поступить при экспорте?"
+      },
+      es: {
+        siteManualDefaultName: "Sitio manual",
+        siteSearchLoading: "Buscando",
+        siteSearchNotFound: "No se encontró nada. Introduce las coordenadas manualmente abajo.",
+        siteSearchNetError: "Geocodificador sin conexión — introduce latitud y longitud manualmente.",
+        csvOutlierTitle: "Valores atípicos estadísticos (> 3σ) detectados",
+        csvOutlierHint: "Puede ser una llamarada o eclipse (valioso para AAVSO — mejor conservar) o un satélite/nube (ruido — se puede eliminar). ¿Cómo proceder al exportar?"
+      },
+      de: {
+        siteManualDefaultName: "Manueller Standort",
+        siteSearchLoading: "Suche",
+        siteSearchNotFound: "Nichts gefunden. Bitte Koordinaten unten manuell eingeben.",
+        siteSearchNetError: "Geocoder nicht erreichbar — bitte Breite und Länge manuell eingeben.",
+        csvOutlierTitle: "Statistische Ausreißer (> 3σ) erkannt",
+        csvOutlierHint: "Dies kann ein Sternausbruch oder eine Bedeckung sein (wichtig für AAVSO — behalten) oder ein Satellit/Wolke (Störung — entfernen). Wie beim Export verfahren?"
+      },
+      fr: {
+        siteManualDefaultName: "Site manuel",
+        siteSearchLoading: "Recherche",
+        siteSearchNotFound: "Aucun résultat. Saisissez les coordonnées manuellement ci-dessous.",
+        siteSearchNetError: "Géocodeur indisponible — saisissez la latitude et la longitude manuellement.",
+        csvOutlierTitle: "Valeurs aberrantes statistiques (> 3σ) détectées",
+        csvOutlierHint: "Il peut s'agir d'une éruption ou d'une éclipse (précieux pour l'AAVSO — à conserver) ou d'un satellite/nuage (bruit — à supprimer). Comment traiter à l'export ?"
+      },
+      zh: {
+        siteManualDefaultName: "手动观测点",
+        siteSearchLoading: "正在搜索",
+        siteSearchNotFound: "未找到结果，请在下方手动输入经纬度坐标。",
+        siteSearchNetError: "地理编码服务不可用 — 请手动输入纬度和经度。",
+        csvOutlierTitle: "检测到统计学异常点 (> 3σ)",
+        csvOutlierHint: "这可能是恒星耀发或掩食（对 AAVSO 科研重要 — 建议保留），也可能是卫星或云层干扰（可剔除）。导出时如何处理？"
+      },
+      cs: {
+        siteManualDefaultName: "Ruční stanoviště",
+        siteSearchLoading: "Hledání",
+        siteSearchNotFound: "Nic nenalezeno. Zadejte souřadnice ručně níže.",
+        siteSearchNetError: "Geokodér je nedostupný — zadejte zeměpisnou šířku a délku ručně.",
+        csvOutlierTitle: "Nalezeny statistické odlehlé body (> 3σ)",
+        csvOutlierHint: "Může jít o erupci nebo zatmění hvězdy (cenné pro AAVSO — ponechat) nebo o družici či mrak (šum — lze odstranit). Jak postupovat při exportu?"
+      },
+      ber: {
+        siteManualDefaultName: "Amkan s ufus",
+        siteSearchLoading: "Anadi",
+        siteSearchNotFound: "Ulac agmuḍ. Sekcem isuddisen s ufus ddaw-a.",
+        siteSearchNetError: "Ameẓlu n wadeg ur yelli ara — sekcem tazeggaɣt d teɣzi s ufus.",
+        csvOutlierTitle: "Tineqqiḍin tibeṛṛaniyin (> 3σ)",
+        csvOutlierHint: "Yezmer d tafejrit n yitri (yelha i AAVSO — eǧǧ-it) neɣ d asatelit/asigna (tella tazmert ad t-tekseḍ). Amek ara texdemeḍ?"
+      }
+    };
+    Object.keys(extra).forEach(lang => {
+      if (I18N[lang]) Object.assign(I18N[lang], extra[lang]);
+    });
+  })();

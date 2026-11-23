@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 ================================================================================
-Seestar AstroLab AAVSO v1.4.0 — Unified Python Backend Core (Single Source of Truth)
+Seestar AstroLab AAVSO v1.5.0-alpha — Unified Python Backend Core (Single Source of Truth)
 Author: CosmoBehemothych (https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO)
 ================================================================================
 Централизованное серверное/бэкенд-ядро бизнес-логики приложения:
@@ -30,7 +30,9 @@ from __future__ import annotations
 import base64
 import datetime
 import hashlib
+import hmac
 import json
+import secrets
 import math
 import os
 import re
@@ -42,11 +44,11 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-APP_VERSION = "1.4.0"
+APP_VERSION = "1.5.0-alpha"
 
 
 # =============================================================================
-# BUILT-IN DIAGNOSTIC LOGGER (v1.4.0 Hotfix3) — Secret-Safe Live Telemetry
+# BUILT-IN DIAGNOSTIC LOGGER (v1.5.0-alpha Hotfix3) — Secret-Safe Live Telemetry
 # =============================================================================
 import logging as _logging
 from logging.handlers import RotatingFileHandler as _RotatingFileHandler
@@ -2659,39 +2661,102 @@ class AavsoNativeAndStorageService:
         }
 
 
+RPC_AUTH_TOKEN: str = secrets.token_hex(24)
+MAX_RPC_BODY_BYTES: int = 25 * 1024 * 1024  # 25 MB safety cap
+
+
+def get_rpc_auth_token() -> str:
+    """Return the per-process cryptographic token required for local RPC POST requests."""
+    return RPC_AUTH_TOKEN
+
+
+def _is_allowed_rpc_origin(origin: str) -> bool:
+    if not origin:
+        return True  # Non-browser / direct local client without Origin header
+    o = origin.strip().lower()
+    if o == "null":
+        return True  # WebView2 / Electron file:// origin
+    return bool(re.match(r"^https?://(127\.0\.0\.1|localhost)(:\d{1,5})?$", o))
+
+
 class _AstroLabBackendRequestHandler(BaseHTTPRequestHandler):
     def log_message(self, format: str, *args: Any) -> None:
         return
 
     def _send_json(self, payload: Dict[str, Any], status: int = 200) -> None:
         raw = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        origin = self.headers.get("Origin", "")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Access-Control-Allow-Origin", "*")
+        if origin and _is_allowed_rpc_origin(origin):
+            self.send_header("Access-Control-Allow-Origin", origin)
+            self.send_header("Vary", "Origin")
         self.send_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-AstroLab-Token")
         self.send_header("Content-Length", str(len(raw)))
         self.end_headers()
         self.wfile.write(raw)
 
     def do_OPTIONS(self) -> None:
+        origin = self.headers.get("Origin", "")
+        if origin and not _is_allowed_rpc_origin(origin):
+            self._send_json({"ok": False, "error": "Forbidden origin"}, 403)
+            return
         self._send_json({"ok": True})
 
     def do_GET(self) -> None:
+        origin = self.headers.get("Origin", "")
+        if origin and not _is_allowed_rpc_origin(origin):
+            self._send_json({"ok": False, "error": "Forbidden origin"}, 403)
+            return
         if self.path.startswith("/api/health"):
             self._send_json({"ok": True, "version": APP_VERSION, "engine": "PhotometryBackendEngine"})
         else:
             self._send_json({"ok": False, "error": "Not found"}, 404)
 
     def do_POST(self) -> None:
+        origin = self.headers.get("Origin", "")
+        if origin and not _is_allowed_rpc_origin(origin):
+            self._send_json({"ok": False, "error": "Forbidden origin"}, 403)
+            return
+
+        require_token = getattr(self.server, "require_token", True)
+        if require_token:
+            supplied = (self.headers.get("X-AstroLab-Token") or "").strip()
+            if not supplied or not hmac.compare_digest(supplied, RPC_AUTH_TOKEN):
+                self._send_json({"ok": False, "error": "Unauthorized RPC request"}, 401)
+                return
+
         try:
             length = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            self._send_json({"ok": False, "error": "Invalid Content-Length"}, 400)
+            return
+
+        if length < 0:
+            self._send_json({"ok": False, "error": "Negative Content-Length"}, 400)
+            return
+        if length > MAX_RPC_BODY_BYTES:
+            self._send_json({"ok": False, "error": f"Payload exceeds {MAX_RPC_BODY_BYTES} bytes limit"}, 413)
+            return
+
+        try:
             body = json.loads(self.rfile.read(length).decode("utf-8")) if length > 0 else {}
         except Exception as e:
             self._send_json({"ok": False, "error": str(e)}, 400)
             return
 
         action = body.get("action", "")
+        try:
+            self._dispatch_post_action(action, body)
+        except Exception as exc:
+            try:
+                AstroLabDiagnosticLogger.log_exception("RPC_DISPATCH_ERR", f"RPC action '{action}' failed", exc)
+            except Exception:
+                pass
+            self._send_json({"ok": False, "error": f"Internal RPC error: {exc}"}, 500)
+
+    def _dispatch_post_action(self, action: str, body: Dict[str, Any]) -> None:
         if action == "get_scope_profile":
             self._send_json({"ok": True, "profile": PhotometryBackendEngine.get_scope_profile(body.get("code", "S50"))})
         elif action == "preview_csv":
@@ -2786,11 +2851,16 @@ class _AstroLabBackendRequestHandler(BaseHTTPRequestHandler):
             self._send_json({"ok": False, "error": f"Unknown action: {action}"}, 400)
 
 
-def start_background_rpc_server(port: int = 18765) -> Optional[ThreadingHTTPServer]:
+def start_background_rpc_server(port: int = 18765, require_token: bool = True) -> Optional[ThreadingHTTPServer]:
     try:
         srv = ThreadingHTTPServer(("127.0.0.1", port), _AstroLabBackendRequestHandler)
+        srv.require_token = bool(require_token)
         t = threading.Thread(target=srv.serve_forever, daemon=True)
         t.start()
         return srv
-    except Exception:
+    except Exception as exc:
+        try:
+            AstroLabDiagnosticLogger.log_exception("RPC_START_ERR", f"Failed to bind local RPC port {port}", exc)
+        except Exception:
+            pass
         return None

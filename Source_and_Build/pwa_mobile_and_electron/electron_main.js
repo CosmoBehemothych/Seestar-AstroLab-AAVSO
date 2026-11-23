@@ -16,7 +16,7 @@ function createWindow() {
     minWidth: 640,
     minHeight: 480,
     backgroundColor: '#040711',
-    icon: path.join(__dirname, '..', 'Seestar_AstroLab.ico'),
+    icon: path.join(__dirname, '..', 'assets', 'Seestar_AstroLab.ico'),
     frame: true,               // Настоящая нативная рамка ОС с системными кнопками _ □ ✕
     autoHideMenuBar: true,     // Скрыть меню браузера
     title: 'Seestar AstroLab by CosmoBehemothych — AAVSO Extended',
@@ -40,7 +40,7 @@ function createWindow() {
       overrideBrowserWindowOptions: {
         width: 1100,
         height: 800,
-        icon: path.join(__dirname, '..', 'Seestar_AstroLab.ico'),
+        icon: path.join(__dirname, '..', 'assets', 'Seestar_AstroLab.ico'),
         autoHideMenuBar: true,
         title: 'Seestar AstroLab — Встроенный просмотр'
       }

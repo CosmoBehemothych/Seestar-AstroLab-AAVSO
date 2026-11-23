@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""
 ==============================================================================
-Seestar AstroLab by CosmoBehemothych – Native Desktop Runner (v1.4.0)
+Seestar AstroLab by CosmoBehemothych – Native Desktop Runner (v1.5.0-alpha)
 ==============================================================================
 """
 
@@ -26,21 +26,22 @@ if sys.platform == "win32":
 
 # Подключение единого серверного ядра бизнес-логики PhotometryBackendEngine
 try:
-    from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server, AstroLabDiagnosticLogger
+    from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server, get_rpc_auth_token, AstroLabDiagnosticLogger
 except ImportError:
     try:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server, AstroLabDiagnosticLogger
+        from backend.astrolab_backend_core import PhotometryBackendEngine, AavsoNativeAndStorageService, get_program_converted_storage_dir, start_background_rpc_server, get_rpc_auth_token, AstroLabDiagnosticLogger
     except ImportError:
         PhotometryBackendEngine = None
         AavsoNativeAndStorageService = None
         get_program_converted_storage_dir = None
         start_background_rpc_server = None
+        get_rpc_auth_token = None
         AstroLabDiagnosticLogger = None
 
 
-APP_VERSION = "1.4.0"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych – Фотометрия и Радар целей (v1.4.0)"
+APP_VERSION = "1.5.0-alpha"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych – Фотометрия и Радар целей (v1.5.0-alpha)"
 APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
 
 
@@ -77,12 +78,12 @@ def get_html_path():
             return os.path.abspath(direct_p)
 
     # 2. [FIX PORTABLE --onefile] Если запущен одиночный Portable .exe из произвольной папки (файлы внутри sys._MEIPASS),
-    # синхронизируем pwa_mobile_and_electron в постоянную рабочую папку %APPDATA%\Seestar_AstroLab\ui_runtime_v121,
+    # синхронизируем pwa_mobile_and_electron в постоянную рабочую папку %APPDATA%\Seestar_AstroLab\ui_runtime_v150,
     # чтобы WebView2 корректно открывал локальный интерфейс без блокировок %TEMP%\_MEI* и сохранял настройки!
     meipass_pwa = os.path.join(base_dir, "pwa_mobile_and_electron")
     if getattr(sys, "frozen", False) and os.path.isdir(meipass_pwa):
         try:
-            runtime_pwa = os.path.join(get_persistent_data_dir(), "ui_runtime_v121", "pwa_mobile_and_electron")
+            runtime_pwa = os.path.join(get_persistent_data_dir(), "ui_runtime_v150", "pwa_mobile_and_electron")
             os.makedirs(runtime_pwa, exist_ok=True)
             for fn in os.listdir(meipass_pwa):
                 s_item = os.path.join(meipass_pwa, fn)
@@ -120,7 +121,7 @@ def get_html_path():
                 _raw = _bf.read()
             _pk = _raw.find(b"PK\x03\x04")
             if _pk != -1:
-                _runtime_ui = os.path.join(get_persistent_data_dir(), "ui_runtime_v121")
+                _runtime_ui = os.path.join(get_persistent_data_dir(), "ui_runtime_v150")
                 with _zf.ZipFile(_io.BytesIO(_raw[_pk:]), "r") as _z:
                     for _m in _z.namelist():
                         if _m.startswith("pwa_mobile_and_electron/") and not _m.endswith("/"):
@@ -286,6 +287,9 @@ class AstroLabDiskBridge:
             self._save_to_disk()
         return True
 
+
+    def get_rpc_token(self):
+        return get_rpc_auth_token() if get_rpc_auth_token else ""
 
     def get_all_store(self):
         with self._lock:
@@ -590,8 +594,7 @@ def main():
             _orig_excepthook(exc_type, exc_value, exc_tb)
         sys.excepthook = _diag_excepthook
     _acquire_running_app_mutex()
-    if start_background_rpc_server:
-        start_background_rpc_server(18765)
+    rpc_server = start_background_rpc_server(18765) if start_background_rpc_server else None
     html_file = get_html_path()
     icon_file = get_icon_path()
 
@@ -666,6 +669,12 @@ def main():
 
     def _on_loaded():
         try:
+            if get_rpc_auth_token:
+                tok_js = json.dumps(get_rpc_auth_token())
+                window.evaluate_js(f"window.__ASTROLAB_RPC_TOKEN = {tok_js};")
+        except Exception:
+            pass
+        try:
             saved_data = disk_bridge.get_all_store()
             if saved_data:
                 payload = json.dumps(saved_data, ensure_ascii=False)
@@ -684,9 +693,20 @@ def main():
     # КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ ПУНКТОВ 2 и 3: private_mode=False и постоянный storage_path!
     def _on_closed():
         try:
+            if rpc_server is not None:
+                threading.Thread(target=rpc_server.shutdown, daemon=True).start()
+                rpc_server.server_close()
+        except Exception:
+            pass
+        try:
             lock_file = os.path.join(get_persistent_data_dir(), "running_instance.lock")
             if os.path.exists(lock_file):
                 os.remove(lock_file)
+        except Exception:
+            pass
+        try:
+            sys.stdout.flush()
+            sys.stderr.flush()
         except Exception:
             pass
         os._exit(0)

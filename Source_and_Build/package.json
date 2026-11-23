@@ -1,7 +1,7 @@
 {
   "name": "seestar-astrolab-aavso",
   "productName": "Seestar AstroLab AAVSO",
-  "version": "1.4.0",
+  "version": "1.5.0-alpha",
   "description": "Seestar AstroLab AAVSO — ZWO Seestar (S30, S30PRO, S50, S50PRO) to AAVSO Extended Photometry Converter, SIMBAD/VSP Check Star Resolver & Urgent Target Radar",
   "main": "pwa_mobile_and_electron/electron_main.js",
   "scripts": {
@@ -19,14 +19,14 @@
     },
     "files": [
       "pwa_mobile_and_electron/**/*",
-      "Seestar_AstroLab.ico",
+      "assets/Seestar_AstroLab.ico",
       "package.json"
     ],
     "win": {
       "target": [
         "nsis"
       ],
-      "icon": "Seestar_AstroLab.ico"
+      "icon": "assets/Seestar_AstroLab.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -36,8 +36,8 @@
       "createStartMenuShortcut": true,
       "shortcutName": "Seestar AstroLab",
       "uninstallDisplayName": "Seestar AstroLab — Радар целей AAVSO",
-      "installerIcon": "Seestar_AstroLab.ico",
-      "uninstallerIcon": "Seestar_AstroLab.ico",
+      "installerIcon": "assets/Seestar_AstroLab.ico",
+      "uninstallerIcon": "assets/Seestar_AstroLab.ico",
       "deleteAppDataOnUninstall": false
     }
   },

@@ -8318,3 +8318,109 @@ body[data-theme="light"] .math-formula-box {
   background: rgba(245, 158, 11, 0.09);
   margin-bottom: 8px;
 }
+
+/* === v1.5.0-alpha: Mode Switch, Lab-Only View, Quality Gate & x2 P === */
+.astrolab-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 4px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(56, 189, 248, 0.24);
+}
+body[data-theme="light"] .astrolab-mode-switch {
+  background: #e2e8f0;
+  border-color: rgba(2, 132, 199, 0.28);
+}
+.astrolab-mode-btn {
+  border: none;
+  border-radius: 9px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--ios-text-secondary);
+  background: transparent;
+  transition: all 0.18s ease;
+}
+.astrolab-mode-btn.active {
+  color: #f8fafc;
+  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  box-shadow: 0 2px 10px rgba(14, 165, 233, 0.35);
+}
+body[data-theme="light"] .astrolab-mode-btn:not(.active) {
+  color: #334155;
+}
+body.astrolab-lab-only #obscode,
+body.astrolab-lab-only label[for="obscode"],
+body.astrolab-lab-only #obscodeHint,
+body.astrolab-lab-only #vspTechCollapsibleBlock,
+body.astrolab-lab-only #hotfix7ExportQualityBox,
+body.astrolab-lab-only #calibrationGuardInlineBanner,
+body.astrolab-lab-only #btnConvert,
+body.astrolab-lab-only #btnOpenAavsoCard,
+body.astrolab-lab-only #convertLockReasonBanner,
+body.astrolab-lab-only #accDiffLogSection,
+body.astrolab-lab-only #verifyConvertedInput,
+body.astrolab-lab-only #btnVerifyConvertedFile,
+body.astrolab-lab-only #verifyConvertedResult {
+  display: none !important;
+}
+body.astrolab-lab-only #obscode:closest,
+body.astrolab-lab-only .astrolab-lab-only-btn {
+  display: block !important;
+}
+.lab-unsubmitted-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 6px 12px;
+  margin: 0 0 6px 0;
+  border-radius: 8px;
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  font-size: 11.5px;
+  color: #e0f2fe;
+}
+body[data-theme="light"] .lab-unsubmitted-bar {
+  background: #e0f2fe;
+  color: #0c4a6e;
+  border-color: #38bdf8;
+}
+.fp-double-p-btn.active {
+  background: #0284c7 !important;
+  color: #fff !important;
+  border-color: #38bdf8 !important;
+}
+.obs-qg-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.obs-qg-badge.eligible {
+  background: rgba(14, 165, 233, 0.18);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+.obs-qg-badge.blocked {
+  background: rgba(245, 158, 11, 0.14);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+.obs-qg-badge.converted {
+  background: rgba(34, 197, 94, 0.16);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+body[data-theme="light"] .obs-qg-badge.eligible { color: #0369a1; }
+body[data-theme="light"] .obs-qg-badge.blocked { color: #b45309; }
+body[data-theme="light"] .obs-qg-badge.converted { color: #15803d; }

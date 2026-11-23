@@ -4,8 +4,8 @@
 ; ============================================================================
 #define MyAppName "Seestar AstroLab AAVSO"
 #define MyAppFullTitle "Seestar AstroLab AAVSO — Радар целей и фотометрия"
-#define MyAppVersion "1.4.0"
-#define MyAppNumericVersion "1.4.0.0"
+#define MyAppVersion "1.5.0-alpha"
+#define MyAppNumericVersion "1.5.0.0"
 #define MyAppPublisher "CosmoBehemothych AstroLab"
 #define MyAppCopyright "Copyright (C) 2026 CosmoBehemothych. MIT License."
 #define MyAppRepoURL "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO"
@@ -182,9 +182,6 @@ Source: "pwa_mobile_and_electron\*"; DestDir: "{app}\pwa_mobile_and_electron"; F
 #endif
 #if FileExists(AddBackslash(SourcePath) + "backend\astrolab_backend_core.py")
 Source: "backend\*"; DestDir: "{app}\backend"; Flags: ignoreversion recursesubdirs createallsubdirs
-#endif
-#if FileExists(AddBackslash(SourcePath) + "desktop_pc\seestar_aavso_desktop_pc.py")
-Source: "desktop_pc\*"; DestDir: "{app}\desktop_pc"; Flags: ignoreversion recursesubdirs createallsubdirs
 #endif
 #if FileExists(AddBackslash(SourcePath) + "..\Converted_Photometry_Storage\README_STORAGE.txt")
 Source: "..\Converted_Photometry_Storage\README_STORAGE.txt"; DestDir: "{app}\Converted_Photometry_Storage"; Flags: ignoreversion
