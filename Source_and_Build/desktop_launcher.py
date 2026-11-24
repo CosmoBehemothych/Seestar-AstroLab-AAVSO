@@ -412,8 +412,8 @@ class AstroLabDiskBridge:
 
     def backend_get_diagnostic_logging_enabled(self):
         if AstroLabDiagnosticLogger:
-            return {"ok": True, "enabled": AstroLabDiagnosticLogger.is_enabled()}
-        return {"ok": True, "enabled": False}
+            return AstroLabDiagnosticLogger.get_log_status()
+        return {"ok": True, "enabled": False, "exportDir": ""}
 
     def backend_set_diagnostic_logging_enabled(self, payload=None):
         if AstroLabDiagnosticLogger:
@@ -421,8 +421,35 @@ class AstroLabDiskBridge:
             return AstroLabDiagnosticLogger.set_enabled(en)
         return {"ok": False, "enabled": False}
 
+    def backend_clear_diagnostic_log(self):
+        if AstroLabDiagnosticLogger:
+            return AstroLabDiagnosticLogger.clear_log()
+        return {"ok": False, "error": "Diagnostic logger unavailable"}
+
+    def backend_choose_diagnostic_log_dir(self):
+        if not AstroLabDiagnosticLogger:
+            return {"ok": False, "error": "Diagnostic logger unavailable"}
+        try:
+            import webview as _wv
+            win = getattr(self, "_window", None) or (_wv.windows[0] if getattr(_wv, "windows", None) else None)
+            if not win:
+                return {"ok": False, "error": "Window unavailable", "exportDir": AstroLabDiagnosticLogger.get_export_dir()}
+            init_dir = AstroLabDiagnosticLogger.get_export_dir()
+            dialog_type = getattr(_wv, "FOLDER_DIALOG", 20)
+            chosen = win.create_file_dialog(dialog_type, directory=init_dir)
+            if chosen and len(chosen) > 0 and str(chosen[0]).strip():
+                folder = str(chosen[0]).strip()
+                res = AstroLabDiagnosticLogger.set_export_dir(folder)
+                res["cancelled"] = False
+                return res
+            return {"ok": True, "cancelled": True, "exportDir": init_dir}
+        except Exception as e:
+            return {"ok": False, "error": str(e), "exportDir": AstroLabDiagnosticLogger.get_export_dir()}
+
     def backend_log_frontend_event(self, payload=None):
         if AstroLabDiagnosticLogger and isinstance(payload, dict):
+            if not AstroLabDiagnosticLogger.is_enabled():
+                return {"ok": True, "skipped": True}
             AstroLabDiagnosticLogger.log_event(
                 level=payload.get("level", "INFO"),
                 category=payload.get("category", "FRONTEND_JS"),
@@ -436,7 +463,8 @@ class AstroLabDiskBridge:
         if AstroLabDiagnosticLogger:
             try:
                 snap = payload if isinstance(payload, dict) else None
-                res = AstroLabDiagnosticLogger.export_diagnostic_report(snap)
+                target_dir = snap.get("targetDir") if isinstance(snap, dict) else None
+                res = AstroLabDiagnosticLogger.export_diagnostic_report(snap, target_dir=target_dir)
                 if res.get("ok") and res.get("path") and sys.platform == "win32":
                     try:
                         subprocess.Popen(["explorer", "/select,", os.path.normpath(res["path"])])
@@ -666,6 +694,8 @@ def main():
         text_select=True,
         zoomable=True
     )
+
+    disk_bridge._window = window
 
     def _on_loaded():
         try:

@@ -11,6 +11,8 @@
 
 import json
 import os
+import shutil
+import subprocess
 import sys
 import tempfile
 import urllib.error
@@ -22,6 +24,7 @@ if BACKEND_ROOT not in sys.path:
     sys.path.insert(0, BACKEND_ROOT)
 
 from backend.astrolab_backend_core import (
+    AstroLabDiagnosticLogger,
     PhotometryBackendEngine,
     AavsoNativeAndStorageService,
     get_rpc_auth_token,
@@ -267,6 +270,252 @@ def test_10_rpc_security():
     print("  [PASS] 10. Local RPC server enforces X-AstroLab-Token (401) and Origin (403), health does not leak token")
 
 
+
+
+def test_11_raw_seestar_tg_band_and_lab_only_obstracker():
+    """
+    [RU] Обязательный регрессионный автотест (v1.5.0-alpha Hotfix):
+         1) Сырые (неконвертированные) точки Seestar CSV, где колонка 5 = Reference magnitude ("/"),
+            должны всегда получать band="TG" и полностью отображаться в полосе TG на графике AID + Ваш вклад
+            (кол-во точек в TG === кол-во точек в ALL, никогда не теряются из-за "/").
+         2) Режим «🔬 Загрузить в Лабораторию и проанализировать» (#btnAnalyzeInLabOnly) обязан сохранять
+            сессию в «📓 Мои наблюдения» через window.getObsTrackerRecords() + window.saveObsTrackerDb()
+            с filter="TG" и статусом "lab_unsubmitted", а Quality Gate должен выдавать aavsoEligible=true
+            для качественных замеров (SNR >= 10, нет насыщения) и aavsoEligible=false для шумных/насыщенных.
+    [EN] Mandatory regression autotest: raw Seestar CSV points must map to band="TG" (never "/") and
+         Lab-Only analysis must persist sessions to My Observations via window.saveObsTrackerDb.
+    """
+    bridge_path = os.path.join(BACKEND_ROOT, "pwa_mobile_and_electron", "astrolab_engine_bridge.js")
+    js_src = open(bridge_path, encoding="utf-8").read()
+
+    # 1. Static structural invariants in astrolab_engine_bridge.js
+    assert "window.saveObsTrackerDb = saveObsTrackerDb;" in js_src, (
+        "window.saveObsTrackerDb must be exported outside the main IIFE so Lab-Only can persist sessions!"
+    )
+    assert "window.getObsTrackerRecords()" in js_src, (
+        "btnAnalyzeInLabOnly must read obsTrackerRecords via window.getObsTrackerRecords()!"
+    )
+    assert "window.saveObsTrackerDb(trackerArr)" in js_src, (
+        "btnAnalyzeInLabOnly must save lab_unsubmitted records via window.saveObsTrackerDb(trackerArr)!"
+    )
+    assert "window.refreshLabUnsubmittedReminderBar(starName)" in js_src, (
+        "btnAnalyzeInLabOnly must refresh #labUnsubmittedReminderBar after saving labRec!"
+    )
+    assert 'band: "TG"' in js_src and 'rawBand: "TG"' in js_src, (
+        "parseCurrentCsvPoints must assign band='TG' for raw Seestar CSV rows (col 5 is Reference magnitude='/')!"
+    )
+
+    # 2. Live Node.js execution against the actual functions in astrolab_engine_bridge.js
+    node_bin = shutil.which("node")
+    assert node_bin, "Node.js is required to run live JS regression checks for TG band and Lab-Only Quality Gate"
+
+    node_script = r"""
+const fs = require('fs');
+const vm = require('vm');
+const jsPath = process.argv[1];
+const src = fs.readFileSync(jsPath, 'utf8');
+
+function extractFn(source, signature) {
+  const lines = source.split(/\r?\n/);
+  const startIdx = lines.findIndex(l => l.includes(signature));
+  if (startIdx < 0) throw new Error('Signature not found: ' + signature);
+  const indent = (lines[startIdx].match(/^(\s*)/) || ['', ''])[1];
+  const closeRe = new RegExp('^' + indent + '\\};?$');
+  for (let i = startIdx + 1; i < lines.length; i++) {
+    if (closeRe.test(lines[i])) {
+      return lines.slice(startIdx, i + 1).join('\n');
+    }
+  }
+  throw new Error('Closing brace not found for: ' + signature);
+}
+
+const fnSplit = extractFn(src, 'function splitSeestarCsvRow(');
+const fnSchema = extractFn(src, 'window.resolveSeestarCsvSchema = function(');
+const fnParse = extractFn(src, 'function parseCurrentCsvPoints(');
+const fnPreprocess = extractFn(src, 'function preprocessPoints(');
+const fnMetrics = extractFn(src, 'function computePhotometryMetrics(');
+const fnElig = extractFn(src, 'function evaluateSessionAavsoEligibility(');
+
+const sandbox = {
+  console,
+  Math,
+  Number,
+  String,
+  Array,
+  Object,
+  Map,
+  Set,
+  Date,
+  isNaN,
+  isFinite,
+  parseFloat,
+  parseInt,
+  _cachedCsvPtsKey: '',
+  _cachedCsvPtsResult: null,
+  document: { getElementById: () => null },
+  window: {},
+  _median: (arr) => {
+    const a = arr.filter(Number.isFinite).slice().sort((x, y) => x - y);
+    if (!a.length) return 0;
+    const m = Math.floor(a.length / 2);
+    return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+  },
+  _mean: (arr) => {
+    const a = arr.filter(Number.isFinite);
+    return a.length ? a.reduce((s, v) => s + v, 0) / a.length : 0;
+  }
+};
+sandbox.window = sandbox;
+vm.createContext(sandbox);
+vm.runInContext(
+  [fnSplit, fnSchema + ';', fnParse, fnPreprocess, fnMetrics, fnElig].join('\n'),
+  sandbox
+);
+
+const header = 'Name,Type,RA,DEC,Valid Reference Stars,Reference magnitude,Mag(obs),Mag(err),X Axis,Y Axis,EXP,EXP start,EXP start(JD),EXP start(MJD),EXP end,EXP end(JD),EXP end(MJD),Is Variable,SNR';
+
+// Case A: High-SNR raw Seestar CSV (SZ Lyncis, col 5 = "/", merr = 0.045 -> SNR ~ 24)
+const goodLines = [header];
+for (let i = 0; i < 12; i++) {
+  const jd1 = (2461360.4438 + i * 0.0002).toFixed(6);
+  const jd2 = (2461360.443916 + i * 0.0002).toFixed(6);
+  goodLines.push(`SZ Lyncis,Non-reference star,122.40188,44.47336,15,/,9.1200,0.0450,1096,1923,10.0s,2026.11.16 01:39:10,${jd1},61359.9438,2026.11.16 01:39:20,${jd2},61359.9439,true,24.1`);
+}
+
+const parsedGood = sandbox.parseCurrentCsvPoints(goodLines);
+if (parsedGood.length !== 12) throw new Error('Expected 12 raw points, got ' + parsedGood.length);
+if (parsedGood.some(p => p.band !== 'TG')) {
+  throw new Error('Raw Seestar points must ALL have band=TG, got: ' + JSON.stringify(parsedGood.map(p => p.band)));
+}
+
+const inTg = sandbox.preprocessPoints(parsedGood, { band: 'TG' });
+const inAll = sandbox.preprocessPoints(parsedGood, { band: 'ALL' });
+if (inTg.length !== 12 || inTg.length !== inAll.length) {
+  throw new Error(`TG band dropped unconverted Seestar points! TG=${inTg.length}, ALL=${inAll.length}`);
+}
+
+// Legacy/malformed "/" or "IR-CUT" band normalization in preprocessPoints
+const legacyPts = [
+  { jd: 2461360.5, mag: 9.1, merr: 0.04, band: '/' },
+  { jd: 2461360.51, mag: 9.12, merr: 0.04, band: 'IR-CUT' },
+  { jd: 2461360.52, mag: 9.11, merr: 0.04, band: '' }
+];
+const normTg = sandbox.preprocessPoints(legacyPts, { band: 'TG' });
+if (normTg.length !== 3 || normTg.some(p => p.band !== 'TG')) {
+  throw new Error('preprocessPoints failed to normalize legacy "/" or "IR-CUT" to TG: ' + JSON.stringify(normTg));
+}
+
+// Quality Gate for high-SNR good session -> aavsoEligible = true
+const qgGood = sandbox.evaluateSessionAavsoEligibility(parsedGood, { calibrationBlocked: false });
+if (!qgGood.eligible) {
+  throw new Error('Good high-SNR session should be aavsoEligible=true, got: ' + JSON.stringify(qgGood));
+}
+
+// Case B: Noisy/saturated raw Seestar CSV (W UMa 30s, col 5 = "/", merr = 0.197 -> SNR ~ 5.5 < 10)
+const noisyLines = [header];
+for (let i = 0; i < 8; i++) {
+  const jd1 = (2461361.4000 + i * 0.0004).toFixed(6);
+  const jd2 = (2461361.400347 + i * 0.0004).toFixed(6);
+  noisyLines.push(`W Ursae Majoris,Non-reference star,145.941,55.954,12,/,7.6400,0.1970,800,900,30.0s,2026.11.17 01:00:00,${jd1},61360.9000,2026.11.17 01:00:30,${jd2},61360.9003,true,5.5`);
+}
+const parsedNoisy = sandbox.parseCurrentCsvPoints(noisyLines);
+if (parsedNoisy.length !== 8 || parsedNoisy.some(p => p.band !== 'TG')) {
+  throw new Error('Noisy raw Seestar points must still map to band=TG');
+}
+const noisyInTg = sandbox.preprocessPoints(parsedNoisy, { band: 'TG' });
+if (noisyInTg.length !== 8) {
+  throw new Error('Noisy raw Seestar points must still be visible in TG band, got ' + noisyInTg.length);
+}
+const qgNoisy = sandbox.evaluateSessionAavsoEligibility(parsedNoisy, { calibrationBlocked: true });
+if (qgNoisy.eligible) {
+  throw new Error('Noisy/saturated session (SNR~5.5, calibrationBlocked) must be aavsoEligible=false');
+}
+
+console.log('NODE_TG_AND_LAB_ONLY_OK');
+"""
+    proc = subprocess.run([node_bin, "-e", node_script, bridge_path], capture_output=True, text=True, timeout=20)
+    assert proc.returncode == 0 and "NODE_TG_AND_LAB_ONLY_OK" in proc.stdout, (
+        f"Node.js TG-band / Lab-Only regression test failed!\nSTDOUT:\n{proc.stdout}\nSTDERR:\n{proc.stderr}"
+    )
+    print("  [PASS] 11. Raw Seestar CSV points map to TG band (never '/') & Lab-Only persists to My Observations with Quality Gate")
+
+
+
+
+def test_12_diagnostic_logging_opt_in_clear_and_custom_dir():
+    """
+    [RU] Обязательный автотест управления диагностическим логом:
+         1) По умолчанию запись выключена (не создаёт файл astrolab_debug.log).
+         2) После включения события пишутся; clear_log() удаляет старый лог и ротированные копии.
+         3) set_export_dir() сохраняет выбранную папку, и export_diagnostic_report() пишет отчёт туда.
+         4) После выключения запись прекращается.
+    """
+    orig_env_dir = os.environ.get("ASTROLAB_LOG_DIR")
+    orig_force = os.environ.get("ASTROLAB_FORCE_DIAG_LOG")
+    try:
+        os.environ.pop("ASTROLAB_FORCE_DIAG_LOG", None)
+        with tempfile.TemporaryDirectory() as tmp_log_dir, tempfile.TemporaryDirectory() as tmp_export_dir:
+            os.environ["ASTROLAB_LOG_DIR"] = tmp_log_dir
+            AstroLabDiagnosticLogger._close_handlers_unlocked()
+
+            # 1. Disabled by default -> must NOT create astrolab_debug.log
+            assert AstroLabDiagnosticLogger.is_enabled() is False
+            AstroLabDiagnosticLogger.init_session("autotest_disabled")
+            AstroLabDiagnosticLogger.log_event("INFO", "TEST", "should_not_be_written")
+            log_file = AstroLabDiagnosticLogger.get_log_file_path()
+            assert not os.path.exists(log_file), "Log file must NOT be created while logging is OFF!"
+
+            # 2. Enable -> writes events
+            r_en = AstroLabDiagnosticLogger.set_enabled(True)
+            assert r_en["ok"] is True and AstroLabDiagnosticLogger.is_enabled() is True
+            AstroLabDiagnosticLogger.log_event("INFO", "TEST", "old_session_marker_12345")
+            assert os.path.isfile(log_file)
+            assert "old_session_marker_12345" in open(log_file, encoding="utf-8").read()
+
+            # Create a fake rotated backup .1 and clear_log() -> both old log and backup wiped!
+            backup_file = log_file + ".1"
+            open(backup_file, "w", encoding="utf-8").write("ancient_v121_error\n")
+            r_clr = AstroLabDiagnosticLogger.clear_log()
+            assert r_clr["ok"] is True and r_clr["deletedCount"] >= 2, f"Expected >=2 deleted, got {r_clr}"
+            assert not os.path.exists(backup_file), "Rotated backup .log.1 must be deleted on clear_log()"
+            fresh_txt = open(log_file, encoding="utf-8").read()
+            assert "old_session_marker_12345" not in fresh_txt, "Old log content must be wiped!"
+            assert "log_cleared" in fresh_txt, "Fresh log session header must start after clear_log()"
+
+            # 3. Custom export folder persists and receives exported report
+            r_dir = AstroLabDiagnosticLogger.set_export_dir(tmp_export_dir)
+            assert r_dir["ok"] is True and os.path.abspath(r_dir["exportDir"]) == os.path.abspath(tmp_export_dir)
+            assert AstroLabDiagnosticLogger.is_enabled() is True, "set_export_dir must preserve enabled flag"
+            r_exp = AstroLabDiagnosticLogger.export_diagnostic_report({"test": True})
+            assert r_exp["ok"] is True
+            assert os.path.dirname(os.path.abspath(r_exp["path"])) == os.path.abspath(tmp_export_dir)
+            assert os.path.isfile(r_exp["path"])
+
+            # 4. Disable -> stops writing immediately
+            r_dis = AstroLabDiagnosticLogger.set_enabled(False)
+            assert r_dis["ok"] is True and AstroLabDiagnosticLogger.is_enabled() is False
+            size_before = os.path.getsize(log_file)
+            AstroLabDiagnosticLogger.log_event("ERROR", "TEST", "must_not_append_when_off")
+            assert os.path.getsize(log_file) == size_before, "No bytes may be appended when logging is OFF!"
+
+            AstroLabDiagnosticLogger._close_handlers_unlocked()
+
+        # 5. UI & DesktopApi wiring checks
+        tpl = open(os.path.join(BACKEND_ROOT, "pwa_mobile_and_electron/astrolab_view_template.js"), encoding="utf-8").read()
+        assert 'id="btnChooseDiagLogDir"' in tpl and 'id="btnClearDiagnosticLog"' in tpl
+        dl = open(os.path.join(BACKEND_ROOT, "desktop_launcher.py"), encoding="utf-8").read()
+        assert "def backend_clear_diagnostic_log(" in dl and "def backend_choose_diagnostic_log_dir(" in dl
+    finally:
+        AstroLabDiagnosticLogger._close_handlers_unlocked()
+        if orig_env_dir is None:
+            os.environ.pop("ASTROLAB_LOG_DIR", None)
+        else:
+            os.environ["ASTROLAB_LOG_DIR"] = orig_env_dir
+        if orig_force is not None:
+            os.environ["ASTROLAB_FORCE_DIAG_LOG"] = orig_force
+    print("  [PASS] 12. Diagnostic log is strictly opt-in, clearable (with backups), and supports custom export folder")
+
+
 if __name__ == "__main__":
     print("=== RUNNING AUTOTEST #8: CONVERTER EDGE CASES, HYGIENE & RPC SECURITY ===")
     test_1_header_based_csv_and_unknown_schema()
@@ -277,4 +526,6 @@ if __name__ == "__main__":
     test_6_frame_timing_validation()
     test_7_8_docs_and_repo_hygiene()
     test_10_rpc_security()
+    test_11_raw_seestar_tg_band_and_lab_only_obstracker()
+    test_12_diagnostic_logging_opt_in_clear_and_custom_dir()
     print("=== CONVERTER EDGE CASES, HYGIENE & RPC SECURITY AUTOTEST: ALL PASS ===")

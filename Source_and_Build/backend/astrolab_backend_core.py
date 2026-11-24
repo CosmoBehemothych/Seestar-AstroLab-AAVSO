@@ -141,31 +141,136 @@ class AstroLabDiagnosticLogger:
         return os.path.join(cls.get_log_dir(), "diag_config.json")
 
     @classmethod
-    def is_enabled(cls) -> bool:
-        """Проверяет, включена ли запись диагностического лога (по умолчанию выключена)."""
-        if os.environ.get("ASTROLAB_FORCE_DIAG_LOG", "").strip() in ("1", "true", "TRUE"):
-            return True
+    def _load_config(cls) -> Dict[str, Any]:
         cfg_path = cls.get_config_file_path()
         try:
             if os.path.isfile(cfg_path):
                 with open(cfg_path, "r", encoding="utf-8") as cf:
                     data = json.load(cf)
-                return bool(data.get("enabled", False))
+                if isinstance(data, dict):
+                    return data
         except Exception:
             pass
-        return False
+        return {}
+
+    @classmethod
+    def _save_config(cls, data: Dict[str, Any]) -> None:
+        cfg_path = cls.get_config_file_path()
+        os.makedirs(os.path.dirname(cfg_path), exist_ok=True)
+        with open(cfg_path, "w", encoding="utf-8") as cf:
+            json.dump(data, cf, ensure_ascii=False, indent=2)
+
+    @classmethod
+    def is_enabled(cls) -> bool:
+        """Проверяет, включена ли запись диагностического лога (по умолчанию выключена)."""
+        if os.environ.get("ASTROLAB_FORCE_DIAG_LOG", "").strip() in ("1", "true", "TRUE"):
+            return True
+        return bool(cls._load_config().get("enabled", False))
 
     @classmethod
     def set_enabled(cls, enabled: bool) -> Dict[str, Any]:
-        cfg_path = cls.get_config_file_path()
         try:
             with cls._lock:
-                os.makedirs(os.path.dirname(cfg_path), exist_ok=True)
-                with open(cfg_path, "w", encoding="utf-8") as cf:
-                    json.dump({"enabled": bool(enabled)}, cf)
-            return {"ok": True, "enabled": bool(enabled)}
+                cfg = cls._load_config()
+                cfg["enabled"] = bool(enabled)
+                cls._save_config(cfg)
+                if not enabled:
+                    cls._close_handlers_unlocked()
+            if enabled:
+                cls.init_session("user_enabled")
+            return {"ok": True, "enabled": bool(enabled), "exportDir": cls.get_export_dir()}
         except Exception as e:
             return {"ok": False, "enabled": bool(enabled), "error": str(e)}
+
+    @classmethod
+    def get_export_dir(cls) -> str:
+        """Возвращает выбранную пользователем папку для сохранения отчёта лога (или Desktop по умолчанию)."""
+        custom = str(cls._load_config().get("export_dir", "") or "").strip()
+        if custom and os.path.isdir(custom):
+            return custom
+        desktop_dir = os.path.join(os.path.expanduser("~"), "Desktop")
+        if os.path.isdir(desktop_dir):
+            return desktop_dir
+        return cls.get_log_dir()
+
+    @classmethod
+    def set_export_dir(cls, folder_path: str) -> Dict[str, Any]:
+        clean_dir = str(folder_path or "").strip()
+        try:
+            if clean_dir:
+                os.makedirs(clean_dir, exist_ok=True)
+                if not os.path.isdir(clean_dir):
+                    return {"ok": False, "error": f"Not a directory: {clean_dir}"}
+            with cls._lock:
+                cfg = cls._load_config()
+                cfg["export_dir"] = clean_dir
+                cls._save_config(cfg)
+            return {"ok": True, "exportDir": cls.get_export_dir()}
+        except Exception as e:
+            return {"ok": False, "error": str(e), "exportDir": cls.get_export_dir()}
+
+    @classmethod
+    def _close_handlers_unlocked(cls) -> None:
+        lg = cls._logger or _logging.getLogger("SeestarAstroLabDiag")
+        for h in list(lg.handlers):
+            try:
+                h.flush()
+            except Exception:
+                pass
+            try:
+                h.close()
+            except Exception:
+                pass
+            try:
+                lg.removeHandler(h)
+            except Exception:
+                pass
+        cls._logger = None
+        cls._initialized = False
+
+    @classmethod
+    def clear_log(cls) -> Dict[str, Any]:
+        """Удаляет старый диагностический лог (включая ротированные копии) и начинает запись заново."""
+        deleted = 0
+        errors: List[str] = []
+        try:
+            with cls._lock:
+                cls._close_handlers_unlocked()
+                base_log = cls.get_log_file_path()
+                candidates = [base_log] + [f"{base_log}.{i}" for i in range(1, 10)]
+                for fp in candidates:
+                    if os.path.isfile(fp):
+                        try:
+                            os.remove(fp)
+                            deleted += 1
+                        except Exception as rem_err:
+                            errors.append(f"{os.path.basename(fp)}: {rem_err}")
+            if cls.is_enabled():
+                cls.init_session("log_cleared")
+            return {
+                "ok": len(errors) == 0,
+                "deletedCount": deleted,
+                "enabled": cls.is_enabled(),
+                "logFile": cls.get_log_file_path(),
+                "error": "; ".join(errors) if errors else "",
+            }
+        except Exception as e:
+            return {"ok": False, "deletedCount": deleted, "enabled": cls.is_enabled(), "error": str(e)}
+
+    @classmethod
+    def get_log_status(cls) -> Dict[str, Any]:
+        log_path = cls.get_log_file_path()
+        exists = os.path.isfile(log_path)
+        size_bytes = os.path.getsize(log_path) if exists else 0
+        return {
+            "ok": True,
+            "enabled": cls.is_enabled(),
+            "logFile": log_path,
+            "logDir": cls.get_log_dir(),
+            "exportDir": cls.get_export_dir(),
+            "exists": exists,
+            "sizeBytes": size_bytes,
+        }
 
     @classmethod
     def _ensure_logger(cls):
@@ -193,6 +298,8 @@ class AstroLabDiagnosticLogger:
 
     @classmethod
     def init_session(cls, entry_point: str = "desktop") -> str:
+        if not cls.is_enabled():
+            return cls.get_log_file_path()
         lg = cls._ensure_logger()
         if not cls._initialized:
             cls._initialized = True
@@ -265,17 +372,29 @@ class AstroLabDiagnosticLogger:
         cls.log_event("ERROR", category, f"{message}: {exc}", tb)
 
     @classmethod
-    def export_diagnostic_report(cls, frontend_snapshot: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        cls.init_session("export")
+    def export_diagnostic_report(
+        cls,
+        frontend_snapshot: Optional[Dict[str, Any]] = None,
+        target_dir: Optional[str] = None,
+        target_path: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        if cls.is_enabled():
+            cls.init_session("export")
         log_path = cls.get_log_file_path()
         stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d_%H%M%S")
         report_name = f"AstroLab_Diagnostic_Report_{stamp}.txt"
 
-        desktop_dir = os.path.join(os.path.expanduser("~"), "Desktop")
-        if os.path.isdir(desktop_dir):
-            out_path = os.path.join(desktop_dir, report_name)
+        if target_path and str(target_path).strip():
+            out_path = str(target_path).strip()
+            os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
         else:
-            out_path = os.path.join(cls.get_log_dir(), report_name)
+            chosen_dir = str(target_dir or "").strip()
+            if chosen_dir:
+                os.makedirs(chosen_dir, exist_ok=True)
+            else:
+                chosen_dir = cls.get_export_dir()
+                os.makedirs(chosen_dir, exist_ok=True)
+            out_path = os.path.join(chosen_dir, report_name)
 
         log_lines: List[str] = []
         if os.path.isfile(log_path):
@@ -313,6 +432,7 @@ class AstroLabDiagnosticLogger:
         return {
             "ok": True,
             "path": out_path,
+            "exportDir": os.path.dirname(os.path.abspath(out_path)),
             "logPath": log_path,
             "lineCount": len(log_lines),
         }

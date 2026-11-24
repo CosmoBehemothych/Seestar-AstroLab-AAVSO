@@ -8185,6 +8185,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
   let obsTrackerRecords = loadObsTrackerDb();
   window.getObsTrackerRecords = () => obsTrackerRecords;
+  window.saveObsTrackerDb = saveObsTrackerDb;
 
   function computeDaysSinceLastPhotometry(records) {
     if (!Array.isArray(records) || records.length === 0) return 0;
@@ -10680,27 +10681,37 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       : null;
     const excludedSet = (dupInfo && dupInfo.excludedLineIndices) ? dupInfo.excludedLineIndices : new Set();
 
+    const schema = (typeof window.resolveSeestarCsvSchema === "function")
+      ? window.resolveSeestarCsvSchema(lines)
+      : { map: { name: 0, type: 1, mag: 6, merr: 7, utc: 11, jdStart: 12, jdEnd: 15 }, headerLineIdx: 0 };
+    const cm = schema.map;
     const pts = [];
     for (let i = 0; i < lines.length; i++) {
-      if (excludedSet.has(i)) continue;
+      if (i === schema.headerLineIdx || excludedSet.has(i)) continue;
       const raw = String(lines[i] || "").trim();
-      if (!raw || (i === 0 && raw.toLowerCase().startsWith("name,"))) continue;
+      if (!raw || raw.startsWith("#")) continue;
       const c = splitSeestarCsvRow(raw);
-      if (c.length < 19 || c[1].toLowerCase() !== "non-reference star") continue;
-      const mag = parseFloat(c[6].trim());
-      const merr = parseFloat(c[7].trim());
-      const jd1 = parseFloat(c[12].trim());
-      const jd2 = parseFloat(c[15].trim());
+      const rowType = String(c[cm.type] || "").trim().toLowerCase();
+      if (rowType !== "non-reference star") continue;
+      const mag = parseFloat(String(c[cm.mag] || "").trim().replace(",", "."));
+      const merr = parseFloat(String(c[cm.merr] || "").trim().replace(",", "."));
+      const jd1 = parseFloat(String(c[cm.jdStart] || "").trim().replace(",", "."));
+      const jd2 = cm.jdEnd !== undefined ? parseFloat(String(c[cm.jdEnd] || "").trim().replace(",", ".")) : NaN;
+      if (!isNaN(jd1) && !isNaN(jd2) && jd2 < jd1) continue;
       const jd = (!isNaN(jd1) && !isNaN(jd2)) ? (jd1 + jd2) / 2 : jd1;
       if (!isNaN(mag) && !isNaN(jd)) {
+        // [RU] ZWO Seestar CSV не содержит колонку полосы (c[5] — это Reference magnitude = "/"),
+        //      поэтому все сырые замеры Seestar строго относятся к каналу TG (зелёный канал Байера).
+        // [EN] Raw ZWO Seestar CSV has no photometric band column (col 5 is Reference magnitude = "/");
+        //      all Seestar photometry belongs strictly to the TG band so unconverted points appear in TG.
         pts.push({
-          star: c[0].trim(),
+          star: String(c[cm.name] || "").trim(),
           jd: Number(jd.toFixed(6)),
           mag: Number(mag.toFixed(4)),
           merr: isNaN(merr) ? 0.012 : Number(merr.toFixed(4)),
-          rawBand: c[5] ? c[5].trim() : "",
-          band: (function(fb){ const u = String(fb || "").trim().toUpperCase(); if (!u || u === "IRCUT" || u === "IR-CUT" || u === "UV/IR" || u === "UV/IR CUT" || u === "LP" || u === "DUO" || u === "G" || u === "GREEN" || u === "NONE") return "TG"; return u; })(c[5]),
-          utc: c[11] ? c[11].trim() : "",
+          rawBand: "TG",
+          band: "TG",
+          utc: cm.utc !== undefined && c[cm.utc] ? String(c[cm.utc]).trim() : "",
           idx: pts.length + 1
         });
       }
@@ -21704,7 +21715,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         jd: Number(p.jd),
         mag: Number(p.mag),
         merr: Math.max(0.002, Number(p.merr || 0.02)),
-        band: String(p.band || p.filt || p.filter || "TG").toUpperCase(),
+        band: (function(rawB){ const u = String(rawB || "").trim().toUpperCase(); return (!u || u === "/" || u === "-" || u === "NA" || u === "N/A" || u === "NONE" || u === "IRCUT" || u === "IR-CUT") ? "TG" : u; })(p.band || p.filt || p.filter),
         source: p.source || "LOCAL",
         obscode: p.obscode || "",
         layer: p.layer,
@@ -22853,43 +22864,83 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   const DIAG_I18N = {
     en: {
       btnExportDiagnosticLog: "🛠️ Save Diagnostic Log (.txt)",
+      btnChooseDiagLogDir: "📁 Log Folder",
+      btnClearDiagLog: "🗑️ Clear Log",
       diagLogSavedFmt: "Diagnostic log saved: {path}",
-      diagLogFailedFmt: "Failed to save diagnostic log: {err}"
+      diagLogFailedFmt: "Failed to save diagnostic log: {err}",
+      diagLogClearedMsg: "Old diagnostic log deleted. Ready to record a fresh log.",
+      diagLogDirSavedFmt: "Log save folder set: {path}",
+      diagLogDirPrefix: "Folder: "
     },
     ru: {
       btnExportDiagnosticLog: "🛠️ Сохранить лог ошибок (.txt)",
+      btnChooseDiagLogDir: "📁 Папка для лога",
+      btnClearDiagLog: "🗑️ Очистить лог",
       diagLogSavedFmt: "Диагностический лог сохранён: {path}",
-      diagLogFailedFmt: "Не удалось сохранить лог: {err}"
+      diagLogFailedFmt: "Не удалось сохранить лог: {err}",
+      diagLogClearedMsg: "Старый лог удалён. Запись начнётся с чистого листа.",
+      diagLogDirSavedFmt: "Папка для сохранения лога: {path}",
+      diagLogDirPrefix: "Папка: "
     },
     es: {
       btnExportDiagnosticLog: "🛠️ Guardar registro de diagnóstico (.txt)",
+      btnChooseDiagLogDir: "📁 Carpeta de log",
+      btnClearDiagLog: "🗑️ Borrar log",
       diagLogSavedFmt: "Registro de diagnóstico guardado: {path}",
-      diagLogFailedFmt: "Error al guardar el registro: {err}"
+      diagLogFailedFmt: "Error al guardar el registro: {err}",
+      diagLogClearedMsg: "Registro anterior eliminado. Listo para grabar uno nuevo.",
+      diagLogDirSavedFmt: "Carpeta de registros configurada: {path}",
+      diagLogDirPrefix: "Carpeta: "
     },
     de: {
       btnExportDiagnosticLog: "🛠️ Diagnoseprotokoll speichern (.txt)",
+      btnChooseDiagLogDir: "📁 Protokollordner",
+      btnClearDiagLog: "🗑️ Protokoll leeren",
       diagLogSavedFmt: "Diagnoseprotokoll gespeichert: {path}",
-      diagLogFailedFmt: "Protokoll konnte nicht gespeichert werden: {err}"
+      diagLogFailedFmt: "Protokoll konnte nicht gespeichert werden: {err}",
+      diagLogClearedMsg: "Altes Protokoll gelöscht. Neues Protokoll bereit.",
+      diagLogDirSavedFmt: "Speicherordner festgelegt: {path}",
+      diagLogDirPrefix: "Ordner: "
     },
     fr: {
       btnExportDiagnosticLog: "🛠️ Enregistrer le journal de diagnostic (.txt)",
+      btnChooseDiagLogDir: "📁 Dossier du journal",
+      btnClearDiagLog: "🗑️ Effacer le journal",
       diagLogSavedFmt: "Journal de diagnostic enregistré : {path}",
-      diagLogFailedFmt: "Échec de l'enregistrement du journal : {err}"
+      diagLogFailedFmt: "Échec de l'enregistrement du journal : {err}",
+      diagLogClearedMsg: "Ancien journal supprimé. Prêt pour un nouveau journal.",
+      diagLogDirSavedFmt: "Dossier du journal défini : {path}",
+      diagLogDirPrefix: "Dossier : "
     },
     zh: {
       btnExportDiagnosticLog: "🛠️ 保存诊断日志 (.txt)",
+      btnChooseDiagLogDir: "📁 日志文件夹",
+      btnClearDiagLog: "🗑️ 清除日志",
       diagLogSavedFmt: "诊断日志已保存：{path}",
-      diagLogFailedFmt: "保存诊断日志失败：{err}"
+      diagLogFailedFmt: "保存诊断日志失败：{err}",
+      diagLogClearedMsg: "旧日志已删除，可开始记录新日志。",
+      diagLogDirSavedFmt: "日志保存文件夹已设置：{path}",
+      diagLogDirPrefix: "文件夹："
     },
     cs: {
       btnExportDiagnosticLog: "🛠️ Uložit diagnostický protokol (.txt)",
+      btnChooseDiagLogDir: "📁 Složka protokolu",
+      btnClearDiagLog: "🗑️ Smazat protokol",
       diagLogSavedFmt: "Diagnostický protokol uložen: {path}",
-      diagLogFailedFmt: "Nepodařilo se uložit protokol: {err}"
+      diagLogFailedFmt: "Nepodařilo se uložit protokol: {err}",
+      diagLogClearedMsg: "Starý protokol smazán. Připraveno pro nový záznam.",
+      diagLogDirSavedFmt: "Složka pro protokol nastavena: {path}",
+      diagLogDirPrefix: "Složka: "
     },
     ber: {
       btnExportDiagnosticLog: "🛠️ ⵃⵔⵣ ⴰⵖⵎⵉⵙ ⵏ ⵓⵙⴼⵙⵉ (.txt)",
+      btnChooseDiagLogDir: "📁 ⴰⴽⴰⵔⴰⵎ ⵏ ⵓⵖⵎⵉⵙ",
+      btnClearDiagLog: "🗑️ ⵙⴼⴹ ⴰⵖⵎⵉⵙ",
       diagLogSavedFmt: "ⴰⵖⵎⵉⵙ ⵏ ⵓⵙⴼⵙⵉ ⵉⵜⵜⵓⵃⵔⵣ: {path}",
-      diagLogFailedFmt: "ⵓⵔ ⵉⵣⵎⵉⵔ ⴰⴷ ⵉⵃⵔⵣ ⴰⵖⵎⵉⵙ: {err}"
+      diagLogFailedFmt: "ⵓⵔ ⵉⵣⵎⵉⵔ ⴰⴷ ⵉⵃⵔⵣ ⴰⵖⵎⵉⵙ: {err}",
+      diagLogClearedMsg: "ⴰⵖⵎⵉⵙ ⴰⵇⴱⵓⵔ ⵉⵜⵜⵡⴰⵙⴼⴹ.",
+      diagLogDirSavedFmt: "ⴰⴽⴰⵔⴰⵎ ⵏ ⵓⵖⵎⵉⵙ: {path}",
+      diagLogDirPrefix: "ⴰⴽⴰⵔⴰⵎ: "
     }
   };
 
@@ -22910,6 +22961,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   }
 
   function logEvent(level, category, message, details) {
+    if (!window._ASTROLAB_DIAG_LOGGING_ENABLED) return;
     const entry = {
       ts: new Date().toISOString(),
       level: String(level || "INFO").toUpperCase(),
@@ -22991,9 +23043,64 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     }
   }
 
+  function _updateDiagExportDirLabel(dirPath) {
+    const el = document.getElementById("diagLogExportDirLabel");
+    if (!el) return;
+    const lang = (document.getElementById("langSelect")?.value || (typeof STATE !== "undefined" && STATE && STATE.lang) || "en");
+    const tPack = DIAG_I18N[lang] || DIAG_I18N.en;
+    el.textContent = dirPath ? (tPack.diagLogDirPrefix + dirPath) : "";
+    el.title = dirPath || "";
+  }
+
+  async function clearLog() {
+    const lang = (document.getElementById("langSelect")?.value || (typeof STATE !== "undefined" && STATE && STATE.lang) || "en");
+    const tPack = DIAG_I18N[lang] || DIAG_I18N.en;
+    window._ASTROLAB_DIAG_BUFFER = [];
+    try {
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_clear_diagnostic_log === "function") {
+        const res = await window.pywebview.api.backend_clear_diagnostic_log();
+        if (res && res.ok) {
+          if (typeof showToast === "function") showToast(tPack.diagLogClearedMsg);
+          return res;
+        }
+        throw new Error((res && res.error) || "Unknown error");
+      }
+      if (typeof showToast === "function") showToast(tPack.diagLogClearedMsg);
+      return { ok: true, deletedCount: 0 };
+    } catch (e) {
+      if (typeof showToast === "function") showToast(tPack.diagLogFailedFmt.replace("{err}", String(e.message || e)));
+      return { ok: false, error: String(e.message || e) };
+    }
+  }
+
+  async function chooseExportDir() {
+    const lang = (document.getElementById("langSelect")?.value || (typeof STATE !== "undefined" && STATE && STATE.lang) || "en");
+    const tPack = DIAG_I18N[lang] || DIAG_I18N.en;
+    try {
+      if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_choose_diagnostic_log_dir === "function") {
+        const res = await window.pywebview.api.backend_choose_diagnostic_log_dir();
+        if (res && res.ok) {
+          if (res.exportDir) _updateDiagExportDirLabel(res.exportDir);
+          if (!res.cancelled && res.exportDir && typeof showToast === "function") {
+            showToast(tPack.diagLogDirSavedFmt.replace("{path}", res.exportDir));
+          }
+          return res;
+        }
+        throw new Error((res && res.error) || "Unknown error");
+      }
+      return { ok: false, error: "Desktop folder picker requires Windows app" };
+    } catch (e) {
+      if (typeof showToast === "function") showToast(tPack.diagLogFailedFmt.replace("{err}", String(e.message || e)));
+      return { ok: false, error: String(e.message || e) };
+    }
+  }
+
   window.AstroLabDiagBridge = {
     log: logEvent,
     exportReport: exportReport,
+    clearLog: clearLog,
+    chooseExportDir: chooseExportDir,
+    updateExportDirLabel: _updateDiagExportDirLabel,
     getBuffer: () => window._ASTROLAB_DIAG_BUFFER.slice()
   };
 
@@ -24055,21 +24162,20 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     try {
       if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_get_diagnostic_logging_enabled === "function") {
         const r = await window.pywebview.api.backend_get_diagnostic_logging_enabled();
-        if (r && r.ok) _diagEnabled = Boolean(r.enabled);
+        if (r && r.ok) {
+          _diagEnabled = Boolean(r.enabled);
+          try { localStorage.setItem(DIAG_PREF_KEY, _diagEnabled ? "1" : "0"); } catch (_) {}
+          if (r.exportDir && window.AstroLabDiagBridge && typeof window.AstroLabDiagBridge.updateExportDirLabel === "function") {
+            window.AstroLabDiagBridge.updateExportDirLabel(r.exportDir);
+          }
+        }
       }
     } catch (_) {}
     if (chkDiag) chkDiag.checked = _diagEnabled;
     window._ASTROLAB_DIAG_LOGGING_ENABLED = _diagEnabled;
   }
   _syncDiagToggleFromBackend();
-
-  if (window.AstroLabDiagBridge && typeof window.AstroLabDiagBridge.log === "function") {
-    const _origLog = window.AstroLabDiagBridge.log.bind(window.AstroLabDiagBridge);
-    window.AstroLabDiagBridge.log = function(level, category, message, details) {
-      if (!window._ASTROLAB_DIAG_LOGGING_ENABLED && level !== "ERROR" && level !== "CRITICAL") return;
-      return _origLog(level, category, message, details);
-    };
-  }
+  window.addEventListener("pywebviewready", _syncDiagToggleFromBackend);
 
   chkDiag?.addEventListener("change", async () => {
     _diagEnabled = Boolean(chkDiag.checked);
@@ -24077,7 +24183,10 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     try { localStorage.setItem(DIAG_PREF_KEY, _diagEnabled ? "1" : "0"); } catch (_) {}
     try {
       if (window.pywebview && window.pywebview.api && typeof window.pywebview.api.backend_set_diagnostic_logging_enabled === "function") {
-        await window.pywebview.api.backend_set_diagnostic_logging_enabled({ enabled: _diagEnabled });
+        const r = await window.pywebview.api.backend_set_diagnostic_logging_enabled({ enabled: _diagEnabled });
+        if (r && r.exportDir && window.AstroLabDiagBridge && typeof window.AstroLabDiagBridge.updateExportDirLabel === "function") {
+          window.AstroLabDiagBridge.updateExportDirLabel(r.exportDir);
+        }
       }
     } catch (_) {}
   });
@@ -25101,30 +25210,57 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
       const scope = document.getElementById("headerScopeSelect")?.value || "S50";
       const todayIso = new Date().toISOString().slice(0, 10);
 
+      const cleanBand = (pts[0] && pts[0].band && pts[0].band !== "/") ? pts[0].band : "TG";
       const labRec = {
         id: "lab_" + Date.now(),
         star: starName,
         date: todayIso,
         durationMin,
         frames: pts.length,
-        filter: (pts[0] && pts[0].band) || "TG",
+        filter: cleanBand,
         scope,
         status: "lab_unsubmitted",
         aavsoEligible: Boolean(qg.eligible),
         aavsoBlockReason: qg.eligible ? "" : (qg.reasonFallback || "Quality Gate failed"),
         snrMedian: Math.round(metrics.medianSnr || 0),
+        jdStart: Number(minJd.toFixed(6)),
+        jdEnd: Number(maxJd.toFixed(6)),
         aavsoPoints: pts.slice(0, 1500).map(p => [Number(p.jd.toFixed(6)), Number(p.mag.toFixed(4)), Number((p.merr || 0.02).toFixed(4))])
       };
 
-      if (typeof obsTrackerRecords !== "undefined" && Array.isArray(obsTrackerRecords)) {
-        obsTrackerRecords.push(labRec);
-        if (typeof saveObsTrackerDb === "function") saveObsTrackerDb(obsTrackerRecords);
+      const trackerArr = (typeof window.getObsTrackerRecords === "function")
+        ? window.getObsTrackerRecords()
+        : (typeof obsTrackerRecords !== "undefined" ? obsTrackerRecords : null);
+      if (Array.isArray(trackerArr)) {
+        const dupIdx = trackerArr.findIndex(r =>
+          r && r.status === "lab_unsubmitted" &&
+          String(r.star || "").trim().toLowerCase() === starName.toLowerCase() &&
+          Number(r.frames) === labRec.frames &&
+          Math.abs(Number(r.jdStart || 0) - labRec.jdStart) < 0.0005
+        );
+        if (dupIdx >= 0) {
+          trackerArr[dupIdx] = Object.assign({}, trackerArr[dupIdx], labRec, { id: trackerArr[dupIdx].id });
+        } else {
+          trackerArr.push(labRec);
+        }
+        if (typeof window.saveObsTrackerDb === "function") window.saveObsTrackerDb(trackerArr);
+        if (typeof window.renderObsTrackerModal === "function") {
+          try { window.renderObsTrackerModal(); } catch (_) {}
+        }
       }
       if (typeof window.openFullPageLightCurveModal === "function") {
         window.openFullPageLightCurveModal("aavso_combined");
       }
+      if (typeof window.refreshLabUnsubmittedReminderBar === "function") {
+        window.refreshLabUnsubmittedReminderBar(starName);
+      }
       if (typeof window.runFullPageLightCurveAnalysis === "function") {
-        setTimeout(() => window.runFullPageLightCurveAnalysis(), 80);
+        setTimeout(() => {
+          window.runFullPageLightCurveAnalysis();
+          if (typeof window.refreshLabUnsubmittedReminderBar === "function") {
+            window.refreshLabUnsubmittedReminderBar(starName);
+          }
+        }, 80);
       }
     });
   })();
