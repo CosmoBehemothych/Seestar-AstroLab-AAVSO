@@ -4476,12 +4476,17 @@ function revealAndFocusField(inputId) {
     }
 
     const hasCsv = Boolean(currentCsvText && String(currentCsvText).trim());
+    const csvValid = Boolean(hasCsv && STATE.csvHasValidData !== false);
+    const isBlocked = Boolean(STATE.isConversionBlockedByMismatch);
     const filePill = document.getElementById("accFileSummaryPill");
     if (filePill) {
-      if (hasCsv) {
+      if (hasCsv && csvValid && !isBlocked) {
         const loadedName = (document.getElementById("selectedFileNameText")?.textContent || "CSV загружен").trim();
         filePill.textContent = loadedName;
         filePill.classList.add("pill-ready");
+      } else if (hasCsv) {
+        filePill.textContent = t("lblFileCheckError") || "⛔ Ошибка проверки файла";
+        filePill.classList.remove("pill-ready");
       } else {
         filePill.textContent = t("noFileSelected");
         filePill.classList.remove("pill-ready");
@@ -4491,9 +4496,12 @@ function revealAndFocusField(inputId) {
     const convPill = document.getElementById("accConvertSummaryPill");
     const step1Ready = Boolean(obsVal && starVal && STATE.simbadCatalogLoaded);
     if (convPill) {
-      if (step1Ready && hasCsv) {
+      if (step1Ready && csvValid && !isBlocked) {
         convPill.textContent = t("lblConvertReady");
         convPill.classList.add("pill-ready");
+      } else if (hasCsv && (!csvValid || isBlocked)) {
+        convPill.textContent = t("lblConvertBlocked") || "⛔ Заблокировано";
+        convPill.classList.remove("pill-ready");
       } else {
         convPill.textContent = t("lblConvertWait");
         convPill.classList.remove("pill-ready");
@@ -4722,6 +4730,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         modal.setAttribute("aria-hidden", "true");
       }
     }
+    if (typeof updateAccordionSummaryBadges === "function") updateAccordionSummaryBadges();
   }
 
   // [EN] Parses raw Seestar CSV content, reconciles parameters against SIMBAD/VSP catalog data, and renders the comparison table & light curve.
@@ -4741,6 +4750,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
     // ПУНКТ 5 (Empty State): Пока CSV-файл Seestar не выбран — таблица скрыта
     if (!text || !String(text).trim()) {
+      STATE.csvHasValidData = false;
       if (previewCard) previewCard.style.display = "block";
       if (emptyStateEl) emptyStateEl.style.display = "block";
       if (previewTableEl) previewTableEl.style.display = "none";
@@ -4800,16 +4810,21 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     }
 
     if (!row) {
+      STATE.csvHasValidData = false;
+      const isAlreadyAavso = /^\s*#TYPE\s*=\s*EXTENDED/im.test(String(text || ""));
+      const invalidReason = isAlreadyAavso
+        ? (t("errAlreadyConvertedAavsoCsv") || "Выбран уже сконвертированный файл AAVSO Extended (#TYPE=EXTENDED), а не исходный сырой CSV телескопа Seestar (Magnitude_*.csv).")
+        : (t("errInvalidSeestarCsvFormat") || t("msgNoData"));
       if (previewCard) previewCard.style.display = "block";
       if (emptyStateEl) emptyStateEl.style.display = "block";
       if (previewTableEl) previewTableEl.style.display = "none";
-      if (previewStatus) { previewStatus.style.display = "block"; previewStatus.textContent = t("msgNoData"); }
+      if (previewStatus) { previewStatus.style.display = "block"; previewStatus.textContent = "⛔ " + invalidReason; }
       if (tbody) tbody.innerHTML = "";
       if (lcBox) lcBox.style.display = "none";
       if (lcEmpty) lcEmpty.style.display = "flex";
       if (lcStats) { lcStats.textContent = ""; lcStats.style.display = "none"; }
       updateEmptyStateSimbadPill();
-      applyCriticalMismatchState(false, [], false);
+      applyCriticalMismatchState(true, [invalidReason], triggerModalOnMismatch);
       if (typeof window.renderUserOnlyLightCurveCard === "function") {
         window.renderUserOnlyLightCurveCard([]);
       }
@@ -4817,10 +4832,11 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         const curStar = (document.getElementById("starid")?.value || STATE.catalogStarName || "").trim();
         window.renderAavsoAndContributionWidget(curStar, false);
       }
-      showIosNotification(t("secPreview"), t("msgNoData"), t("msgNoDataExplain"), "warn");
+      showIosNotification(t("secPreview"), invalidReason, t("msgNoDataExplain"), "error");
       return;
     }
 
+    STATE.csvHasValidData = true;
     if (previewCard) previewCard.style.display = "block";
     if (emptyStateEl) emptyStateEl.style.display = "none";
     if (previewTableEl) previewTableEl.style.display = "table";
@@ -24260,7 +24276,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   // 4. ITEM 8: EXPORT >3σ DEFAULT ON + ? HELP MODAL
   // --------------------------------------------------------------------------
   const chkExport3s = document.getElementById("chkExportClipOutliers3Sigma");
-  if (chkExport3s) chkExport3s.checked = true;
+  if (chkExport3s) chkExport3s.checked = false;
 
   function _openExport3SigmaHelpModal() {
     const modal = document.getElementById("export3SigmaHelpModal");
@@ -24998,13 +25014,17 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
     _openCalibrationGuardModal();
   });
 
-  // Hook into CSV file input change to trigger Calibration Guard automatically
+  // Hook into CSV file input change to trigger Calibration Guard automatically (with timer cancellation to prevent stale file race)
+  let _cgEvalTimer = null;
   document.getElementById("csvFile")?.addEventListener("change", (ev) => {
+    if (_cgEvalTimer) { clearTimeout(_cgEvalTimer); _cgEvalTimer = null; }
     const file = ev.target && ev.target.files && ev.target.files[0];
     if (!file) { window.AstroLabCalibrationGuard.reset(); return; }
     const reader = new FileReader();
     reader.onload = () => {
-      setTimeout(() => {
+      if (_cgEvalTimer) clearTimeout(_cgEvalTimer);
+      _cgEvalTimer = setTimeout(() => {
+        _cgEvalTimer = null;
         window.AstroLabCalibrationGuard.evaluateFromCsvText(String(reader.result || ""), file.name || "");
       }, 350);
     };
@@ -25437,6 +25457,65 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
         errOfflineStarNotFound: "Ulac internet yerna itri «{star}» ur yettwaf ara deg ukatalug adigan.",
         errOfflineStarAction: "Senqed tuqqna-ik neɣ fren itri seg Radar adigan.",
         errCityGeocoderOffline: "Anadi n temdint yesra internet — fren tamdint seg tebdart tadigant."
+      }
+    };
+    Object.keys(extra).forEach(lc => {
+      if (I18N[lc]) Object.assign(I18N[lc], extra[lc]);
+    });
+  })();
+
+
+  // [CSV VERIFICATION GUARD I18N v1.5.0-alpha] 8-language invalid / already-converted AAVSO CSV messages
+  (function patchCsvVerificationGuardI18n() {
+    if (typeof I18N === "undefined") return;
+    const extra = {
+      en: {
+        errAlreadyConvertedAavsoCsv: "You selected an already-converted AAVSO Extended file (#TYPE=EXTENDED) instead of a raw ZWO Seestar CSV (Magnitude_*.csv). Select the original Magnitude_*.csv file from Seestar.",
+        errInvalidSeestarCsvFormat: "No Seestar 'Non-reference star' photometry rows found in this CSV file.",
+        lblConvertBlocked: "⛔ Blocked (mismatch)",
+        lblFileCheckError: "⛔ File check failed"
+      },
+      ru: {
+        errAlreadyConvertedAavsoCsv: "Выбран уже сконвертированный файл AAVSO Extended (#TYPE=EXTENDED), а не сырой CSV телескопа Seestar (Magnitude_*.csv). Выберите исходный файл Magnitude_*.csv из папки Seestar.",
+        errInvalidSeestarCsvFormat: "В выбранном файле не найдено ни одной строки фотометрии 'Non-reference star' (неверный формат CSV Seestar).",
+        lblConvertBlocked: "⛔ Заблокировано",
+        lblFileCheckError: "⛔ Ошибка файла"
+      },
+      es: {
+        errAlreadyConvertedAavsoCsv: "Seleccionaste un archivo AAVSO Extended ya convertido (#TYPE=EXTENDED) en lugar de un CSV sin procesar de Seestar (Magnitude_*.csv).",
+        errInvalidSeestarCsvFormat: "No se encontraron filas 'Non-reference star' en este archivo CSV de Seestar.",
+        lblConvertBlocked: "⛔ Bloqueado",
+        lblFileCheckError: "⛔ Error de archivo"
+      },
+      de: {
+        errAlreadyConvertedAavsoCsv: "Sie haben eine bereits konvertierte AAVSO-Extended-Datei (#TYPE=EXTENDED) statt einer Seestar-Roh-CSV (Magnitude_*.csv) gewählt.",
+        errInvalidSeestarCsvFormat: "Keine 'Non-reference star'-Photometriezeilen in dieser CSV-Datei gefunden.",
+        lblConvertBlocked: "⛔ Gesperrt",
+        lblFileCheckError: "⛔ Dateifehler"
+      },
+      fr: {
+        errAlreadyConvertedAavsoCsv: "Vous avez sélectionné un fichier AAVSO Extended déjà converti (#TYPE=EXTENDED) au lieu d'un CSV brut Seestar (Magnitude_*.csv).",
+        errInvalidSeestarCsvFormat: "Aucune ligne de photométrie 'Non-reference star' trouvée dans ce fichier CSV.",
+        lblConvertBlocked: "⛔ Bloqué",
+        lblFileCheckError: "⛔ Erreur fichier"
+      },
+      zh: {
+        errAlreadyConvertedAavsoCsv: "您选择的是已转换的 AAVSO Extended 文件 (#TYPE=EXTENDED)，而非 Seestar 原始 CSV 文件 (Magnitude_*.csv)。",
+        errInvalidSeestarCsvFormat: "此 CSV 文件中未找到任何 'Non-reference star' 测光数据行。",
+        lblConvertBlocked: "⛔ 已阻止",
+        lblFileCheckError: "⛔ 文件错误"
+      },
+      cs: {
+        errAlreadyConvertedAavsoCsv: "Vybrali jste již zkonvertovaný soubor AAVSO Extended (#TYPE=EXTENDED) místo surového CSV ze Seestaru (Magnitude_*.csv).",
+        errInvalidSeestarCsvFormat: "V tomto souboru CSV nebyl nalezen žádný řádek fotometrie 'Non-reference star'.",
+        lblConvertBlocked: "⛔ Blokováno",
+        lblFileCheckError: "⛔ Chyba souboru"
+      },
+      ber: {
+        errAlreadyConvertedAavsoCsv: "Tferned afaylu AAVSO Extended yettwabeddlen yakan (#TYPE=EXTENDED) mačči d afaylu CSV amenzu n Seestar (Magnitude_*.csv).",
+        errInvalidSeestarCsvFormat: "Ur yettwaf ula d yiwen izirig 'Non-reference star' deg ufaylu-a CSV.",
+        lblConvertBlocked: "⛔ Yewḥel",
+        lblFileCheckError: "⛔ Tuccḍa n ufaylu"
       }
     };
     Object.keys(extra).forEach(lc => {

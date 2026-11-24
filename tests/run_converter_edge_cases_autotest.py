@@ -559,6 +559,109 @@ def test_13_offline_catalog_guard_and_network_timeouts():
     print("  [PASS] 13. Offline catalog guard (no false OK/collapse), geocoder timeouts (6s), and bounded backend network loops verified")
 
 
+
+
+def test_14_csv_verification_aavso_guard_badges_and_3sigma_default():
+    """
+    [RU] Обязательный браузерный E2E-автотест (реальный Chromium) проверки CSV и формул сверки:
+         1) Галочка >3σ при экспорте реально ВЫКЛЮЧЕНА по умолчанию после загрузки JS.
+         2) Загрузка уже сконвертированного AAVSO Extended файла (#TYPE=EXTENDED) вместо сырого
+            Seestar Magnitude_*.csv: блокирует Шаг 3, открывает модалку ошибки с явным пояснением,
+            убирает зелёный статус pill-ready с Шага 2 и Шага 3.
+         3) Загрузка сырого CSV другой звезды (W UMa против SZ Lyn): строит таблицу сверки (6 строк),
+            выявляет критические расхождения STARID + RA + DEC, блокирует экспорт и убирает pill-ready.
+         4) Загрузка сырого CSV совпадающей звезды (SZ Lyn против SZ Lyn): строит таблицу (6 строк),
+            снимает блокировку, открывает кнопку конвертации и ставит зелёный pill-ready.
+    """
+    import re
+    sys.path.insert(0, os.path.dirname(__file__))
+    import run_localization_autotest as loc
+
+    html_src = (loc.PWA / "index.html").read_text(encoding="utf-8")
+    tpl_js = (loc.PWA / "astrolab_view_template.js").read_text(encoding="utf-8")
+    eng_js = (loc.PWA / "astrolab_engine_bridge.js").read_text(encoding="utf-8")
+    bundled = re.sub(r'<script src="astrolab_view_template\.js[^"]*"></script>', lambda _: f"<script>{tpl_js}</script>", html_src)
+    bundled = re.sub(r'<script src="astrolab_engine_bridge\.js[^"]*"></script>', lambda _: f"<script>{eng_js}</script>", bundled)
+
+    aavso_converted = (
+        "#TYPE=EXTENDED\n#OBSCODE=APPA\n#SOFTWARE=Seestar\n#DELIM=,\n#DATE=JD\n#OBSTYPE=CMOS\n"
+        "#NAME,DATE,MAG,MERR,FILT,TRANS,MTYPE,CNAME,CMAG,KNAME,KMAG,AMASS,GROUP,CHART,NOTES\n"
+        "W UMa,2461360.500000,7.4818,0.0450,TG,NO,STD,ENSEMBLE,na,na,na,na,na,X42562V,Seestar\n"
+    )
+    raw_wuma = STD_HEADER + "\n" + (
+        "W Ursae Majoris,Non-reference star,145.943086,55.954105,12,/,7.4818,0.0450,"
+        "800,900,20.0s,2026.11.16 02:56:21,2461360.497465,61359.997465,2026.11.16 02:56:41,2461360.497697,61359.997697,true,22.0\n"
+    )
+    raw_szlyn = STD_HEADER + "\n" + _make_row(star="SZ Lyncis", mag=9.15, merr=0.045, exp="10.0s") + "\n"
+
+    js = f"""
+    (async () => {{
+      const aavsoTxt = {json.dumps(aavso_converted)};
+      const rawWuma = {json.dumps(raw_wuma)};
+      const rawSzlyn = {json.dumps(raw_szlyn)};
+      const out = {{}};
+
+      document.getElementById('obscode').value = 'APPA';
+      document.getElementById('starid').value = 'SZ Lyn';
+      document.getElementById('ra').value = '122.40188';
+      document.getElementById('dec').value = '+44.47336';
+      document.getElementById('chart').value = 'X42562V';
+      window.STATE.catalogStarName = 'SZ Lyn';
+      window.STATE.catalogRa = 122.40188;
+      window.STATE.catalogDec = 44.47336;
+      window.STATE.simbadCatalogLoaded = true;
+      out.default_chk3s = document.getElementById('chkExportClipOutliers3Sigma')?.checked;
+
+      async function loadCsv(name, txt) {{
+        const dt = new DataTransfer();
+        dt.items.add(new File([txt], name, {{ type: 'text/csv' }}));
+        const inp = document.getElementById('csvFile');
+        inp.files = dt.files;
+        inp.dispatchEvent(new Event('change', {{ bubbles: true }}));
+        await new Promise(r => setTimeout(r, 450));
+        return {{
+          tableDisplay: document.getElementById('previewTable')?.style.display,
+          rowsCount: document.querySelectorAll('#previewTable tbody tr').length,
+          blocked: window.STATE.isConversionBlockedByMismatch,
+          reasons: window.STATE.lastMismatchReasons,
+          btnConvertDisabled: document.getElementById('btnConvert')?.disabled,
+          btnLabDisabled: document.getElementById('btnAnalyzeInLabOnly')?.disabled,
+          modalDisplay: document.getElementById('criticalMismatchModal')?.style.display,
+          filePillReady: document.getElementById('accFileSummaryPill')?.classList.contains('pill-ready'),
+          convPillReady: document.getElementById('accConvertSummaryPill')?.classList.contains('pill-ready'),
+        }};
+      }}
+
+      out.c_aavso = await loadCsv('W_UMa_2026-11-16_02-56-21_105pts_Seestar.csv', aavsoTxt);
+      out.c_mismatch = await loadCsv('Magnitude_09h 43m 46s +55° 57′ 14″.csv', rawWuma);
+      out.c_match = await loadCsv('Magnitude_08h 09m 36s +44° 28′ 23″.csv', rawSzlyn);
+      return JSON.stringify(out);
+    }})()
+    """
+    raw = loc.eval_in_browser(bundled, js, port=9297, await_promise=True, wait_ms=1400)
+    res = json.loads(raw)
+
+    assert res["default_chk3s"] is False, f"3-sigma checkbox MUST be OFF by default at runtime! Got: {res['default_chk3s']}"
+
+    c1 = res["c_aavso"]
+    assert c1["blocked"] is True and c1["btnConvertDisabled"] is True and c1["btnLabDisabled"] is True, f"Already-converted AAVSO CSV must lock conversion: {c1}"
+    assert c1["modalDisplay"] == "flex", f"Already-converted AAVSO CSV must show alert modal: {c1}"
+    assert any("AAVSO Extended" in r for r in c1["reasons"]), f"Reason must identify AAVSO Extended file: {c1}"
+    assert c1["filePillReady"] is False and c1["convPillReady"] is False, f"Step 2 & 3 badges must NOT be green on invalid CSV: {c1}"
+
+    c2 = res["c_mismatch"]
+    assert c2["tableDisplay"] == "table" and c2["rowsCount"] >= 6, f"Raw mismatched CSV must render comparison table: {c2}"
+    assert c2["blocked"] is True and c2["btnConvertDisabled"] is True and len(c2["reasons"]) >= 3, f"Raw W UMa vs SZ Lyn must trigger STARID+RA+DEC mismatch: {c2}"
+    assert c2["filePillReady"] is False and c2["convPillReady"] is False, f"Step 2 & 3 badges must NOT be green on mismatch: {c2}"
+
+    c3 = res["c_match"]
+    assert c3["tableDisplay"] == "table" and c3["rowsCount"] >= 6, f"Raw matching CSV must render comparison table: {c3}"
+    assert c3["blocked"] is False and c3["btnConvertDisabled"] is False, f"Raw SZ Lyn vs SZ Lyn must unlock conversion: {c3}"
+    assert c3["filePillReady"] is True and c3["convPillReady"] is True, f"Step 2 & 3 badges must be green on valid matching CSV: {c3}"
+
+    print("  [PASS] 14. Real-Chromium E2E: >3σ default OFF, AAVSO Extended guard, raw mismatch/match verification & accordion badges")
+
+
 if __name__ == "__main__":
     print("=== RUNNING AUTOTEST #8: CONVERTER EDGE CASES, HYGIENE & RPC SECURITY ===")
     test_1_header_based_csv_and_unknown_schema()
@@ -572,4 +675,5 @@ if __name__ == "__main__":
     test_11_raw_seestar_tg_band_and_lab_only_obstracker()
     test_12_diagnostic_logging_opt_in_clear_and_custom_dir()
     test_13_offline_catalog_guard_and_network_timeouts()
+    test_14_csv_verification_aavso_guard_badges_and_3sigma_default()
     print("=== CONVERTER EDGE CASES, HYGIENE & RPC SECURITY AUTOTEST: ALL PASS ===")
