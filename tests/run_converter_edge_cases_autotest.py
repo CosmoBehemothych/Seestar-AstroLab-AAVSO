@@ -47,14 +47,19 @@ def _make_row(star="SZ Lyncis", mag=9.15, merr=0.05, exp="10.0s", utc="2026.11.0
 
 
 def _with_isolated_storage(fn):
+    import backend.astrolab_backend_core as _bc
     with tempfile.TemporaryDirectory() as tmp:
         orig_get = AavsoNativeAndStorageService.get_storage_db_path
+        orig_dir = _bc.get_program_converted_storage_dir
         db_file = os.path.join(tmp, "user_converted_photometry_db.json")
+        os.makedirs(os.path.join(tmp, "sessions"), exist_ok=True)
         AavsoNativeAndStorageService.get_storage_db_path = classmethod(lambda cls: db_file)
+        _bc.get_program_converted_storage_dir = lambda: tmp
         try:
             return fn(tmp)
         finally:
             AavsoNativeAndStorageService.get_storage_db_path = orig_get
+            _bc.get_program_converted_storage_dir = orig_dir
 
 
 def test_1_header_based_csv_and_unknown_schema():
@@ -210,6 +215,9 @@ def test_7_8_docs_and_repo_hygiene():
     assert os.path.isfile(os.path.join(REPO_ROOT, ".gitignore")), ".gitignore missing in repo root"
     assert not os.path.exists(os.path.join(BACKEND_ROOT, "README.md")), "Duplicate Source_and_Build/README.md must not exist"
     assert not os.path.exists(os.path.join(BACKEND_ROOT, "publish_github_hotfix_only.py")), "Old 5MB hotfix script must not exist"
+    sess_dir = os.path.join(BACKEND_ROOT, "Converted_Photometry_Storage", "sessions")
+    leaked_csvs = [f for f in os.listdir(sess_dir) if f.lower().endswith(".csv")] if os.path.isdir(sess_dir) else []
+    assert not leaked_csvs, f"User/test session CSVs must NOT exist in repo storage: {leaked_csvs}"
     print("  [PASS] 7-8. README methodology, audio license, .gitignore, and repo hygiene verified")
 
 
@@ -516,6 +524,41 @@ def test_12_diagnostic_logging_opt_in_clear_and_custom_dir():
     print("  [PASS] 12. Diagnostic log is strictly opt-in, clearable (with backups), and supports custom export folder")
 
 
+
+
+def test_13_offline_catalog_guard_and_network_timeouts():
+    """
+    [RU] Обязательный автотест офлайн-защиты и отсутствия зависаний/зацикливаний в сетевых вызовах:
+         1) btnFetchAll проверяет simbadOk / vspOk / localMatched и при офлайне + отсутствии звезды
+            в локальном каталоге НЕ ставит data-source="catalog" и НЕ сворачивает Раздел 1.
+         2) Все вызовы Open-Meteo Geocoding имеют явный AbortController-таймаут (6s).
+         3) Все вызовы urlopen в бэкенде имеют конечный timeout=, а пагинация AAVSO AID ограничена лимитом страниц.
+    """
+    bridge_path = os.path.join(BACKEND_ROOT, "pwa_mobile_and_electron", "astrolab_engine_bridge.js")
+    js_src = open(bridge_path, encoding="utf-8").read()
+
+    # 1. Offline guard in btnFetchAll
+    assert "const catalogConfirmed = Boolean(simbadOk || vspOk || localMatched || (finalCatRec && finalCatRec.matched));" in js_src
+    assert 'staridEl.removeAttribute("data-source");' in js_src
+    assert "errOfflineStarNotFound" in js_src
+
+    # 2. Zero bare unbounded geocoding fetch(url) calls
+    for line in js_src.splitlines():
+        if "geocoding-api.open-meteo.com" in line and "fetch(" in line:
+            assert "signal:" in line, f"Geocoding fetch missing AbortController signal: {line.strip()}"
+    assert "geoCtrl1.abort(), 6000" in js_src
+    assert "geoCtrl2.abort(), 6000" in js_src
+    assert "geoCtrl3.abort(), 6000" in js_src
+
+    # 3. Backend urlopen timeouts & bounded pagination
+    core_src = open(os.path.join(BACKEND_ROOT, "backend", "astrolab_backend_core.py"), encoding="utf-8").read()
+    for line in core_src.splitlines():
+        if "_urlopen_with_ssl_fallback(" in line and "def " not in line:
+            assert "timeout=" in line, f"Backend network call missing timeout=: {line.strip()}"
+    assert "while next_url and pages_fetched < 6" in core_src, "AAVSO AID pagination loop must have a strict page cap!"
+    print("  [PASS] 13. Offline catalog guard (no false OK/collapse), geocoder timeouts (6s), and bounded backend network loops verified")
+
+
 if __name__ == "__main__":
     print("=== RUNNING AUTOTEST #8: CONVERTER EDGE CASES, HYGIENE & RPC SECURITY ===")
     test_1_header_based_csv_and_unknown_schema()
@@ -528,4 +571,5 @@ if __name__ == "__main__":
     test_10_rpc_security()
     test_11_raw_seestar_tg_band_and_lab_only_obstracker()
     test_12_diagnostic_logging_opt_in_clear_and_custom_dir()
+    test_13_offline_catalog_guard_and_network_timeouts()
     print("=== CONVERTER EDGE CASES, HYGIENE & RPC SECURITY AUTOTEST: ALL PASS ===")

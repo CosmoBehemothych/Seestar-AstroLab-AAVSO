@@ -5210,10 +5210,16 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     const log = beginLog(`══ SIMBAD & VSP: "${rawStarInput}" ══`, t("fetchingSimbad"));
 
     let simbadObj = null;
+    let simbadOk = false;
+    let vspOk = false;
+    let localMatched = false;
     let canonicalStar = normalizeStarForVsp(rawStarInput, null);
     log(t("fetchingSimbad"));
     try {
       simbadObj = await querySimbad(rawStarInput, log);
+      if (simbadObj && simbadObj.ra != null && simbadObj.dec != null) {
+        simbadOk = true;
+      }
       if (simbadObj.ra != null) {
         document.getElementById("ra").value = Number(simbadObj.ra).toFixed(5);
         STATE.catalogRa = Number(simbadObj.ra);
@@ -5263,6 +5269,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       const { data, source } = await queryVsp(canonicalStar, log, simbadObj, (stepMsg, pct) => {
         setVspLoadingState(true, stepMsg, pct || 65);
       });
+      if (data && data.chartid) vspOk = true;
       if (!data || !data.chartid) throw new Error(t("msgNoChartId"));
       document.getElementById("chart").value = data.chartid;
 
@@ -5309,6 +5316,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         canonicalStar = localCat.canonicalStar;
       }
       if (localCat.matched) {
+        localMatched = true;
         if (!document.getElementById("chart").value.trim()) document.getElementById("chart").value = localCat.matched.chart;
         if (localCat.matched.kname) document.getElementById("kname").value = localCat.matched.kname;
         if (localCat.matched.kmag != null && !isNaN(Number(localCat.matched.kmag))) document.getElementById("kmag").value = Number(localCat.matched.kmag).toFixed(3);
@@ -5319,12 +5327,31 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       }
     }
 
-    // ПУНКТ 2 (Цикл 3): Поле STARID в разделе «Наблюдатель и звезда» строго принимает каноническое имя из каталога!
+    // [RU] Офлайн-защита (To-Be): проверяем, подтверждена ли звезда хотя бы одним источником (SIMBAD, VSP или локальный каталог).
+    // [EN] Offline guard (To-Be): verify the star was confirmed by at least one catalog source (SIMBAD, VSP, or local catalog).
     const finalCatRec = resolveCatalogStarRecord(
       canonicalStar || rawStarInput,
       parseRaAnyToDeg(document.getElementById("ra").value),
       parseDecAnyToDeg(document.getElementById("dec").value)
     );
+    const catalogConfirmed = Boolean(simbadOk || vspOk || localMatched || (finalCatRec && finalCatRec.matched));
+    if (!catalogConfirmed) {
+      STATE.catalogStarName = "";
+      STATE.simbadCatalogLoaded = false;
+      STATE.dismissedMismatchSig = "";
+      const offlineMsg = (t("errOfflineStarNotFound") || "No internet connection and star «{star}» was not found in the local catalog.").replace("{star}", rawStarInput);
+      const offlineTitle = t("errOfflineStarTitle") || "Catalog unavailable (Offline)";
+      const offlineAct = t("errOfflineStarAction") || "Check your internet connection or pick a star from the built-in Target Radar.";
+      if (staridEl) {
+        staridEl.removeAttribute("data-source");
+        setFieldStatus("starid", "staridHint", "warn", offlineMsg);
+      }
+      log(`✗ ${offlineTitle}: ${offlineMsg}`);
+      showIosNotification(offlineTitle, offlineMsg, offlineAct, "error");
+      updateAccordionSummaryBadges();
+      return;
+    }
+
     if (finalCatRec.canonicalStar) {
       canonicalStar = finalCatRec.canonicalStar;
     }
@@ -15928,7 +15955,10 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     try {
       const lg = getActiveLangCode() === "ru" ? "ru" : "en";
       const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1&language=${lg}&format=json`;
-      const resp = await fetch(url);
+      const geoCtrl1 = new AbortController();
+      const geoTimer1 = setTimeout(() => geoCtrl1.abort(), 6000);
+      let resp;
+      try { resp = await fetch(url, { signal: geoCtrl1.signal }); } finally { clearTimeout(geoTimer1); }
       if (resp.ok) {
         const j = await resp.json();
         if (j && Array.isArray(j.results) && j.results.length > 0) {
@@ -15955,7 +15985,11 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
           if (typeof window.refreshWheelStarsForActiveScope === "function") window.refreshWheelStarsForActiveScope();
         }
       }
-    } catch (_) {}
+    } catch (_) {
+      if (typeof showIosNotification === "function") {
+        showIosNotification(t("errOfflineStarTitle") || "Offline", t("errCityGeocoderOffline") || "City search requires internet — pick a city from the built-in list.", "", "warn");
+      }
+    }
   }
 
   document.getElementById("headerCitySelect")?.addEventListener("change", (e) => {
@@ -18287,7 +18321,10 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     try {
       const apiLang = (lg === "ru" || lg === "es" || lg === "de" || lg === "fr" || lg === "zh") ? lg : "en";
       const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchTerm)}&count=1&language=${apiLang}&format=json`;
-      const resp = await fetch(url);
+      const geoCtrl2 = new AbortController();
+      const geoTimer2 = setTimeout(() => geoCtrl2.abort(), 6000);
+      let resp;
+      try { resp = await fetch(url, { signal: geoCtrl2.signal }); } finally { clearTimeout(geoTimer2); }
       if (resp.ok) {
         const j = await resp.json();
         if (j && Array.isArray(j.results) && j.results.length > 0) {
@@ -18305,7 +18342,11 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
           return true;
         }
       }
-    } catch (_) {}
+    } catch (_) {
+      if (typeof showIosNotification === "function") {
+        showIosNotification(t("errOfflineStarTitle") || "Offline", t("errCityGeocoderOffline") || "City search requires internet — pick a city from the built-in list.", "", "warn");
+      }
+    }
     return false;
   };
 
@@ -23704,7 +23745,12 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     resWrap.innerHTML = `<div style="font-size:11px; opacity:0.75;">⏳ ${escapeHtml(_trSite("siteSearchLoading", "Searching"))} «${safeQ}»...</div>`;
     try {
       const geoLang = (typeof currentLang === "string" && ["ru","en","es","de","fr","zh","cs"].includes(currentLang)) ? currentLang : "en";
-      const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=${geoLang}&format=json`);
+      const geoCtrl3 = new AbortController();
+      const geoTimer3 = setTimeout(() => geoCtrl3.abort(), 6000);
+      let r;
+      try {
+        r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=${geoLang}&format=json`, { signal: geoCtrl3.signal });
+      } finally { clearTimeout(geoTimer3); }
       const data = await r.json();
       const hits = data && Array.isArray(data.results) ? data.results : [];
       if (!hits.length) {
@@ -25336,5 +25382,64 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
     };
     Object.keys(extra).forEach(lang => {
       if (I18N[lang]) Object.assign(I18N[lang], extra[lang]);
+    });
+  })();
+
+
+  // [OFFLINE GUARD I18N v1.5.0-alpha] 8-language offline catalog & geocoder error messages
+  (function patchOfflineGuardI18n() {
+    if (typeof I18N === "undefined") return;
+    const extra = {
+      en: {
+        errOfflineStarTitle: "No connection to catalogs",
+        errOfflineStarNotFound: "No internet connection and star «{star}» was not found in the local catalog.",
+        errOfflineStarAction: "Check your internet connection or pick a star from the built-in Target Radar.",
+        errCityGeocoderOffline: "City search requires internet — pick a city from the built-in list."
+      },
+      ru: {
+        errOfflineStarTitle: "Нет связи с каталогами",
+        errOfflineStarNotFound: "Нет интернета, и звезда «{star}» не найдена во встроенном локальном каталоге.",
+        errOfflineStarAction: "Проверьте подключение к сети или выберите звезду из встроенного Радара целей.",
+        errCityGeocoderOffline: "Поиск города требует интернет — выберите город из встроенного списка."
+      },
+      es: {
+        errOfflineStarTitle: "Sin conexión a catálogos",
+        errOfflineStarNotFound: "Sin conexión a Internet y la estrella «{star}» no está en el catálogo local.",
+        errOfflineStarAction: "Comprueba tu conexión o elige una estrella del Radar de objetivos integrado.",
+        errCityGeocoderOffline: "La búsqueda de ciudades requiere Internet: elige una ciudad de la lista integrada."
+      },
+      de: {
+        errOfflineStarTitle: "Keine Verbindung zu Katalogen",
+        errOfflineStarNotFound: "Keine Internetverbindung und der Stern «{star}» wurde im lokalen Katalog nicht gefunden.",
+        errOfflineStarAction: "Prüfe deine Internetverbindung oder wähle einen Stern aus dem integrierten Ziel-Radar.",
+        errCityGeocoderOffline: "Stadtsuche erfordert Internet — wähle eine Stadt aus der integrierten Liste."
+      },
+      fr: {
+        errOfflineStarTitle: "Aucune connexion aux catalogues",
+        errOfflineStarNotFound: "Pas de connexion Internet et l'étoile «{star}» est introuvable dans le catalogue local.",
+        errOfflineStarAction: "Vérifiez votre connexion ou choisissez une étoile dans le Radar de cibles intégré.",
+        errCityGeocoderOffline: "La recherche de ville nécessite Internet — choisissez une ville dans la liste intégrée."
+      },
+      zh: {
+        errOfflineStarTitle: "无法连接星表服务器",
+        errOfflineStarNotFound: "无网络连接，且本地星表中未找到恒星「{star}」。",
+        errOfflineStarAction: "请检查网络连接，或从内置目标雷达中选择一颗恒星。",
+        errCityGeocoderOffline: "搜索城市需要网络连接——请从内置列表中选择城市。"
+      },
+      cs: {
+        errOfflineStarTitle: "Žádné připojení ke katalogům",
+        errOfflineStarNotFound: "Bez připojení k internetu a hvězda «{star}» nebyla nalezena v lokálním katalogu.",
+        errOfflineStarAction: "Zkontrolujte připojení nebo vyberte hvězdu z vestavěného Radaru cílů.",
+        errCityGeocoderOffline: "Vyhledávání města vyžaduje internet — vyberte město z vestavěného seznamu."
+      },
+      ber: {
+        errOfflineStarTitle: "Ulac tuqqna ɣer ikatalugen",
+        errOfflineStarNotFound: "Ulac internet yerna itri «{star}» ur yettwaf ara deg ukatalug adigan.",
+        errOfflineStarAction: "Senqed tuqqna-ik neɣ fren itri seg Radar adigan.",
+        errCityGeocoderOffline: "Anadi n temdint yesra internet — fren tamdint seg tebdart tadigant."
+      }
+    };
+    Object.keys(extra).forEach(lc => {
+      if (I18N[lc]) Object.assign(I18N[lc], extra[lc]);
     });
   })();
