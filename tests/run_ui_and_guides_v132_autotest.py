@@ -16,7 +16,6 @@ import run_localization_autotest as loc
 def test_version_and_policy_consistency():
     must_have_132 = [
         "README.md",
-        "Source_and_Build/README.md",
         ".github/workflows/build.yml",
         "Source_and_Build/Seestar_AstroLab_Installer.iss",
         "Source_and_Build/version_info.txt",

@@ -1,0 +1,24 @@
+# Python & Build Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+build/
+dist/
+*.spec
+*.egg-info/
+
+# Local Windows 1-Click scripts (never upload .bat to GitHub)
+*.bat
+
+# Local user observation data & diagnostic logs
+Converted_Photometry_Storage/sessions/*.csv
+Converted_Photometry_Storage/sessions/*.txt
+Source_and_Build/Converted_Photometry_Storage/sessions/*.csv
+Source_and_Build/Converted_Photometry_Storage/sessions/*.txt
+*.log
+
+# OS & IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

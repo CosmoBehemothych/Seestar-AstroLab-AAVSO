@@ -16776,29 +16776,103 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     return parts.join("; ");
   }
 
+  // [RU] Единый разборщик заголовков CSV Seestar (header -> index) + скользящий 3σ MAD
+  // [EN] Canonical header-based Seestar CSV schema resolver + rolling-median 3-sigma MAD
+  window.resolveSeestarCsvSchema = function(linesInput) {
+    const lines = Array.isArray(linesInput) ? linesInput : String(linesInput || "").split(/\r?\n/);
+    const aliases = {
+      name: ["name", "star", "starid", "object", "target"],
+      type: ["type", "star type", "role"],
+      ra: ["ra", "ra(deg)", "ra_deg", "ra (j2000)"],
+      dec: ["dec", "dec(deg)", "dec_deg", "dec (j2000)"],
+      refStars: ["valid reference stars", "ref stars", "refstars", "comparison stars"],
+      mag: ["mag(obs)", "mag", "magnitude", "obs mag"],
+      merr: ["mag(err)", "merr", "mag err", "error", "mag_err"],
+      x: ["x axis", "x", "x_pos", "x(px)"],
+      y: ["y axis", "y", "y_pos", "y(px)"],
+      exp: ["exp", "exposure", "exptime", "exp(s)"],
+      utc: ["exp start", "utc", "start time", "date-obs"],
+      jdStart: ["exp start(jd)", "jd start", "jd_start", "jd"],
+      jdEnd: ["exp end(jd)", "jd end", "jd_end"],
+      snr: ["snr", "s/n", "signal_to_noise"]
+    };
+    const legacy = { name: 0, type: 1, ra: 2, dec: 3, refStars: 4, mag: 6, merr: 7, x: 8, y: 9, exp: 10, utc: 11, jdStart: 12, jdEnd: 15, snr: 18 };
+    for (let i = 0; i < Math.min(lines.length, 15); i++) {
+      const raw = String(lines[i] || "").trim().replace(/^\uFEFF/, "");
+      if (!raw || raw.startsWith("#")) continue;
+      const delim = (raw.split(";").length > raw.split(",").length) ? ";" : ",";
+      const cols = raw.split(delim).map(s => s.trim().replace(/^"|"$/g, "").toLowerCase().replace(/\s+/g, " "));
+      if (cols.length >= 19 && (cols[1] === "non-reference star" || cols[1] === "reference star")) {
+        return { map: legacy, headerLineIdx: -1, delim, hasHeader: false };
+      }
+      const map = {};
+      for (const [key, list] of Object.entries(aliases)) {
+        const idx = cols.findIndex(c => list.includes(c));
+        if (idx >= 0) map[key] = idx;
+      }
+      if (map.name !== undefined && map.type !== undefined && map.mag !== undefined && map.merr !== undefined && map.jdStart !== undefined) {
+        return { map, headerLineIdx: i, delim, hasHeader: true };
+      }
+    }
+    return { map: legacy, headerLineIdx: -1, delim: ",", hasHeader: false };
+  };
+
+  window.detectRollingMad3SigmaOutliersJs = function(mags, windowSize = 9) {
+    const n = Array.isArray(mags) ? mags.length : 0;
+    if (n < 6) return { count: 0, indices: new Set() };
+    const med = arr => {
+      const s = [...arr].sort((a, b) => a - b);
+      const m = s.length;
+      return m % 2 ? s[m >> 1] : 0.5 * (s[(m >> 1) - 1] + s[m >> 1]);
+    };
+    const halfW = Math.max(2, Math.floor(windowSize / 2));
+    const indices = new Set();
+    for (let i = 0; i < n; i++) {
+      let lo = Math.max(0, i - halfW);
+      let hi = Math.min(n, i + halfW + 1);
+      if (hi - lo < Math.min(5, n)) {
+        if (lo === 0) hi = Math.min(n, 5);
+        else lo = Math.max(0, n - 5);
+      }
+      const neighbors = [];
+      for (let j = lo; j < hi; j++) if (j !== i) neighbors.push(mags[j]);
+      if (neighbors.length < 4) continue;
+      const locMed = med(neighbors);
+      const locMad = med(neighbors.map(x => Math.abs(x - locMed))) * 1.4826;
+      const locLimit = Math.max(0.06, 3.0 * (locMad > 0 ? locMad : 0.02));
+      if (Math.abs(mags[i] - locMed) > locLimit) indices.add(i);
+    }
+    return { count: indices.size, indices };
+  };
+
   window.analyzeAndFilterDuplicateAndOldCsvRows = function(linesInput, starCandidate) {
     const lines = Array.isArray(linesInput) ? linesInput : String(linesInput || "").split(/\r?\n/);
     const validRows = [];
+    const schema = window.resolveSeestarCsvSchema(lines);
+    const cm = schema.map;
     for (let i = 0; i < lines.length; i++) {
+      if (i === schema.headerLineIdx) continue;
       const raw = String(lines[i] || "").trim();
-      if (!raw || (i === 0 && raw.toLowerCase().startsWith("name,"))) continue;
+      if (!raw || raw.startsWith("#")) continue;
       const c = splitSeestarCsvRow(raw);
-      if (c.length < 19 || c[1].toLowerCase() !== "non-reference star") continue;
-      const mag = parseFloat(c[6]);
-      const merr = parseFloat(c[7]);
-      const jdStart = parseFloat(c[12]);
-      const jdEnd = parseFloat(c[15]);
+      const rowType = String(c[cm.type] || "").trim().toLowerCase();
+      if (rowType !== "non-reference star") continue;
+      const mag = parseFloat(String(c[cm.mag] || "").replace(",", "."));
+      const merr = parseFloat(String(c[cm.merr] || "").replace(",", "."));
+      const jdStart = parseFloat(String(c[cm.jdStart] || "").replace(",", "."));
+      const jdEnd = cm.jdEnd !== undefined ? parseFloat(String(c[cm.jdEnd] || "").replace(",", ".")) : NaN;
       if (!Number.isFinite(mag) || !Number.isFinite(merr)) continue;
       if (!Number.isFinite(jdStart) && !Number.isFinite(jdEnd)) continue;
+      if (Number.isFinite(jdStart) && Number.isFinite(jdEnd) && jdEnd < jdStart) continue;
       const jdMid = (Number.isFinite(jdStart) && Number.isFinite(jdEnd))
         ? (jdStart + jdEnd) / 2
         : (Number.isFinite(jdStart) ? jdStart : jdEnd);
       validRows.push({
         lineIdx: i,
-        starRaw: c[0].trim(),
+        starRaw: String(c[cm.name] || "").trim(),
         mag,
         merr,
-        utc: c[11] ? c[11].trim() : "",
+        utc: cm.utc !== undefined && c[cm.utc] ? String(c[cm.utc]).trim() : "",
         jdStart: Number.isFinite(jdStart) ? jdStart : jdMid,
         jdEnd: Number.isFinite(jdEnd) ? jdEnd : jdMid,
         jdMid: Number(jdMid.toFixed(6))
@@ -16879,13 +16953,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         continue;
       }
 
-      // Проверка C: строка относится к более старой сессии (предыдущей ночи) в многоэпоховом сыром файле Seestar
-      if (hasMultipleEpochSessions && r.jdMid < latestSessionMinJd - 0.1) {
-        excludedLineIndices.add(r.lineIdx);
-        removedRows.push(r);
-        reasonsSet.add("old_session");
-        continue;
-      }
+      // [RU] Пункт 3 ревью: эвристика «старых ночей» удалена — дедупликация выполняется строго
+      //      по реальной базе Converted_Photometry_Storage, чтобы не терять данные при первой конвертации многоночных CSV.
+      // [EN] Review Item 3: silent old-night heuristic removed; deduplication relies strictly on Converted_Photometry_Storage.
 
       keptRows.push(r);
     }
@@ -23582,12 +23652,10 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       const pts = window.parseCurrentCsvPoints() || [];
       if (pts.length >= 6) {
         const mags = pts.map(p => Number(p.mag)).filter(Number.isFinite);
-        const sorted = [...mags].sort((a, b) => a - b);
-        const med = sorted[Math.floor(sorted.length / 2)];
-        const devs = mags.map(m => Math.abs(m - med)).sort((a, b) => a - b);
-        const mad = (devs[Math.floor(devs.length / 2)] || 0.05) * 1.4826;
-        const limit = Math.max(0.06, 3.0 * mad);
-        const outliers = mags.filter(m => Math.abs(m - med) > limit);
+        const rollRes = (typeof window.detectRollingMad3SigmaOutliersJs === "function")
+          ? window.detectRollingMad3SigmaOutliersJs(mags, 9)
+          : { count: 0, indices: new Set() };
+        const outliers = { length: rollRes.count };
         if (outliers.length > 0) {
           const _trOut = (k, fb) => (typeof t === "function" && t(k) && t(k) !== k) ? t(k) : fb;
           const outTitle = escapeHtml(_trOut("csvOutlierTitle", "Statistical outliers (> 3σ) detected")) + `: ${outliers.length} / ${mags.length}`;
@@ -24656,17 +24724,21 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
       const mags = [];
       const refs = [];
       const exps = [];
-      for (const rawLine of csvText.split(/\r?\n/)) {
-        const ln = rawLine.trim();
-        if (!ln || ln.toLowerCase().startsWith("name")) continue;
-        const delim = (ln.split(";").length > ln.split(",").length) ? ";" : ",";
+      const cgLines = csvText.split(/\r?\n/);
+      const cgSchema = (typeof window.resolveSeestarCsvSchema === "function") ? window.resolveSeestarCsvSchema(cgLines) : { map: { type: 1, refStars: 4, mag: 6, exp: 10 }, headerLineIdx: 0, delim: "," };
+      const cgm = cgSchema.map;
+      for (let li = 0; li < cgLines.length; li++) {
+        if (li === cgSchema.headerLineIdx) continue;
+        const ln = cgLines[li].trim();
+        if (!ln || ln.startsWith("#")) continue;
+        const delim = cgSchema.delim || ((ln.split(";").length > ln.split(",").length) ? ";" : ",");
         const cols = ln.split(delim).map(s => s.trim().replace(/^"|"$/g, ""));
-        if (cols.length >= 19 && cols[1].toLowerCase() === "non-reference star") {
-          const mv = parseFloat(cols[6].replace(",", "."));
+        if (String(cols[cgm.type] || "").toLowerCase() === "non-reference star") {
+          const mv = parseFloat(String(cols[cgm.mag] || "").replace(",", "."));
           if (Number.isFinite(mv)) mags.push(mv);
-          const rf = parseInt(cols[4], 10);
+          const rf = cgm.refStars !== undefined ? parseInt(cols[cgm.refStars], 10) : NaN;
           if (Number.isFinite(rf) && rf >= 0) refs.push(rf);
-          const ev = parseFloat(String(cols[10]).toLowerCase().replace("s", "").replace(",", "."));
+          const ev = cgm.exp !== undefined ? parseFloat(String(cols[cgm.exp] || "").toLowerCase().replace("s", "").replace(",", ".")) : NaN;
           if (Number.isFinite(ev) && ev > 0) exps.push(ev);
         }
       }
@@ -24704,15 +24776,24 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
         }
       }
 
-      // Check 2: Saturation risk (mag + exposure)
-      const satLimit = (medExp != null && medExp > 20) ? 8.3 : ((medExp != null && medExp > 10) ? 7.8 : 7.0);
-      if (medMag < satLimit) {
+      // Check 2: Saturation risk (brightest 5th percentile + model & exposure formula: base_10s(model) + 2.5*log10(EXP/10))
+      const sortedMagsCg = [...mags].sort((a, b) => a - b);
+      const p05Pos = 0.05 * (sortedMagsCg.length - 1);
+      const p05Lo = Math.floor(p05Pos);
+      const p05Hi = Math.min(sortedMagsCg.length - 1, p05Lo + 1);
+      const p05Mag = sortedMagsCg[p05Lo] * (1 - (p05Pos - p05Lo)) + sortedMagsCg[p05Hi] * (p05Pos - p05Lo);
+      const activeScopeCode = String(document.getElementById("headerScopeSelect")?.value || "S50").toUpperCase().replace(/[^A-Z0-9]/g, "");
+      const satBaseMap = { S30: 6.4, S30PLUS: 6.2, S30PRO: 6.0, S50: 7.0, S50PRO: 6.8 };
+      const satBase10 = satBaseMap[activeScopeCode] ?? 7.0;
+      const effExp = (medExp != null && medExp > 0) ? medExp : 10.0;
+      const satLimit = Number((satBase10 + 2.5 * Math.log10(effExp / 10.0)).toFixed(2));
+      if (p05Mag < satLimit) {
         issues.push({
           icon: "☀️",
           title: ru ? "Риск перенасыщения матрицы (Saturation)" : "Sensor Saturation Risk",
           detail: ru
-            ? `Медиана блеска ${medMag.toFixed(2)}m ярче безопасного порога линейности Seestar (${satLimit.toFixed(1)}m${medExp ? " при выдержке " + medExp.toFixed(0) + "s" : ""}).`
-            : `Median magnitude ${medMag.toFixed(2)}m is brighter than the Seestar linearity threshold (${satLimit.toFixed(1)}m${medExp ? " at " + medExp.toFixed(0) + "s exposure" : ""}).`,
+            ? `Ярчайшие 5% кадров (${p05Mag.toFixed(2)}m, медиана ${medMag.toFixed(2)}m) ярче порога линейности ${activeScopeCode} (${satLimit.toFixed(2)}m при выдержке ${effExp.toFixed(0)}s).`
+            : `Brightest 5% frames (${p05Mag.toFixed(2)}m, median ${medMag.toFixed(2)}m) exceed ${activeScopeCode} linearity threshold (${satLimit.toFixed(2)}m at ${effExp.toFixed(0)}s).`,
           advice: ru
             ? "При пересвете пиксели матрицы упираются в потолок, и измеренная величина может быть систематически искажена."
             : "Saturated pixels clip the star profile and can produce systematically biased magnitudes."

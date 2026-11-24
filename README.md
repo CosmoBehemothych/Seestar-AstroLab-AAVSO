@@ -39,7 +39,7 @@ Uploading raw `Magnitude_*.csv` files directly to AAVSO WebObs risks submitting 
    - Before exporting your CSV, the converter computes the session **median** and robust dispersion (`σ = 1.4826 × MAD`). Unlike a standard mean, a single bad frame (satellite/aircraft trail, passing cloud, tracking slip, or cosmic ray) cannot skew the threshold — outliers beyond `max(0.06 mag, 3 × σ)` are automatically filtered out. A built-in **`?`** guide explains when to keep it active and when to turn it off (for example, during rapid flares or novae).
 2. **🛡️ Calibration Guard (3-Layer Pre-Export Check)**:
    - **Zero-Point Shift (`> 0.40 mag`)**: Compares your session median against AAVSO reference observations to catch wrong comparison stars or calibration drift.
-   - **Sensor Saturation Risk (`mag + 2.5·log10(EXP)`)**: Flags bright-star / long-exposure frames at risk of sensor saturation.
+   - **Sensor Saturation Risk (`mag_p05 < base_10s(model) + 2.5·log10(EXP / 10)`)**: Evaluates the **brightest 5th percentile** of frames against the selected Seestar model's linearity limit (`S30: 6.4m`, `S30+: 6.2m`, `S30PRO: 6.0m`, `S50: 7.0m`, `S50PRO: 6.8m` at `10s`) scaled by exposure `EXP`, catching saturation at maximum light.
    - **Sparse Reference Stars (`RefStars < 3`)**: Warns when fewer than 3 comparison stars were available in Seestar's ensemble.
    - When triggered, export is soft-locked until you inspect the curve in the Light Curve Lab or confirm a genuine outburst.
 3. **Duplicate & Multi-Night Overwrite Protection**:
@@ -141,3 +141,33 @@ Available in **8 languages**: English, Russian, Spanish, German, French, Chinese
 - Установщик `Seestar_AstroLab_Setup_v1.4.0.exe` не имеет коммерческой цифровой подписи, но собирается открыто в GitHub Actions из исходного кода под лицензией MIT и публикуется с хэшем `SHA-256` ([`VERIFY.txt`](VERIFY.txt)).
 - Инструкция по самостоятельной сборке — [`BUILD.md`](BUILD.md), политика безопасности — [`SECURITY.md`](SECURITY.md).
 - Для научных ссылок (CERN Zenodo DOI): **[`10.5281/zenodo.24402803`](https://doi.org/10.5281/zenodo.24402803)**.
+
+---
+
+## 🔬 Photometric Methodology, Limitations & Audio License
+
+### How ZWO Seestar Photometry Is Mapped to AAVSO Extended
+* **Source calibration:** ZWO Seestar's onboard photometry mode computes instrumental/calibrated `Mag(obs)` and `Mag(err)` via internal ensemble comparison against the Seestar app's built-in star catalog (using `Valid Reference Stars` in the frame).
+* **AAVSO Extended headers (`#OBSTYPE=DSLR`, `FILT=TG`, `MTYPE=STD`, `TRANS=NO`):**
+  * `FILT=TG` (Tri-color Green) reflects the Bayer green CMOS bandpass of Seestar sensors (IMX462 / IMX585 / IMX662 / SC485SL).
+  * `CNAME=ENSEMBLE`, `CMAG=na`, `KNAME=na`, `KMAG=na`: strictly compliant with AAVSO rules because Seestar exports an ensemble solution without an independent check-star measurement.
+  * `TRANS=NO`: no user-derived color transformation coefficients are applied.
+* **Outlier handling (`>3σ` Rolling MAD):** Uses a **rolling-window median** (9-frame local window) so genuine narrow eclipses (EA), flares, and dwarf nova rises are preserved while isolated satellite/cloud spikes are flagged. Auto-removal on export is **OFF by default** and requires explicit user confirmation.
+* **Known Limitations:**
+  * **Dual-Band LP Filter:** Must be **OFF** (IR-cut only) when collecting scientific AAVSO photometry — the current 19-column ZWO Seestar CSV does not export filter state or internal stack count (if ZWO adds these columns in future firmware, the header-based parser automatically appends them to `NOTES`).
+  * **Internal Stacking & Bright-Star Linearity:** Watch the Calibration Guard (`p05` saturation check) and avoid stars brighter than `base_10s(model) + 2.5·log10(EXP / 10)`.
+* **Comparison with AstroImageJ & VPhot:**
+  | Criterion | Seestar AstroLab AAVSO | AstroImageJ / VPhot |
+  | :--- | :--- | :--- |
+  | **Input** | Raw Seestar Photometry CSV (zero-script) | Calibrated FITS frames |
+  | **Best For** | Rapid AAVSO TG submissions, target planning, multi-night monitoring, quick Lomb–Scargle/BLS checks | High-precision differential/transformed photometry, custom apertures, independent check-star (`KNAME`/`KMAG`) reporting |
+  | **Color Transforms** | `TRANS=NO` (onboard Seestar ensemble) | Full `B/V/R/I` or `TB/TG/TR` transform support |
+
+### Audio Asset License (`jackpot_track.mp3`)
+* `Source_and_Build/pwa_mobile_and_electron/assets/jackpot_track.mp3` is **original AI-generated audio created by the repository author (CosmoBehemothych)** and is distributed under the repository's **MIT License** with no third-party copyright encumbrances.
+
+### Методология фотометрии, ограничения и лицензия аудио (RU)
+* **Калибровка и формат AAVSO Extended:** Seestar рассчитывает `Mag(obs)` ансамблем по встроенному каталогу приложения ZWO; в отчёт AAVSO записываются `#OBSTYPE=DSLR`, `FILT=TG` (зелёный канал Байера), `MTYPE=STD`, `CNAME=ENSEMBLE`, `KNAME=na`, `KMAG=na`, `TRANS=NO`.
+* **Защита от выбросов и пересвета:** детектор выбросов использует **скользящую медиану** (окно 9 кадров) и **отключён по умолчанию при экспорте** (только подсветка и удаление по подтверждению), чтобы не срезать минимумы затменных и вспышки. Насыщение проверяется по **5-му процентилю ярчайших точек** по формуле `base_10s(model) + 2.5·log10(EXP / 10)`.
+* **Ограничения:** для научной фотометрии AAVSO встроенный LP-фильтр Seestar должен быть **выключен** (в текущем 19-колоночном CSV ZWO не выгружает состояние LP-фильтра и число кадров стэка; при их появлении в новых прошивках парсер по заголовкам автоматически добавит их в `NOTES`). Для задач с индивидуальным подбором апертур, контрольной звездой (`KNAME`/`KMAG`) и цветовыми трансформациями используйте **AstroImageJ** или **VPhot**.
+* **Лицензия `jackpot_track.mp3`:** аудиофайл создан лично автором репозитория (`CosmoBehemothych`) с помощью нейросети и распространяется под лицензией **MIT** без прав третьих лиц.

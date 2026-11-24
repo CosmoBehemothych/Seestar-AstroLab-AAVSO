@@ -31,6 +31,43 @@ import base64
 import datetime
 import hashlib
 import hmac
+
+try:
+    from backend.csv_schema import (
+        SeestarCsvSchemaError,
+        parse_seestar_csv_header_and_rows,
+        get_col,
+        compute_percentile,
+        compute_saturation_threshold,
+        detect_rolling_mad_3sigma_outliers,
+        validate_frame_timing,
+    )
+    from backend.rpc_server import (
+        RPC_AUTH_TOKEN,
+        MAX_RPC_BODY_BYTES,
+        get_rpc_auth_token,
+        is_allowed_rpc_origin as _is_allowed_rpc_origin,
+        build_rpc_handler_class,
+        start_rpc_server,
+    )
+except ImportError:
+    from csv_schema import (
+        SeestarCsvSchemaError,
+        parse_seestar_csv_header_and_rows,
+        get_col,
+        compute_percentile,
+        compute_saturation_threshold,
+        detect_rolling_mad_3sigma_outliers,
+        validate_frame_timing,
+    )
+    from rpc_server import (
+        RPC_AUTH_TOKEN,
+        MAX_RPC_BODY_BYTES,
+        get_rpc_auth_token,
+        is_allowed_rpc_origin as _is_allowed_rpc_origin,
+        build_rpc_handler_class,
+        start_rpc_server,
+    )
 import json
 import secrets
 import math
@@ -704,26 +741,29 @@ class PhotometryBackendEngine:
     @classmethod
     def extract_first_seestar_row(cls, csv_text: str) -> Optional[Dict[str, Any]]:
         detected_delim = cls.detect_csv_delimiter(csv_text)
-        detected_site_coords = cls.detect_site_coords_in_csv(csv_text, detected_delim)
-        raw_preview_mags: List[float] = []
-        for idx, raw_line in enumerate((csv_text or "").splitlines()):
-            line = raw_line.strip()
-            if not line:
-                continue
-            cols = cls._split_dirty_csv_line(line)
-            if not cols or (idx == 0 and cols[0].lower() == "name"):
-                continue
-            if len(cols) >= 19 and cols[1].lower() == "non-reference star":
+        try:
+            col_map, data_rows, _ = parse_seestar_csv_header_and_rows(
+                csv_text,
+                lambda ln: cls._split_dirty_csv_line(ln) if detected_delim == "," else cls.split_csv_row(ln, detected_delim),
+            )
+        except SeestarCsvSchemaError:
+            return None
+        for _line_no, cols in data_rows:
+            row_type = get_col(cols, col_map, "type").lower()
+            if row_type == "non-reference star":
                 try:
-                    jd_s = float(cols[12])
-                    jd_e = float(cols[15]) if cols[15] else jd_s
+                    jd_s = float(get_col(cols, col_map, "jd_start").replace(",", "."))
+                    jd_e_raw = get_col(cols, col_map, "jd_end").replace(",", ".")
+                    jd_e = float(jd_e_raw) if jd_e_raw else jd_s
+                    ra_raw = get_col(cols, col_map, "ra").replace(",", ".")
+                    dec_raw = get_col(cols, col_map, "dec").replace(",", ".")
                     return {
-                        "starId": cols[0],
-                        "ra": float(cols[2]) if cols[2] else 0.0,
-                        "dec": float(cols[3]) if cols[3] else 0.0,
-                        "mag": float(cols[6]),
-                        "merr": float(cols[7]),
-                        "utc": cols[11],
+                        "starId": get_col(cols, col_map, "name"),
+                        "ra": float(ra_raw) if ra_raw else 0.0,
+                        "dec": float(dec_raw) if dec_raw else 0.0,
+                        "mag": float(get_col(cols, col_map, "mag").replace(",", ".")),
+                        "merr": float(get_col(cols, col_map, "merr").replace(",", ".")),
+                        "utc": get_col(cols, col_map, "utc"),
                         "jdStart": jd_s,
                         "jdEnd": jd_e,
                     }
@@ -841,41 +881,48 @@ class PhotometryBackendEngine:
             return "na"
 
     @staticmethod
-    def detect_mad_3sigma_outliers(mags: List[float]) -> Dict[str, Any]:
-        """Определяет статистические выбросы (> 3 * 1.4826 * MAD) для предупреждения пользователя."""
-        if len(mags) < 6:
-            return {"count": 0, "indices": set(), "median": None, "limit": None}
-        s_mags = sorted(mags)
-        n = len(s_mags)
-        med = s_mags[n // 2] if n % 2 == 1 else 0.5 * (s_mags[n // 2 - 1] + s_mags[n // 2])
-        abs_dev = sorted(abs(m - med) for m in mags)
-        mad = (abs_dev[n // 2] if n % 2 == 1 else 0.5 * (abs_dev[n // 2 - 1] + abs_dev[n // 2])) * 1.4826
-        limit = max(0.06, 3.0 * (mad if mad > 0 else 0.05))
-        bad_idx = {i for i, m in enumerate(mags) if abs(m - med) > limit}
-        return {"count": len(bad_idx), "indices": bad_idx, "median": round(med, 4), "limit": round(limit, 4)}
+    def detect_mad_3sigma_outliers(mags: List[float], window: int = 9) -> Dict[str, Any]:
+        """Определяет статистические выбросы относительно скользящей медианы (> max(0.06, 3 * 1.4826 * local_MAD))."""
+        return detect_rolling_mad_3sigma_outliers(mags, window=window)
 
     @classmethod
-    def compute_calibration_guard_metrics(cls, csv_text: str) -> Dict[str, Any]:
+    def compute_calibration_guard_metrics(cls, csv_text: str, scope_model: str = "S50") -> Dict[str, Any]:
         """Извлекает из сырого CSV Seestar метрики для «Калибровочного сторожа»:
-        медианный блеск, выдержку (EXP, сек), число опорных звёзд (RefStars) и флаги рисков."""
+        5-й процентиль ярчайших точек (максимум блеска), медиану, выдержку (EXP, сек),
+        число опорных звёзд (RefStars) и флаги рисков с учётом модели телескопа и формулы 2.5*log10(EXP/10)."""
         mags: List[float] = []
         ref_stars_list: List[int] = []
         exp_secs: List[float] = []
         detected_delim = cls.detect_csv_delimiter(csv_text)
-        for idx, raw_line in enumerate((csv_text or "").splitlines()):
-            line = raw_line.strip()
-            if not line or (idx == 0 and line.lower().startswith("name")):
-                continue
-            cols = cls.split_csv_row(line, detected_delim)
-            if len(cols) >= 19 and cols[1].lower() == "non-reference star":
+        try:
+            col_map, data_rows, _ = parse_seestar_csv_header_and_rows(
+                csv_text,
+                lambda ln: cls.split_csv_row(ln, detected_delim),
+            )
+        except SeestarCsvSchemaError as schema_err:
+            return {
+                "schemaError": str(schema_err),
+                "medianMag": None,
+                "brightestP05Mag": None,
+                "medianRefStars": None,
+                "minRefStars": None,
+                "medianExpSec": None,
+                "saturationThresholdMag": compute_saturation_threshold(scope_model, 10.0),
+                "saturationRisk": False,
+                "smallEnsembleRisk": False,
+                "scopeModel": scope_model,
+            }
+
+        for _line_no, cols in data_rows:
+            if get_col(cols, col_map, "type").lower() == "non-reference star":
                 try:
-                    mv = float(cols[6].replace(",", "."))
+                    mv = float(get_col(cols, col_map, "mag").replace(",", "."))
                     if math.isfinite(mv):
                         mags.append(mv)
                 except (ValueError, TypeError):
                     pass
                 try:
-                    rf_raw = str(cols[4]).strip()
+                    rf_raw = get_col(cols, col_map, "ref_stars")
                     if rf_raw:
                         rf_val = int(float(rf_raw.replace(",", ".")))
                         if rf_val >= 0:
@@ -883,7 +930,7 @@ class PhotometryBackendEngine:
                 except (ValueError, TypeError):
                     pass
                 try:
-                    exp_raw = str(cols[10]).strip().lower().replace("s", "").replace(",", ".")
+                    exp_raw = get_col(cols, col_map, "exp").lower().replace("s", "").replace(",", ".")
                     if exp_raw:
                         ev = float(exp_raw)
                         if math.isfinite(ev) and ev > 0:
@@ -899,31 +946,27 @@ class PhotometryBackendEngine:
             return s[n // 2] if n % 2 == 1 else 0.5 * (s[n // 2 - 1] + s[n // 2])
 
         med_mag = _median(mags)
+        p05_mag = compute_percentile(mags, 5.0)
         med_ref = _median(ref_stars_list)
         min_ref = min(ref_stars_list) if ref_stars_list else None
         med_exp = _median(exp_secs)
 
-        # Порог риска перенасыщения матрицы Seestar (IMX462/IMX585) в зависимости от выдержки
-        sat_limit = 7.0
-        if med_exp is not None:
-            if med_exp > 20.0:
-                sat_limit = 8.3
-            elif med_exp > 10.0:
-                sat_limit = 7.8
-            else:
-                sat_limit = 7.0
-
-        saturation_risk = bool(med_mag is not None and med_mag < sat_limit)
+        # Порог риска перенасыщения матрицы Seestar с учётом модели и выдержки (mag_p05 < base_10s + 2.5*log10(EXP/10))
+        sat_limit = compute_saturation_threshold(scope_model, med_exp if med_exp is not None else 10.0)
+        eval_mag = p05_mag if p05_mag is not None else med_mag
+        saturation_risk = bool(eval_mag is not None and eval_mag < sat_limit)
         small_ensemble_risk = bool((med_ref is not None and med_ref < 3) or (min_ref is not None and min_ref < 3))
 
         return {
             "medianMag": round(med_mag, 4) if med_mag is not None else None,
+            "brightestP05Mag": round(p05_mag, 4) if p05_mag is not None else None,
             "medianRefStars": int(round(med_ref)) if med_ref is not None else None,
             "minRefStars": int(min_ref) if min_ref is not None else None,
             "medianExpSec": round(med_exp, 1) if med_exp is not None else None,
             "saturationThresholdMag": sat_limit,
             "saturationRisk": saturation_risk,
             "smallEnsembleRisk": small_ensemble_risk,
+            "scopeModel": scope_model,
         }
 
     @classmethod
@@ -939,12 +982,30 @@ class PhotometryBackendEngine:
         site_lat: Optional[float] = None,
         site_lon: Optional[float] = None,
         clip_outliers_3sigma: bool = False,
+        scope_model: str = "S50",
     ) -> Dict[str, Any]:
         """
-        Выполняет серверный разбор CSV-файла Seestar и строгую сверку с эталоном SIMBAD.
+        Выполняет серверный разбор CSV-файла Seestar по заголовкам и строгую сверку с эталоном SIMBAD.
         КРИТИЧЕСКОЕ ПРАВИЛО: Если simbad_loaded=False, колонка SIMBAD остаётся пустой ('— (Не загружено)')
         и НИКОГДА не копирует значения из CSV-файла Seestar!
         """
+        detected_delim = cls.detect_csv_delimiter(csv_text)
+        try:
+            col_map, data_rows, _ = parse_seestar_csv_header_and_rows(
+                csv_text,
+                lambda ln: cls._split_dirty_csv_line(ln) if detected_delim == "," else cls.split_csv_row(ln, detected_delim),
+            )
+        except SeestarCsvSchemaError as schema_err:
+            return {
+                "hasData": False,
+                "isCriticalMismatch": False,
+                "mismatchReasons": [],
+                "pointsCount": 0,
+                "errorCode": "UNKNOWN_CSV_SCHEMA",
+                "schemaError": str(schema_err),
+                "missingColumns": schema_err.missing_columns,
+            }
+
         first_row = cls.extract_first_seestar_row(csv_text)
         if not first_row:
             return {
@@ -955,20 +1016,18 @@ class PhotometryBackendEngine:
             }
 
         points = []
-        detected_delim = cls.detect_csv_delimiter(csv_text)
-        for idx, raw_line in enumerate((csv_text or "").splitlines()):
-            line = raw_line.strip()
-            if not line or (idx == 0 and line.lower().startswith("name,")):
-                continue
-            cols = cls.split_csv_row(line, detected_delim)
-            if len(cols) >= 19 and cols[1].lower() == "non-reference star":
+        for _line_no, cols in data_rows:
+            if get_col(cols, col_map, "type").lower() == "non-reference star":
                 try:
-                    jd_s = float(cols[12])
-                    jd_e = float(cols[15])
+                    jd_s = float(get_col(cols, col_map, "jd_start").replace(",", "."))
+                    jd_e_raw = get_col(cols, col_map, "jd_end").replace(",", ".")
+                    jd_e = float(jd_e_raw) if jd_e_raw else jd_s
+                    if jd_e < jd_s:
+                        continue
                     jd_mid = (jd_s + jd_e) / 2.0
-                    mag = float(cols[6])
-                    merr = float(cols[7])
-                    points.append({"jd": round(jd_mid, 6), "mag": round(mag, 4), "merr": round(merr, 4), "utc": cols[11]})
+                    mag = float(get_col(cols, col_map, "mag").replace(",", "."))
+                    merr = float(get_col(cols, col_map, "merr").replace(",", "."))
+                    points.append({"jd": round(jd_mid, 6), "mag": round(mag, 4), "merr": round(merr, 4), "utc": get_col(cols, col_map, "utc")})
                 except (TypeError, ValueError):
                     continue
 
@@ -1028,17 +1087,33 @@ class PhotometryBackendEngine:
         site_lat: Optional[float] = None,
         site_lon: Optional[float] = None,
         clip_outliers_3sigma: bool = False,
+        selected_sessions: Optional[List[int]] = None,
     ) -> Dict[str, Any]:
         """
         Конвертирует сырой CSV фотометрии Seestar в стандарт AAVSO Extended (#OBSTYPE=DSLR).
-        Проверяет отсутствие критического расхождения перед генерацией отчёта.
+        Читает колонки строго по заголовкам, не отбрасывает старые ночи без проверки базы,
+        использует скользящий 3σ MAD, проверяет порядок времени (jd_end >= jd_start) и логирует ошибки диска.
         """
         obs_clean = str(obscode or "").strip()
         if not obs_clean or obs_clean.upper() == "NA":
             return {"ok": False, "errorCode": "NO_OBSCODE", "error": "Не указан личный код наблюдателя #OBSCODE"}
 
+        detected_delim = cls.detect_csv_delimiter(csv_text)
+        try:
+            col_map, data_rows, _has_header = parse_seestar_csv_header_and_rows(
+                csv_text,
+                lambda ln: cls._split_dirty_csv_line(ln) if detected_delim == "," else cls.split_csv_row(ln, detected_delim),
+            )
+        except SeestarCsvSchemaError as schema_err:
+            return {
+                "ok": False,
+                "errorCode": "UNKNOWN_CSV_SCHEMA",
+                "error": str(schema_err),
+                "missingColumns": schema_err.missing_columns,
+            }
+
         if simbad_loaded and catalog_star and catalog_ra is not None and catalog_dec is not None:
-            ver = cls.preview_and_verify_csv(csv_text, True, catalog_star, catalog_ra, catalog_dec)
+            ver = cls.preview_and_verify_csv(csv_text, True, catalog_star, catalog_ra, catalog_dec, scope_model=scope_model)
             if ver.get("isCriticalMismatch"):
                 return {
                     "ok": False,
@@ -1066,220 +1141,336 @@ class PhotometryBackendEngine:
         bad = 0
         dup_removed_count = 0
         rounding_warnings = 0
+        empty_jd_end_warnings = 0
+        invalid_time_order_count = 0
+        exp_duration_mismatch_count = 0
         first_utc = None
         first_raw_star = None
         diffs = []
         removed_old_summary = []
+        timing_warnings: List[str] = []
 
-        # [RU] Предварительный проход для выявления ранее сконвертированных точек (из Converted_Photometry_Storage)
-        #      и старых ночей наблюдений в дозаписанных файлах Seestar CSV (разрыв между сессиями ΔJD > 0.35 сут)
-        # [EN] Pre-pass to detect previously converted records and older observing nights in appended Seestar CSVs
-        raw_lines_all = (csv_text or "").splitlines()
-        valid_jds_for_sessions = []
-        for _i, _rl in enumerate(raw_lines_all):
-            _s = _rl.strip()
-            if not _s or (_i == 0 and _s.lower().startswith("name,")):
-                continue
-            _c = cls._split_dirty_csv_line(_s)
-            if len(_c) >= 19 and _c[1].lower() == "non-reference star":
-                try:
-                    _j1 = float(_c[12])
-                    _j2 = float(_c[15]) if _c[15] else _j1
-                    valid_jds_for_sessions.append((_j1 + _j2) / 2.0)
-                except Exception:
-                    pass
-
-        latest_session_min_jd = None
-        if len(valid_jds_for_sessions) > 1:
-            sorted_jds = sorted(valid_jds_for_sessions)
-            sess_list = [[sorted_jds[0]]]
-            for _k in range(1, len(sorted_jds)):
-                if sorted_jds[_k] - sorted_jds[_k - 1] > 0.35:
-                    sess_list.append([sorted_jds[_k]])
-                else:
-                    sess_list[-1].append(sorted_jds[_k])
-            if len(sess_list) > 1:
-                latest_session_min_jd = sess_list[-1][0]
-
-        existing_db_jds = []
+        # [RU] Загружаем реально сконвертированные точки из Converted_Photometry_Storage (без эвристики «старых ночей»!)
+        # [EN] Load genuinely converted points from Converted_Photometry_Storage (NO silent old-night heuristic!)
+        existing_db_jds: List[float] = []
+        storage_load_warning = ""
         try:
             _db = AavsoNativeAndStorageService.load_storage_db()
             for _pt in _db.get("points", []):
                 if _pt.get("jd") is not None:
                     if not canonical_target or cls.are_same_star(_pt.get("star"), canonical_target):
                         existing_db_jds.append(float(_pt["jd"]))
-        except Exception:
-            pass
+        except Exception as db_exc:
+            storage_load_warning = f"Не удалось прочитать локальную базу Converted_Photometry_Storage: {db_exc}"
+            try:
+                AstroLabDiagnosticLogger.log_exception("STORAGE_LOAD_ERR", storage_load_warning, db_exc)
+            except Exception as _bg_exc:
+                try:
+                    AstroLabDiagnosticLogger.log_exception("BACKEND_HANDLED_ERR", "Handled backend exception", _bg_exc)
+                except Exception:
+                    pass
 
-        seen_in_file_jds = set()
-
-        _pre_mags: List[float] = []
-        if clip_outliers_3sigma:
-            for _rl in raw_lines_all:
-                _s = _rl.strip()
-                if not _s or _s.startswith("#"):
-                    continue
-                _c = cls._split_dirty_csv_line(_s)
-                if len(_c) >= 19 and _c[1].lower() == "non-reference star":
-                    try:
-                        _mv = float(_c[6].replace(",", "."))
-                        if math.isfinite(_mv):
-                            _pre_mags.append(_mv)
-                    except ValueError:
-                        pass
-        _mad_info = cls.detect_mad_3sigma_outliers(_pre_mags) if clip_outliers_3sigma else {"count": 0, "indices": set(), "median": None, "limit": None}
-        _clipped_3sigma_count = 0
-        for idx, raw_line in enumerate(raw_lines_all):
-            raw = raw_line.strip()
-            if not raw:
-                skipped += 1
-                continue
-            cols = cls._split_dirty_csv_line(raw)
-            if not cols or (idx == 0 and cols[0].lower() == "name"):
-                skipped += 1
-                continue
-            if len(cols) < 19 or cols[1].lower() != "non-reference star":
+        # [RU] Первый проход: собираем валидные целевые строки (для разбивки на ночи и скользящего 3σ MAD)
+        # [EN] Pass 1: gather valid target rows for multi-night session metadata & rolling 3-sigma MAD
+        from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
+        parsed_candidates: List[Dict[str, Any]] = []
+        for line_no, cols in data_rows:
+            if get_col(cols, col_map, "type").lower() != "non-reference star":
                 skipped += 1
                 continue
             try:
-                mag_orig = float(cols[6])
-                err_orig = float(cols[7])
-                if math.isnan(mag_orig) or math.isnan(err_orig) or math.isinf(mag_orig) or math.isinf(err_orig) or err_orig <= 0.0 or err_orig >= 1.0:
+                mag_raw = get_col(cols, col_map, "mag")
+                err_raw = get_col(cols, col_map, "merr")
+                mag_orig = float(mag_raw.replace(",", "."))
+                err_orig = float(err_raw.replace(",", "."))
+                if (
+                    math.isnan(mag_orig) or math.isnan(err_orig)
+                    or math.isinf(mag_orig) or math.isinf(err_orig)
+                    or err_orig <= 0.0 or err_orig >= 1.0
+                ):
                     bad += 1
                     continue
-                if clip_outliers_3sigma and _mad_info.get("median") is not None and _mad_info.get("limit") is not None:
-                    if abs(mag_orig - _mad_info["median"]) > _mad_info["limit"]:
-                        _clipped_3sigma_count += 1
-                        continue
 
-                mag_conv = round(mag_orig, 4)
-                err_conv = round(err_orig, 4)
-                # [RU] ПУНКТ 1 РЕВЬЮ: Не отбрасываем строку при высокой точности исходного float,
-                #      а логируем предупреждение округления (rounding_warnings), сохраняя измерение!
-                # [EN] REVIEW ITEM 1: Do not drop high-precision rows on rounding delta > 0.0001;
-                #      record a non-destructive rounding warning instead.
-                if abs(mag_orig - mag_conv) > 0.0001 or abs(err_orig - err_conv) > 0.0001:
-                    rounding_warnings += 1
-
-                jd_start_str = cols[12]
-                jd_end_str = cols[15] if cols[15] else cols[12]
+                jd_start_str = get_col(cols, col_map, "jd_start").replace(",", ".")
+                jd_end_raw = get_col(cols, col_map, "jd_end").replace(",", ".")
                 jd_start = float(jd_start_str)
-                jd_end = float(jd_end_str)
-                from decimal import Decimal, ROUND_HALF_UP, InvalidOperation
-                if not (math.isfinite(jd_start) and math.isfinite(jd_end)):
+                jd_end_opt = float(jd_end_raw) if jd_end_raw else None
+
+                exp_raw = get_col(cols, col_map, "exp")
+                exp_sec_val = None
+                try:
+                    _ev = float(exp_raw.lower().replace("s", "").replace(",", "."))
+                    if math.isfinite(_ev) and _ev > 0:
+                        exp_sec_val = _ev
+                except (TypeError, ValueError):
+                    exp_sec_val = None
+
+                t_check = validate_frame_timing(jd_start, jd_end_opt, exp_sec_val)
+                if not t_check["valid"]:
+                    if t_check["reason"] == "jd_end_before_jd_start":
+                        invalid_time_order_count += 1
                     bad += 1
                     continue
+                if t_check["emptyEnd"]:
+                    empty_jd_end_warnings += 1
+                if t_check["expMismatch"]:
+                    exp_duration_mismatch_count += 1
+
+                jd_end_eff = t_check["jdEndEffective"]
                 try:
-                    jd_mid_dec = ((Decimal(str(jd_start)) + Decimal(str(jd_end))) / Decimal("2")).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
+                    jd_mid_dec = (
+                        (Decimal(str(jd_start)) + Decimal(str(jd_end_eff))) / Decimal("2")
+                    ).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
                 except (InvalidOperation, ValueError):
                     bad += 1
                     continue
-                jd_mid = str(jd_mid_dec)
-                jd_mid_float = float(jd_mid_dec)
 
-                # Проверка на дубликат или старую сессию, которая уже передавалась в AAVSO
-                is_dup_or_old = False
-                if jd_mid in seen_in_file_jds:
-                    is_dup_or_old = True
-                seen_in_file_jds.add(jd_mid)
-
-                if not is_dup_or_old and latest_session_min_jd is not None and jd_mid_float < latest_session_min_jd - 0.1:
-                    is_dup_or_old = True
-
-                if not is_dup_or_old and existing_db_jds:
-                    for _ejd in existing_db_jds:
-                        if abs(_ejd - jd_mid_float) <= 0.00012:
-                            is_dup_or_old = True
-                            break
-
-                if is_dup_or_old:
-                    dup_removed_count += 1
-                    skipped += 1
-                    removed_old_summary.append({"utc": cols[11], "jd": jd_mid})
-                    continue
-
-                if not first_utc:
-                    first_utc = cols[11]
-                if not first_raw_star:
-                    first_raw_star = cols[0]
-
-                ra_final = str(ra_ui or cols[2]).strip()
-                dec_final = str(dec_ui or cols[3]).strip()
-                star_final = canonical_target or cls.normalize_star_for_vsp(cols[0])
-
-                notes = cls.build_safe_aavso_notes(
-                    utc_val=cols[11],
-                    exp_val=cols[10],
-                    snr_val=cols[18],
-                    ref_stars=cols[4],
-                    raw_mag=cols[6],
-                    raw_err=cols[7],
-                    ra_val=ra_final,
-                    dec_val=dec_final,
-                    x_val=cols[8],
-                    y_val=cols[9],
-                    max_len=cls.MAX_AAVSO_NOTES_LEN,
-                )
-
-                out_lines.append(",".join([
-                    star_final, jd_mid, f"{mag_conv:.4f}", f"{err_conv:.4f}",
-                    "TG", "NO", "STD", "ENSEMBLE", "na",
-                    # [RU] Строгий стандарт AAVSO: Seestar не передаёт отдельный замер проверочной звезды
-                    # [EN] Strict AAVSO standard: Seestar does not output a separate check-star measurement
-                    "na",
-                    "na",
-                    "na", "na",
-                    str(chart or "na").strip() or "na",
-                    notes,
-                ]))
-
-                diffs.append({
-                    "rowNum": idx + 1,
-                    "origStarId": cols[0],
-                    "newStarId": star_final,
-                    "origMag": mag_orig,
-                    "newMag": mag_conv,
-                    "origMerr": err_orig,
-                    "newMerr": err_conv,
-                    "origJd": f"{cols[12]} / {cols[15]}",
-                    "newJd": jd_mid,
-                    "origRa": cols[2],
-                    "newRa": ra_final,
-                    "origDec": cols[3],
-                    "newDec": dec_final,
+                parsed_candidates.append({
+                    "line_no": line_no,
+                    "cols": cols,
+                    "mag_orig": mag_orig,
+                    "err_orig": err_orig,
+                    "mag_raw": mag_raw,
+                    "err_raw": err_raw,
+                    "jd_start_str": jd_start_str,
+                    "jd_end_str": jd_end_raw or jd_start_str,
+                    "jd_mid": str(jd_mid_dec),
+                    "jd_mid_float": float(jd_mid_dec),
                 })
-                count += 1
             except (TypeError, ValueError):
                 bad += 1
 
+        # [RU] Группировка по ночам (ΔJD > 0.35 сут) — только для информирования и явного выбора пользователя
+        # [EN] Group into observing nights (ΔJD > 0.35d) strictly for metadata & explicit user selection
+        sessions_meta: List[Dict[str, Any]] = []
+        row_session_idx: Dict[int, int] = {}
+        if parsed_candidates:
+            indexed_sorted = sorted(enumerate(parsed_candidates), key=lambda kv: kv[1]["jd_mid_float"])
+            sess_groups: List[List[int]] = [[indexed_sorted[0][0]]]
+            for _k in range(1, len(indexed_sorted)):
+                prev_jd = parsed_candidates[indexed_sorted[_k - 1][0]]["jd_mid_float"]
+                cur_jd = parsed_candidates[indexed_sorted[_k][0]]["jd_mid_float"]
+                if cur_jd - prev_jd > 0.35:
+                    sess_groups.append([indexed_sorted[_k][0]])
+                else:
+                    sess_groups[-1].append(indexed_sorted[_k][0])
+            for s_idx, grp in enumerate(sess_groups):
+                jds_g = [parsed_candidates[i]["jd_mid_float"] for i in grp]
+                first_u = get_col(parsed_candidates[grp[0]]["cols"], col_map, "utc")
+                date_label = first_u.split(" ")[0] if first_u else f"Night {s_idx + 1}"
+                sessions_meta.append({
+                    "index": s_idx,
+                    "date": date_label,
+                    "count": len(grp),
+                    "jdMin": round(min(jds_g), 6),
+                    "jdMax": round(max(jds_g), 6),
+                })
+                for i in grp:
+                    row_session_idx[i] = s_idx
+
+        selected_sessions_set = set(selected_sessions) if selected_sessions is not None else None
+
+        # [RU] Скользящий 3σ MAD (отключён по умолчанию; если включён пользователем — удаляет только локальные выбросы)
+        # [EN] Rolling 3-sigma MAD (OFF by default; when explicitly enabled, removes only local single-frame spikes)
+        _mad_info = (
+            cls.detect_mad_3sigma_outliers([r["mag_orig"] for r in parsed_candidates])
+            if clip_outliers_3sigma
+            else {"count": 0, "indices": set(), "median": None, "limit": None, "method": "rolling_mad_3sigma"}
+        )
+        _clipped_3sigma_count = 0
+        seen_in_file_jds = set()
+
+        for cand_idx, item in enumerate(parsed_candidates):
+            cols = item["cols"]
+            mag_orig = item["mag_orig"]
+            err_orig = item["err_orig"]
+            jd_mid = item["jd_mid"]
+            jd_mid_float = item["jd_mid_float"]
+
+            if selected_sessions_set is not None and row_session_idx.get(cand_idx) not in selected_sessions_set:
+                skipped += 1
+                continue
+
+            if clip_outliers_3sigma and cand_idx in _mad_info.get("indices", set()):
+                _clipped_3sigma_count += 1
+                continue
+
+            mag_conv = round(mag_orig, 4)
+            err_conv = round(err_orig, 4)
+            if abs(mag_orig - mag_conv) > 0.0001 or abs(err_orig - err_conv) > 0.0001:
+                rounding_warnings += 1
+
+            # [RU] Дедупликация СТРОГО по дублям внутри файла и реальной базе Converted_Photometry_Storage
+            # [EN] Deduplication STRICTLY against in-file duplicates and real Converted_Photometry_Storage records
+            is_dup = False
+            if jd_mid in seen_in_file_jds:
+                is_dup = True
+            seen_in_file_jds.add(jd_mid)
+
+            if not is_dup and existing_db_jds:
+                for _ejd in existing_db_jds:
+                    if abs(_ejd - jd_mid_float) <= 0.00012:
+                        is_dup = True
+                        break
+
+            if is_dup:
+                dup_removed_count += 1
+                skipped += 1
+                removed_old_summary.append({"utc": get_col(cols, col_map, "utc"), "jd": jd_mid})
+                continue
+
+            utc_val = get_col(cols, col_map, "utc")
+            raw_star = get_col(cols, col_map, "name")
+            if not first_utc:
+                first_utc = utc_val
+            if not first_raw_star:
+                first_raw_star = raw_star
+
+            ra_col = get_col(cols, col_map, "ra")
+            dec_col = get_col(cols, col_map, "dec")
+            ra_final = str(ra_ui or ra_col).strip()
+            dec_final = str(dec_ui or dec_col).strip()
+            star_final = canonical_target or cls.normalize_star_for_vsp(raw_star)
+
+            amass_str = "na"
+            if calc_amass and site_lat is not None and site_lon is not None:
+                try:
+                    amass_str = cls.compute_airmass_pickering(
+                        jd_mid_float,
+                        float(ra_final) if ra_final else None,
+                        float(dec_final) if dec_final else None,
+                        float(site_lat),
+                        float(site_lon),
+                    )
+                except (TypeError, ValueError):
+                    amass_str = "na"
+
+            notes = cls.build_safe_aavso_notes(
+                utc_val=utc_val,
+                exp_val=get_col(cols, col_map, "exp"),
+                snr_val=get_col(cols, col_map, "snr"),
+                ref_stars=get_col(cols, col_map, "ref_stars"),
+                raw_mag=item["mag_raw"],
+                raw_err=item["err_raw"],
+                ra_val=ra_final,
+                dec_val=dec_final,
+                x_val=get_col(cols, col_map, "x"),
+                y_val=get_col(cols, col_map, "y"),
+                max_len=cls.MAX_AAVSO_NOTES_LEN,
+            )
+            # Append optional future firmware fields if present in CSV headers
+            stack_val = get_col(cols, col_map, "stack_frames")
+            lp_val = get_col(cols, col_map, "lp_filter")
+            extra_notes = []
+            if stack_val:
+                extra_notes.append(f"Stack={stack_val}")
+            if lp_val:
+                extra_notes.append(f"LP={lp_val}")
+            if extra_notes:
+                cand_notes = notes + "|" + "|".join(extra_notes)
+                if len(cand_notes) <= cls.MAX_AAVSO_NOTES_LEN:
+                    notes = cand_notes
+
+            out_lines.append(",".join([
+                star_final, jd_mid, f"{mag_conv:.4f}", f"{err_conv:.4f}",
+                "TG", "NO", "STD", "ENSEMBLE", "na",
+                # [RU] Строгий стандарт AAVSO: Seestar не передаёт отдельный замер проверочной звезды
+                # [EN] Strict AAVSO standard: Seestar does not output a separate check-star measurement
+                "na",
+                "na",
+                amass_str, "na",
+                str(chart or "na").strip() or "na",
+                notes,
+            ]))
+
+            diffs.append({
+                "rowNum": item["line_no"],
+                "origStarId": raw_star,
+                "newStarId": star_final,
+                "origMag": mag_orig,
+                "newMag": mag_conv,
+                "origMerr": err_orig,
+                "newMerr": err_conv,
+                "origJd": f"{item['jd_start_str']} / {item['jd_end_str']}",
+                "newJd": jd_mid,
+                "origRa": ra_col,
+                "newRa": ra_final,
+                "origDec": dec_col,
+                "newDec": dec_final,
+            })
+            count += 1
+
+        if empty_jd_end_warnings > 0:
+            timing_warnings.append(
+                f"У {empty_jd_end_warnings} строк отсутствует EXP end(JD) — использован EXP start(JD)."
+            )
+        if invalid_time_order_count > 0:
+            timing_warnings.append(
+                f"Отбраковано {invalid_time_order_count} строк с нарушенным порядком времени (jd_end < jd_start)."
+            )
+        if exp_duration_mismatch_count > 0:
+            timing_warnings.append(
+                f"У {exp_duration_mismatch_count} строк интервал (jd_end - jd_start) расходится с заявленной выдержкой EXP."
+            )
+
         if count == 0:
-            return {"ok": False, "errorCode": "NO_DATA_ROWS", "error": "Нет целевых строк измерений Non-reference star"}
+            return {
+                "ok": False,
+                "errorCode": "NO_DATA_ROWS",
+                "error": "Нет целевых строк измерений Non-reference star",
+                "timingWarnings": timing_warnings,
+                "invalidTimeOrderCount": invalid_time_order_count,
+            }
 
         date_part = (first_utc or "session").replace(".", "-").replace(" ", "_").replace(":", "-")
         safe_star = (canonical_target or first_raw_star or "SEESTAR").replace(" ", "_")
         suggested_name = f"{safe_star}_{date_part}_{count}pts_Seestar.csv"
         final_content_str = "\n".join(out_lines) + "\n"
+
+        storage_saved = True
+        storage_save_warning = storage_load_warning
         try:
-            AavsoNativeAndStorageService.save_converted_session(
+            save_res = AavsoNativeAndStorageService.save_converted_session(
                 star_name=canonical_target or first_raw_star or starid_ui,
                 obscode=obs_clean,
                 scope_model=scope_model,
                 file_name=suggested_name,
                 aavso_csv_content=final_content_str,
             )
-        except Exception:
-            pass
+            if isinstance(save_res, dict) and save_res.get("ok") is False:
+                storage_saved = False
+                msg = save_res.get("error") or "Неизвестная ошибка записи"
+                storage_save_warning = f"Не удалось сохранить сессию в «Мои наблюдения»: {msg}"
+        except Exception as save_exc:
+            storage_saved = False
+            storage_save_warning = f"Не удалось сохранить сессию в «Мои наблюдения» (дедупликация может не сработать): {save_exc}"
+            try:
+                AstroLabDiagnosticLogger.log_exception("STORAGE_SAVE_ERR", storage_save_warning, save_exc)
+            except Exception as _bg_exc:
+                try:
+                    AstroLabDiagnosticLogger.log_exception("BACKEND_HANDLED_ERR", "Handled backend exception", _bg_exc)
+                except Exception:
+                    pass
 
         return {
             "ok": True,
             "fileName": suggested_name,
-            "content": "\n".join(out_lines) + "\n",
+            "content": final_content_str,
             "count": count,
             "skipped": skipped,
             "duplicateRemovedCount": dup_removed_count,
             "duplicateRemovedRecords": removed_old_summary,
+            "clippedOutliersCount": _clipped_3sigma_count,
+            "outlierMethod": "rolling_mad_3sigma",
             "bad": bad,
             "roundingWarnings": rounding_warnings,
+            "emptyJdEndWarnings": empty_jd_end_warnings,
+            "invalidTimeOrderCount": invalid_time_order_count,
+            "expDurationMismatchCount": exp_duration_mismatch_count,
+            "timingWarnings": timing_warnings,
+            "sessions": sessions_meta,
+            "storageSaved": storage_saved,
+            "storageSaveWarning": storage_save_warning,
             "obscodeFormatWarning": obs_validation.get("warning", ""),
             "canonicalStar": canonical_target or first_raw_star,
             "firstRawStar": first_raw_star,
@@ -1402,8 +1593,11 @@ class AavsoNativeAndStorageService:
                     data.setdefault("sessions", [])
                     data.setdefault("points", [])
                     return data
-            except Exception:
-                pass
+            except Exception as _bg_exc:
+                try:
+                    AstroLabDiagnosticLogger.log_exception("BACKEND_HANDLED_ERR", "Handled backend exception", _bg_exc)
+                except Exception:
+                    pass
         return {"version": APP_VERSION, "sessions": [], "points": []}
 
     @classmethod
@@ -1431,8 +1625,11 @@ class AavsoNativeAndStorageService:
             try:
                 with open(saved_csv_path, "w", encoding="utf-8") as f:
                     f.write(aavso_csv_content)
-            except Exception:
-                pass
+            except Exception as _bg_exc:
+                try:
+                    AstroLabDiagnosticLogger.log_exception("BACKEND_HANDLED_ERR", "Handled backend exception", _bg_exc)
+                except Exception:
+                    pass
 
         # Если список точек не передан явно, парсим их из самого сконвертированного файла AAFF Extended
         extracted_pts: List[Dict[str, Any]] = []
@@ -1506,8 +1703,11 @@ class AavsoNativeAndStorageService:
             try:
                 with open(cls.get_storage_db_path(), "w", encoding="utf-8") as f:
                     json.dump(db, f, ensure_ascii=False, indent=2)
-            except Exception:
-                pass
+            except Exception as _bg_exc:
+                try:
+                    AstroLabDiagnosticLogger.log_exception("BACKEND_HANDLED_ERR", "Handled backend exception", _bg_exc)
+                except Exception:
+                    pass
 
         return cls.get_converted_history(canonical_star or star_name)
 
@@ -1527,8 +1727,11 @@ class AavsoNativeAndStorageService:
             try:
                 with open(cls.get_storage_db_path(), "w", encoding="utf-8") as f:
                     json.dump(db, f, ensure_ascii=False, indent=2)
-            except Exception:
-                pass
+            except Exception as _bg_exc:
+                try:
+                    AstroLabDiagnosticLogger.log_exception("BACKEND_HANDLED_ERR", "Handled backend exception", _bg_exc)
+                except Exception:
+                    pass
         return {"ok": True}
 
     @classmethod
@@ -1542,13 +1745,19 @@ class AavsoNativeAndStorageService:
                         fp = os.path.join(sessions_dir, fn)
                         if os.path.isfile(fp):
                             os.remove(fp)
-            except Exception:
-                pass
+            except Exception as _bg_exc:
+                try:
+                    AstroLabDiagnosticLogger.log_exception("BACKEND_HANDLED_ERR", "Handled backend exception", _bg_exc)
+                except Exception:
+                    pass
             try:
                 with open(cls.get_storage_db_path(), "w", encoding="utf-8") as f:
                     json.dump({"version": APP_VERSION, "sessions": [], "points": []}, f, ensure_ascii=False, indent=2)
-            except Exception:
-                pass
+            except Exception as _bg_exc:
+                try:
+                    AstroLabDiagnosticLogger.log_exception("BACKEND_HANDLED_ERR", "Handled backend exception", _bg_exc)
+                except Exception:
+                    pass
         return {"ok": True}
 
     @classmethod
@@ -1671,8 +1880,11 @@ class AavsoNativeAndStorageService:
                     result["period"] = it0.get("period")
                     result["source"] = "AAVSO API v2 (Stars)"
                     result["ok"] = result["ra"] is not None and result["dec"] is not None
-            except Exception:
-                pass
+            except Exception as _bg_exc:
+                try:
+                    AstroLabDiagnosticLogger.log_exception("BACKEND_HANDLED_ERR", "Handled backend exception", _bg_exc)
+                except Exception:
+                    pass
 
         # 2. Официальный AAVSO VSX VOTable API (https://vsx.aavso.org/index.php?view=query.votable&ident=...)
         if not result["ok"]:
@@ -2631,8 +2843,11 @@ class AavsoNativeAndStorageService:
                 if m:
                     latest_tag = m.group(1).strip()
                     release_url = final_url
-        except Exception:
-            pass
+        except Exception as _bg_exc:
+            try:
+                AstroLabDiagnosticLogger.log_exception("BACKEND_HANDLED_ERR", "Handled backend exception", _bg_exc)
+            except Exception:
+                pass
 
         # Канал 2: fallback на GitHub REST API (если редирект не дал тег)
         if not latest_tag:
@@ -2661,206 +2876,18 @@ class AavsoNativeAndStorageService:
         }
 
 
-RPC_AUTH_TOKEN: str = secrets.token_hex(24)
-MAX_RPC_BODY_BYTES: int = 25 * 1024 * 1024  # 25 MB safety cap
-
-
-def get_rpc_auth_token() -> str:
-    """Return the per-process cryptographic token required for local RPC POST requests."""
-    return RPC_AUTH_TOKEN
-
-
-def _is_allowed_rpc_origin(origin: str) -> bool:
-    if not origin:
-        return True  # Non-browser / direct local client without Origin header
-    o = origin.strip().lower()
-    if o == "null":
-        return True  # WebView2 / Electron file:// origin
-    return bool(re.match(r"^https?://(127\.0\.0\.1|localhost)(:\d{1,5})?$", o))
-
-
-class _AstroLabBackendRequestHandler(BaseHTTPRequestHandler):
-    def log_message(self, format: str, *args: Any) -> None:
-        return
-
-    def _send_json(self, payload: Dict[str, Any], status: int = 200) -> None:
-        raw = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-        origin = self.headers.get("Origin", "")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        if origin and _is_allowed_rpc_origin(origin):
-            self.send_header("Access-Control-Allow-Origin", origin)
-            self.send_header("Vary", "Origin")
-        self.send_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-AstroLab-Token")
-        self.send_header("Content-Length", str(len(raw)))
-        self.end_headers()
-        self.wfile.write(raw)
-
-    def do_OPTIONS(self) -> None:
-        origin = self.headers.get("Origin", "")
-        if origin and not _is_allowed_rpc_origin(origin):
-            self._send_json({"ok": False, "error": "Forbidden origin"}, 403)
-            return
-        self._send_json({"ok": True})
-
-    def do_GET(self) -> None:
-        origin = self.headers.get("Origin", "")
-        if origin and not _is_allowed_rpc_origin(origin):
-            self._send_json({"ok": False, "error": "Forbidden origin"}, 403)
-            return
-        if self.path.startswith("/api/health"):
-            self._send_json({"ok": True, "version": APP_VERSION, "engine": "PhotometryBackendEngine"})
-        else:
-            self._send_json({"ok": False, "error": "Not found"}, 404)
-
-    def do_POST(self) -> None:
-        origin = self.headers.get("Origin", "")
-        if origin and not _is_allowed_rpc_origin(origin):
-            self._send_json({"ok": False, "error": "Forbidden origin"}, 403)
-            return
-
-        require_token = getattr(self.server, "require_token", True)
-        if require_token:
-            supplied = (self.headers.get("X-AstroLab-Token") or "").strip()
-            if not supplied or not hmac.compare_digest(supplied, RPC_AUTH_TOKEN):
-                self._send_json({"ok": False, "error": "Unauthorized RPC request"}, 401)
-                return
-
-        try:
-            length = int(self.headers.get("Content-Length", "0"))
-        except ValueError:
-            self._send_json({"ok": False, "error": "Invalid Content-Length"}, 400)
-            return
-
-        if length < 0:
-            self._send_json({"ok": False, "error": "Negative Content-Length"}, 400)
-            return
-        if length > MAX_RPC_BODY_BYTES:
-            self._send_json({"ok": False, "error": f"Payload exceeds {MAX_RPC_BODY_BYTES} bytes limit"}, 413)
-            return
-
-        try:
-            body = json.loads(self.rfile.read(length).decode("utf-8")) if length > 0 else {}
-        except Exception as e:
-            self._send_json({"ok": False, "error": str(e)}, 400)
-            return
-
-        action = body.get("action", "")
-        try:
-            self._dispatch_post_action(action, body)
-        except Exception as exc:
-            try:
-                AstroLabDiagnosticLogger.log_exception("RPC_DISPATCH_ERR", f"RPC action '{action}' failed", exc)
-            except Exception:
-                pass
-            self._send_json({"ok": False, "error": f"Internal RPC error: {exc}"}, 500)
-
-    def _dispatch_post_action(self, action: str, body: Dict[str, Any]) -> None:
-        if action == "get_scope_profile":
-            self._send_json({"ok": True, "profile": PhotometryBackendEngine.get_scope_profile(body.get("code", "S50"))})
-        elif action == "preview_csv":
-            res = PhotometryBackendEngine.preview_and_verify_csv(
-                csv_text=body.get("csvText", ""),
-                simbad_loaded=bool(body.get("simbadLoaded", False)),
-                catalog_star=body.get("catalogStar", ""),
-                catalog_ra=body.get("catalogRa"),
-                catalog_dec=body.get("catalogDec"),
-                catalog_kmag=body.get("catalogKmag"),
-            )
-            self._send_json({"ok": True, "result": res})
-        elif action == "convert_csv":
-            res = PhotometryBackendEngine.convert_seestar_csv_to_aavso_extended(
-                csv_text=body.get("csvText", ""),
-                obscode=body.get("obscode", ""),
-                starid_ui=body.get("starid", ""),
-                chart=body.get("chart", "na"),
-                kname="na",  # Strictly na for Seestar ensemble photometry
-                kmag="na",   # Strictly na for Seestar ensemble photometry
-                ra_ui=body.get("ra", ""),
-                dec_ui=body.get("dec", ""),
-                scope_model=body.get("scopeModel", "S50"),
-                simbad_loaded=bool(body.get("simbadLoaded", False)),
-                catalog_star=body.get("catalogStar", ""),
-                catalog_ra=body.get("catalogRa"),
-                catalog_dec=body.get("catalogDec"),
-            )
-            self._send_json(res)
-        elif action == "verify_file":
-            res = PhotometryBackendEngine.verify_converted_aavso_file(body.get("content", ""))
-            self._send_json({"ok": True, "result": res})
-        elif action == "save_converted_session":
-            res = AavsoNativeAndStorageService.save_converted_session(
-                star_name=body.get("star", ""),
-                obscode=body.get("obscode", ""),
-                scope_model=body.get("scopeModel", "S50"),
-                file_name=body.get("fileName", "Seestar_AAVSO.csv"),
-                aavso_csv_content=body.get("content", ""),
-                points=body.get("points"),
-            )
-            self._send_json(res)
-        elif action == "delete_converted_records":
-            res = AavsoNativeAndStorageService.delete_converted_records(
-                star_name=body.get("star", ""),
-                file_name=body.get("fileName", ""),
-                obs_date=body.get("obsDate", ""),
-            )
-            self._send_json(res)
-        elif action == "reset_all_user_data":
-            res = AavsoNativeAndStorageService.reset_all_user_data()
-            self._send_json(res)
-        elif action == "get_converted_history":
-            res = AavsoNativeAndStorageService.get_converted_history(body.get("star"))
-            self._send_json(res)
-        elif action == "fetch_live_star_dossier":
-            res = AavsoNativeAndStorageService.fetch_live_star_dossier(body.get("star", ""))
-            self._send_json(res)
-        elif action == "query_aavso_star":
-            res = AavsoNativeAndStorageService.query_aavso_star(
-                star_name=body.get("star", ""),
-                scope_model=body.get("scopeModel", "S50"),
-                api_token=body.get("apiToken", ""),
-            )
-            self._send_json(res)
-        elif action == "check_github_latest_release":
-            res = AavsoNativeAndStorageService.check_github_latest_release(body.get("currentVersion") or APP_VERSION)
-            self._send_json(res)
-        elif action == "fetch_live_aavso_notices":
-            res = AavsoNativeAndStorageService.fetch_live_aavso_notices()
-            self._send_json(res)
-        elif action == "fetch_live_aavso_campaign_targets":
-            res = AavsoNativeAndStorageService.fetch_live_aavso_campaign_targets(
-                max_stars=int(body.get("maxStars", 25) or 25)
-            )
-            self._send_json(res)
-        elif action == "fetch_aavso_target_tool_targets":
-            res = AavsoNativeAndStorageService.fetch_aavso_target_tool_targets(
-                api_key=body.get("apiKey", ""),
-                obs_section=body.get("obsSection", "all"),
-            )
-            self._send_json(res)
-        elif action == "fetch_aavso_light_curve":
-            res = AavsoNativeAndStorageService.fetch_aavso_light_curve(
-                star_name=body.get("star", ""),
-                days_back=int(body.get("daysBack", 180) or 180),
-                api_token=body.get("apiToken", ""),
-                user_obscode=body.get("obscode", ""),
-            )
-            self._send_json(res)
-        else:
-            self._send_json({"ok": False, "error": f"Unknown action: {action}"}, 400)
+_AstroLabBackendRequestHandler = build_rpc_handler_class(
+    app_version=APP_VERSION,
+    photometry_engine_cls=PhotometryBackendEngine,
+    storage_service_cls=AavsoNativeAndStorageService,
+    diagnostic_logger_cls=AstroLabDiagnosticLogger,
+)
 
 
 def start_background_rpc_server(port: int = 18765, require_token: bool = True) -> Optional[ThreadingHTTPServer]:
-    try:
-        srv = ThreadingHTTPServer(("127.0.0.1", port), _AstroLabBackendRequestHandler)
-        srv.require_token = bool(require_token)
-        t = threading.Thread(target=srv.serve_forever, daemon=True)
-        t.start()
-        return srv
-    except Exception as exc:
-        try:
-            AstroLabDiagnosticLogger.log_exception("RPC_START_ERR", f"Failed to bind local RPC port {port}", exc)
-        except Exception:
-            pass
-        return None
+    return start_rpc_server(
+        handler_cls=_AstroLabBackendRequestHandler,
+        diagnostic_logger_cls=AstroLabDiagnosticLogger,
+        port=port,
+        require_token=require_token,
+    )

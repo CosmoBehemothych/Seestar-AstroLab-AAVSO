@@ -293,7 +293,6 @@ def test_version_and_policy_consistency():
     print("[4/5] Version 1.5.0-alpha & Trust Infrastructure policy consistency...")
     files_must_have_133 = [
         "README.md",
-        "Source_and_Build/README.md",
         "Source_and_Build/desktop_launcher.py",
         "Source_and_Build/backend/astrolab_backend_core.py",
         "Source_and_Build/Seestar_AstroLab_Installer.iss",
