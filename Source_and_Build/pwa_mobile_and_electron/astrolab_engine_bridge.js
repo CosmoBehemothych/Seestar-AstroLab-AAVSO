@@ -5371,6 +5371,14 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     if (finalCatRec.canonicalStar) {
       canonicalStar = finalCatRec.canonicalStar;
     }
+    if (!simbadOk && !vspOk && (localMatched || (finalCatRec && finalCatRec.matched))) {
+      showIosNotification(
+        t("offlineLocalFallbackTitle") || "Offline mode (local catalog)",
+        (t("offlineLocalFallbackMsg") || "No internet — coordinates and chart for «{star}» loaded from the built-in catalog.").replace("{star}", canonicalStar || rawStarInput),
+        "",
+        "warn"
+      );
+    }
     STATE.catalogStarName = canonicalStar;
     STATE.simbadCatalogLoaded = Boolean(canonicalStar && STATE.catalogRa != null && STATE.catalogDec != null);
     STATE.dismissedMismatchSig = "";
@@ -12022,6 +12030,24 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     if (window.AstroLabCurveLoaderV2) window.AstroLabCurveLoaderV2.start(st, _reloadDays);
     try {
       await window.renderAavsoAndContributionWidget(st, true);
+      const gotPts = Array.isArray(STATE_CURVES.aavsoOtherPoints) ? STATE_CURVES.aavsoOtherPoints.length : 0;
+      if (gotPts === 0 && typeof showIosNotification === "function") {
+        showIosNotification(
+          t("errOfflineStarTitle") || "No internet connection",
+          (t("errOfflineAavsoCurve") || "Could not refresh AAVSO light curve for «{star}» (offline or server unavailable).").replace("{star}", st),
+          "",
+          "warn"
+        );
+      }
+    } catch (_) {
+      if (typeof showIosNotification === "function") {
+        showIosNotification(
+          t("errOfflineStarTitle") || "No internet connection",
+          (t("errOfflineAavsoCurve") || "Could not refresh AAVSO light curve for «{star}» (offline or server unavailable).").replace("{star}", st),
+          "",
+          "warn"
+        );
+      }
     } finally {
       if (window.AstroLabCurveLoaderV2) window.AstroLabCurveLoaderV2.stop();
     }
@@ -16053,9 +16079,17 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     }
   });
 
-  document.getElementById("btnHeaderSkyClarity")?.addEventListener("click", () => {
+  document.getElementById("btnHeaderSkyClarity")?.addEventListener("click", async () => {
     OBSERVER_GEO_STATE.skyClarityPct = null;
-    fetchCitySkyClarityAndMoonNow(true);
+    await fetchCitySkyClarityAndMoonNow(true);
+    if (OBSERVER_GEO_STATE.skyClarityPct === null && typeof showIosNotification === "function") {
+      showIosNotification(
+        t("errOfflineStarTitle") || "No internet connection",
+        t("errOfflineSkyClarity") || "Could not refresh Sky Clarity & Moon data (no internet connection).",
+        "",
+        "warn"
+      );
+    }
   });
 
   // Синхронизация фильтров Полушария (#v6HemiOnlySelect / #urgentHemiOnlySelect), Азимута и чекбоксов (Пункты 9, 10, 11)
@@ -21746,7 +21780,21 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
           );
         } else if (res && res.targetToolError) {
           showIosNotification(t("lblAavsoApiKeyTitle"), res.targetToolError, "targettool.aavso.org", "warn");
+        } else {
+          showIosNotification(
+            t("errOfflineStarTitle") || "No internet connection",
+            t("errOfflineRadarApi") || "Could not fetch AAVSO Target Radar updates (no internet connection or server unreachable).",
+            "targettool.aavso.org",
+            "warn"
+          );
         }
+      } catch (_) {
+        showIosNotification(
+          t("errOfflineStarTitle") || "No internet connection",
+          t("errOfflineRadarApi") || "Could not fetch AAVSO Target Radar updates (no internet connection or server unreachable).",
+          "targettool.aavso.org",
+          "warn"
+        );
       } finally {
         _btnRadarApi.textContent = prevTxt;
         window._syncRadarApiFetchButton();
@@ -25516,6 +25564,73 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
         errInvalidSeestarCsvFormat: "Ur yettwaf ula d yiwen izirig 'Non-reference star' deg ufaylu-a CSV.",
         lblConvertBlocked: "⛔ Yewḥel",
         lblFileCheckError: "⛔ Tuccḍa n ufaylu"
+      }
+    };
+    Object.keys(extra).forEach(lc => {
+      if (I18N[lc]) Object.assign(I18N[lc], extra[lc]);
+    });
+  })();
+
+
+  // [OFFLINE NOTIFICATIONS 4-BUTTONS I18N v1.5.0-alpha] 8-language offline alerts
+  (function patchOffline4ButtonsI18n() {
+    if (typeof I18N === "undefined") return;
+    const extra = {
+      en: {
+        errOfflineSkyClarity: "Could not refresh Sky Clarity & Moon data (no internet connection).",
+        errOfflineRadarApi: "Could not refresh AAVSO Target Radar via API (no internet connection or server unreachable).",
+        errOfflineAavsoCurve: "Could not load AAVSO AID light curve for «{star}» (no internet connection or server unavailable).",
+        offlineLocalFallbackTitle: "Offline mode (local catalog)",
+        offlineLocalFallbackMsg: "No internet — data for «{star}» was loaded from the built-in local catalog."
+      },
+      ru: {
+        errOfflineSkyClarity: "Не удалось обновить «Чистоту неба» и Луну — нет подключения к интернету.",
+        errOfflineRadarApi: "Не удалось обновить Радар целей AAVSO по API — нет интернета или сервер недоступен.",
+        errOfflineAavsoCurve: "Не удалось обновить кривую блеска AAVSO для «{star}» — нет интернета или сервер недоступен.",
+        offlineLocalFallbackTitle: "Офлайн-режим (локальный каталог)",
+        offlineLocalFallbackMsg: "Нет интернета — данные по звезде «{star}» подставлены из встроенного локального каталога."
+      },
+      es: {
+        errOfflineSkyClarity: "No se pudo actualizar la claridad del cielo ni la Luna (sin conexión a Internet).",
+        errOfflineRadarApi: "No se pudo actualizar el Radar AAVSO por API (sin conexión o servidor no disponible).",
+        errOfflineAavsoCurve: "No se pudo actualizar la curva de luz AAVSO para «{star}» (sin conexión a Internet).",
+        offlineLocalFallbackTitle: "Modo sin conexión (catálogo local)",
+        offlineLocalFallbackMsg: "Sin Internet: los datos de «{star}» se cargaron desde el catálogo local integrado."
+      },
+      de: {
+        errOfflineSkyClarity: "Himmelsklarheit und Monddaten konnten nicht aktualisiert werden (keine Internetverbindung).",
+        errOfflineRadarApi: "AAVSO-Zielradar konnte nicht per API aktualisiert werden (keine Internetverbindung).",
+        errOfflineAavsoCurve: "AAVSO-Lichtkurve für «{star}» konnte nicht geladen werden (keine Internetverbindung).",
+        offlineLocalFallbackTitle: "Offline-Modus (lokaler Katalog)",
+        offlineLocalFallbackMsg: "Kein Internet — Daten für «{star}» wurden aus dem integrierten lokalen Katalog geladen."
+      },
+      fr: {
+        errOfflineSkyClarity: "Impossible d'actualiser la clarté du ciel et la Lune (pas de connexion Internet).",
+        errOfflineRadarApi: "Impossible d'actualiser le Radar AAVSO via l'API (pas de connexion Internet).",
+        errOfflineAavsoCurve: "Impossible de charger la courbe AAVSO pour «{star}» (pas de connexion Internet).",
+        offlineLocalFallbackTitle: "Mode hors ligne (catalogue local)",
+        offlineLocalFallbackMsg: "Pas d'Internet — les données de «{star}» ont été chargées depuis le catalogue local."
+      },
+      zh: {
+        errOfflineSkyClarity: "无法刷新晴空度与月相数据（无网络连接）。",
+        errOfflineRadarApi: "无法通过 API 刷新 AAVSO 目标雷达（无网络连接或服务器不可用）。",
+        errOfflineAavsoCurve: "无法加载「{star}」的 AAVSO 光变曲线（无网络连接或服务器不可用）。",
+        offlineLocalFallbackTitle: "离线模式（本地星表）",
+        offlineLocalFallbackMsg: "无网络连接 — 已从内置本地星表加载「{star}」的数据。"
+      },
+      cs: {
+        errOfflineSkyClarity: "Nelze obnovit jasnost oblohy a Měsíc (bez připojení k internetu).",
+        errOfflineRadarApi: "Nelze obnovit Radar cílů AAVSO přes API (bez připojení k internetu).",
+        errOfflineAavsoCurve: "Nelze načíst světelnou křivku AAVSO pro «{star}» (bez připojení k internetu).",
+        offlineLocalFallbackTitle: "Offline režim (lokální katalog)",
+        offlineLocalFallbackMsg: "Bez internetu — data pro «{star}» byla načtena z vestavěného lokálního katalogu."
+      },
+      ber: {
+        errOfflineSkyClarity: "Ur izmir ara ad d-yesnifel tazdeg n igenni (ulac internet).",
+        errOfflineRadarApi: "Ur izmir ara ad d-yesnifel Radar AAVSO s API (ulac internet).",
+        errOfflineAavsoCurve: "Ur izmir ara ad d-yali agemmay AAVSO i «{star}» (ulac internet).",
+        offlineLocalFallbackTitle: "Askar war internet (akatalug adigan)",
+        offlineLocalFallbackMsg: "Ulac internet — isefka n «{star}» usan-d seg ukatalug adigan."
       }
     };
     Object.keys(extra).forEach(lc => {

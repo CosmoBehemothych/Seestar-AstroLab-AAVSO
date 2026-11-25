@@ -662,6 +662,28 @@ def test_14_csv_verification_aavso_guard_badges_and_3sigma_default():
     print("  [PASS] 14. Real-Chromium E2E: >3σ default OFF, AAVSO Extended guard, raw mismatch/match verification & accordion badges")
 
 
+
+
+def test_15_offline_notifications_all_four_buttons():
+    """
+    [RU] Обязательный автотест офлайн-уведомлений для всех 4 кнопок из живого лога Windows:
+         #btnHeaderSkyClarity, #btnRadarFetchTargetToolApi, #btnReloadAavsoCurve и #btnFetchAll (локальный фолбэк).
+    """
+    bridge_path = os.path.join(BACKEND_ROOT, "pwa_mobile_and_electron", "astrolab_engine_bridge.js")
+    js_src = open(bridge_path, encoding="utf-8").read()
+    for key in (
+        "errOfflineSkyClarity",
+        "errOfflineRadarApi",
+        "errOfflineAavsoCurve",
+        "offlineLocalFallbackTitle",
+        "offlineLocalFallbackMsg",
+    ):
+        assert key in js_src, f"Missing offline notification key/usage: {key}"
+    assert "if (!simbadOk && !vspOk && (localMatched || (finalCatRec && finalCatRec.matched)))" in js_src
+    assert 'if (OBSERVER_GEO_STATE.skyClarityPct === null && typeof showIosNotification === "function")' in js_src
+    print("  [PASS] 15. Offline notifications verified for Sky Clarity, Target Radar API, AAVSO Curve reload & local catalog fallback")
+
+
 if __name__ == "__main__":
     print("=== RUNNING AUTOTEST #8: CONVERTER EDGE CASES, HYGIENE & RPC SECURITY ===")
     test_1_header_based_csv_and_unknown_schema()
@@ -676,4 +698,5 @@ if __name__ == "__main__":
     test_12_diagnostic_logging_opt_in_clear_and_custom_dir()
     test_13_offline_catalog_guard_and_network_timeouts()
     test_14_csv_verification_aavso_guard_badges_and_3sigma_default()
+    test_15_offline_notifications_all_four_buttons()
     print("=== CONVERTER EDGE CASES, HYGIENE & RPC SECURITY AUTOTEST: ALL PASS ===")

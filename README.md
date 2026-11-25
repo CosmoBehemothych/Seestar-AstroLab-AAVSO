@@ -171,3 +171,20 @@ Available in **8 languages**: English, Russian, Spanish, German, French, Chinese
 * **Защита от выбросов и пересвета:** детектор выбросов использует **скользящую медиану** (окно 9 кадров) и **отключён по умолчанию при экспорте** (только подсветка и удаление по подтверждению), чтобы не срезать минимумы затменных и вспышки. Насыщение проверяется по **5-му процентилю ярчайших точек** по формуле `base_10s(model) + 2.5·log10(EXP / 10)`.
 * **Ограничения:** для научной фотометрии AAVSO встроенный LP-фильтр Seestar должен быть **выключен** (в текущем 19-колоночном CSV ZWO не выгружает состояние LP-фильтра и число кадров стэка; при их появлении в новых прошивках парсер по заголовкам автоматически добавит их в `NOTES`). Для задач с индивидуальным подбором апертур, контрольной звездой (`KNAME`/`KMAG`) и цветовыми трансформациями используйте **AstroImageJ** или **VPhot**.
 * **Лицензия `jackpot_track.mp3`:** аудиофайл создан лично автором репозитория (`CosmoBehemothych`) с помощью нейросети и распространяется под лицензией **MIT** без прав третьих лиц.
+
+## 📚 Scientific References & Data Credits
+
+### Algorithms & Astronomical Methods
+* **Periodogram & False Alarm Probability:** Lomb, N. R. (1976), *Ap&SS*, 39, 447; Scargle, J. D. (1982), *ApJ*, 263, 835; Baluev, R. V. (2008), *MNRAS*, 385, 1279; VanderPlas, J. T. (2018), *ApJS*, 236, 16 ([arXiv:1703.09824](https://arxiv.org/abs/1703.09824)).
+* **Airmass Calculation (`AMASS`):** Pickering, K. A. (2002), *DIO*, 12, 20; Kasten, F. & Young, A. T. (1989), *Applied Optics*, 28, 4735.
+* **Astronomical Ephemeris & Coordinates:** Meeus, J. (1998), *Astronomical Algorithms* (2nd ed., Willmann-Bell).
+* **Robust Outlier Statistics (`3σ MAD`):** Leys, C. et al. (2013), *Journal of Experimental Social Psychology*, 49, 764 (`σ = 1.4826 × MAD`).
+
+### Data Sources & Services (Acknowledgements)
+* **AAVSO (American Association of Variable Star Observers):** Variable Star Index ([VSX](https://www.aavso.org/vsx/)), Variable Star Plotter ([VSP](https://apps.aavso.org/vsp/)), AAVSO International Database ([AID](https://www.aavso.org/aavso-international-database-aid)), and AAVSO Target Tool API.
+* **CDS, Strasbourg, France:** This application makes use of the [SIMBAD](https://simbad.cds.unistra.fr/simbad/) database and [VizieR](https://vizier.cds.unistra.fr/) catalog access tool, operated at CDS, Strasbourg.
+* **Weather & Lunar Ephemeris:** [Open-Meteo](https://open-meteo.com/) Forecast & Geocoding API; [USNO Astronomical Applications](https://aa.usno.navy.mil/) API.
+
+### Научные ссылки и благодарности (RU)
+* **Алгоритмы:** периодограмма Ломба–Скаргла (Lomb 1976; Scargle 1982; VanderPlas 2018) и оценка значимости Baluev FAP (Baluev 2008); воздушная масса по Pickering (2002) и Kasten & Young (1989); астрономические эфемериды по Ж. Меёсу (*Astronomical Algorithms*); робастная статистика скользящего `3σ MAD` (`σ = 1.4826 × MAD`).
+* **Источники данных:** [AAVSO](https://www.aavso.org/) (`VSX`, `VSP`, `AID`, `Target Tool API`), базы данных [CDS SIMBAD](https://simbad.cds.unistra.fr/simbad/) и [VizieR](https://vizier.cds.unistra.fr/) (Страсбург), погодный и геокодинговый сервис [Open-Meteo](https://open-meteo.com/), а также [USNO Astronomical Applications](https://aa.usno.navy.mil/).
