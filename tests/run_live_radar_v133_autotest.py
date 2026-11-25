@@ -6,7 +6,7 @@ Mandatory v1.5.0-alpha Regression Autotest:
      rate-limit header, 401/429 error handling)
   3. Frontend Settings API Key UI (#settingsAavsoApiKeyInput, #btnSaveAavsoApiKey, #btnClearAavsoApiKey,
      #btnOpenApiKeyGuideModal) + localized #aavsoApiKeyGuideModal (RU & EN)
-  4. Dynamic Target Radar catalog merge beyond 246 baseline + dynamic header/filter counters + LIVE badges
+  4. Dynamic Target Radar catalog merge beyond 1000 baseline + dynamic header/filter counters + LIVE badges
   5. v1.5.0-alpha version & Trust Infrastructure consistency (Zenodo Concept DOI, no Portable/SignPath)
 """
 
@@ -199,7 +199,7 @@ def test_frontend_settings_modal_and_dynamic_radar():
       window.closeAavsoApiKeyGuideModal();
       const closedOk = !modal.classList.contains("open");
 
-      // Test dynamic merge into Target Radar beyond 246 baseline
+      // Test dynamic merge into Target Radar beyond 1000 baseline
       const headerEl = document.getElementById("v6RadarHeaderTitle");
       const filterAllEl = document.getElementById("radarFilterAllBtn");
       const listEl = document.getElementById("v6RadarListContainer");
@@ -280,11 +280,11 @@ def test_frontend_settings_modal_and_dynamic_radar():
     assert res["hasApiLink"] is True, "Guide modal missing targettool.aavso.org/TargetTool/api link"
     assert res["closedOk"] is True, "Guide modal failed to close"
     assert res["mergeRes"]["added"] == 2, f"Expected 2 added stars: {res['mergeRes']}"
-    assert res["mergeRes"]["total"] >= 248, f"Expected total >= 248: {res['mergeRes']}"
+    assert res["mergeRes"]["total"] >= 1002, f"Expected total >= 1002: {res['mergeRes']}"
     assert str(res["mergeRes"]["total"]) in res["afterHeader"], f"Header not updated: {res['afterHeader']}"
     assert str(res["mergeRes"]["total"]) in res["afterAllBtn"], f"Filter All btn not updated: {res['afterAllBtn']}"
     assert res["hasLiveBadge"] is True, "LIVE badge not rendered in Radar cards"
-    assert "(246)" in res["resetHeader"], f"Reset did not restore 246 baseline: {res['resetHeader']}"
+    assert "(1000)" in res["resetHeader"], f"Reset did not restore 1000 baseline: {res['resetHeader']}"
     assert res["hasS30PlusTab"] is True and "2.66" in res["s30PlusSpecs"], f"S30PLUS UI check failed: {res}"
     print(f"  PASS: UI modal (RU/EN), dynamic merge ({res['beforeHeader']} -> {res['afterHeader']} -> {res['resetHeader']}), LIVE badge")
 
