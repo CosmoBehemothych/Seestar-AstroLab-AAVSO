@@ -157,6 +157,9 @@ def parse_seestar_csv_header_and_rows(
         s = raw_line.strip()
         if not s or s.startswith("#"):
             continue
+        # [FIRMWARE GUARD] Stop parsing if Seestar firmware appends a refData: reference-star footer block
+        if s.lower().startswith("refdata:"):
+            break
         cols = split_fn(s)
         if not cols:
             continue

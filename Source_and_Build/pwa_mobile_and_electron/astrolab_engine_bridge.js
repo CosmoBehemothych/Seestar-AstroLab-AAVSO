@@ -10784,6 +10784,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     for (let i = 0; i < lines.length; i++) {
       if (i === schema.headerLineIdx || excludedSet.has(i)) continue;
       const raw = String(lines[i] || "").trim();
+      if (raw.toLowerCase().startsWith("refdata:")) break;
       if (!raw || raw.startsWith("#")) continue;
       const c = splitSeestarCsvRow(raw);
       const rowType = String(c[cm.type] || "").trim().toLowerCase();
@@ -22152,19 +22153,47 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       const expSec = Number(opts.expSec || 0);
       const scintillationWarn = expSec > 0 && expSec < 10;
 
-      // Budding & Demircan: O-C (Observed minus Calculated)
+      // Meeus (1998): Geocentric JD -> Heliocentric JD (HJD) light-time correction (±8.3 min max)
+      function computeHeliocentricJd(jd, raDeg, decDeg) {
+        if (!Number.isFinite(jd) || !Number.isFinite(raDeg) || !Number.isFinite(decDeg)) return jd;
+        const d = jd - 2451545.0;
+        const deg2rad = Math.PI / 180.0;
+        const g = (357.5291 + 0.98560028 * d) * deg2rad;
+        const q = (280.459 + 0.98564736 * d) % 360;
+        const L = (q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * deg2rad;
+        const R = 1.00014 - 0.01671 * Math.cos(g) - 0.00014 * Math.cos(2 * g);
+        const eps = (23.4393 - 0.00000036 * d) * deg2rad;
+        const sinDecSun = Math.sin(eps) * Math.sin(L);
+        const decSun = Math.asin(sinDecSun);
+        const raSun = Math.atan2(Math.cos(eps) * Math.sin(L), Math.cos(L));
+        const ra = raDeg * deg2rad;
+        const dec = decDeg * deg2rad;
+        const cosTheta = Math.sin(dec) * Math.sin(decSun) + Math.cos(dec) * Math.cos(decSun) * Math.cos(ra - raSun);
+        // Light-time 1 AU = 0.0057755183 days (~499.005 s)
+        return jd - 0.0057755183 * R * cosTheta;
+      }
+
+      // Budding & Demircan: O-C (Observed minus Calculated, with JD -> HJD correction when RA/Dec known)
       let oMinusCDays = null;
       let oMinusCMins = null;
+      let oMinusCHeliocentric = false;
       const catP = Number(opts.catalogPeriodDays || 0);
       const catE = Number(opts.catalogEpochJd || 0);
       const obsT = Number(opts.observedExtremumJd || 0);
+      const raDegOpt = Number(opts.raDeg);
+      const decDegOpt = Number(opts.decDeg);
       if (catP > 0 && catE > 2400000 && obsT > 2400000) {
-        const E = Math.round((obsT - catE) / catP);
-        oMinusCDays = obsT - (catE + E * catP);
+        let obsAligned = obsT;
+        if (Number.isFinite(raDegOpt) && Number.isFinite(decDegOpt)) {
+          obsAligned = computeHeliocentricJd(obsT, raDegOpt, decDegOpt);
+          oMinusCHeliocentric = true;
+        }
+        const E = Math.round((obsAligned - catE) / catP);
+        oMinusCDays = obsAligned - (catE + E * catP);
         oMinusCMins = oMinusCDays * 1440.0;
       }
 
-      return { medianSnr, snrTier, bouguerCorr, bouguerWarn, scintillationWarn, oMinusCDays, oMinusCMins };
+      return { medianSnr, snrTier, bouguerCorr, bouguerWarn, scintillationWarn, oMinusCDays, oMinusCMins, oMinusCHeliocentric };
     }
 
     // Unified Quality Gate for Lab-Only sessions before allowing AAVSO export/reminders
@@ -22512,11 +22541,20 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     const catEpochJd = vsxItem && Number.isFinite(parseFloat(vsxItem.epochJd)) ? parseFloat(vsxItem.epochJd) : 0;
     const mult = window._fpPeriodMultiplier === 2 ? 2 : 1;
 
+    const starRaDeg = (vsxItem && Number.isFinite(parseFloat(vsxItem.ra)))
+      ? parseFloat(vsxItem.ra)
+      : ((window.STATE && Number.isFinite(Number(window.STATE.catalogRa))) ? Number(window.STATE.catalogRa) : NaN);
+    const starDecDeg = (vsxItem && Number.isFinite(parseFloat(vsxItem.dec)))
+      ? parseFloat(vsxItem.dec)
+      : ((window.STATE && Number.isFinite(Number(window.STATE.catalogDec))) ? Number(window.STATE.catalogDec) : NaN);
+
     const res = AstroLabLightCurveLab.analyze(points, {
       band, binMinutes, sigmaClip,
       periodMultiplier: mult,
       catalogPeriodDays: catPeriodDays,
-      catalogEpochJd: catEpochJd
+      catalogEpochJd: catEpochJd,
+      raDeg: starRaDeg,
+      decDeg: starDecDeg
     });
     if (res.ls && res.ls.bestPeriodDays > 0) {
       window._fpDetectedPeriodDays = res.ls.bestPeriodDays;
@@ -22545,7 +22583,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         ? `<span class="lc-metric-pill">📶 SNR ~${Math.round(m.medianSnr)}</span>`
         : "";
       const ocPill = (typeof m.oMinusCMins === "number" && Number.isFinite(m.oMinusCMins))
-        ? `<span class="lc-metric-pill">🧭 O−C: ${m.oMinusCMins >= 0 ? "+" : ""}${m.oMinusCMins.toFixed(1)} min</span>`
+        ? `<span class="lc-metric-pill">🧭 O−C${m.oMinusCHeliocentric ? " (HJD)" : ""}: ${m.oMinusCMins >= 0 ? "+" : ""}${m.oMinusCMins.toFixed(1)} min</span>`
         : "";
       const bouguerPill = m.bouguerWarn
         ? `<span class="lc-metric-pill" style="border-color:rgba(245,158,11,0.5);">🌫️ ${isRu ? "Дрейф по M(z) (Бугер)" : "Airmass drift r=" + m.bouguerCorr.toFixed(2)}</span>`
