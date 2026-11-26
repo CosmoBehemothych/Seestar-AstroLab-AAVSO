@@ -1011,6 +1011,8 @@ class PhotometryBackendEngine:
         5-й процентиль ярчайших точек (максимум блеска), медиану, выдержку (EXP, сек),
         число опорных звёзд (RefStars) и флаги рисков с учётом модели телескопа и формулы 2.5*log10(EXP/10)."""
         mags: List[float] = []
+        merrs: List[float] = []
+        snrs: List[float] = []
         ref_stars_list: List[int] = []
         exp_secs: List[float] = []
         detected_delim = cls.detect_csv_delimiter(csv_text)
@@ -1039,6 +1041,18 @@ class PhotometryBackendEngine:
                     mv = float(get_col(cols, col_map, "mag").replace(",", "."))
                     if math.isfinite(mv):
                         mags.append(mv)
+                except (ValueError, TypeError):
+                    pass
+                try:
+                    me = float(get_col(cols, col_map, "merr").replace(",", "."))
+                    if math.isfinite(me) and me > 0:
+                        merrs.append(me)
+                except (ValueError, TypeError):
+                    pass
+                try:
+                    sv = float(get_col(cols, col_map, "snr").replace(",", "."))
+                    if math.isfinite(sv) and sv > 0:
+                        snrs.append(sv)
                 except (ValueError, TypeError):
                     pass
                 try:
@@ -1077,12 +1091,27 @@ class PhotometryBackendEngine:
         saturation_risk = bool(eval_mag is not None and eval_mag < sat_limit)
         small_ensemble_risk = bool((med_ref is not None and med_ref < 3) or (min_ref is not None and min_ref < 3))
 
+        med_merr = _median(merrs)
+        med_snr = _median(snrs)
+        photon_floor = (1.0857 / med_snr) if (med_snr is not None and med_snr > 0) else None
+        zp_ratio = (med_merr / photon_floor) if (med_merr is not None and photon_floor and photon_floor > 0) else None
+        zp_inflation_risk = bool(
+            med_snr is not None and med_snr >= 50.0 and
+            med_merr is not None and med_merr >= 0.08 and
+            zp_ratio is not None and zp_ratio >= 5.0
+        )
+
         return {
             "medianMag": round(med_mag, 4) if med_mag is not None else None,
             "brightestP05Mag": round(p05_mag, 4) if p05_mag is not None else None,
             "medianRefStars": int(round(med_ref)) if med_ref is not None else None,
             "minRefStars": int(min_ref) if min_ref is not None else None,
             "medianExpSec": round(med_exp, 1) if med_exp is not None else None,
+            "medianMerr": round(med_merr, 4) if med_merr is not None else None,
+            "medianSnr": round(med_snr, 1) if med_snr is not None else None,
+            "photonNoiseFloor": round(photon_floor, 4) if photon_floor is not None else None,
+            "zpInflationRatio": round(zp_ratio, 1) if zp_ratio is not None else None,
+            "zpInflationRisk": zp_inflation_risk,
             "saturationThresholdMag": sat_limit,
             "saturationRisk": saturation_risk,
             "smallEnsembleRisk": small_ensemble_risk,

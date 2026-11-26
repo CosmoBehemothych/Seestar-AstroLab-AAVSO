@@ -76,7 +76,7 @@ LEGACY_19COL_MAP: Dict[str, int] = {
 SCOPE_SATURATION_BASE_10S: Dict[str, float] = {
     "S30": 6.4,
     "S30PLUS": 6.2,
-    "S30PRO": 6.0,
+    "S30PRO": 7.7,
     "S50": 7.0,
     "S50PRO": 6.8,
 }
@@ -316,4 +316,167 @@ def validate_frame_timing(
         "expMismatch": exp_mismatch,
         "actualSec": round(actual_sec, 2),
         "jdEndEffective": eff_end,
+    }
+
+
+def is_per_frame_seestar_csv(csv_text: str, split_row_fn=None) -> bool:
+    """Returns True if the CSV contains per-frame Seestar 'reference star' calibration rows."""
+    if not csv_text:
+        return False
+    low = csv_text.lower()
+    return "reference star" in low and "non-reference star" in low
+
+
+def recalibrate_per_frame_seestar_csvs(
+    csv_texts: Sequence[str],
+    target_name_hint: str = "",
+) -> Dict[str, Any]:
+    """
+    [RU] Пакетный пересчёт покадровых CSV Seestar (Magnitude_..._HHMMSS.csv):
+         1. Извлекает строки 'reference star' (с Reference magnitude и Mag(obs)).
+         2. Находит линейный «хвост» слабых опорных звёзд и отбрасывает пересвеченные
+            (где Mag(obs) - Reference magnitude > tail_median + 0.12 mag).
+         3. Вычисляет честный сдвиг нуль-пункта delta_zp и пересчитывает Mag(obs) и Mag(err)
+            целевой звезды, возвращая единый очищенный CSV.
+    [EN] Batch-recalibrates per-frame Seestar CSVs by rejecting saturated bright reference stars
+         and shifting target Mag(obs) to the linear unsaturated reference ensemble.
+    """
+    import csv as _csv
+    import io as _io
+
+    clean_rows: List[Tuple[float, List[str]]] = []
+    zp_shifts: List[float] = []
+    sat_counts: List[int] = []
+    tot_refs: List[int] = []
+    detected_target = str(target_name_hint or "").strip()
+    header_out = [
+        "Name", "Type", "RA", "DEC", "Valid Reference Stars", "Reference magnitude",
+        "Mag(obs)", "Mag(err)", "X Axis", "Y Axis", "EXP", "EXP start", "EXP start(JD)",
+        "EXP start(MJD)", "EXP end", "EXP end(JD)", "EXP end(MJD)", "Is Variable", "SNR",
+    ]
+
+    hint_low = detected_target.lower()
+    for txt in csv_texts:
+        if not txt or not txt.strip():
+            continue
+        delim = ";" if txt.splitlines()[0].count(";") > txt.splitlines()[0].count(",") else ","
+        reader = _csv.DictReader(_io.StringIO(txt), delimiter=delim)
+        if not reader.fieldnames:
+            continue
+        norm_fields = {fn.strip().lower(): fn for fn in reader.fieldnames if fn}
+        def _gf(row: Dict[str, str], *cands: str) -> str:
+            for c in cands:
+                k = norm_fields.get(c)
+                if k and row.get(k) is not None:
+                    return str(row.get(k)).strip()
+            return ""
+
+        ref_pairs: List[Tuple[float, float]] = []
+        target_row: Optional[Dict[str, str]] = None
+        fallback_var_row: Optional[Dict[str, str]] = None
+
+        for row in reader:
+            rtype = _gf(row, "type", "star type", "role").lower()
+            rname = _gf(row, "name", "star", "starid", "object", "target")
+            if rtype == "reference star":
+                try:
+                    rmag = float(_gf(row, "reference magnitude", "ref mag", "ref_mag").replace(",", "."))
+                    omag = float(_gf(row, "mag(obs)", "mag", "magnitude", "obs mag").replace(",", "."))
+                    if math.isfinite(rmag) and math.isfinite(omag):
+                        ref_pairs.append((rmag, omag))
+                except ValueError:
+                    pass
+            elif rtype == "non-reference star" or rname:
+                if hint_low and rname.lower() == hint_low:
+                    target_row = row
+                elif rname and target_row is None:
+                    target_row = row
+                elif _gf(row, "is variable", "variable", "is_variable").lower() == "true" and fallback_var_row is None:
+                    fallback_var_row = row
+
+        if target_row is None:
+            target_row = fallback_var_row
+        if target_row is None:
+            continue
+
+        tname = _gf(target_row, "name", "star", "starid", "object", "target") or detected_target or "TARGET"
+        if not detected_target and tname != "TARGET":
+            detected_target = tname
+
+        try:
+            t_mag = float(_gf(target_row, "mag(obs)", "mag", "magnitude", "obs mag").replace(",", "."))
+            t_merr = float(_gf(target_row, "mag(err)", "merr", "mag err", "error", "mag_err").replace(",", "."))
+            t_jd_s = float(_gf(target_row, "exp start(jd)", "jd start", "jd_start", "jd").replace(",", "."))
+        except ValueError:
+            continue
+
+        t_snr_s = _gf(target_row, "snr", "s/n", "signal_to_noise").replace(",", ".")
+        t_snr = float(t_snr_s) if t_snr_s else 0.0
+
+        delta_zp = 0.0
+        new_merr = t_merr
+        n_lin = len(ref_pairs)
+        n_sat = 0
+        if len(ref_pairs) >= 3:
+            # Faintest reference stars are least likely to saturate
+            by_faint = sorted(ref_pairs, key=lambda p: p[0], reverse=True)
+            tail = by_faint[:max(3, min(6, len(by_faint) // 2 + 1))]
+            tail_diffs = [om - rm for rm, om in tail]
+            tail_med = _median(tail_diffs)
+            linear = [(rm, om, om - rm) for rm, om in ref_pairs if (om - rm) - tail_med <= 0.12]
+            if len(linear) < 2:
+                linear = [(rm, om, om - rm) for rm, om in tail]
+            n_lin = len(linear)
+            n_sat = len(ref_pairs) - n_lin
+            lin_diffs = [x[2] for x in linear]
+            delta_zp = _median(lin_diffs)
+            mad = _median([abs(d - delta_zp) for d in lin_diffs]) * 1.4826
+            zp_err = max(0.005, mad / math.sqrt(max(1, n_lin)))
+            phot_err = (1.0857 / t_snr) if t_snr > 0 else 0.01
+            new_merr = min(t_merr, math.sqrt(phot_err * phot_err + zp_err * zp_err)) if t_snr > 0 else t_merr
+            zp_shifts.append(delta_zp)
+            sat_counts.append(n_sat)
+            tot_refs.append(len(ref_pairs))
+
+        mag_clean = t_mag - delta_zp
+        out_row = [
+            tname,
+            "Non-reference star",
+            _gf(target_row, "ra", "ra(deg)", "ra_deg", "ra (j2000)"),
+            _gf(target_row, "dec", "dec(deg)", "dec_deg", "dec (j2000)"),
+            str(n_lin),
+            "/",
+            f"{mag_clean:.6f}",
+            f"{new_merr:.6f}",
+            _gf(target_row, "x axis", "x", "x_pos", "x(px)"),
+            _gf(target_row, "y axis", "y", "y_pos", "y(px)"),
+            _gf(target_row, "exp", "exposure", "exptime", "exp(s)") or "10.0s",
+            _gf(target_row, "exp start", "utc", "start time", "date-obs"),
+            f"{t_jd_s:.6f}",
+            _gf(target_row, "exp start(mjd)", "mjd start", "mjd_start", "mjd"),
+            _gf(target_row, "exp end", "end time"),
+            _gf(target_row, "exp end(jd)", "jd end", "jd_end"),
+            _gf(target_row, "exp end(mjd)", "mjd end", "mjd_end"),
+            _gf(target_row, "is variable", "variable", "is_variable") or "true",
+            f"{t_snr:.6f}" if t_snr > 0 else _gf(target_row, "snr", "s/n", "signal_to_noise"),
+        ]
+        clean_rows.append((t_jd_s, out_row))
+
+    clean_rows.sort(key=lambda x: x[0])
+    buf = _io.StringIO()
+    w = _csv.writer(buf, lineterminator="\n")
+    w.writerow(header_out)
+    for _, r in clean_rows:
+        w.writerow(r)
+
+    med_shift = _median(zp_shifts) if zp_shifts else 0.0
+    avg_sat = (sum(sat_counts) / len(sat_counts)) if sat_counts else 0.0
+    avg_tot = (sum(tot_refs) / len(tot_refs)) if tot_refs else 0.0
+    return {
+        "csvText": buf.getvalue(),
+        "framesProcessed": len(clean_rows),
+        "targetName": detected_target,
+        "medianZpShiftMag": round(med_shift, 4),
+        "avgSaturatedRefs": round(avg_sat, 1),
+        "avgTotalRefs": round(avg_tot, 1),
     }

@@ -173,10 +173,10 @@ def test_5_saturation_p05_and_model_exposure_formula():
     assert m_s50["saturationThresholdMag"] == 7.0
     assert m_s50["saturationRisk"] is True, f"p05 should catch bright maximum saturation: {m_s50}"
 
-    # Model-aware: S30PRO base_10s = 6.0m -> p05 ~6.59m should NOT saturate S30PRO at 10s
+    # Model-aware: S30PRO empirically calibrated base_10s = 7.7m -> p05 ~6.59m saturates S30PRO at 10s
     m_s30p = PhotometryBackendEngine.compute_calibration_guard_metrics(csv_text, scope_model="S30PRO")
-    assert m_s30p["saturationThresholdMag"] == 6.0
-    assert m_s30p["saturationRisk"] is False
+    assert m_s30p["saturationThresholdMag"] == 7.7
+    assert m_s30p["saturationRisk"] is True
 
     # Exposure scaling: S50 at 30s -> 7.0 + 2.5*log10(3) = 8.19m
     assert compute_saturation_threshold("S50", 30.0) == 8.19
@@ -682,6 +682,35 @@ def test_15_offline_notifications_all_four_buttons():
     assert "if (!simbadOk && !vspOk && (localMatched || (finalCatRec && finalCatRec.matched)))" in js_src
     assert 'if (OBSERVER_GEO_STATE.skyClarityPct === null && typeof showIosNotification === "function")' in js_src
     print("  [PASS] 15. Offline notifications verified for Sky Clarity, Target Radar API, AAVSO Curve reload & local catalog fallback")
+
+
+
+
+def test_per_frame_recalibration_and_zp_inflation():
+    from csv_schema import recalibrate_per_frame_seestar_csvs, is_per_frame_seestar_csv
+    per_frame_csv = (
+        "Name,Type,RA,DEC,Valid Reference Stars,Reference magnitude,Mag(obs),Mag(err),X Axis,Y Axis,EXP,EXP start,EXP start(JD),EXP start(MJD),EXP end,EXP end(JD),EXP end(MJD),Is Variable,SNR\n"
+        ",reference star,146.63,57.12,15,4.028,6.271,0.181,564,905,20.0s,2026.11.16 03:31:54,2461360.522160,61360.022160,2026.11.16 03:32:14,2461360.522395,61360.022395,false,389.0\n"
+        ",reference star,145.62,56.18,15,8.615,8.195,0.181,1102,1834,20.0s,2026.11.16 03:31:54,2461360.522160,61360.022160,2026.11.16 03:32:14,2461360.522395,61360.022395,false,79.3\n"
+        ",reference star,143.96,54.69,15,8.629,8.209,0.181,2035,3290,20.0s,2026.11.16 03:31:54,2461360.522160,61360.022160,2026.11.16 03:32:14,2461360.522395,61360.022395,false,100.0\n"
+        ",reference star,145.67,55.66,15,8.645,8.225,0.181,1070,2347,20.0s,2026.11.16 03:31:54,2461360.522160,61360.022160,2026.11.16 03:32:14,2461360.522395,61360.022395,false,107.7\n"
+        "W Ursae Majoris,Non-reference star,145.943,55.954,15,/,7.580,0.181,926,2063,20.0s,2026.11.16 03:31:54,2461360.522160,61360.022160,2026.11.16 03:32:14,2461360.522395,61360.022395,true,157.0\n"
+    )
+    assert is_per_frame_seestar_csv(per_frame_csv) is True
+    rec = recalibrate_per_frame_seestar_csvs([per_frame_csv], target_name_hint="W Ursae Majoris")
+    assert rec["framesProcessed"] == 1
+    assert abs(rec["medianZpShiftMag"] - (-0.42)) < 0.02, f"Unexpected shift: {rec}"
+    assert rec["avgSaturatedRefs"] == 1.0
+    assert "8.000" in rec["csvText"], f"Expected recalibrated mag ~8.000 in {rec['csvText']}"
+
+    summary_csv = (
+        "Name,Type,RA,DEC,Valid Reference Stars,Reference magnitude,Mag(obs),Mag(err),X Axis,Y Axis,EXP,EXP start,EXP start(JD),EXP start(MJD),EXP end,EXP end(JD),EXP end(MJD),Is Variable,SNR\n"
+        "W Ursae Majoris,Non-reference star,145.943,55.954,15,/,7.58,0.183,926,2063,20.0s,2026.11.16 03:31:54,2461360.522160,61360.022160,2026.11.16 03:32:14,2461360.522395,61360.022395,true,180.0\n"
+    )
+    cg = PhotometryBackendEngine.compute_calibration_guard_metrics(summary_csv, scope_model="S30PRO")
+    assert cg["zpInflationRisk"] is True, f"Expected zpInflationRisk=True: {cg}"
+    assert cg["zpInflationRatio"] > 20.0
+    print("PER_FRAME_RECALIBRATION_AND_ZP_INFLATION_PASS")
 
 
 if __name__ == "__main__":

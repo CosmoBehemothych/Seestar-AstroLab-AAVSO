@@ -891,7 +891,8 @@
       btnDownloadDesktopShortcut: "💻 Скачать ярлык запуска для ПК со значком",
       submitModalTitle: "🚀 Отправка файла в AAVSO WebObs (?preview=true)",
       secFileStart: "Выбор и проверка файла фотометрии",
-      btnSelectCsvFile: "📂 Выбрать CSV-файл Seestar",
+      btnSelectCsvFile: "📂 Выбрать CSV-файл(ы) Seestar",
+    btnSelectPerFrameFolder: "📁 Папка покадровых CSV",
       noFileSelected: "Файл еще не выбран (нажмите кнопку выше или «Демо CSV»)",
       lblVerifyDisk: "Проверка готового файла AAVSO:",
       btnVerifyDisk: "🔍 Проверить сконвертированный файл с диска",
@@ -1241,7 +1242,8 @@
       btnDownloadDesktopShortcut: "💻 Download PC Desktop Shortcut with Icon",
       submitModalTitle: "🚀 Submit File to AAVSO WebObs (?preview=true)",
       secFileStart: "Select & Verify Photometry File",
-      btnSelectCsvFile: "📂 Choose Seestar CSV File",
+      btnSelectCsvFile: "📂 Choose Seestar CSV File(s)",
+    btnSelectPerFrameFolder: "📁 Per-Frame CSV Folder",
       noFileSelected: "No file selected yet (click the button above or 'Demo CSV')",
       lblVerifyDisk: "Verify Converted AAVSO File:",
       btnVerifyDisk: "🔍 Verify Converted File from Disk",
@@ -1440,7 +1442,8 @@
       secUrgentStars: "🔥 Estrellas Prioritarias (AAVSO Alert Notices)",
       btnCloseModal: "Cerrar",
       secFileStart: "1. Selección y verificación de archivo",
-      btnSelectCsvFile: "📂 Seleccionar CSV Seestar",
+      btnSelectCsvFile: "📂 Seleccionar CSV(s) Seestar",
+    btnSelectPerFrameFolder: "📁 Carpeta CSV por cuadro",
       noFileSelected: "Ningún archivo seleccionado (pulse arriba o 'CSV Demo')",
       lblVerifyDisk: "Verificar archivo AAVSO:",
       btnVerifyDisk: "🔍 Verificar archivo convertido del disco",
@@ -1764,7 +1767,8 @@
       secUrgentStars: "🔥 Dringende Zielsterne (AAVSO Alert Notices)",
       btnCloseModal: "Schließen",
       secFileStart: "Photometriedatei wählen & prüfen",
-      btnSelectCsvFile: "📂 Seestar-CSV auswählen",
+      btnSelectCsvFile: "📂 Seestar-CSV(s) auswählen",
+    btnSelectPerFrameFolder: "📁 Einzelbild-CSV-Ordner",
       noFileSelected: "Noch keine Datei gewählt (oben klicken oder 'Demo-CSV')",
       lblVerifyDisk: "Konvertierte AAVSO-Datei prüfen:",
       btnVerifyDisk: "🔍 Konvertierte Datei von Festplatte prüfen",
@@ -2077,7 +2081,8 @@
       secUrgentStars: "🔥 Étoiles Prioritaires (AAVSO Alert Notices)",
       btnCloseModal: "Fermer",
       secFileStart: "Sélection et vérification du fichier",
-      btnSelectCsvFile: "📂 Choisir un fichier CSV Seestar",
+      btnSelectCsvFile: "📂 Choisir fichier(s) CSV Seestar",
+    btnSelectPerFrameFolder: "📁 Dossier CSV par image",
       noFileSelected: "Aucun fichier choisi (cliquez ci-dessus ou sur 'CSV Démo')",
       lblVerifyDisk: "Vérifier un fichier AAVSO :",
       btnVerifyDisk: "🔍 Vérifier un fichier converti du disque",
@@ -2389,7 +2394,8 @@
       secUrgentStars: "🔥 紧急优先观测恒星 (AAVSO Alert Notices)",
       btnCloseModal: "关闭",
       secFileStart: "1. 选择并校验测光文件",
-      btnSelectCsvFile: "📂 选择 Seestar CSV 文件",
+      btnSelectCsvFile: "📂 选择 Seestar CSV 文件（可多选）",
+    btnSelectPerFrameFolder: "📁 逐帧 CSV 文件夹",
       noFileSelected: "尚未选择文件（请点击上方按钮或“演示数据”）",
       lblVerifyDisk: "校验已转换的 AAVSO 文件：",
       btnVerifyDisk: "🔍 校验磁盘上的已转换文件",
@@ -6024,8 +6030,190 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   const appShell = document.getElementById("appShell");
   // [Mobile view switcher removed per user request]
 
+  window.recalibrateSeestarPerFrameCsvFiles = function(filesWithText, targetHint = "") {
+    const _med = (arr) => {
+      if (!arr.length) return 0;
+      const s = [...arr].sort((a, b) => a - b);
+      const n = s.length;
+      return n % 2 ? s[n >> 1] : 0.5 * (s[(n >> 1) - 1] + s[n >> 1]);
+    };
+    const headerOut = ["Name","Type","RA","DEC","Valid Reference Stars","Reference magnitude","Mag(obs)","Mag(err)","X Axis","Y Axis","EXP","EXP start","EXP start(JD)","EXP start(MJD)","EXP end","EXP end(JD)","EXP end(MJD)","Is Variable","SNR"];
+    const cleanRows = [];
+    const zpShifts = [];
+    const satCounts = [];
+    let detectedTarget = String(targetHint || "").trim();
+    const hintLow = detectedTarget.toLowerCase();
+
+    for (const item of (filesWithText || [])) {
+      const txt = String(item.text || "");
+      if (!txt.trim()) continue;
+      const lines = txt.split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) continue;
+      const delim = (lines[0].split(";").length > lines[0].split(",").length) ? ";" : ",";
+      const hdr = lines[0].split(delim).map(s => s.trim().replace(/^"|"$/g, "").toLowerCase());
+      const idx = (cands) => { for (const c of cands) { const i = hdr.indexOf(c); if (i >= 0) return i; } return -1; };
+      const iName = idx(["name","star","starid","object","target"]);
+      const iType = idx(["type","star type","role"]);
+      const iRa = idx(["ra","ra(deg)","ra_deg","ra (j2000)"]);
+      const iDec = idx(["dec","dec(deg)","dec_deg","dec (j2000)"]);
+      const iRefMag = idx(["reference magnitude","ref mag","ref_mag"]);
+      const iMag = idx(["mag(obs)","mag","magnitude","obs mag"]);
+      const iMerr = idx(["mag(err)","merr","mag err","error","mag_err"]);
+      const iX = idx(["x axis","x","x_pos","x(px)"]);
+      const iY = idx(["y axis","y","y_pos","y(px)"]);
+      const iExp = idx(["exp","exposure","exptime","exp(s)"]);
+      const iUtc = idx(["exp start","utc","start time","date-obs"]);
+      const iJdS = idx(["exp start(jd)","jd start","jd_start","jd"]);
+      const iMjdS = idx(["exp start(mjd)","mjd start","mjd_start","mjd"]);
+      const iUtcE = idx(["exp end","end time"]);
+      const iJdE = idx(["exp end(jd)","jd end","jd_end"]);
+      const iMjdE = idx(["exp end(mjd)","mjd end","mjd_end"]);
+      const iVar = idx(["is variable","variable","is_variable"]);
+      const iSnr = idx(["snr","s/n","signal_to_noise"]);
+      if (iMag < 0 || iJdS < 0) continue;
+
+      const refPairs = [];
+      let targetCols = null;
+      let fallbackVar = null;
+      for (let li = 1; li < lines.length; li++) {
+        const cols = lines[li].split(delim).map(s => s.trim().replace(/^"|"$/g, ""));
+        const rtype = iType >= 0 ? String(cols[iType] || "").toLowerCase() : "";
+        const rname = iName >= 0 ? String(cols[iName] || "").trim() : "";
+        if (rtype === "reference star" && iRefMag >= 0) {
+          const rm = parseFloat(String(cols[iRefMag] || "").replace(",", "."));
+          const om = parseFloat(String(cols[iMag] || "").replace(",", "."));
+          if (Number.isFinite(rm) && Number.isFinite(om)) refPairs.push([rm, om]);
+        } else if (rtype === "non-reference star" || rname) {
+          if (hintLow && rname.toLowerCase() === hintLow) targetCols = cols;
+          else if (rname && !targetCols) targetCols = cols;
+          else if (iVar >= 0 && String(cols[iVar] || "").toLowerCase() === "true" && !fallbackVar) fallbackVar = cols;
+        }
+      }
+      if (!targetCols) targetCols = fallbackVar;
+      if (!targetCols) continue;
+
+      const tname = (iName >= 0 ? String(targetCols[iName] || "").trim() : "") || detectedTarget || "TARGET";
+      if (!detectedTarget && tname !== "TARGET") detectedTarget = tname;
+      const tMag = parseFloat(String(targetCols[iMag] || "").replace(",", "."));
+      const tMerr = iMerr >= 0 ? parseFloat(String(targetCols[iMerr] || "").replace(",", ".")) : 0.02;
+      const tJdS = parseFloat(String(targetCols[iJdS] || "").replace(",", "."));
+      const tSnr = iSnr >= 0 ? parseFloat(String(targetCols[iSnr] || "").replace(",", ".")) : 0;
+      if (!Number.isFinite(tMag) || !Number.isFinite(tJdS)) continue;
+
+      let deltaZp = 0;
+      let newMerr = Number.isFinite(tMerr) ? tMerr : 0.02;
+      let nLin = refPairs.length;
+      let nSat = 0;
+      if (refPairs.length >= 3) {
+        const byFaint = [...refPairs].sort((a, b) => b[0] - a[0]);
+        const tail = byFaint.slice(0, Math.max(3, Math.min(6, Math.floor(byFaint.length / 2) + 1)));
+        const tailMed = _med(tail.map(p => p[1] - p[0]));
+        let linear = refPairs.filter(p => (p[1] - p[0]) - tailMed <= 0.12);
+        if (linear.length < 2) linear = tail;
+        nLin = linear.length;
+        nSat = refPairs.length - nLin;
+        const linDiffs = linear.map(p => p[1] - p[0]);
+        deltaZp = _med(linDiffs);
+        const mad = _med(linDiffs.map(d => Math.abs(d - deltaZp))) * 1.4826;
+        const zpErr = Math.max(0.005, mad / Math.sqrt(Math.max(1, nLin)));
+        const photErr = (Number.isFinite(tSnr) && tSnr > 0) ? (1.0857 / tSnr) : 0.01;
+        if (Number.isFinite(tSnr) && tSnr > 0) newMerr = Math.min(newMerr, Math.sqrt(photErr * photErr + zpErr * zpErr));
+        zpShifts.push(deltaZp);
+        satCounts.push(nSat);
+      }
+      const g = (ix, dflt = "") => (ix >= 0 && targetCols[ix] !== undefined) ? String(targetCols[ix]).trim() : dflt;
+      cleanRows.push({
+        jd: tJdS,
+        row: [
+          tname, "Non-reference star", g(iRa), g(iDec), String(nLin), "/",
+          (tMag - deltaZp).toFixed(6), newMerr.toFixed(6), g(iX), g(iY),
+          g(iExp, "10.0s"), g(iUtc), tJdS.toFixed(6), g(iMjdS), g(iUtcE), g(iJdE), g(iMjdE),
+          g(iVar, "true"), (Number.isFinite(tSnr) && tSnr > 0) ? tSnr.toFixed(6) : g(iSnr)
+        ]
+      });
+    }
+    cleanRows.sort((a, b) => a.jd - b.jd);
+    const csvText = [headerOut.join(","), ...cleanRows.map(x => x.row.join(","))].join("\n");
+    const medShift = zpShifts.length ? _med(zpShifts) : 0;
+    const avgSat = satCounts.length ? (satCounts.reduce((a, b) => a + b, 0) / satCounts.length) : 0;
+    return { csvText, framesProcessed: cleanRows.length, targetName: detectedTarget, medianZpShiftMag: Number(medShift.toFixed(4)), avgSaturatedRefs: Number(avgSat.toFixed(1)) };
+  };
+
+  async function _handleSeestarCsvFileList(fileList) {
+    const arr = Array.from(fileList || []).filter(f => /\.(csv|txt)$/i.test(f.name || ""));
+    if (!arr.length) return;
+    const badgeEl = document.getElementById("csvModePipelineBadge");
+    const nameEl = document.getElementById("selectedFileNameText");
+    const ru = typeof currentLang === "string" && currentLang.startsWith("ru");
+
+    if (arr.length === 1) {
+      const txt = await arr[0].text();
+      const isPerFrame = /reference star/i.test(txt) && /non-reference star/i.test(txt);
+      if (isPerFrame) {
+        const hint = document.getElementById("starNameInput")?.value || STATE.catalogStarName || "";
+        const rec = window.recalibrateSeestarPerFrameCsvFiles([{ name: arr[0].name, text: txt }], hint);
+        if (rec.framesProcessed > 0) {
+          window._astroLabRecalibratedPerFrame = rec;
+          currentCsvText = rec.csvText;
+          if (nameEl) nameEl.textContent = `📄 ${arr[0].name} (1 покадровый CSV • авто-пересчёт)`;
+          if (badgeEl) {
+            badgeEl.style.display = "block";
+            badgeEl.style.background = "rgba(16,185,129,0.14)";
+            badgeEl.style.border = "1px solid rgba(16,185,129,0.45)";
+            badgeEl.style.color = "#d1fae5";
+            badgeEl.textContent = ru
+              ? `✨ Покадровый CSV: отброшено ~${rec.avgSaturatedRefs} пересвеч. опорных, поправка нуль-пункта ${(-rec.medianZpShiftMag >= 0 ? "+" : "")}${(-rec.medianZpShiftMag).toFixed(3)}m`
+              : `✨ Per-frame CSV: rejected ~${rec.avgSaturatedRefs} saturated refs, ZP correction ${(-rec.medianZpShiftMag >= 0 ? "+" : "")}${(-rec.medianZpShiftMag).toFixed(3)}m`;
+          }
+          previewCsvText(rec.csvText);
+          if (window.AstroLabCalibrationGuard) window.AstroLabCalibrationGuard.evaluateFromCsvText(rec.csvText, arr[0].name);
+          return;
+        }
+      }
+      window._astroLabRecalibratedPerFrame = null;
+      if (badgeEl) {
+        badgeEl.style.display = "block";
+        badgeEl.style.background = "rgba(59,130,246,0.12)";
+        badgeEl.style.border = "1px solid rgba(59,130,246,0.35)";
+        badgeEl.style.color = "#dbeafe";
+        badgeEl.textContent = ru ? `📊 Итоговый CSV (${arr[0].name})` : `📊 Summary CSV (${arr[0].name})`;
+      }
+      previewFile(arr[0]);
+      return;
+    }
+
+    // Multiple per-frame CSVs
+    const loaded = await Promise.all(arr.slice(0, 1200).map(async f => ({ name: f.name, text: await f.text() })));
+    const hint = document.getElementById("starNameInput")?.value || STATE.catalogStarName || "";
+    const rec = window.recalibrateSeestarPerFrameCsvFiles(loaded, hint);
+    if (rec.framesProcessed > 0) {
+      window._astroLabRecalibratedPerFrame = rec;
+      currentCsvText = rec.csvText;
+      if (nameEl) nameEl.textContent = ru
+        ? `📁 ${rec.framesProcessed} покадровых CSV (${rec.targetName || "Seestar"})`
+        : `📁 ${rec.framesProcessed} per-frame CSVs (${rec.targetName || "Seestar"})`;
+      if (badgeEl) {
+        badgeEl.style.display = "block";
+        badgeEl.style.background = "rgba(16,185,129,0.14)";
+        badgeEl.style.border = "1px solid rgba(16,185,129,0.45)";
+        badgeEl.style.color = "#d1fae5";
+        badgeEl.textContent = ru
+          ? `✨ Пересчитано ${rec.framesProcessed} кадров по ненасыщенным опорным • убрано ~${rec.avgSaturatedRefs} пересвеч. • сдвиг ${(-rec.medianZpShiftMag >= 0 ? "+" : "")}${(-rec.medianZpShiftMag).toFixed(3)}m`
+          : `✨ Recalibrated ${rec.framesProcessed} frames using unsaturated refs • rejected ~${rec.avgSaturatedRefs} saturated • ZP shift ${(-rec.medianZpShiftMag >= 0 ? "+" : "")}${(-rec.medianZpShiftMag).toFixed(3)}m`;
+      }
+      previewCsvText(rec.csvText);
+      if (window.AstroLabCalibrationGuard) window.AstroLabCalibrationGuard.evaluateFromCsvText(rec.csvText, `batch_${rec.framesProcessed}_frames.csv`);
+    }
+  }
+
   document.getElementById("csvFile").addEventListener("change", e => {
-    if (e.target.files.length) previewFile(e.target.files[0]);
+    if (e.target.files && e.target.files.length) _handleSeestarCsvFileList(e.target.files);
+  });
+  document.getElementById("btnSelectPerFrameFolder")?.addEventListener("click", () => {
+    document.getElementById("csvFolderInput")?.click();
+  });
+  document.getElementById("csvFolderInput")?.addEventListener("change", e => {
+    if (e.target.files && e.target.files.length) _handleSeestarCsvFileList(e.target.files);
   });
   document.getElementById("btnConvert").addEventListener("click", processFile);
 
@@ -18668,7 +18856,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         "9. Конвертация",
         "10. WebObs",
         "11. Ошибки",
-        "12. Первый шаг"
+        "12. Первый шаг", "13. Съёмка и CSV"
       ],
       slides: [
         {
@@ -19045,7 +19233,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       tabs: [
         "1. Título", "2. Ciencia", "3. Estándar AAVSO", "4. OBSCODE",
         "5. Prep. Seestar", "6. Elegir estrella", "7. Captura", "8. Exportar CSV",
-        "9. Conversión", "10. WebObs", "11. Errores", "12. Primer paso"
+        "9. Conversión", "10. WebObs", "11. Errores", "12. Primer paso", "13. Captura y CSV"
       ],
       slides: [
         { type: "hero", kicker: "FOTOMETRÍA CIUDADANA • ZWO SEESTAR", headline: "Fotometría ciudadana con Seestar: de la luz estelar a la base AAVSO", callout: "Guía paso a paso para observadores de estrellas variables • Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO", steps: ["<strong>Para quién es:</strong> propietarios de ZWO Seestar que desean aportar datos científicos reales.", "<strong>Qué aprenderás:</strong> registro en <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO</a>, captura en modo EQ, conversión de <code>Magnitude_*.csv</code> y subida a WebObs.", "<strong>Resultado:</strong> tus mediciones entran en la base mundial de astrofísica."], img: "assets/pptx_slide_1.jpg", caption: "Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO • WebObs" },
@@ -19083,7 +19271,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         { kicker: "SCHRITT 6", headline: "Konvertierung in AstroLab (Abschnitt 1 → 2 → 3)", callout: "Erst Abschnitt 1 (OBSCODE + SIMBAD/VSP), dann Abschnitt 2 (CSV) und Abschnitt 3 (`.csv`).", steps: ["<strong>JD_Mid & Filter:</strong> automatische Mittelwertberechnung.", "<strong>Format #TYPE=EXTENDED:</strong> exportiert <code>*_Seestar.csv</code>.", "<strong>Kurvenvergleich:</strong> direkt mit AAVSO AID."], img: "assets/pptx_slide_9.png", caption: "Vergleich Ihrer Seestar-Daten mit AAVSO AID" },
         { kicker: "SCHRITT 7", headline: "Upload zu AAVSO WebObs", callout: "Ihre Daten erscheinen sofort in der AAVSO-Datenbank!", steps: ["<strong>1. Konvertieren:</strong> <code>*_Seestar.csv</code> erzeugen.", "<strong>2. WebObs öffnen:</strong> <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>apps.aavso.org/v2/data/submit/photometry/</a>.", "<strong>3. Upload a file of observations:</strong> Datei hochladen."], cards: [{ num: "1", title: ".csv Datei", desc: "#TYPE=EXTENDED" }, { num: "2", title: "WebObs", desc: "Upload-Portal" }, { num: "3", title: "Upload", desc: "10 Sekunden" }, { num: "4", title: "Live in AID", desc: "Weltweit sichtbar" }] },
         { kicker: "FEHLER VERMEIDEN", headline: "Typische Fehler & Lösungen", callout: "Kurze Checkliste vor jedem Upload.", table: { headers: ["Fehler", "Folge", "Lösung"], rows: [["Rohe CSV hochgeladen", "Formatfehler", "Immer über AstroLab konvertieren"], ["OBSCODE vergessen", "Keine Zuordnung", "OBSCODE in Abschnitt 1 prüfen"], ["Stern überbelichtet", "Lichtkurve verzerrt", "Belichtung im Radar prüfen"], ["Check Star ignoriert", "Keine Qualitätsprüfung", "KNAME/KMAG im UI prüfen"]] } },
-        { kicker: "FAZIT", headline: "Zusammenfassung: Von Seestar zu AAVSO", callout: "Erste Aufgabe: 10–20 Bilder à 10s aufnehmen, konvertieren & hochladen!", steps: ["<strong>1–2.</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a> Konto.", "<strong>3–4.</strong> OBSCODE & Zielradar.", "<strong>5–6.</strong> 10s EQ → <code>Magnitude_*.csv</code>.", "<strong>7–8.</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>."], cards: [{ num: "1–2", title: "Konto", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "Radar" }, { num: "5–6", title: "Aufnahme", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "AAVSO AID" }] }
+        { kicker: "FAZIT", headline: "Zusammenfassung: Von Seestar zu AAVSO", callout: "Erste Aufgabe: 10–20 Bilder à 10s aufnehmen, konvertieren & hochladen!", steps: ["<strong>1–2.</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a> Konto.", "<strong>3–4.</strong> OBSCODE & Zielradar.", "<strong>5–6.</strong> 10s EQ → <code>Magnitude_*.csv</code>.", "<strong>7–8.</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>."], cards: [{ num: "1–2", title: "Konto", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "Radar" }, { num: "5–6", title: "Aufnahme", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "AAVSO AID" }] },
+        { kicker: "SHOOTING & UPLOAD", headline: "Seestar Exposure & Per-Frame CSV Upload", callout: "Stars brighter than 8.5m clip R-channel refs at 20s — use 5–10s or load per-frame CSVs!", steps: ["<strong>Exposure rule:</strong> use <strong>5–10s</strong> for targets &lt; 8.5m (e.g., W UMa) so bright comparison stars don't saturate in Red.", "<strong>Filter:</strong> always shoot with <code>IRCUT</code> (<code>TG</code>); never submit dual-band <code>LP</code> frames.", "<strong>Two upload paths:</strong> load 1 summary CSV (auto-checks <code>Mag(err)/SNR</code>) or click <strong>Per-Frame CSV Folder</strong> to auto-reject clipped refs and fix ZP bias."], svgHtml: "<svg viewBox='0 0 420 250' width='100%' style='background:#0f172a; border-radius:10px; border:1px solid rgba(16,185,129,0.35);'><rect x='14' y='18' width='180' height='64' rx='8' fill='rgba(59,130,246,0.16)' stroke='#3b82f6' stroke-width='1.5'/><text x='104' y='42' text-anchor='middle' fill='#93c5fd' font-size='12' font-weight='700'>A. Summary CSV</text><text x='104' y='62' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>1 file • Mag(err) vs SNR check</text><rect x='226' y='18' width='180' height='64' rx='8' fill='rgba(16,185,129,0.18)' stroke='#10b981' stroke-width='1.5'/><text x='316' y='42' text-anchor='middle' fill='#6ee7b7' font-size='12' font-weight='700'>B. Per-Frame Folder</text><text x='316' y='62' text-anchor='middle' fill='#d1fae5' font-size='10.5'>N files • Linear ref recalibration</text><line x1='104' y1='82' x2='104' y2='116' stroke='#3b82f6' stroke-width='1.8'/><line x1='316' y1='82' x2='316' y2='116' stroke='#10b981' stroke-width='1.8'/><rect x='40' y='116' width='340' height='54' rx='8' fill='rgba(245,158,11,0.14)' stroke='#f59e0b' stroke-width='1.5'/><text x='210' y='138' text-anchor='middle' fill='#fde68a' font-size='12' font-weight='700'>Calibration Guard + Saturation (5-10s &lt; 8.5m)</text><text x='210' y='156' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>Rejects clipped R-channel refs • Removes ~0.4m ZP bias</text><line x1='210' y1='170' x2='210' y2='192' stroke='#10b981' stroke-width='2'/><rect x='95' y='192' width='230' height='40' rx='8' fill='rgba(16,185,129,0.25)' stroke='#10b981' stroke-width='1.8'/><text x='210' y='217' text-anchor='middle' fill='#ffffff' font-size='12.5' font-weight='700'>Clean AAVSO Extended / Lab</text></svg>" },
+        { kicker: "SHOOTING & UPLOAD", headline: "Seestar Exposure & Per-Frame CSV Upload", callout: "Stars brighter than 8.5m clip R-channel refs at 20s — use 5–10s or load per-frame CSVs!", steps: ["<strong>Exposure rule:</strong> use <strong>5–10s</strong> for targets &lt; 8.5m (e.g., W UMa) so bright comparison stars don't saturate in Red.", "<strong>Filter:</strong> always shoot with <code>IRCUT</code> (<code>TG</code>); never submit dual-band <code>LP</code> frames.", "<strong>Two upload paths:</strong> load 1 summary CSV (auto-checks <code>Mag(err)/SNR</code>) or click <strong>Per-Frame CSV Folder</strong> to auto-reject clipped refs and fix ZP bias."], svgHtml: "<svg viewBox='0 0 420 250' width='100%' style='background:#0f172a; border-radius:10px; border:1px solid rgba(16,185,129,0.35);'><rect x='14' y='18' width='180' height='64' rx='8' fill='rgba(59,130,246,0.16)' stroke='#3b82f6' stroke-width='1.5'/><text x='104' y='42' text-anchor='middle' fill='#93c5fd' font-size='12' font-weight='700'>A. Summary CSV</text><text x='104' y='62' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>1 file • Mag(err) vs SNR check</text><rect x='226' y='18' width='180' height='64' rx='8' fill='rgba(16,185,129,0.18)' stroke='#10b981' stroke-width='1.5'/><text x='316' y='42' text-anchor='middle' fill='#6ee7b7' font-size='12' font-weight='700'>B. Per-Frame Folder</text><text x='316' y='62' text-anchor='middle' fill='#d1fae5' font-size='10.5'>N files • Linear ref recalibration</text><line x1='104' y1='82' x2='104' y2='116' stroke='#3b82f6' stroke-width='1.8'/><line x1='316' y1='82' x2='316' y2='116' stroke='#10b981' stroke-width='1.8'/><rect x='40' y='116' width='340' height='54' rx='8' fill='rgba(245,158,11,0.14)' stroke='#f59e0b' stroke-width='1.5'/><text x='210' y='138' text-anchor='middle' fill='#fde68a' font-size='12' font-weight='700'>Calibration Guard + Saturation (5-10s &lt; 8.5m)</text><text x='210' y='156' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>Rejects clipped R-channel refs • Removes ~0.4m ZP bias</text><line x1='210' y1='170' x2='210' y2='192' stroke='#10b981' stroke-width='2'/><rect x='95' y='192' width='230' height='40' rx='8' fill='rgba(16,185,129,0.25)' stroke='#10b981' stroke-width='1.8'/><text x='210' y='217' text-anchor='middle' fill='#ffffff' font-size='12.5' font-weight='700'>Clean AAVSO Extended / Lab</text></svg>" }
       ]
     },
     fr: {
@@ -19107,7 +19297,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         { kicker: "ÉTAPE 6", headline: "Conversion dans AstroLab (Section 1 → 2 → 3)", callout: "Vérifiez OBSCODE/SIMBAD en Section 1, chargez le CSV en Section 2, exportez en Section 3.", steps: ["<strong>JD_Mid & filtrage :</strong> calcul automatique.", "<strong>Format #TYPE=EXTENDED :</strong> crée <code>*_Seestar.csv</code>.", "<strong>Comparaison :</strong> courbe superposée à AAVSO AID."], img: "assets/pptx_slide_9.png", caption: "Comparaison de vos mesures Seestar avec AAVSO AID" },
         { kicker: "ÉTAPE 7", headline: "Envoi sur AAVSO WebObs", callout: "Vos données sont immédiatement publiées !", steps: ["<strong>1. Convertir (.csv)</strong> en Section 3.", "<strong>2. Ouvrir :</strong> <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>apps.aavso.org/v2/data/submit/photometry/</a>.", "<strong>3. Upload a file of observations :</strong> envoyer <code>*_Seestar.csv</code>."], cards: [{ num: "1", title: ".csv prêt", desc: "#TYPE=EXTENDED" }, { num: "2", title: "WebObs", desc: "Portail officiel" }, { num: "3", title: "Upload", desc: "10 secondes" }, { num: "4", title: "Publié", desc: "Base AAVSO AID" }] },
         { kicker: "PIÈGES À ÉVITER", headline: "Erreurs fréquentes", callout: "Vérifiez ces 4 points avant chaque envoi.", table: { headers: ["Erreur", "Conséquence", "Solution"], rows: [["CSV brut envoyé", "Erreur de format", "Convertir via AstroLab"], ["OBSCODE oublié", "Non lié au compte", "Vérifier Section 1"], ["Étoile saturée", "Courbe fausse", "Suivre le temps de pose du Radar"], ["Check star ignorée", "Qualité non vérifiée", "Vérifier KNAME/KMAG"]] } },
-        { kicker: "RÉSUMÉ", headline: "Résumé : de Seestar à l'AAVSO", callout: "Premier défi : 10–20 poses de 10s, conversion et envoi WebObs !", steps: ["<strong>1–2.</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a>.", "<strong>3–4.</strong> OBSCODE & Radar.", "<strong>5–6.</strong> 10s EQ → <code>Magnitude_*.csv</code>.", "<strong>7–8.</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>."], cards: [{ num: "1–2", title: "Compte", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "Radar" }, { num: "5–6", title: "Capture", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "AAVSO AID" }] }
+        { kicker: "RÉSUMÉ", headline: "Résumé : de Seestar à l'AAVSO", callout: "Premier défi : 10–20 poses de 10s, conversion et envoi WebObs !", steps: ["<strong>1–2.</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a>.", "<strong>3–4.</strong> OBSCODE & Radar.", "<strong>5–6.</strong> 10s EQ → <code>Magnitude_*.csv</code>.", "<strong>7–8.</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>."], cards: [{ num: "1–2", title: "Compte", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "Radar" }, { num: "5–6", title: "Capture", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "AAVSO AID" }] },
+        { kicker: "SHOOTING & UPLOAD", headline: "Seestar Exposure & Per-Frame CSV Upload", callout: "Stars brighter than 8.5m clip R-channel refs at 20s — use 5–10s or load per-frame CSVs!", steps: ["<strong>Exposure rule:</strong> use <strong>5–10s</strong> for targets &lt; 8.5m (e.g., W UMa) so bright comparison stars don't saturate in Red.", "<strong>Filter:</strong> always shoot with <code>IRCUT</code> (<code>TG</code>); never submit dual-band <code>LP</code> frames.", "<strong>Two upload paths:</strong> load 1 summary CSV (auto-checks <code>Mag(err)/SNR</code>) or click <strong>Per-Frame CSV Folder</strong> to auto-reject clipped refs and fix ZP bias."], svgHtml: "<svg viewBox='0 0 420 250' width='100%' style='background:#0f172a; border-radius:10px; border:1px solid rgba(16,185,129,0.35);'><rect x='14' y='18' width='180' height='64' rx='8' fill='rgba(59,130,246,0.16)' stroke='#3b82f6' stroke-width='1.5'/><text x='104' y='42' text-anchor='middle' fill='#93c5fd' font-size='12' font-weight='700'>A. Summary CSV</text><text x='104' y='62' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>1 file • Mag(err) vs SNR check</text><rect x='226' y='18' width='180' height='64' rx='8' fill='rgba(16,185,129,0.18)' stroke='#10b981' stroke-width='1.5'/><text x='316' y='42' text-anchor='middle' fill='#6ee7b7' font-size='12' font-weight='700'>B. Per-Frame Folder</text><text x='316' y='62' text-anchor='middle' fill='#d1fae5' font-size='10.5'>N files • Linear ref recalibration</text><line x1='104' y1='82' x2='104' y2='116' stroke='#3b82f6' stroke-width='1.8'/><line x1='316' y1='82' x2='316' y2='116' stroke='#10b981' stroke-width='1.8'/><rect x='40' y='116' width='340' height='54' rx='8' fill='rgba(245,158,11,0.14)' stroke='#f59e0b' stroke-width='1.5'/><text x='210' y='138' text-anchor='middle' fill='#fde68a' font-size='12' font-weight='700'>Calibration Guard + Saturation (5-10s &lt; 8.5m)</text><text x='210' y='156' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>Rejects clipped R-channel refs • Removes ~0.4m ZP bias</text><line x1='210' y1='170' x2='210' y2='192' stroke='#10b981' stroke-width='2'/><rect x='95' y='192' width='230' height='40' rx='8' fill='rgba(16,185,129,0.25)' stroke='#10b981' stroke-width='1.8'/><text x='210' y='217' text-anchor='middle' fill='#ffffff' font-size='12.5' font-weight='700'>Clean AAVSO Extended / Lab</text></svg>" }
       ]
     },
     zh: {
@@ -19141,7 +19332,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       tabs: [
         "1. Titul", "2. Proč věda", "3. Základy AAVSO", "4. Kód OBSCODE",
         "5. Příprava Seestaru", "6. Výběr cíle", "7. Snímání", "8. Export CSV",
-        "9. Převod", "10. WebObs", "11. Chyby", "12. První krok"
+        "9. Převod", "10. WebObs", "11. Chyby", "12. První krok", "13. Snímání a CSV"
       ],
       slides: [
         { type: "hero", kicker: "OBČANSKÁ FOTOMETRIE • ZWO SEESTAR", headline: "Občanská fotometrie se Seestarem: od hvězdného světla do databáze AAVSO", callout: "Průvodce krok za krokem pro pozorovatele proměnných hvězd • Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO", steps: ["<strong>Pro koho je průvodce:</strong> pro každého majitele ZWO Seestar, který chce získávat skutečná vědecká data.", "<strong>Co se naučíte:</strong> registraci na <a href='https://www.aavso.org' target='_blank' rel='noopener'>AAVSO</a>, snímání v EQ režimu, převod <code>Magnitude_*.csv</code> a nahrání na WebObs."], img: "assets/pptx_slide_1.jpg", caption: "Seestar S30 / S50 / Pro • Seestar AstroLab AAVSO • WebObs" },
@@ -19179,7 +19370,10 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         { kicker: "ASURIF 6", headline: "Abeddel deg AstroLab (Aḥric 1 → 2 → 3)", callout: "Aḥric 1 (OBSCODE + SIMBAD), sinna Aḥric 2 (CSV) d Uḥric 3 (`.csv`).", steps: ["<strong>JD_Mid:</strong> aktili awurman.", "<strong>#TYPE=EXTENDED:</strong> <code>*_Seestar.csv</code>.", "<strong>Udlif:</strong> s wudem agraɣlan."], img: "assets/pptx_slide_9.png", caption: "Asenqed n udlif-ik akked AAVSO AID" },
         { kicker: "ASURIF 7", headline: "Tuzna ɣer AAVSO WebObs", callout: "Deg 10s ad yili deg taffa tamaḍlant!", steps: ["<strong>1. Beddel (.csv)</strong>.", "<strong>2. Ldi:</strong> <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>apps.aavso.org/v2/data/submit/photometry/</a>.", "<strong>3. Upload:</strong> <code>*_Seestar.csv</code>."], cards: [{ num: "1", title: ".csv", desc: "#TYPE=EXTENDED" }, { num: "2", title: "WebObs", desc: "Tawwurt" }, { num: "3", title: "Upload", desc: "10s" }, { num: "4", title: "AAVSO AID", desc: "Yekcem" }] },
         { kicker: "TUCCḌIWIN", headline: "Tuccḍiwin & Tifrat", callout: "Senqed uqbel tuzna.", table: { headers: ["Tuccḍa", "Agemmuḍ", "Tifrat"], rows: [["CSV azegzaw", "Tuccḍa", "Beddel s AstroLab"], ["Tettuḍ OBSCODE", "Ur yettwaqqen", "Senqed Aḥric 1"], ["Itri yesserɣ", "Udlif yerka", "Senqed akud deg Uradar"], ["Check star", "Ulac asenqed", "Senqed KNAME/KMAG"]] } },
-        { kicker: "AGZUL", headline: "Agzul: seg Seestar ɣer AAVSO", callout: "Amahil amenzu: 10–20 n tteswirin n 10s, beddel & sali!", steps: ["<strong>1–2.</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a>.", "<strong>3–4.</strong> OBSCODE & Aradar.", "<strong>5–6.</strong> 10s EQ → <code>Magnitude_*.csv</code>.", "<strong>7–8.</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>."], cards: [{ num: "1–2", title: "Amiḍan", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "Aradar" }, { num: "5–6", title: "Tuṭṭfa", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "AAVSO AID" }] }
+        { kicker: "AGZUL", headline: "Agzul: seg Seestar ɣer AAVSO", callout: "Amahil amenzu: 10–20 n tteswirin n 10s, beddel & sali!", steps: ["<strong>1–2.</strong> <a href='https://www.aavso.org' target='_blank' rel='noopener'>aavso.org</a>.", "<strong>3–4.</strong> OBSCODE & Aradar.", "<strong>5–6.</strong> 10s EQ → <code>Magnitude_*.csv</code>.", "<strong>7–8.</strong> <code>*_Seestar.csv</code> → <a href='https://apps.aavso.org/v2/data/submit/photometry/' target='_blank' rel='noopener'>WebObs</a>."], cards: [{ num: "1–2", title: "Amiḍan", desc: "aavso.org" }, { num: "3–4", title: "OBSCODE", desc: "Aradar" }, { num: "5–6", title: "Tuṭṭfa", desc: "Magnitude_*.csv" }, { num: "7–8", title: "WebObs", desc: "AAVSO AID" }] },
+        { kicker: "SHOOTING & UPLOAD", headline: "Seestar Exposure & Per-Frame CSV Upload", callout: "Stars brighter than 8.5m clip R-channel refs at 20s — use 5–10s or load per-frame CSVs!", steps: ["<strong>Exposure rule:</strong> use <strong>5–10s</strong> for targets &lt; 8.5m (e.g., W UMa) so bright comparison stars don't saturate in Red.", "<strong>Filter:</strong> always shoot with <code>IRCUT</code> (<code>TG</code>); never submit dual-band <code>LP</code> frames.", "<strong>Two upload paths:</strong> load 1 summary CSV (auto-checks <code>Mag(err)/SNR</code>) or click <strong>Per-Frame CSV Folder</strong> to auto-reject clipped refs and fix ZP bias."], svgHtml: "<svg viewBox='0 0 420 250' width='100%' style='background:#0f172a; border-radius:10px; border:1px solid rgba(16,185,129,0.35);'><rect x='14' y='18' width='180' height='64' rx='8' fill='rgba(59,130,246,0.16)' stroke='#3b82f6' stroke-width='1.5'/><text x='104' y='42' text-anchor='middle' fill='#93c5fd' font-size='12' font-weight='700'>A. Summary CSV</text><text x='104' y='62' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>1 file • Mag(err) vs SNR check</text><rect x='226' y='18' width='180' height='64' rx='8' fill='rgba(16,185,129,0.18)' stroke='#10b981' stroke-width='1.5'/><text x='316' y='42' text-anchor='middle' fill='#6ee7b7' font-size='12' font-weight='700'>B. Per-Frame Folder</text><text x='316' y='62' text-anchor='middle' fill='#d1fae5' font-size='10.5'>N files • Linear ref recalibration</text><line x1='104' y1='82' x2='104' y2='116' stroke='#3b82f6' stroke-width='1.8'/><line x1='316' y1='82' x2='316' y2='116' stroke='#10b981' stroke-width='1.8'/><rect x='40' y='116' width='340' height='54' rx='8' fill='rgba(245,158,11,0.14)' stroke='#f59e0b' stroke-width='1.5'/><text x='210' y='138' text-anchor='middle' fill='#fde68a' font-size='12' font-weight='700'>Calibration Guard + Saturation (5-10s &lt; 8.5m)</text><text x='210' y='156' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>Rejects clipped R-channel refs • Removes ~0.4m ZP bias</text><line x1='210' y1='170' x2='210' y2='192' stroke='#10b981' stroke-width='2'/><rect x='95' y='192' width='230' height='40' rx='8' fill='rgba(16,185,129,0.25)' stroke='#10b981' stroke-width='1.8'/><text x='210' y='217' text-anchor='middle' fill='#ffffff' font-size='12.5' font-weight='700'>Clean AAVSO Extended / Lab</text></svg>" },
+        { kicker: "SHOOTING & UPLOAD", headline: "Seestar Exposure & Per-Frame CSV Upload", callout: "Stars brighter than 8.5m clip R-channel refs at 20s — use 5–10s or load per-frame CSVs!", steps: ["<strong>Exposure rule:</strong> use <strong>5–10s</strong> for targets &lt; 8.5m (e.g., W UMa) so bright comparison stars don't saturate in Red.", "<strong>Filter:</strong> always shoot with <code>IRCUT</code> (<code>TG</code>); never submit dual-band <code>LP</code> frames.", "<strong>Two upload paths:</strong> load 1 summary CSV (auto-checks <code>Mag(err)/SNR</code>) or click <strong>Per-Frame CSV Folder</strong> to auto-reject clipped refs and fix ZP bias."], svgHtml: "<svg viewBox='0 0 420 250' width='100%' style='background:#0f172a; border-radius:10px; border:1px solid rgba(16,185,129,0.35);'><rect x='14' y='18' width='180' height='64' rx='8' fill='rgba(59,130,246,0.16)' stroke='#3b82f6' stroke-width='1.5'/><text x='104' y='42' text-anchor='middle' fill='#93c5fd' font-size='12' font-weight='700'>A. Summary CSV</text><text x='104' y='62' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>1 file • Mag(err) vs SNR check</text><rect x='226' y='18' width='180' height='64' rx='8' fill='rgba(16,185,129,0.18)' stroke='#10b981' stroke-width='1.5'/><text x='316' y='42' text-anchor='middle' fill='#6ee7b7' font-size='12' font-weight='700'>B. Per-Frame Folder</text><text x='316' y='62' text-anchor='middle' fill='#d1fae5' font-size='10.5'>N files • Linear ref recalibration</text><line x1='104' y1='82' x2='104' y2='116' stroke='#3b82f6' stroke-width='1.8'/><line x1='316' y1='82' x2='316' y2='116' stroke='#10b981' stroke-width='1.8'/><rect x='40' y='116' width='340' height='54' rx='8' fill='rgba(245,158,11,0.14)' stroke='#f59e0b' stroke-width='1.5'/><text x='210' y='138' text-anchor='middle' fill='#fde68a' font-size='12' font-weight='700'>Calibration Guard + Saturation (5-10s &lt; 8.5m)</text><text x='210' y='156' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>Rejects clipped R-channel refs • Removes ~0.4m ZP bias</text><line x1='210' y1='170' x2='210' y2='192' stroke='#10b981' stroke-width='2'/><rect x='95' y='192' width='230' height='40' rx='8' fill='rgba(16,185,129,0.25)' stroke='#10b981' stroke-width='1.8'/><text x='210' y='217' text-anchor='middle' fill='#ffffff' font-size='12.5' font-weight='700'>Clean AAVSO Extended / Lab</text></svg>" },
+        { kicker: "SHOOTING & UPLOAD", headline: "Seestar Exposure & Per-Frame CSV Upload", callout: "Stars brighter than 8.5m clip R-channel refs at 20s — use 5–10s or load per-frame CSVs!", steps: ["<strong>Exposure rule:</strong> use <strong>5–10s</strong> for targets &lt; 8.5m (e.g., W UMa) so bright comparison stars don't saturate in Red.", "<strong>Filter:</strong> always shoot with <code>IRCUT</code> (<code>TG</code>); never submit dual-band <code>LP</code> frames.", "<strong>Two upload paths:</strong> load 1 summary CSV (auto-checks <code>Mag(err)/SNR</code>) or click <strong>Per-Frame CSV Folder</strong> to auto-reject clipped refs and fix ZP bias."], svgHtml: "<svg viewBox='0 0 420 250' width='100%' style='background:#0f172a; border-radius:10px; border:1px solid rgba(16,185,129,0.35);'><rect x='14' y='18' width='180' height='64' rx='8' fill='rgba(59,130,246,0.16)' stroke='#3b82f6' stroke-width='1.5'/><text x='104' y='42' text-anchor='middle' fill='#93c5fd' font-size='12' font-weight='700'>A. Summary CSV</text><text x='104' y='62' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>1 file • Mag(err) vs SNR check</text><rect x='226' y='18' width='180' height='64' rx='8' fill='rgba(16,185,129,0.18)' stroke='#10b981' stroke-width='1.5'/><text x='316' y='42' text-anchor='middle' fill='#6ee7b7' font-size='12' font-weight='700'>B. Per-Frame Folder</text><text x='316' y='62' text-anchor='middle' fill='#d1fae5' font-size='10.5'>N files • Linear ref recalibration</text><line x1='104' y1='82' x2='104' y2='116' stroke='#3b82f6' stroke-width='1.8'/><line x1='316' y1='82' x2='316' y2='116' stroke='#10b981' stroke-width='1.8'/><rect x='40' y='116' width='340' height='54' rx='8' fill='rgba(245,158,11,0.14)' stroke='#f59e0b' stroke-width='1.5'/><text x='210' y='138' text-anchor='middle' fill='#fde68a' font-size='12' font-weight='700'>Calibration Guard + Saturation (5-10s &lt; 8.5m)</text><text x='210' y='156' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>Rejects clipped R-channel refs • Removes ~0.4m ZP bias</text><line x1='210' y1='170' x2='210' y2='192' stroke='#10b981' stroke-width='2'/><rect x='95' y='192' width='230' height='40' rx='8' fill='rgba(16,185,129,0.25)' stroke='#10b981' stroke-width='1.8'/><text x='210' y='217' text-anchor='middle' fill='#ffffff' font-size='12.5' font-weight='700'>Clean AAVSO Extended / Lab</text></svg>" }
       ]
     }
   };
@@ -19188,7 +19382,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   let _activeBeginnerSlideIdx = 0;
 
   window.renderBeginnerGuideSlide = function(slideIdx = _activeBeginnerSlideIdx) {
-    _activeBeginnerSlideIdx = Math.max(0, Math.min(11, Number(slideIdx) || 0));
+    _activeBeginnerSlideIdx = Math.max(0, Math.min(12, Number(slideIdx) || 0));
     const lg = getActive7Lang();
     const pack = BEGINNER_PRESENTATION_7LANG[lg] || BEGINNER_PRESENTATION_7LANG.en;
     const slide = pack.slides[_activeBeginnerSlideIdx] || pack.slides[0];
@@ -19197,7 +19391,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     if (titleEl) titleEl.textContent = pack.modalTitle;
 
     const counterEl = document.getElementById("beginnerSlideCounterBadge");
-    if (counterEl) counterEl.textContent = `${_activeBeginnerSlideIdx + 1} / 12`;
+    if (counterEl) counterEl.textContent = `${_activeBeginnerSlideIdx + 1} / 13`;
 
     const prevLbl = document.getElementById("lblBeginnerPrev");
     if (prevLbl) prevLbl.textContent = pack.btnPrev;
@@ -19247,6 +19441,16 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
             <div style="padding:8px 10px; border-radius:8px; background:rgba(16,185,129,0.14); border:1px solid rgba(16,185,129,0.42); font-size:12px; color:#d1fae5; font-weight:600; text-align:center;">
               ${slide.caption || ""}
             </div>
+          </div>
+        `;
+      } else if (slide.svgHtml) {
+        rightHtml = `
+          <div class="beginner-slide-mockup-box">
+            <div class="mockup-window-bar">
+              <span class="mockup-dots"><i style="background:#ef4444;"></i><i style="background:#f59e0b;"></i><i style="background:#10b981;"></i></span>
+              <span>${slide.kicker || "SEESTAR → AAVSO"}</span>
+            </div>
+            ${slide.svgHtml}
           </div>
         `;
       } else if (slide.table) {
@@ -19321,11 +19525,11 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
   window.stepBeginnerGuideSlide = function(delta) {
     const nextIdx = _activeBeginnerSlideIdx + Number(delta || 1);
-    if (nextIdx >= 12) {
+    if (nextIdx >= 13) {
       window.closeBeginnerGuideModal();
       return;
     }
-    window.renderBeginnerGuideSlide(Math.max(0, Math.min(11, nextIdx)));
+    window.renderBeginnerGuideSlide(Math.max(0, Math.min(12, nextIdx)));
   };
 
   // Закрытие по клику на фон и навигация стрелками клавиатуры
@@ -19409,7 +19613,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     acc2Title: "Výběr a kontrola souboru fotometrie",
     acc3Title: "Převod Seestar CSV na AAVSO Extended",
     secFileStart: "Výběr a kontrola souboru fotometrie",
-    btnSelectCsvFile: "📂 Vybrat CSV soubor Seestar",
+    btnSelectCsvFile: "📂 Vybrat CSV soubor(y) Seestar",
+    btnSelectPerFrameFolder: "📁 Složka snímkových CSV",
     btnLoadDemo: "✨ Demo CSV (SZ Lyn)",
     noFileSelected: "Soubor zatím nevybrán (klikněte výše nebo na «Demo CSV»)",
     btnConvert: "⚡ Převést a uložit AAVSO Extended (.csv)",
@@ -19766,7 +19971,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         secFileStart: "Výběr a kontrola fotometrického souboru",
         lblFile: "CSV soubor ze Seestar:",
         btnLoadDemo: "✨ Demo CSV (SZ Lyn)",
-        btnSelectCsvFile: "📂 Vybrat CSV soubor ze Seestar",
+        btnSelectCsvFile: "📂 Vybrat CSV soubor(y) ze Seestar",
+    btnSelectPerFrameFolder: "📁 Složka snímkových CSV",
         noFileSelected: "Soubor zatím nevybrán (klikněte výše nebo «Demo CSV»)",
         tipCsvText: "Vyberte zdrojový fotometrický CSV soubor Seestar (zpracují se řádky «Non-reference star»).",
         lblVerifyDisk: "Kontrola hotového souboru AAVSO:",
@@ -25023,6 +25229,8 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
         _cgState.lastFileSignature = sig;
       }
       const mags = [];
+      const merrs = [];
+      const snrs = [];
       const refs = [];
       const exps = [];
       const cgLines = csvText.split(/\r?\n/);
@@ -25037,6 +25245,10 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
         if (String(cols[cgm.type] || "").toLowerCase() === "non-reference star") {
           const mv = parseFloat(String(cols[cgm.mag] || "").replace(",", "."));
           if (Number.isFinite(mv)) mags.push(mv);
+          const me = cgm.merr !== undefined ? parseFloat(String(cols[cgm.merr] || "").replace(",", ".")) : NaN;
+          if (Number.isFinite(me) && me > 0) merrs.push(me);
+          const sv = cgm.snr !== undefined ? parseFloat(String(cols[cgm.snr] || "").replace(",", ".")) : NaN;
+          if (Number.isFinite(sv) && sv > 0) snrs.push(sv);
           const rf = cgm.refStars !== undefined ? parseInt(cols[cgm.refStars], 10) : NaN;
           if (Number.isFinite(rf) && rf >= 0) refs.push(rf);
           const ev = cgm.exp !== undefined ? parseFloat(String(cols[cgm.exp] || "").toLowerCase().replace("s", "").replace(",", ".")) : NaN;
@@ -25084,7 +25296,7 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
       const p05Hi = Math.min(sortedMagsCg.length - 1, p05Lo + 1);
       const p05Mag = sortedMagsCg[p05Lo] * (1 - (p05Pos - p05Lo)) + sortedMagsCg[p05Hi] * (p05Pos - p05Lo);
       const activeScopeCode = String(document.getElementById("headerScopeSelect")?.value || "S50").toUpperCase().replace(/[^A-Z0-9]/g, "");
-      const satBaseMap = { S30: 6.4, S30PLUS: 6.2, S30PRO: 6.0, S50: 7.0, S50PRO: 6.8 };
+      const satBaseMap = { S30: 6.4, S30PLUS: 6.2, S30PRO: 7.7, S50: 7.0, S50PRO: 6.8 };
       const satBase10 = satBaseMap[activeScopeCode] ?? 7.0;
       const effExp = (medExp != null && medExp > 0) ? medExp : 10.0;
       const satLimit = Number((satBase10 + 2.5 * Math.log10(effExp / 10.0)).toFixed(2));
@@ -25113,6 +25325,26 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
             ? "При 1–2 звёздах сравнения любая помеха или переменность опорной звезды сдвигает всю вашу кривую блеска."
             : "With only 1–2 comparison stars, a single noisy or variable comp star shifts the entire light curve."
         });
+      }
+
+      // Check 4: Zero-Point / Ensemble error inflation (Mag(err) >> 1.0857 / SNR)
+      if (!window._astroLabRecalibratedPerFrame && merrs.length && snrs.length) {
+        const medMerr = med(merrs);
+        const medSnr = med(snrs);
+        const photFloor = medSnr > 0 ? (1.0857 / medSnr) : 0;
+        const ratio = photFloor > 0 ? (medMerr / photFloor) : 0;
+        if (medSnr >= 50 && medMerr >= 0.08 && ratio >= 5.0) {
+          issues.push({
+            icon: "📈",
+            title: ru ? "Раздутая ошибка нуль-пункта (Mag(err) vs SNR)" : "Inflated Zero-Point Error (Mag(err) vs SNR)",
+            detail: ru
+              ? `Звезда снята чисто (медианный SNR ${medSnr.toFixed(0)}, фотонный шум ~${photFloor.toFixed(3)}m), но ошибка в CSV выросла до ±${medMerr.toFixed(3)}m (в ${ratio.toFixed(0)}× выше).`
+              : `Star photometry is clean (median SNR ${medSnr.toFixed(0)}, photon floor ~${photFloor.toFixed(3)}m), yet CSV Mag(err) is ±${medMerr.toFixed(3)}m (${ratio.toFixed(0)}× higher).`,
+            advice: ru
+              ? "Обычно это признак пересвеченных опорных звёзд в прошивке Seestar (как на ярких полях при 20s). Загрузите папку покадровых CSV для авто-пересчёта или снизьте выдержку до 5–10s."
+              : "Usually caused by saturated bright reference stars in Seestar firmware (e.g., 20s exposure). Load the folder of per-frame CSVs for auto-recalibration or reduce exposure to 5–10s."
+          });
+        }
       }
 
       _cgState.issues = issues;
