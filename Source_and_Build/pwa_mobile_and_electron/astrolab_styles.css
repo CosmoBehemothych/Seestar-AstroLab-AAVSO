@@ -8424,3 +8424,31 @@ body[data-theme="light"] .lab-unsubmitted-bar {
 body[data-theme="light"] .obs-qg-badge.eligible { color: #0369a1; }
 body[data-theme="light"] .obs-qg-badge.blocked { color: #b45309; }
 body[data-theme="light"] .obs-qg-badge.converted { color: #15803d; }
+
+/* v1.5.0-alpha: Prominent exposure time badge on star cards */
+.exp-highlight-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(16,185,129,0.34), rgba(5,150,105,0.44));
+  border: 1.5px solid #34d399;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  box-shadow: 0 0 12px rgba(16,185,129,0.24);
+  white-space: nowrap;
+}
+.exp-highlight-pill strong {
+  color: #fef08a;
+  font-size: 14px;
+  font-weight: 900;
+}
+.scope-warn .exp-highlight-pill,
+.exp-highlight-pill.warn {
+  background: linear-gradient(135deg, rgba(245,158,11,0.34), rgba(217,119,6,0.42));
+  border-color: #fbbf24;
+  box-shadow: 0 0 12px rgba(245,158,11,0.24);
+}
