@@ -472,6 +472,8 @@ def test_v150_alpha_features():
       const v1 = window.isRemoteVersionNewer("1.5.0", "1.5.0-alpha");
       const v2 = window.isRemoteVersionNewer("1.4.0", "1.5.0-alpha");
       const s50Bright = window.AstroLabCore.evaluateScopeSuitability({ kmag: "4.5", magRange: "4.5m - 5.5m" }, "S50");
+      const wumaS30p = window.AstroLabCore.evaluateScopeSuitability({ kmag: "10.4", magRange: "7.75m → 8.48m", varType: "EW" }, "S30PRO");
+      if (!String(wumaS30p.expRec).startsWith("10 s")) throw new Error("W UMa on S30PRO must recommend 10 s, got: " + wumaS30p.expRec);
       const s50Faint = window.AstroLabCore.evaluateScopeSuitability({ kmag: "13.8", magRange: "13.6m - 14.0m" }, "S50");
       const s30FaintFast = window.AstroLabCore.evaluateScopeSuitability({ kmag: "12.9", magRange: "12.8m - 13.2m", periodDays: 0.12, varType: "HADS" }, "S30");
       const qgBad = window.AstroLabLightCurveLab.evaluateSessionAavsoEligibility([{ jd: 2461000.1, mag: 10.0, merr: 0.02 }]);

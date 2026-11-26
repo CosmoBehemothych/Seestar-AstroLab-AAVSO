@@ -330,40 +330,107 @@ def is_per_frame_seestar_csv(csv_text: str, split_row_fn=None) -> bool:
 def recalibrate_per_frame_seestar_csvs(
     csv_texts: Sequence[str],
     target_name_hint: str = "",
+    target_ra_deg: Optional[float] = None,
+    target_dec_deg: Optional[float] = None,
 ) -> Dict[str, Any]:
     """
     [RU] Пакетный пересчёт покадровых CSV Seestar (Magnitude_..._HHMMSS.csv):
-         1. Извлекает строки 'reference star' (с Reference magnitude и Mag(obs)).
-         2. Находит линейный «хвост» слабых опорных звёзд и отбрасывает пересвеченные
-            (где Mag(obs) - Reference magnitude > tail_median + 0.12 mag).
-         3. Вычисляет честный сдвиг нуль-пункта delta_zp и пересчитывает Mag(obs) и Mag(err)
-            целевой звезды, возвращая единый очищенный CSV.
-    [EN] Batch-recalibrates per-frame Seestar CSVs by rejecting saturated bright reference stars
-         and shifting target Mag(obs) to the linear unsaturated reference ensemble.
+         1. Пропускает итоговые CSV (без строк 'reference star').
+         2. Находит целевую звезду по имени ИЛИ ближайшую в радиусе ≤ 30″ к её координатам RA/DEC
+            (устойчиво к кадрам, где Seestar оставил колонку Name пустой).
+         3. Отбрасывает пересвеченные яркие опорные звёзды и пересчитывает Mag(obs) и Mag(err)
+            целевой звезды по линейному хвосту ненасыщенных опорных.
+    [EN] Batch-recalibrates per-frame Seestar CSVs by matching target via name or closest <= 30 arcsec
+         coordinate match and rejecting saturated bright reference stars.
     """
     import csv as _csv
     import io as _io
 
-    clean_rows: List[Tuple[float, List[str]]] = []
-    zp_shifts: List[float] = []
-    sat_counts: List[int] = []
-    tot_refs: List[int] = []
-    detected_target = str(target_name_hint or "").strip()
     header_out = [
         "Name", "Type", "RA", "DEC", "Valid Reference Stars", "Reference magnitude",
         "Mag(obs)", "Mag(err)", "X Axis", "Y Axis", "EXP", "EXP start", "EXP start(JD)",
         "EXP start(MJD)", "EXP end", "EXP end(JD)", "EXP end(MJD)", "Is Variable", "SNR",
     ]
+    detected_target = str(target_name_hint or "").strip()
 
-    hint_low = detected_target.lower()
+    def _same_star(a: str, b: str) -> bool:
+        if not a or not b:
+            return False
+        na = re.sub(r"[^a-z0-9]", "", a.lower())
+        nb = re.sub(r"[^a-z0-9]", "", b.lower())
+        if na == nb or na in nb or nb in na:
+            return True
+        # Constellation genitive shorthand (e.g. "W UMa" vs "W Ursae Majoris")
+        pa, pb = a.strip().lower().split(), b.strip().lower().split()
+        return len(pa) >= 2 and len(pb) >= 2 and pa[0] == pb[0] and pb[1].startswith(pa[1][0])
+
+    def _ang_dist_arcsec(ra1: float, dec1: float, ra2: float, dec2: float) -> float:
+        d_dec = dec1 - dec2
+        d_ra = ((ra1 - ra2 + 540.0) % 360.0 - 180.0) * math.cos(math.radians(0.5 * (dec1 + dec2)))
+        return math.hypot(d_ra, d_dec) * 3600.0
+
+    # Pass 1: parse valid per-frame CSVs and infer target RA/DEC from named rows if not provided
+    parsed_frames = []
+    skipped_non_per_frame = 0
+    inferred_coords: List[Tuple[float, float, str]] = []
+
     for txt in csv_texts:
         if not txt or not txt.strip():
             continue
-        delim = ";" if txt.splitlines()[0].count(";") > txt.splitlines()[0].count(",") else ","
+        low = txt.lower()
+        if "reference star" not in low or "non-reference star" not in low:
+            skipped_non_per_frame += 1
+            continue
+        lines = [l for l in txt.splitlines() if l.strip()]
+        if len(lines) < 2:
+            skipped_non_per_frame += 1
+            continue
+        delim = ";" if lines[0].count(";") > lines[0].count(",") else ","
         reader = _csv.DictReader(_io.StringIO(txt), delimiter=delim)
         if not reader.fieldnames:
+            skipped_non_per_frame += 1
             continue
         norm_fields = {fn.strip().lower(): fn for fn in reader.fieldnames if fn}
+        rows = list(reader)
+        parsed_frames.append((norm_fields, rows))
+
+        def _g1(row, *cands):
+            for c in cands:
+                k = norm_fields.get(c)
+                if k and row.get(k) is not None:
+                    return str(row.get(k)).strip()
+            return ""
+
+        for row in rows:
+            rtype = _g1(row, "type", "star type", "role").lower()
+            rname = _g1(row, "name", "star", "starid", "object", "target")
+            if rtype == "non-reference star" and rname:
+                if not detected_target or _same_star(rname, detected_target):
+                    try:
+                        ra_v = float(_g1(row, "ra", "ra(deg)", "ra_deg", "ra (j2000)").replace(",", "."))
+                        dec_v = float(_g1(row, "dec", "dec(deg)", "dec_deg", "dec (j2000)").replace(",", "."))
+                        if math.isfinite(ra_v) and math.isfinite(dec_v):
+                            inferred_coords.append((ra_v, dec_v, rname))
+                            break
+                    except ValueError:
+                        pass
+
+    ref_ra = target_ra_deg
+    ref_dec = target_dec_deg
+    if (ref_ra is None or ref_dec is None) and inferred_coords:
+        ref_ra = _median([c[0] for c in inferred_coords])
+        ref_dec = _median([c[1] for c in inferred_coords])
+        if not detected_target:
+            detected_target = inferred_coords[0][2]
+
+    # Pass 2: extract exact target row (by name or closest <= 30 arcsec) & recalibrate
+    clean_rows: List[Tuple[float, List[str]]] = []
+    zp_shifts: List[float] = []
+    sat_counts: List[int] = []
+    tot_refs: List[int] = []
+    skipped_other_star = 0
+
+    for norm_fields, rows in parsed_frames:
         def _gf(row: Dict[str, str], *cands: str) -> str:
             for c in cands:
                 k = norm_fields.get(c)
@@ -372,10 +439,11 @@ def recalibrate_per_frame_seestar_csvs(
             return ""
 
         ref_pairs: List[Tuple[float, float]] = []
-        target_row: Optional[Dict[str, str]] = None
-        fallback_var_row: Optional[Dict[str, str]] = None
+        named_match: Optional[Dict[str, str]] = None
+        closest_row: Optional[Dict[str, str]] = None
+        closest_arcsec = 30.0  # strict 30 arcsec radius prevents grabbing neighbor stars
 
-        for row in reader:
+        for row in rows:
             rtype = _gf(row, "type", "star type", "role").lower()
             rname = _gf(row, "name", "star", "starid", "object", "target")
             if rtype == "reference star":
@@ -387,16 +455,26 @@ def recalibrate_per_frame_seestar_csvs(
                 except ValueError:
                     pass
             elif rtype == "non-reference star" or rname:
-                if hint_low and rname.lower() == hint_low:
-                    target_row = row
-                elif rname and target_row is None:
-                    target_row = row
-                elif _gf(row, "is variable", "variable", "is_variable").lower() == "true" and fallback_var_row is None:
-                    fallback_var_row = row
+                if detected_target and rname and _same_star(rname, detected_target):
+                    named_match = row
+                if ref_ra is not None and ref_dec is not None:
+                    try:
+                        ra_v = float(_gf(row, "ra", "ra(deg)", "ra_deg", "ra (j2000)").replace(",", "."))
+                        dec_v = float(_gf(row, "dec", "dec(deg)", "dec_deg", "dec (j2000)").replace(",", "."))
+                        d_arc = _ang_dist_arcsec(ra_v, dec_v, ref_ra, ref_dec)
+                        if d_arc < closest_arcsec:
+                            closest_arcsec = d_arc
+                            closest_row = row
+                    except ValueError:
+                        pass
 
+        if len(ref_pairs) < 3:
+            skipped_non_per_frame += 1
+            continue
+
+        target_row = named_match or closest_row
         if target_row is None:
-            target_row = fallback_var_row
-        if target_row is None:
+            skipped_other_star += 1
             continue
 
         tname = _gf(target_row, "name", "star", "starid", "object", "target") or detected_target or "TARGET"
@@ -413,30 +491,23 @@ def recalibrate_per_frame_seestar_csvs(
         t_snr_s = _gf(target_row, "snr", "s/n", "signal_to_noise").replace(",", ".")
         t_snr = float(t_snr_s) if t_snr_s else 0.0
 
-        delta_zp = 0.0
-        new_merr = t_merr
-        n_lin = len(ref_pairs)
-        n_sat = 0
-        if len(ref_pairs) >= 3:
-            # Faintest reference stars are least likely to saturate
-            by_faint = sorted(ref_pairs, key=lambda p: p[0], reverse=True)
-            tail = by_faint[:max(3, min(6, len(by_faint) // 2 + 1))]
-            tail_diffs = [om - rm for rm, om in tail]
-            tail_med = _median(tail_diffs)
-            linear = [(rm, om, om - rm) for rm, om in ref_pairs if (om - rm) - tail_med <= 0.12]
-            if len(linear) < 2:
-                linear = [(rm, om, om - rm) for rm, om in tail]
-            n_lin = len(linear)
-            n_sat = len(ref_pairs) - n_lin
-            lin_diffs = [x[2] for x in linear]
-            delta_zp = _median(lin_diffs)
-            mad = _median([abs(d - delta_zp) for d in lin_diffs]) * 1.4826
-            zp_err = max(0.005, mad / math.sqrt(max(1, n_lin)))
-            phot_err = (1.0857 / t_snr) if t_snr > 0 else 0.01
-            new_merr = min(t_merr, math.sqrt(phot_err * phot_err + zp_err * zp_err)) if t_snr > 0 else t_merr
-            zp_shifts.append(delta_zp)
-            sat_counts.append(n_sat)
-            tot_refs.append(len(ref_pairs))
+        by_faint = sorted(ref_pairs, key=lambda p: p[0], reverse=True)
+        tail = by_faint[:max(3, min(6, len(by_faint) // 2 + 1))]
+        tail_med = _median([om - rm for rm, om in tail])
+        linear = [(rm, om, om - rm) for rm, om in ref_pairs if (om - rm) - tail_med <= 0.12]
+        if len(linear) < 2:
+            linear = [(rm, om, om - rm) for rm, om in tail]
+        n_lin = len(linear)
+        n_sat = len(ref_pairs) - n_lin
+        lin_diffs = [x[2] for x in linear]
+        delta_zp = _median(lin_diffs)
+        mad = _median([abs(d - delta_zp) for d in lin_diffs]) * 1.4826
+        zp_err = max(0.005, mad / math.sqrt(max(1, n_lin)))
+        phot_err = (1.0857 / t_snr) if t_snr > 0 else 0.01
+        new_merr = min(t_merr, math.sqrt(phot_err * phot_err + zp_err * zp_err)) if t_snr > 0 else t_merr
+        zp_shifts.append(delta_zp)
+        sat_counts.append(n_sat)
+        tot_refs.append(len(ref_pairs))
 
         mag_clean = t_mag - delta_zp
         out_row = [
@@ -475,6 +546,8 @@ def recalibrate_per_frame_seestar_csvs(
     return {
         "csvText": buf.getvalue(),
         "framesProcessed": len(clean_rows),
+        "skippedNonPerFrame": skipped_non_per_frame,
+        "skippedOtherStar": skipped_other_star,
         "targetName": detected_target,
         "medianZpShiftMag": round(med_shift, 4),
         "avgSaturatedRefs": round(avg_sat, 1),

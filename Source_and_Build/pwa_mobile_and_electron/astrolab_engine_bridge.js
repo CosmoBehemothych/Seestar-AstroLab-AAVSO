@@ -129,7 +129,7 @@
       resPx: "3840×2160",
       pixelScale: 1.97,
       magLimit: 14.2,
-      brightLimit: 5.0,
+      brightLimit: 7.7,
       minExpSec: 10,
       maxExpSec: 30,
       vspFovArcmin: 90,
@@ -271,24 +271,25 @@
       const nums = Array.from(magStr.matchAll(/(\d+(?:\.\d+)?)\s*(?:m|mag)\b/gi), m => parseFloat(m[1])).filter(n => !isNaN(n));
       const minMag = nums.length ? Math.min(...nums) : (isNaN(kmag) ? 10.0 : kmag);
       const maxMag = nums.length ? Math.max(...nums) : (isNaN(kmag) ? 11.5 : kmag);
-      const refMag = !isNaN(kmag) ? kmag : ((minMag + maxMag) / 2);
+      // Use the target star's own brightness (never let a fainter VSP check star kmag inflate exposure and saturate the target!)
+      const refMag = nums.length ? ((minMag + maxMag) / 2) : (isNaN(kmag) ? 10.0 : kmag);
 
       const tr = (typeof t === "function") ? t : (k => k);
       // v1.5.0: Per-telescope D^2 + sensor discrete Seestar exposure (10s / 20s / 30s / 60s EQ)
-      // with strict saturation guard and Moon-phase / fast-period awareness
+      // with strict saturation guard (based on target minMag at maximum light) and Moon-phase / fast-period awareness
       const moonFrac = (typeof AstroLabCore.getMoonIlluminationApprox === "function")
         ? AstroLabCore.getMoonIlluminationApprox(new Date())
         : 0.0;
       const periodDays = parseFloat((targetItem && (targetItem.periodDays || targetItem.period)) || "");
       const varTypeStr = String((targetItem && (targetItem.varType || targetItem.type || "")) || "").toUpperCase();
       const isFastVar = (Number.isFinite(periodDays) && periodDays > 0 && periodDays < 0.22) ||
-        /(HADS|DSCT|EW|EP|TRANSIT|SX PHE)/.test(varTypeStr);
+        /\b(HADS|DSCT|EW|EP|TRANSIT|SX PHE)\b/.test(varTypeStr);
 
       let expSecNum = 20;
       let eqSuffix = "";
-      if (minMag < prof.brightLimit || refMag <= prof.t10Max) {
+      if (minMag < prof.brightLimit || minMag <= prof.t10Max || refMag <= prof.t10Max) {
         expSecNum = 10;
-      } else if (refMag <= prof.t20Max) {
+      } else if (minMag <= prof.t20Max && refMag <= prof.t20Max) {
         expSecNum = 20;
       } else if (refMag <= prof.t30Max) {
         expSecNum = 30;
@@ -6030,105 +6031,171 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   const appShell = document.getElementById("appShell");
   // [Mobile view switcher removed per user request]
 
-  window.recalibrateSeestarPerFrameCsvFiles = function(filesWithText, targetHint = "") {
+  window.recalibrateSeestarPerFrameCsvFiles = function(filesWithText, targetHint = "", targetRaDeg = NaN, targetDecDeg = NaN) {
     const _med = (arr) => {
       if (!arr.length) return 0;
       const s = [...arr].sort((a, b) => a - b);
       const n = s.length;
       return n % 2 ? s[n >> 1] : 0.5 * (s[(n >> 1) - 1] + s[n >> 1]);
     };
-    const headerOut = ["Name","Type","RA","DEC","Valid Reference Stars","Reference magnitude","Mag(obs)","Mag(err)","X Axis","Y Axis","EXP","EXP start","EXP start(JD)","EXP start(MJD)","EXP end","EXP end(JD)","EXP end(MJD)","Is Variable","SNR"];
-    const cleanRows = [];
-    const zpShifts = [];
-    const satCounts = [];
-    let detectedTarget = String(targetHint || "").trim();
-    const hintLow = detectedTarget.toLowerCase();
+    const _sameStar = (a, b) => {
+      if (!a || !b) return false;
+      if (window.AstroLabCore && typeof window.AstroLabCore.areSameStar === "function") {
+        try { if (window.AstroLabCore.areSameStar(a, b)) return true; } catch (_) {}
+      }
+      const na = String(a).toLowerCase().replace(/[^a-z0-9]/g, "");
+      const nb = String(b).toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (na && nb && (na === nb || na.includes(nb) || nb.includes(na))) return true;
+      const pa = String(a).trim().toLowerCase().split(/\s+/);
+      const pb = String(b).trim().toLowerCase().split(/\s+/);
+      return pa.length >= 2 && pb.length >= 2 && pa[0] === pb[0] && pb[1].startsWith(pa[1][0]);
+    };
+    const _angDistArcsec = (ra1, dec1, ra2, dec2) => {
+      if (![ra1, dec1, ra2, dec2].every(Number.isFinite)) return Infinity;
+      const dDec = dec1 - dec2;
+      const dRa = ((ra1 - ra2 + 540) % 360 - 180) * Math.cos(((dec1 + dec2) * 0.5) * Math.PI / 180);
+      return Math.hypot(dRa, dDec) * 3600.0;
+    };
 
+    const headerOut = ["Name","Type","RA","DEC","Valid Reference Stars","Reference magnitude","Mag(obs)","Mag(err)","X Axis","Y Axis","EXP","EXP start","EXP start(JD)","EXP start(MJD)","EXP end","EXP end(JD)","EXP end(MJD)","Is Variable","SNR"];
+    let skippedNonPerFrame = 0;
+    let skippedOtherStar = 0;
+    let detectedTarget = String(targetHint || "").trim();
+
+    // Pass 1: parse valid per-frame CSVs and infer exact target RA/DEC from named rows
+    const parsedFrames = [];
+    const inferredCoords = [];
     for (const item of (filesWithText || [])) {
       const txt = String(item.text || "");
       if (!txt.trim()) continue;
+      if (!/reference star/i.test(txt) || !/non-reference star/i.test(txt)) {
+        skippedNonPerFrame++;
+        continue;
+      }
       const lines = txt.split(/\r?\n/).filter(l => l.trim());
-      if (lines.length < 2) continue;
+      if (lines.length < 2) { skippedNonPerFrame++; continue; }
       const delim = (lines[0].split(";").length > lines[0].split(",").length) ? ";" : ",";
       const hdr = lines[0].split(delim).map(s => s.trim().replace(/^"|"$/g, "").toLowerCase());
       const idx = (cands) => { for (const c of cands) { const i = hdr.indexOf(c); if (i >= 0) return i; } return -1; };
-      const iName = idx(["name","star","starid","object","target"]);
-      const iType = idx(["type","star type","role"]);
-      const iRa = idx(["ra","ra(deg)","ra_deg","ra (j2000)"]);
-      const iDec = idx(["dec","dec(deg)","dec_deg","dec (j2000)"]);
-      const iRefMag = idx(["reference magnitude","ref mag","ref_mag"]);
-      const iMag = idx(["mag(obs)","mag","magnitude","obs mag"]);
-      const iMerr = idx(["mag(err)","merr","mag err","error","mag_err"]);
-      const iX = idx(["x axis","x","x_pos","x(px)"]);
-      const iY = idx(["y axis","y","y_pos","y(px)"]);
-      const iExp = idx(["exp","exposure","exptime","exp(s)"]);
-      const iUtc = idx(["exp start","utc","start time","date-obs"]);
-      const iJdS = idx(["exp start(jd)","jd start","jd_start","jd"]);
-      const iMjdS = idx(["exp start(mjd)","mjd start","mjd_start","mjd"]);
-      const iUtcE = idx(["exp end","end time"]);
-      const iJdE = idx(["exp end(jd)","jd end","jd_end"]);
-      const iMjdE = idx(["exp end(mjd)","mjd end","mjd_end"]);
-      const iVar = idx(["is variable","variable","is_variable"]);
-      const iSnr = idx(["snr","s/n","signal_to_noise"]);
-      if (iMag < 0 || iJdS < 0) continue;
-
-      const refPairs = [];
-      let targetCols = null;
-      let fallbackVar = null;
+      const map = {
+        iName: idx(["name","star","starid","object","target"]),
+        iType: idx(["type","star type","role"]),
+        iRa: idx(["ra","ra(deg)","ra_deg","ra (j2000)"]),
+        iDec: idx(["dec","dec(deg)","dec_deg","dec (j2000)"]),
+        iRefMag: idx(["reference magnitude","ref mag","ref_mag"]),
+        iMag: idx(["mag(obs)","mag","magnitude","obs mag"]),
+        iMerr: idx(["mag(err)","merr","mag err","error","mag_err"]),
+        iX: idx(["x axis","x","x_pos","x(px)"]),
+        iY: idx(["y axis","y","y_pos","y(px)"]),
+        iExp: idx(["exp","exposure","exptime","exp(s)"]),
+        iUtc: idx(["exp start","utc","start time","date-obs"]),
+        iJdS: idx(["exp start(jd)","jd start","jd_start","jd"]),
+        iMjdS: idx(["exp start(mjd)","mjd start","mjd_start","mjd"]),
+        iUtcE: idx(["exp end","end time"]),
+        iJdE: idx(["exp end(jd)","jd end","jd_end"]),
+        iMjdE: idx(["exp end(mjd)","mjd end","mjd_end"]),
+        iVar: idx(["is variable","variable","is_variable"]),
+        iSnr: idx(["snr","s/n","signal_to_noise"]),
+      };
+      if (map.iMag < 0 || map.iJdS < 0) { skippedNonPerFrame++; continue; }
+      const rowsCols = [];
       for (let li = 1; li < lines.length; li++) {
         const cols = lines[li].split(delim).map(s => s.trim().replace(/^"|"$/g, ""));
-        const rtype = iType >= 0 ? String(cols[iType] || "").toLowerCase() : "";
-        const rname = iName >= 0 ? String(cols[iName] || "").trim() : "";
-        if (rtype === "reference star" && iRefMag >= 0) {
-          const rm = parseFloat(String(cols[iRefMag] || "").replace(",", "."));
-          const om = parseFloat(String(cols[iMag] || "").replace(",", "."));
-          if (Number.isFinite(rm) && Number.isFinite(om)) refPairs.push([rm, om]);
-        } else if (rtype === "non-reference star" || rname) {
-          if (hintLow && rname.toLowerCase() === hintLow) targetCols = cols;
-          else if (rname && !targetCols) targetCols = cols;
-          else if (iVar >= 0 && String(cols[iVar] || "").toLowerCase() === "true" && !fallbackVar) fallbackVar = cols;
+        rowsCols.push(cols);
+        const rtype = map.iType >= 0 ? String(cols[map.iType] || "").toLowerCase() : "";
+        const rname = map.iName >= 0 ? String(cols[map.iName] || "").trim() : "";
+        if (rtype === "non-reference star" && rname) {
+          if (!detectedTarget || _sameStar(rname, detectedTarget)) {
+            const raV = map.iRa >= 0 ? parseFloat(String(cols[map.iRa] || "").replace(",", ".")) : NaN;
+            const decV = map.iDec >= 0 ? parseFloat(String(cols[map.iDec] || "").replace(",", ".")) : NaN;
+            if (Number.isFinite(raV) && Number.isFinite(decV)) {
+              inferredCoords.push([raV, decV, rname]);
+            }
+          }
         }
       }
-      if (!targetCols) targetCols = fallbackVar;
-      if (!targetCols) continue;
+      parsedFrames.push({ map, rowsCols });
+    }
 
-      const tname = (iName >= 0 ? String(targetCols[iName] || "").trim() : "") || detectedTarget || "TARGET";
+    let refRa = Number.isFinite(targetRaDeg) ? targetRaDeg : NaN;
+    let refDec = Number.isFinite(targetDecDeg) ? targetDecDeg : NaN;
+    if ((!Number.isFinite(refRa) || !Number.isFinite(refDec)) && inferredCoords.length) {
+      refRa = _med(inferredCoords.map(c => c[0]));
+      refDec = _med(inferredCoords.map(c => c[1]));
+      if (!detectedTarget) detectedTarget = inferredCoords[0][2];
+    }
+
+    // Pass 2: match exact target by name OR closest <= 30 arcsec (handles unnamed frames without grabbing neighbor stars!)
+    const cleanRows = [];
+    const zpShifts = [];
+    const satCounts = [];
+
+    for (const { map, rowsCols } of parsedFrames) {
+      const refPairs = [];
+      let namedMatch = null;
+      let closestRow = null;
+      let closestArcsec = 30.0;
+
+      for (const cols of rowsCols) {
+        const rtype = map.iType >= 0 ? String(cols[map.iType] || "").toLowerCase() : "";
+        const rname = map.iName >= 0 ? String(cols[map.iName] || "").trim() : "";
+        if (rtype === "reference star" && map.iRefMag >= 0) {
+          const rm = parseFloat(String(cols[map.iRefMag] || "").replace(",", "."));
+          const om = parseFloat(String(cols[map.iMag] || "").replace(",", "."));
+          if (Number.isFinite(rm) && Number.isFinite(om)) refPairs.push([rm, om]);
+        } else if (rtype === "non-reference star" || rname) {
+          if (detectedTarget && rname && _sameStar(rname, detectedTarget)) {
+            namedMatch = cols;
+          }
+          if (Number.isFinite(refRa) && Number.isFinite(refDec)) {
+            const raV = map.iRa >= 0 ? parseFloat(String(cols[map.iRa] || "").replace(",", ".")) : NaN;
+            const decV = map.iDec >= 0 ? parseFloat(String(cols[map.iDec] || "").replace(",", ".")) : NaN;
+            const dArc = _angDistArcsec(raV, decV, refRa, refDec);
+            if (dArc < closestArcsec) {
+              closestArcsec = dArc;
+              closestRow = cols;
+            }
+          }
+        }
+      }
+
+      if (refPairs.length < 3) { skippedNonPerFrame++; continue; }
+      const targetCols = namedMatch || closestRow;
+      if (!targetCols) { skippedOtherStar++; continue; }
+
+      const tname = (map.iName >= 0 ? String(targetCols[map.iName] || "").trim() : "") || detectedTarget || "TARGET";
       if (!detectedTarget && tname !== "TARGET") detectedTarget = tname;
-      const tMag = parseFloat(String(targetCols[iMag] || "").replace(",", "."));
-      const tMerr = iMerr >= 0 ? parseFloat(String(targetCols[iMerr] || "").replace(",", ".")) : 0.02;
-      const tJdS = parseFloat(String(targetCols[iJdS] || "").replace(",", "."));
-      const tSnr = iSnr >= 0 ? parseFloat(String(targetCols[iSnr] || "").replace(",", ".")) : 0;
+      const tMag = parseFloat(String(targetCols[map.iMag] || "").replace(",", "."));
+      const tMerr = map.iMerr >= 0 ? parseFloat(String(targetCols[map.iMerr] || "").replace(",", ".")) : 0.02;
+      const tJdS = parseFloat(String(targetCols[map.iJdS] || "").replace(",", "."));
+      const tSnr = map.iSnr >= 0 ? parseFloat(String(targetCols[map.iSnr] || "").replace(",", ".")) : 0;
       if (!Number.isFinite(tMag) || !Number.isFinite(tJdS)) continue;
 
-      let deltaZp = 0;
+      const byFaint = [...refPairs].sort((a, b) => b[0] - a[0]);
+      const tail = byFaint.slice(0, Math.max(3, Math.min(6, Math.floor(byFaint.length / 2) + 1)));
+      const tailMed = _med(tail.map(p => p[1] - p[0]));
+      let linear = refPairs.filter(p => (p[1] - p[0]) - tailMed <= 0.12);
+      if (linear.length < 2) linear = tail;
+      const nLin = linear.length;
+      const nSat = refPairs.length - nLin;
+      const linDiffs = linear.map(p => p[1] - p[0]);
+      const deltaZp = _med(linDiffs);
+      const mad = _med(linDiffs.map(d => Math.abs(d - deltaZp))) * 1.4826;
+      const zpErr = Math.max(0.005, mad / Math.sqrt(Math.max(1, nLin)));
+      const photErr = (Number.isFinite(tSnr) && tSnr > 0) ? (1.0857 / tSnr) : 0.01;
       let newMerr = Number.isFinite(tMerr) ? tMerr : 0.02;
-      let nLin = refPairs.length;
-      let nSat = 0;
-      if (refPairs.length >= 3) {
-        const byFaint = [...refPairs].sort((a, b) => b[0] - a[0]);
-        const tail = byFaint.slice(0, Math.max(3, Math.min(6, Math.floor(byFaint.length / 2) + 1)));
-        const tailMed = _med(tail.map(p => p[1] - p[0]));
-        let linear = refPairs.filter(p => (p[1] - p[0]) - tailMed <= 0.12);
-        if (linear.length < 2) linear = tail;
-        nLin = linear.length;
-        nSat = refPairs.length - nLin;
-        const linDiffs = linear.map(p => p[1] - p[0]);
-        deltaZp = _med(linDiffs);
-        const mad = _med(linDiffs.map(d => Math.abs(d - deltaZp))) * 1.4826;
-        const zpErr = Math.max(0.005, mad / Math.sqrt(Math.max(1, nLin)));
-        const photErr = (Number.isFinite(tSnr) && tSnr > 0) ? (1.0857 / tSnr) : 0.01;
-        if (Number.isFinite(tSnr) && tSnr > 0) newMerr = Math.min(newMerr, Math.sqrt(photErr * photErr + zpErr * zpErr));
-        zpShifts.push(deltaZp);
-        satCounts.push(nSat);
-      }
+      if (Number.isFinite(tSnr) && tSnr > 0) newMerr = Math.min(newMerr, Math.sqrt(photErr * photErr + zpErr * zpErr));
+      zpShifts.push(deltaZp);
+      satCounts.push(nSat);
+
       const g = (ix, dflt = "") => (ix >= 0 && targetCols[ix] !== undefined) ? String(targetCols[ix]).trim() : dflt;
       cleanRows.push({
         jd: tJdS,
         row: [
-          tname, "Non-reference star", g(iRa), g(iDec), String(nLin), "/",
-          (tMag - deltaZp).toFixed(6), newMerr.toFixed(6), g(iX), g(iY),
-          g(iExp, "10.0s"), g(iUtc), tJdS.toFixed(6), g(iMjdS), g(iUtcE), g(iJdE), g(iMjdE),
-          g(iVar, "true"), (Number.isFinite(tSnr) && tSnr > 0) ? tSnr.toFixed(6) : g(iSnr)
+          tname, "Non-reference star", g(map.iRa), g(map.iDec), String(nLin), "/",
+          (tMag - deltaZp).toFixed(6), newMerr.toFixed(6), g(map.iX), g(map.iY),
+          g(map.iExp, "10.0s"), g(map.iUtc), tJdS.toFixed(6), g(map.iMjdS), g(map.iUtcE), g(map.iJdE), g(map.iMjdE),
+          g(map.iVar, "true"), (Number.isFinite(tSnr) && tSnr > 0) ? tSnr.toFixed(6) : g(map.iSnr)
         ]
       });
     }
@@ -6136,7 +6203,15 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     const csvText = [headerOut.join(","), ...cleanRows.map(x => x.row.join(","))].join("\n");
     const medShift = zpShifts.length ? _med(zpShifts) : 0;
     const avgSat = satCounts.length ? (satCounts.reduce((a, b) => a + b, 0) / satCounts.length) : 0;
-    return { csvText, framesProcessed: cleanRows.length, targetName: detectedTarget, medianZpShiftMag: Number(medShift.toFixed(4)), avgSaturatedRefs: Number(avgSat.toFixed(1)) };
+    return {
+      csvText,
+      framesProcessed: cleanRows.length,
+      skippedNonPerFrame,
+      skippedOtherStar,
+      targetName: detectedTarget,
+      medianZpShiftMag: Number(medShift.toFixed(4)),
+      avgSaturatedRefs: Number(avgSat.toFixed(1)),
+    };
   };
 
   async function _handleSeestarCsvFileList(fileList) {
@@ -6145,13 +6220,15 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     const badgeEl = document.getElementById("csvModePipelineBadge");
     const nameEl = document.getElementById("selectedFileNameText");
     const ru = typeof currentLang === "string" && currentLang.startsWith("ru");
+    const hint = document.getElementById("starNameInput")?.value || STATE.catalogStarName || "";
+    const raHint = parseFloat(document.getElementById("raInput")?.value || STATE.catalogRaDeg || "");
+    const decHint = parseFloat(document.getElementById("decInput")?.value || STATE.catalogDecDeg || "");
 
     if (arr.length === 1) {
       const txt = await arr[0].text();
       const isPerFrame = /reference star/i.test(txt) && /non-reference star/i.test(txt);
       if (isPerFrame) {
-        const hint = document.getElementById("starNameInput")?.value || STATE.catalogStarName || "";
-        const rec = window.recalibrateSeestarPerFrameCsvFiles([{ name: arr[0].name, text: txt }], hint);
+        const rec = window.recalibrateSeestarPerFrameCsvFiles([{ name: arr[0].name, text: txt }], hint, raHint, decHint);
         if (rec.framesProcessed > 0) {
           window._astroLabRecalibratedPerFrame = rec;
           currentCsvText = rec.csvText;
@@ -6182,13 +6259,17 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       return;
     }
 
-    // Multiple per-frame CSVs
+    // Multiple files / folder: keep ONLY real per-frame CSVs matching the active target star
     const loaded = await Promise.all(arr.slice(0, 1200).map(async f => ({ name: f.name, text: await f.text() })));
-    const hint = document.getElementById("starNameInput")?.value || STATE.catalogStarName || "";
-    const rec = window.recalibrateSeestarPerFrameCsvFiles(loaded, hint);
+    const rec = window.recalibrateSeestarPerFrameCsvFiles(loaded, hint, raHint, decHint);
     if (rec.framesProcessed > 0) {
       window._astroLabRecalibratedPerFrame = rec;
       currentCsvText = rec.csvText;
+      const skipInfo = (rec.skippedNonPerFrame + rec.skippedOtherStar) > 0
+        ? (ru
+            ? ` • пропущено ${rec.skippedOtherStar} др. звёзд / ${rec.skippedNonPerFrame} итоговых`
+            : ` • skipped ${rec.skippedOtherStar} other-star / ${rec.skippedNonPerFrame} summary`)
+        : "";
       if (nameEl) nameEl.textContent = ru
         ? `📁 ${rec.framesProcessed} покадровых CSV (${rec.targetName || "Seestar"})`
         : `📁 ${rec.framesProcessed} per-frame CSVs (${rec.targetName || "Seestar"})`;
@@ -6198,11 +6279,22 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         badgeEl.style.border = "1px solid rgba(16,185,129,0.45)";
         badgeEl.style.color = "#d1fae5";
         badgeEl.textContent = ru
-          ? `✨ Пересчитано ${rec.framesProcessed} кадров по ненасыщенным опорным • убрано ~${rec.avgSaturatedRefs} пересвеч. • сдвиг ${(-rec.medianZpShiftMag >= 0 ? "+" : "")}${(-rec.medianZpShiftMag).toFixed(3)}m`
-          : `✨ Recalibrated ${rec.framesProcessed} frames using unsaturated refs • rejected ~${rec.avgSaturatedRefs} saturated • ZP shift ${(-rec.medianZpShiftMag >= 0 ? "+" : "")}${(-rec.medianZpShiftMag).toFixed(3)}m`;
+          ? `✨ Пересчитано ${rec.framesProcessed} кадров • убрано ~${rec.avgSaturatedRefs} пересвеч. опорных • поправка ${(-rec.medianZpShiftMag >= 0 ? "+" : "")}${(-rec.medianZpShiftMag).toFixed(3)}m${skipInfo}`
+          : `✨ Recalibrated ${rec.framesProcessed} frames • rejected ~${rec.avgSaturatedRefs} saturated refs • ZP shift ${(-rec.medianZpShiftMag >= 0 ? "+" : "")}${(-rec.medianZpShiftMag).toFixed(3)}m${skipInfo}`;
       }
       previewCsvText(rec.csvText);
       if (window.AstroLabCalibrationGuard) window.AstroLabCalibrationGuard.evaluateFromCsvText(rec.csvText, `batch_${rec.framesProcessed}_frames.csv`);
+    } else {
+      window._astroLabRecalibratedPerFrame = null;
+      if (badgeEl) {
+        badgeEl.style.display = "block";
+        badgeEl.style.background = "rgba(245,158,11,0.16)";
+        badgeEl.style.border = "1px solid rgba(245,158,11,0.55)";
+        badgeEl.style.color = "#fef3c7";
+        badgeEl.textContent = ru
+          ? `⚠️ В выбранной папке не найдено покадровых CSV для «${hint || "выбранной звезды"}» (пропущено итоговых/неподходящих: ${rec.skippedNonPerFrame}, других звёзд: ${rec.skippedOtherStar}). Выберите папку с файлами Magnitude_..._HHMMSS.csv (внутри которых есть строки reference star).`
+          : `⚠️ No per-frame CSVs matching "${hint || "selected star"}" found in this folder (skipped ${rec.skippedNonPerFrame} summary/other files, ${rec.skippedOtherStar} other-star frames). Choose a folder containing Magnitude_..._HHMMSS.csv files with reference star rows.`;
+      }
     }
   }
 
@@ -19378,6 +19470,52 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     }
   };
   BEGINNER_PRESENTATION_7LANG.be = BEGINNER_PRESENTATION_7LANG.ber;
+
+  // Guarantee Slide 13 (Shooting Recommendations & Per-Frame CSV Pipeline) across all 8 languages
+  (function ensureSlide13AllLangs() {
+    const svgDiagram = "<svg viewBox='0 0 420 250' width='100%' style='background:#0f172a; border-radius:10px; border:1px solid rgba(16,185,129,0.35);'><rect x='14' y='18' width='180' height='64' rx='8' fill='rgba(59,130,246,0.16)' stroke='#3b82f6' stroke-width='1.5'/><text x='104' y='42' text-anchor='middle' fill='#93c5fd' font-size='12' font-weight='700'>A. Summary CSV</text><text x='104' y='62' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>1 file • Mag(err) vs SNR check</text><rect x='226' y='18' width='180' height='64' rx='8' fill='rgba(16,185,129,0.18)' stroke='#10b981' stroke-width='1.5'/><text x='316' y='42' text-anchor='middle' fill='#6ee7b7' font-size='12' font-weight='700'>B. Per-Frame Folder</text><text x='316' y='62' text-anchor='middle' fill='#d1fae5' font-size='10.5'>N files • Linear ref recalibration</text><line x1='104' y1='82' x2='104' y2='116' stroke='#3b82f6' stroke-width='1.8'/><line x1='316' y1='82' x2='316' y2='116' stroke='#10b981' stroke-width='1.8'/><rect x='40' y='116' width='340' height='54' rx='8' fill='rgba(245,158,11,0.14)' stroke='#f59e0b' stroke-width='1.5'/><text x='210' y='138' text-anchor='middle' fill='#fde68a' font-size='12' font-weight='700'>Calibration Guard + Exposure (5-10s &lt; 8.5m)</text><text x='210' y='156' text-anchor='middle' fill='#cbd5e1' font-size='10.5'>Rejects clipped R-channel refs • Removes ~0.4m ZP bias</text><line x1='210' y1='170' x2='210' y2='192' stroke='#10b981' stroke-width='2'/><rect x='95' y='192' width='230' height='40' rx='8' fill='rgba(16,185,129,0.25)' stroke='#10b981' stroke-width='1.8'/><text x='210' y='217' text-anchor='middle' fill='#ffffff' font-size='12.5' font-weight='700'>Clean AAVSO Extended / Lab</text></svg>";
+    const tabMap = {
+      ru: "13. Съёмка и CSV",
+      en: "13. Shooting & CSV",
+      es: "13. Captura y CSV",
+      de: "13. Aufnahme & CSV",
+      fr: "13. Capture & CSV",
+      zh: "13. 拍摄与上传",
+      cs: "13. Snímání a CSV",
+      ber: "13. Tuṭṭfa & CSV",
+    };
+    const slideRu = {
+      kicker: "СЪЁМКА И ЗАГРУЗКА",
+      headline: "Рекомендации по съёмке и загрузка в конвертер",
+      callout: "При 20s на ярких полях (< 8.5m) пересвечиваются опорные звёзды в канале R — снимайте по 5–10s или грузите папку покадровых CSV!",
+      steps: [
+        "<strong>Выдержка на Seestar:</strong> для звёзд ярче <code>8.5m</code> ставьте <strong>5–10 секунд</strong> (<code>S30 / S30 Pro / S50 / S50 Pro</code>), чтобы не сбить нуль-пункт пересветом опорных.",
+        "<strong>Фильтр:</strong> снимайте только в <code>IRCUT</code> (<code>TG</code>), узкополосный <code>LP</code> для фотометрии не подходит.",
+        "<strong>Как загружать теперь:</strong> выберите 1 итоговый CSV (работает детектор <code>Mag(err)/SNR</code>) либо нажмите <strong>«Папка покадровых CSV»</strong> — конвертер сам выбросит пересвеченные опорные и снимет сдвиг ~0.4m."
+      ],
+      svgHtml: svgDiagram,
+    };
+    const slideEn = {
+      kicker: "SHOOTING & UPLOAD",
+      headline: "Seestar Exposure & Per-Frame CSV Upload",
+      callout: "Stars brighter than 8.5m clip R-channel refs at 20s — use 5–10s or load the folder of per-frame CSVs!",
+      steps: [
+        "<strong>Exposure rule:</strong> use <strong>5–10s</strong> for targets &lt; 8.5m (e.g., W UMa) so bright comparison stars do not saturate in Red.",
+        "<strong>Filter:</strong> always shoot with <code>IRCUT</code> (<code>TG</code>); never submit dual-band <code>LP</code> frames.",
+        "<strong>Two upload paths:</strong> load 1 summary CSV (auto-checks <code>Mag(err)/SNR</code>) or click <strong>Per-Frame CSV Folder</strong> to auto-reject clipped refs and fix ~0.4m ZP bias."
+      ],
+      svgHtml: svgDiagram,
+    };
+    Object.keys(BEGINNER_PRESENTATION_7LANG).forEach(lg => {
+      const p = BEGINNER_PRESENTATION_7LANG[lg];
+      if (!p || !Array.isArray(p.slides) || !Array.isArray(p.tabs)) return;
+      p.tabs = p.tabs.slice(0, 12);
+      p.tabs.push(tabMap[lg] || tabMap.en);
+      p.slides = p.slides.slice(0, 12);
+      p.slides.push(lg === "ru" ? slideRu : slideEn);
+    });
+  })();
+
 
   let _activeBeginnerSlideIdx = 0;
 

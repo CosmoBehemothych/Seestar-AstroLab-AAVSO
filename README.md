@@ -37,9 +37,9 @@ Uploading raw `Magnitude_*.csv` files directly to AAVSO WebObs risks submitting 
 
 1. **✂ Automatic `>3σ MAD` Outlier Check Before Conversion (ON by Default)**:
    - Before exporting your CSV, the converter computes the session **median** and robust dispersion (`σ = 1.4826 × MAD`). Unlike a standard mean, a single bad frame (satellite/aircraft trail, passing cloud, tracking slip, or cosmic ray) cannot skew the threshold — outliers beyond `max(0.06 mag, 3 × σ)` are automatically filtered out. A built-in **`?`** guide explains when to keep it active and when to turn it off (for example, during rapid flares or novae).
-2. **🛡️ Calibration Guard (3-Layer Pre-Export Check)**:
+2. **🛡️ Calibration Guard (4-Layer Pre-Export Check + Per-Frame Recalibration)**:
    - **Zero-Point Shift (`> 0.40 mag`)**: Compares your session median against AAVSO reference observations to catch wrong comparison stars or calibration drift.
-   - **Sensor Saturation Risk (`mag_p05 < base_10s(model) + 2.5·log10(EXP / 10)`)**: Evaluates the **brightest 5th percentile** of frames against the selected Seestar model's linearity limit (`S30: 6.4m`, `S30+: 6.2m`, `S30PRO: 6.0m`, `S50: 7.0m`, `S50PRO: 6.8m` at `10s`) scaled by exposure `EXP`, catching saturation at maximum light.
+   - **Sensor Saturation Risk (`mag_p05 < base_10s(model) + 2.5·log10(EXP / 10)`)**: Evaluates the **brightest 5th percentile** of frames against the selected Seestar model's linearity limit (`S30: 6.4m`, `S30+: 6.2m`, `S30PRO: 7.7m`, `S50: 7.0m`, `S50PRO: 6.8m` at `10s` — empirically calibrated on real S30 Pro FITS) scaled by exposure `EXP`, catching saturation at maximum light.
    - **Sparse Reference Stars (`RefStars < 3`)**: Warns when fewer than 3 comparison stars were available in Seestar's ensemble.
    - When triggered, export is soft-locked until you inspect the curve in the Light Curve Lab or confirm a genuine outburst.
 3. **Duplicate & Multi-Night Overwrite Protection**:
@@ -65,7 +65,7 @@ Uploading raw `Magnitude_*.csv` files directly to AAVSO WebObs risks submitting 
 
 1. **⬇️ Download** **`Seestar_AstroLab_Setup_v1.5.0-alpha.exe`** (Windows Installer) and **`SHA256SUMS.txt`** from [GitHub Releases (`v1.5.0-alpha`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0-alpha) *(or the latest stable [`v1.4.0`](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.4.0))*. *(Standalone Windows Installer only — no Python required.)*
 2. **▶️ Install & Launch** the app.
-3. **🟢 Click `🚀 Getting Started`** in the top bar for a built-in **12-slide visual guide** (plus an **8-slide guide on How to Read Light Curves**) in all **8 languages**.
+3. **🟢 Click `🚀 Getting Started`** in the top bar for a built-in **13-slide visual guide** (plus an **8-slide guide on How to Read Light Curves**) in all **8 languages**.
 
 ---
 
@@ -107,7 +107,7 @@ Available in **8 languages**: English, Russian, Spanish, German, French, Chinese
 ### 3. My Observations (By Star & Session Analytics)
 ![My Observations Analytics](screenshots/03_my_observations_analytics.png)
 
-### 4. Getting Started (12-Slide Visual Guide)
+### 4. Getting Started (13-Slide Visual Guide — incl. Seestar Exposure & Per-Frame CSV)
 ![Getting Started Guide](screenshots/04_getting_started_guide.png)
 
 ---
@@ -123,6 +123,7 @@ Available in **8 languages**: English, Russian, Spanish, German, French, Chinese
 * **Очистка данных на `>3σ MAD` — и для ваших файлов, и для чужих графиков:**
   * **Перед конвертацией файла:** фильтр `>3σ MAD` включён по умолчанию — он находит медиану и устойчивое отклонение `σ = 1.4826 × MAD`, автоматически удаляя случайные выбросы (пролёт спутника, облако, срыв ведения), чтобы в базу AAVSO не попадал мусор.
   * **При анализе звезды в Лаборатории:** точно такую же очистку `>3σ MAD`, усреднение (биннинг) и фильтры полос (`TG`, `V`, `CV`, `B`, `R`, `Vis.`) вы можете применять и к **чужим наблюдениям из базы AAVSO** прямо на графике — убирая чужие случайные промахи ради чистого расчёта периода и кривой блеска.
+* **📁 Пакетный пересчёт покадровых CSV (`Папка покадровых CSV`) и детектор `Mag(err) vs SNR`:** на итоговых CSV программа ловит раздутую ошибку нуль-пункта (`Mag(err)` в `≥ 5×` выше фотонного шума), а при загрузке папки покадровых `Magnitude_..._HHMMSS.csv` сама отбрасывает пересвеченные яркие опорные звёзды и возвращает честный нуль-пункт. В раздел **«С чего начать»** добавлен 13-й слайд с рекомендациями по выдержке (`5–10s` для звёзд ярче `8.5m`) и визуальной схемой загрузки.
 * **🛡️ Калибровочный сторож (защита от пересвета и сбоев перед экспортом):** проверяет сдвиг нуль-пункта относительно базы AAVSO (`> 0.40 mag`), риск **пересвета матрицы** (`mag + 2.5·log10(EXP)`) и нехватку звёзд сравнения (`RefStars < 3`). Если сработала защита, экспорт мягко блокируется до вашей проверки на графике.
 * **📡 Живой Радар целей (работает и без ключа, и с ключом API):** даже **без ввода API-ключа** радар не статичный — он автоматически подгружает свежие срочные кампании из публичных **AAVSO Alert Notices**. А если указать бесплатный личный ключ **[AAVSO Target Tool API](https://targettool.aavso.org/TargetTool/api)** в **⚙️ Настройках**, радар раскрывает весь живой каталог целей AAVSO (3 000+ звёзд).
 * **📓 Мои наблюдения в двух разрезах:** список всех сессий и отдельная вкладка **«⭐ По звёздам»** (число ночей, суммарное время, кадры, фильтры) с быстрым переходом к графику любой звезды в Лаборатории.
