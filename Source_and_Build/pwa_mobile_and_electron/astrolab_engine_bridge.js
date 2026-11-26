@@ -323,13 +323,13 @@
       } else if (faintDipWarning) {
         status = "warn";
         badgeText = (tr("scopeEvalDipFmt") !== "scopeEvalDipFmt"
-          ? tr("scopeEvalDipFmt").replace("{id}", prof.id).replace("{max}", maxMag).replace("{mag}", prof.magLimit).replace("{exp}", prof.maxExpSec)
-          : `${prof.id}: min ${maxMag}m (limit ${prof.magLimit}m) • ${prof.maxExpSec} s`);
+          ? tr("scopeEvalDipFmt").replace("{id}", prof.id).replace("{max}", maxMag).replace("{mag}", prof.magLimit).replace("{exp}", expRec)
+          : `${prof.id}: min ${maxMag}m (limit ${prof.magLimit}m) • ${expRec}`);
       } else if (brightWarning) {
         status = "warn";
         badgeText = (tr("scopeEvalBrightFmt") !== "scopeEvalBrightFmt"
-          ? tr("scopeEvalBrightFmt").replace("{id}", prof.id).replace("{min}", minMag).replace("{bright}", prof.brightLimit).replace("{exp}", prof.minExpSec)
-          : `${prof.id}: bright ${minMag}m < ${prof.brightLimit}m • ${prof.minExpSec} s`);
+          ? tr("scopeEvalBrightFmt").replace("{id}", prof.id).replace("{min}", minMag).replace("{bright}", prof.brightLimit).replace("{exp}", expRec)
+          : `${prof.id}: bright ${minMag}m < ${prof.brightLimit}m • ${expRec}`);
       }
       return {
         compatible: withinFaintLimit,
@@ -671,8 +671,8 @@
       ttDefaultComment: "Активируйте серию TG (ансамбль ENSEMBLE, KNAME/KMAG = na).",
       scopeEvalOkFmt: "{id}: Выдержка {exp} • FOV {fov} ({scale}″/px)",
       scopeEvalFaintFmt: "{id}: Тусклее лимита {mag}m (реком. S50/S50PRO)",
-      scopeEvalDipFmt: "{id}: В минимуме до {max}m (лимит {mag}m) • Выдержка {exp} с",
-      scopeEvalBrightFmt: "{id}: Яркая ({min}m < {bright}m, риск насыщения) • Выдержка {exp} с",
+      scopeEvalDipFmt: "{id}: В минимуме до {max}m (лимит {mag}m) • Выдержка {exp}",
+      scopeEvalBrightFmt: "{id}: Яркая ({min}m < {bright}m, риск насыщения) • Выдержка {exp}",
       exp10_20: "10–20 с",
       exp10: "10 с",
       exp20_30: "20–30 с",
@@ -1025,8 +1025,8 @@
       ttDefaultComment: "Use TG filter series (ENSEMBLE photometry, KNAME/KMAG = na).",
       scopeEvalOkFmt: "{id}: Exposure {exp} • FOV {fov} ({scale}″/px)",
       scopeEvalFaintFmt: "{id}: Fainter than {mag}m limit (rec. S50/S50PRO)",
-      scopeEvalDipFmt: "{id}: Minimum down to {max}m (limit {mag}m) • Exp {exp} s",
-      scopeEvalBrightFmt: "{id}: Bright ({min}m < {bright}m, saturation risk) • Exp {exp} s",
+      scopeEvalDipFmt: "{id}: Minimum down to {max}m (limit {mag}m) • Exp {exp}",
+      scopeEvalBrightFmt: "{id}: Bright ({min}m < {bright}m, saturation risk) • Exp {exp}",
       exp10_20: "10–20 s",
       exp10: "10 s",
       exp20_30: "20–30 s",
@@ -1374,8 +1374,8 @@
       ttDefaultComment: "Active la serie TG y verifique la calibración KNAME.",
       scopeEvalOkFmt: "{id}: Exposición {exp} • FOV {fov} ({scale}″/px)",
       scopeEvalFaintFmt: "{id}: Más débil que el límite {mag}m (rec. S50/S50PRO)",
-      scopeEvalDipFmt: "{id}: Mínimo hasta {max}m (límite {mag}m) • Exp {exp} s",
-      scopeEvalBrightFmt: "{id}: Brillante ({min}m < {bright}m, riesgo saturación) • Exp {exp} s",
+      scopeEvalDipFmt: "{id}: Mínimo hasta {max}m (límite {mag}m) • Exp {exp}",
+      scopeEvalBrightFmt: "{id}: Brillante ({min}m < {bright}m, riesgo saturación) • Exp {exp}",
       exp10_20: "10–20 s",
       exp10: "10 s",
       exp20_30: "20–30 s",
@@ -1699,8 +1699,8 @@
       ttDefaultComment: "TG-Filterserie aktivieren und KNAME-Kalibrierung prüfen.",
       scopeEvalOkFmt: "{id}: Belichtung {exp} • FOV {fov} ({scale}″/px)",
       scopeEvalFaintFmt: "{id}: Schwächer als Limit {mag}m (empf. S50/S50PRO)",
-      scopeEvalDipFmt: "{id}: Minimum bis {max}m (Limit {mag}m) • Bel. {exp} s",
-      scopeEvalBrightFmt: "{id}: Hell ({min}m < {bright}m, Sättigungsrisiko) • Bel. {exp} s",
+      scopeEvalDipFmt: "{id}: Minimum bis {max}m (Limit {mag}m) • Bel. {exp}",
+      scopeEvalBrightFmt: "{id}: Hell ({min}m < {bright}m, Sättigungsrisiko) • Bel. {exp}",
       exp10_20: "10–20 s",
       exp10: "10 s",
       exp20_30: "20–30 s",
@@ -2013,8 +2013,8 @@
       ttDefaultComment: "Activez la série TG et vérifiez l'étalonnage KNAME.",
       scopeEvalOkFmt: "{id} : Pose {exp} • FOV {fov} ({scale}″/px)",
       scopeEvalFaintFmt: "{id} : Plus faible que la limite {mag}m (rec. S50/S50PRO)",
-      scopeEvalDipFmt: "{id} : Minimum jusqu'à {max}m (limite {mag}m) • Pose {exp} s",
-      scopeEvalBrightFmt: "{id} : Brillante ({min}m < {bright}m, risque saturation) • Pose {exp} s",
+      scopeEvalDipFmt: "{id} : Minimum jusqu'à {max}m (limite {mag}m) • Pose {exp}",
+      scopeEvalBrightFmt: "{id} : Brillante ({min}m < {bright}m, risque saturation) • Pose {exp}",
       exp10_20: "10–20 s",
       exp10: "10 s",
       exp20_30: "20–30 s",
@@ -2326,8 +2326,8 @@
       ttDefaultComment: "建议使用 TG 滤镜序列并核对 KNAME 比较星。",
       scopeEvalOkFmt: "{id}: 曝光 {exp} • 视场 {fov} ({scale}″/px)",
       scopeEvalFaintFmt: "{id}: 暗于极限 {mag}m（推荐 S50/S50PRO）",
-      scopeEvalDipFmt: "{id}: 极小值达 {max}m（极限 {mag}m）• 曝光 {exp} 秒",
-      scopeEvalBrightFmt: "{id}: 较亮 ({min}m < {bright}m，注意防饱和) • 曝光 {exp} 秒",
+      scopeEvalDipFmt: "{id}: 极小值达 {max}m（极限 {mag}m）• 曝光 {exp}",
+      scopeEvalBrightFmt: "{id}: 较亮 ({min}m < {bright}m，注意防饱和) • 曝光 {exp}",
       exp10_20: "10–20 秒",
       exp10: "10 秒",
       exp20_30: "20–30 秒",
@@ -6753,7 +6753,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     for (const r of ROWS) {
       const [star, otype, ra, dec, vmag, sp, nbref] = r;
       const con = star.split(" ").pop() || "—";
-      const expHint = vmag < 10.5 ? "10 с" : (vmag < 12.0 ? "20 с" : "30 с");
+      // Exposure is computed dynamically per telescope model by AstroLabCore.evaluateScopeSuitability()
       AAVSO_URGENT_CATALOGUE.push({
         star,
         alias: "V* " + star,
@@ -6768,7 +6768,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         kmag: "—",
         priority: nbref >= 80 ? "⭐ ПРИОРИТЕТ" : "📌 КАТАЛОГ",
         desc: "Переменная звезда каталога CDS SIMBAD (" + otype + (sp ? ", спектр " + sp : "") + "). Упоминаний в научных публикациях: " + nbref + ".",
-        comment: "Рекомендуемая выдержка Seestar в фильтре TG: " + expHint + " (зависит от текущей фазы блеска)."
+        comment: "Снимайте в фильтре IRCUT (TG) в EQ-режиме; ориентируйтесь на расчётную выдержку для выбранной модели Seestar выше."
       });
     }
   })();
@@ -14859,13 +14859,13 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       defSeek: "Регистрация блеска в полосе TG (или V), фиксация эпох экстремумов (JD Mid) и контроль амплитуды переменности.",
       nrReq: "Глобальный патруль AAVSO Alert Notice (Cataclysmic Variables Section) и группа наземной поддержки космических обсерваторий",
       nrUrg: "Ожидается редкая термоядерная вспышка повторной новой (окно активности раз в ~80 лет). Необходим еженощный мониторинг блеска.",
-      nrSeek: "Контроль предвспышечного уровня яркости, быстрых мерцаний аккреционного диска (flickering) и возможного подъёма блеска. Выдержка 10–15 с в полосе TG.",
+      nrSeek: "Контроль предвспышечного уровня яркости, быстрых мерцаний аккреционного диска (flickering) и возможного подъёма блеска в полосе IRCUT (TG) с расчётной выдержкой для вашей модели Seestar.",
       dsctReq: "Секция короткопериодических пульсирующих звёзд AAVSO (Short Period Pulsators Section — SPP)",
       dsctUrg: "Для этой высокоамплитудной звезды типа δ Щита важно фиксировать точный момент максимума блеска для отслеживания вековых изменений периода (O−C).",
-      dsctSeek: "Построение непрерывной кривой блеска длительностью 2–3 часа с выдержкой 10–20 с для точного определения эпохи максимума (JD Mid).",
+      dsctSeek: "Построение непрерывной кривой блеска длительностью 2–3 часа в полосе IRCUT (TG) с расчётной выдержкой для вашей модели Seestar для точного определения эпохи максимума (JD Mid).",
       ugReq: "Секция катаклизмических переменных и новых звёзд AAVSO (CV & Nova Section)",
       ugUrg: "Неустойчивость аккреционного диска вокруг белого карлика вызывает внезапные вспышки на 3–5 звёздных величин и появление сверхгорбов.",
-      ugSeek: "Определение текущей фазы (покой, подъём, плато или вспышка) на серии кадров 1.5–3 часа с выдержкой 15–20 с в полосе TG.",
+      ugSeek: "Определение текущей фазы (покой, подъём, плато или вспышка) на серии кадров 1.5–3 часа в полосе IRCUT (TG) с расчётной выдержкой для вашей модели Seestar.",
       epReq: "Секция экзопланет AAVSO (Exoplanet Section) и группа подтверждения транзитов NASA TESS (TFOP)",
       epUrg: "Требуется высокоточная фиксация середины транзита (TTV) для уточнения орбитальных эфемерид горячего юпитера.",
       epSeek: "Регистрация характерного U-образного проседания блеска глубиной 0.015–0.030m при прохождении планеты по диску звезды.",
@@ -14884,13 +14884,13 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       defSeek: "Measure instrumental TG (or V) magnitude, record times of extrema (JD Mid), and track variability amplitude.",
       nrReq: "AAVSO Alert Notice Patrol (Cataclysmic Variables Section) & Space Telescope Ground Support Network",
       nrUrg: "Monitored for an imminent recurrent nova thermonuclear eruption (~80-year cycle). Nightly brightness checks are critical.",
-      nrSeek: "Track pre-eruption brightness, accretion disk flickering, and any rapid brightening onset using 10–15 s TG exposures.",
+      nrSeek: "Track pre-eruption brightness, accretion disk flickering, and any rapid brightening onset in IRCUT (TG) using the calculated exposure for your Seestar model.",
       dsctReq: "AAVSO Short Period Pulsators Section (SPP) & O−C Timing Program",
       dsctUrg: "High-amplitude Delta Scuti pulsator requiring precise times of maximum light to track orbital light-time effects (O−C).",
-      dsctSeek: "Capture a continuous 2–3 hour time series (10–20 s exposures) to pinpoint the exact Julian Date (JD Mid) of maximum light.",
+      dsctSeek: "Capture a continuous 2–3 hour IRCUT (TG) time series using the calculated exposure for your Seestar model to pinpoint the exact Julian Date (JD Mid) of maximum light.",
       ugReq: "AAVSO Cataclysmic Variables & Nova Section (CV & Nova Section)",
       ugUrg: "Thermal disk instability around the white dwarf triggers sudden 3–5 mag outbursts and superhump oscillations.",
-      ugSeek: "Identify the current state (quiescence, rise, plateau, or outburst) over a 1.5–3 hour series (15–20 s exposures in TG).",
+      ugSeek: "Identify the current state (quiescence, rise, plateau, or outburst) over a 1.5–3 hour IRCUT (TG) series using the calculated exposure for your Seestar model.",
       epReq: "AAVSO Exoplanet Section & NASA TESS Follow-up Observing Program (TFOP)",
       epUrg: "High-precision mid-transit timing (TTV) is needed to refine Hot Jupiter orbital ephemerides.",
       epSeek: "Record the characteristic U-shaped transit dip (0.015–0.030 mag depth) across the predicted transit window.",
@@ -16930,7 +16930,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
       <div class="star-dossier-section-card" style="border-left:3px solid #38bdf8;">
         <div class="star-dossier-sec-title"><span>${escapeHtml(mPack.secRecommendations)}</span></div>
-        <div style="margin-bottom:5px;"><strong>${escapeHtml(mPack.lblScopeFit.replace("{scope}", scopeProf.name))}</strong> <span style="color:#34d399; font-weight:700;">🔭 ${escapeHtml(scopeEval.badgeText)}</span> (${escapeHtml(scopeProf.fovStr)} • Лимит ≤${escapeHtml(scopeProf.magLimit)}m)</div>
+        <div style="margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><strong>${escapeHtml(mPack.lblScopeFit.replace("{scope}", scopeProf.name))}</strong> <span class="exp-highlight-pill ${scopeEval.status === 'warn' ? 'warn' : ''}">⏱ <strong>${escapeHtml(scopeEval.expRec || "10 s")}</strong></span> <span style="color:#34d399; font-weight:700;">🔭 ${escapeHtml(scopeEval.badgeText)}</span> (${escapeHtml(scopeProf.fovStr)} • Лимит ≤${escapeHtml(scopeProf.magLimit)}m)</div>
         <div><strong>${escapeHtml(mPack.lblObservingGuide)}</strong> ${escapeHtml(dossier.seek)}</div>
       </div>
     `;
@@ -19478,40 +19478,61 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
   // Guarantee Slide 13 (Shooting Recommendations & Per-Frame CSV Pipeline) across all 8 languages
   (function ensureSlide13AllLangs() {
-    function buildWorkflowSvg(L) {
+    function buildUiMockupSvg(L) {
       return (
-        "<svg viewBox='0 0 460 322' width='100%' style='display:block; background:#0b1220; border-radius:10px; border:1px solid rgba(16,185,129,0.38);'>" +
-        "<defs><marker id='arrG13' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0 1 L10 5 L0 9 z' fill='#10b981'/></marker>" +
-        "<marker id='arrB13' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0 1 L10 5 L0 9 z' fill='#64748b'/></marker></defs>" +
-        // Step 1: Telescope capture + USB-C storage path
-        "<rect x='14' y='12' width='432' height='64' rx='9' fill='rgba(245,158,11,0.13)' stroke='#f59e0b' stroke-width='1.5'/>" +
-        "<text x='230' y='32' text-anchor='middle' fill='#fde68a' font-size='12' font-weight='800'>" + L.s1Title + "</text>" +
-        "<text x='230' y='50' text-anchor='middle' fill='#e2e8f0' font-size='10.2'>" + L.s1Sub + "</text>" +
-        "<text x='230' y='66' text-anchor='middle' fill='#93c5fd' font-size='9.8' font-weight='700'>" + L.s1Path + "</text>" +
-        // Arrows down to Primary (Left, wide) and Fallback (Right, compact)
-        "<path d='M150 76 L150 102' stroke='#10b981' stroke-width='2.2' marker-end='url(#arrG13)'/>" +
-        "<path d='M368 76 L368 102' stroke='#64748b' stroke-width='1.5' stroke-dasharray='4,3' marker-end='url(#arrB13)'/>" +
-        // Primary Branch (Left, 268px wide, highlighted green)
-        "<rect x='14' y='106' width='272' height='98' rx='9' fill='rgba(16,185,129,0.18)' stroke='#10b981' stroke-width='2.1'/>" +
-        "<text x='150' y='126' text-anchor='middle' fill='#6ee7b7' font-size='11.8' font-weight='800'>" + L.pTitle + "</text>" +
-        "<text x='150' y='145' text-anchor='middle' fill='#ffffff' font-size='10' font-weight='700'>" + L.pLine1 + "</text>" +
-        "<text x='150' y='162' text-anchor='middle' fill='#d1fae5' font-size='9.8'>" + L.pLine2 + "</text>" +
-        "<text x='150' y='179' text-anchor='middle' fill='#d1fae5' font-size='9.8'>" + L.pLine3 + "</text>" +
-        "<text x='150' y='195' text-anchor='middle' fill='#34d399' font-size='9.6' font-weight='700'>" + L.pLine4 + "</text>" +
-        // Fallback Branch (Right, 148px wide, muted secondary)
-        "<rect x='296' y='106' width='150' height='98' rx='9' fill='rgba(51,65,85,0.28)' stroke='#64748b' stroke-width='1.3' stroke-dasharray='4,3'/>" +
-        "<text x='371' y='126' text-anchor='middle' fill='#cbd5e1' font-size='10.8' font-weight='700'>" + L.fTitle + "</text>" +
-        "<text x='371' y='146' text-anchor='middle' fill='#94a3b8' font-size='9.6'>" + L.fLine1 + "</text>" +
-        "<text x='371' y='163' text-anchor='middle' fill='#94a3b8' font-size='9.4'>" + L.fLine2 + "</text>" +
-        "<text x='371' y='182' text-anchor='middle' fill='#fcd34d' font-size='9.2'>" + L.fLine3 + "</text>" +
-        // Arrows converging to Final Output
-        "<path d='M150 204 L150 222 L212 222 L212 234' fill='none' stroke='#10b981' stroke-width='2.2' marker-end='url(#arrG13)'/>" +
-        "<path d='M371 204 L371 222 L252 222 L252 234' fill='none' stroke='#64748b' stroke-width='1.4' stroke-dasharray='4,3' marker-end='url(#arrB13)'/>" +
-        // Final Output (full width 432px)
-        "<rect x='14' y='238' width='432' height='70' rx='10' fill='rgba(16,185,129,0.22)' stroke='#10b981' stroke-width='1.8'/>" +
-        "<text x='230' y='260' text-anchor='middle' fill='#ffffff' font-size='12.5' font-weight='800'>" + L.outTitle + "</text>" +
-        "<text x='230' y='279' text-anchor='middle' fill='#d1fae5' font-size='10.2'>" + L.outSub1 + "</text>" +
-        "<text x='230' y='296' text-anchor='middle' fill='#a7f3d0' font-size='9.8'>" + L.outSub2 + "</text>" +
+        "<svg viewBox='0 0 480 350' width='100%' style='display:block; background:#09101d; border-radius:10px; border:1px solid rgba(56,189,248,0.35); font-family:system-ui,-apple-system,sans-serif;'>" +
+        "<defs>" +
+        "<marker id='arrCyan13' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0 1 L10 5 L0 9 z' fill='#38bdf8'/></marker>" +
+        "<marker id='arrEm13' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0 1 L10 5 L0 9 z' fill='#10b981'/></marker>" +
+        "<marker id='arrAmb13' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0 1 L10 5 L0 9 z' fill='#fbbf24'/></marker>" +
+        "</defs>" +
+
+        // PANEL 1: USB-C Explorer Mockup (Where to find the folder)
+        "<rect x='12' y='10' width='456' height='74' rx='9' fill='#0f1a2e' stroke='#334155' stroke-width='1.3'/>" +
+        "<circle cx='28' cy='27' r='10' fill='#f59e0b'/><text x='28' y='31' text-anchor='middle' fill='#09101d' font-size='11' font-weight='900'>1</text>" +
+        "<text x='46' y='31' fill='#fde68a' font-size='11.2' font-weight='800'>" + L.p1Title + "</text>" +
+        // Explorer address bar
+        "<rect x='22' y='40' width='290' height='22' rx='5' fill='#1e293b' stroke='#475569' stroke-width='1'/>" +
+        "<text x='30' y='55' fill='#93c5fd' font-size='10' font-family='monospace' font-weight='700'>📁 Seestar (USB-C) › MyWorks › W UMa_sub</text>" +
+        // Folder badge on right
+        "<rect x='320' y='40' width='138' height='22' rx='5' fill='rgba(245,158,11,0.16)' stroke='#f59e0b' stroke-width='1'/>" +
+        "<text x='389' y='54' text-anchor='middle' fill='#fde68a' font-size='9.5' font-weight='700'>" + L.p1Badge + "</text>" +
+        "<text x='22' y='76' fill='#94a3b8' font-size='9.3'>" + L.p1Hint + "</text>" +
+
+        // Arrow 1 -> 2
+        "<path d='M135 84 L135 102' stroke='#38bdf8' stroke-width='2' marker-end='url(#arrCyan13)'/>" +
+
+        // PANEL 2: Step 2 UI Screenshot Mockup (Exact buttons + CLICK HERE arrow)
+        "<rect x='12' y='106' width='456' height='104' rx='9' fill='#0f1b2d' stroke='#38bdf8' stroke-width='1.5'/>" +
+        "<circle cx='28' cy='123' r='10' fill='#38bdf8'/><text x='28' y='127' text-anchor='middle' fill='#09101d' font-size='11' font-weight='900'>2</text>" +
+        "<text x='46' y='127' fill='#e0f2fe' font-size='11.2' font-weight='800'>" + L.p2Title + "</text>" +
+        // Primary blue button mockup
+        "<rect x='22' y='137' width='232' height='36' rx='8' fill='#0284c7' stroke='#38bdf8' stroke-width='2'/>" +
+        "<text x='138' y='159' text-anchor='middle' fill='#ffffff' font-size='11.5' font-weight='800'>" + L.btnPrimary + "</text>" +
+        // Secondary muted button mockup
+        "<rect x='264' y='137' width='194' height='36' rx='8' fill='#1e293b' stroke='#475569' stroke-width='1.2' stroke-dasharray='3,2'/>" +
+        "<text x='361' y='159' text-anchor='middle' fill='#94a3b8' font-size='10.2' font-weight='700'>" + L.btnFallback + "</text>" +
+        // Callout arrow pointing UP to primary button
+        "<path d='M138 194 L138 176' stroke='#fbbf24' stroke-width='2.2' marker-end='url(#arrAmb13)'/>" +
+        "<text x='138' y='203' text-anchor='middle' fill='#fde047' font-size='9.8' font-weight='800'>" + L.clickHere + "</text>" +
+        "<text x='361' y='194' text-anchor='middle' fill='#64748b' font-size='9.1'>" + L.fallbackNote + "</text>" +
+
+        // Arrow 2 -> 3
+        "<path d='M240 210 L240 227' stroke='#10b981' stroke-width='2.2' marker-end='url(#arrEm13)'/>" +
+
+        // PANEL 3: Automatic Recalibration Green Banner Mockup (What happens & Why)
+        "<rect x='12' y='231' width='456' height='54' rx='9' fill='rgba(16,185,129,0.16)' stroke='#10b981' stroke-width='1.6'/>" +
+        "<circle cx='28' cy='248' r='10' fill='#10b981'/><text x='28' y='252' text-anchor='middle' fill='#09101d' font-size='11' font-weight='900'>3</text>" +
+        "<text x='46' y='252' fill='#6ee7b7' font-size='10.6' font-weight='800'>" + L.p3Banner + "</text>" +
+        "<text x='22' y='272' fill='#d1fae5' font-size='9.5'>" + L.p3Why + "</text>" +
+
+        // Arrow 3 -> 4
+        "<path d='M240 285 L240 299' stroke='#10b981' stroke-width='2' marker-end='url(#arrEm13)'/>" +
+
+        // PANEL 4: Step 3 Result (Ready for AAVSO WebObs)
+        "<rect x='12' y='303' width='456' height='37' rx='8' fill='rgba(16,185,129,0.24)' stroke='#34d399' stroke-width='1.5'/>" +
+        "<circle cx='28' cy='321' r='9' fill='#34d399'/><text x='28' y='325' text-anchor='middle' fill='#09101d' font-size='10.5' font-weight='900'>4</text>" +
+        "<text x='46' y='325' fill='#ffffff' font-size='10.8' font-weight='800'>" + L.p4Result + "</text>" +
         "</svg>"
       );
     }
@@ -19521,248 +19542,216 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         tab: "13. Съёмка и CSV",
         slide: {
           kicker: "СЪЁМКА НА SEESTAR И ЗАГРУЗКА CSV",
-          headline: "Рекомендации по съёмке и загрузка в конвертер",
-          callout: "Целевой способ загрузки в AstroLab — «Папка покадровых CSV ★»: подключите Seestar по USB-C и откройте MyWorks/<Звезда>_sub напрямую с телескопа или предварительно скопировав папку на компьютер.",
+          headline: "Как снимать и загружать данные правильно (и почему)",
+          callout: "Почему это важно: в итоговом CSV прошивка Seestar на ярких звёздах (< 8.5m) не выбрасывает пересвеченные опорные звёзды — блеск уплывает на ~0.4m, а ошибка раздувается до ±0.18m. Поэтому основной режим в AstroLab — «Папка покадровых CSV ★».",
           steps: [
-            "<strong>Настройки съёмки на Seestar:</strong> для целей ярче <code>8.5m</code> (порог <code>S30PRO ≈ 7.7m</code> при <code>10s</code>) ставьте выдержку <strong>5–10 с</strong>, фильтр <code>IRCUT</code> (<code>TG</code>) и <strong>EQ-режим</strong> — при <code>20–30 с</code> пересвечиваются опорные в канале R (сдвиг <code>~0.4m</code>).",
-            "<strong>Где искать покадровые CSV на Seestar:</strong> подключите телескоп к ПК кабелем <strong>USB-C</strong> (режим накопителя) и откройте папку <code>MyWorks/&lt;Имя_звезды&gt;_sub</code> (например, <code>MyWorks/W UMa_sub</code>). Папку можно выбрать <strong>сразу с подключённого телескопа</strong> или <strong>предварительно скопировать на компьютер</strong>.",
-            "<strong>Загрузка в конвертер:</strong> нажмите главную кнопку <strong>«Папка покадровых CSV ★»</strong> — конвертер сам отсеет пересвеченные опорные звёзды, найдёт цель в радиусе <code>≤ 30″</code> и снимет сдвиг <code>~0.4m</code>. Одиночный итоговый CSV оставлен как запасной вариант (контроль <code>Mag(err)/SNR</code>)."
+            "<strong>1. Как снимать на Seestar (зачем 5–10 с):</strong> смотрите на бейдж <strong>«⏱ Выдержка»</strong> в плитке звезды (для звёзд ярче <code>8.5m</code> ставьте <strong>5–10 с</strong>, фильтр <code>IRCUT / TG</code>, <code>EQ-режим</code>). Короткая выдержка не даёт опорным звёздам уйти в пересвет канала R (<code>65535 ADU</code>).",
+            "<strong>2. Где взять покадровые CSV (зачем папка <code>_sub</code>):</strong> подключите Seestar к ПК кабелем <strong>USB-C</strong> (режим накопителя) и найдите <code>MyWorks/&lt;Звезда&gt;_sub</code>. В этой папке лежат отдельные CSV на каждый кадр со всеми опорными звёздами — её можно выбрать <strong>напрямую с телескопа</strong> или <strong>скопировать на ПК</strong>.",
+            "<strong>3. Куда нажимать в AstroLab:</strong> в Шаге 1 выберите звезду → в Шаге 2 нажмите синюю кнопку <strong>«📁 Папка покадровых CSV ★»</strong> и укажите папку <code>_sub</code>. Конвертер сам выбросит пересвеченные опорные, найдёт цель в радиусе <code>≤ 30″</code>, снимет сдвиг <code>~0.4m</code> и покажет зелёную плашку отчёта — после этого жмите <strong>«Конвертировать»</strong>."
           ],
-          svgHtml: buildWorkflowSvg({
-            s1Title: "1. Съёмка на Seestar (S30 / S30 Pro / S50 / S50 Pro)",
-            s1Sub: "IRCUT (TG) • EQ-режим • 5–10 с для звёзд ярче 8.5m",
-            s1Path: "Папка на телескопе (USB-C): MyWorks/<Имя_звезды>_sub",
-            pTitle: "★ ОСНОВНОЙ СПОСОБ: Папка покадровых CSV",
-            pLine1: "Подключите Seestar по USB-C → выберите папку",
-            pLine2: "сразу с телескопа или скопируйте её на ПК",
-            pLine3: "Автоотсев пересвеченных опорных + поиск цели ≤ 30″",
-            pLine4: "Снимает сдвиг ~0.4m и ложную ошибку Mag(err)",
-            fTitle: "Запасной: Итоговый CSV",
-            fLine1: "1 файл Magnitude_*.csv",
-            fLine2: "Без пересчёта опорных",
-            fLine3: "Только контроль Mag(err)/SNR",
-            outTitle: "3. Чистый файл AAVSO Extended + Лаборатория",
-            outSub1: "Точный блеск в допуске SIMBAD/VSX • Реальная ошибка MERR (~0.02–0.03m)",
-            outSub2: "Готово к сверке с AAVSO AID и публикации на WebObs"
+          svgHtml: buildUiMockupSvg({
+            p1Title: "Подключите Seestar по USB-C (или скопируйте на ПК)",
+            p1Badge: "Нужна папка *_sub",
+            p1Hint: "Внутри лежат покадровые Light_*.csv с таблицей опорных звёзд",
+            p2Title: "Шаг 2 в AstroLab — куда нажимать:",
+            btnPrimary: "📁 Папка покадровых CSV ★",
+            btnFallback: "📂 Итоговый CSV (запасной)",
+            clickHere: "▲ НАЖМИТЕ СЮДА (основной способ)",
+            fallbackNote: "Только если нет папки _sub",
+            p3Banner: "✨ Пересчитано 112 кадров • убрано ~7 пересвеч. опорных • сдвиг -0.39m",
+            p3Why: "Зачем: AstroLab сам отсекает клиппинг в R и убирает ложную ошибку Mag(err)",
+            p4Result: "Шаг 3 → «Конвертировать»: чистый блеск (MERR ~0.025m) готов для AAVSO WebObs"
           }),
-          caption: "Рекомендуемый поток v1.5.0: подключите Seestar по USB-C и загружайте «Папку покадровых CSV» (MyWorks/<Звезда>_sub) напрямую с телескопа или с диска ПК"
+          caption: "Пошаговая схема: 1) папка MyWorks/<Звезда>_sub по USB-C → 2) синяя кнопка «Папка покадровых CSV ★» → 3) автопересчёт → 4) экспорт в AAVSO"
         }
       },
       en: {
         tab: "13. Shooting & CSV",
         slide: {
           kicker: "SEESTAR SHOOTING & CSV UPLOAD",
-          headline: "Shooting Recommendations & Converter Upload Flow",
-          callout: "Target upload workflow in AstroLab: click «Per-Frame CSV Folder ★» — connect your Seestar via USB-C and select MyWorks/<Target>_sub directly from the telescope or after copying it to your PC.",
+          headline: "How to Shoot & Upload Data Properly (and Why)",
+          callout: "Why this matters: on bright fields (< 8.5m), Seestar firmware does not reject Red-saturated reference stars in the summary CSV — shifting magnitude by ~0.4m and inflating Mag(err) to ±0.18m. Always use «Per-Frame CSV Folder ★».",
           steps: [
-            "<strong>Seestar capture settings:</strong> for targets brighter than <code>8.5m</code> (<code>S30PRO</code> floor ~<code>7.7m</code> at <code>10s</code>), shoot <strong>5–10s</strong> with <code>IRCUT</code> (<code>TG</code>) in <strong>EQ mode</strong> — <code>20–30s</code> clips R-channel refs (~<code>0.4m</code> shift).",
-            "<strong>Where to find per-frame CSVs on Seestar:</strong> plug Seestar into your computer via <strong>USB-C</strong> (storage mode) and open <code>MyWorks/&lt;StarName&gt;_sub</code> (e.g., <code>MyWorks/W UMa_sub</code>). Load it <strong>directly from Seestar</strong> or <strong>copy the folder to your PC first</strong>.",
-            "<strong>Loading into Converter:</strong> use the primary button <strong>«Per-Frame CSV Folder ★»</strong> — AstroLab rejects saturated refs, locks the target within <code>≤ 30″</code>, and removes the <code>~0.4m</code> bias. Single Summary CSV remains as a fallback (<code>Mag(err)/SNR</code> check only)."
+            "<strong>1. How to shoot (why 5–10s):</strong> follow the <strong>«⏱ Exposure»</strong> badge on the star card (use <strong>5–10s</strong> for targets &lt; <code>8.5m</code>, <code>IRCUT / TG</code>, <code>EQ mode</code>) so comparison stars stay below Red clipping (<code>65535 ADU</code>).",
+            "<strong>2. Where to find per-frame CSVs:</strong> connect Seestar via <strong>USB-C</strong> (storage mode) and open <code>MyWorks/&lt;Star&gt;_sub</code>. Each frame CSV stores all reference stars — select the folder <strong>directly from Seestar</strong> or <strong>copy it to your PC first</strong>.",
+            "<strong>3. Where to click in AstroLab:</strong> Step 1 pick star → Step 2 click the blue <strong>«📁 Per-Frame CSV Folder ★»</strong> button and select <code>_sub</code>. AstroLab auto-rejects saturated refs, locks the target within <code>≤ 30″</code>, removes <code>~0.4m</code> bias, and shows the green report banner → click <strong>Convert</strong>."
           ],
-          svgHtml: buildWorkflowSvg({
-            s1Title: "1. Capture on Seestar (S30 / S30 Pro / S50 / S50 Pro)",
-            s1Sub: "IRCUT (TG) • EQ Mode • 5–10s for stars brighter than 8.5m",
-            s1Path: "Telescope folder (USB-C): MyWorks/<TargetName>_sub",
-            pTitle: "★ PRIMARY WORKFLOW: Per-Frame CSV Folder",
-            pLine1: "Connect Seestar via USB-C → open folder directly",
-            pLine2: "from the telescope or copy it to your PC first",
-            pLine3: "Auto-rejects saturated refs + ≤ 30″ target lock",
-            pLine4: "Removes ~0.4m ZP bias & inflated Mag(err)",
-            fTitle: "Fallback: Summary CSV",
-            fLine1: "1 file Magnitude_*.csv",
-            fLine2: "No ref recalibration",
-            fLine3: "Mag(err)/SNR check only",
-            outTitle: "3. Clean AAVSO Extended File + Light Curve Lab",
-            outSub1: "Calibrated magnitudes matching SIMBAD/VSX • Realistic MERR (~0.02–0.03m)",
-            outSub2: "Ready for AAVSO AID overlay and WebObs submission"
+          svgHtml: buildUiMockupSvg({
+            p1Title: "Connect Seestar via USB-C (or copy folder to PC)",
+            p1Badge: "Select *_sub folder",
+            p1Hint: "Contains per-frame Light_*.csv files with full reference star tables",
+            p2Title: "Step 2 in AstroLab — where to click:",
+            btnPrimary: "📁 Per-Frame CSV Folder ★",
+            btnFallback: "📂 Summary CSV (Fallback)",
+            clickHere: "▲ CLICK HERE (primary workflow)",
+            fallbackNote: "Only if _sub folder is unavailable",
+            p3Banner: "✨ Recalibrated 112 frames • dropped ~7 saturated refs • shift -0.39m",
+            p3Why: "Why: removes R-channel clipping bias & inflated Mag(err) automatically",
+            p4Result: "Step 3 → Convert: clean SIMBAD/VSX magnitudes (MERR ~0.025m) for AAVSO WebObs"
           }),
-          caption: "Recommended v1.5.0 workflow: connect Seestar via USB-C and load Per-Frame CSV Folder (MyWorks/<Target>_sub) directly from the telescope or from PC"
+          caption: "Step-by-step UI guide: 1) MyWorks/<Star>_sub via USB-C → 2) blue Per-Frame CSV Folder button → 3) auto-recalibration → 4) AAVSO export"
         }
       },
       es: {
         tab: "13. Captura y CSV",
         slide: {
           kicker: "CAPTURA SEESTAR Y CARGA CSV",
-          headline: "Recomendaciones de captura y carga en el conversor",
-          callout: "Flujo principal en AstroLab: usa «Carpeta CSV por cuadro ★» conectando el Seestar por USB-C (MyWorks/<Estrella>_sub) directamente desde el telescopio o copiando la carpeta al PC.",
+          headline: "Cómo capturar y cargar datos correctamente (y por qué)",
+          callout: "Por qué importa: en campos brillantes (< 8.5m) el CSV resumen de Seestar incluye referencias saturadas en R (~0.4m de sesgo). Usa siempre «Carpeta CSV por cuadro ★».",
           steps: [
-            "<strong>Captura en Seestar:</strong> para objetivos < <code>8.5m</code> usa <strong>5–10 s</strong>, filtro <code>IRCUT</code> (<code>TG</code>) y <strong>modo EQ</strong>.",
-            "<strong>Dónde encontrar los CSV:</strong> conecta el Seestar por <strong>USB-C</strong> y abre <code>MyWorks/&lt;Estrella&gt;_sub</code> directamente desde el telescopio o copiando antes la carpeta al PC.",
-            "<strong>Carga en el conversor:</strong> pulsa el botón principal <strong>«Carpeta CSV por cuadro ★»</strong> (descarta referencias saturadas y corrige <code>~0.4m</code>). El CSV resumen queda como opción alternativa."
+            "<strong>1. Captura:</strong> sigue la etiqueta <strong>«⏱ Exposición»</strong> de la tarjeta (<strong>5–10 s</strong> para &lt; <code>8.5m</code>, <code>IRCUT/TG</code>, <code>EQ</code>).",
+            "<strong>2. Dónde está la carpeta:</strong> conecta Seestar por <strong>USB-C</strong> y abre <code>MyWorks/&lt;Estrella&gt;_sub</code> directamente desde el telescopio o copiándola al PC.",
+            "<strong>3. Dónde pulsar:</strong> Paso 2 → botón azul <strong>«📁 Carpeta CSV por cuadro ★»</strong> → selecciona <code>_sub</code> → comprueba el aviso verde de recalibración → <strong>Convertir</strong>."
           ],
-          svgHtml: buildWorkflowSvg({
-            s1Title: "1. Captura en Seestar (S30 / S30 Pro / S50 / S50 Pro)",
-            s1Sub: "IRCUT (TG) • Modo EQ • 5–10 s para estrellas < 8.5m",
-            s1Path: "Carpeta en Seestar (USB-C): MyWorks/<Estrella>_sub",
-            pTitle: "★ MÉTODO PRINCIPAL: Carpeta CSV por cuadro",
-            pLine1: "Conecta Seestar por USB-C → abre la carpeta",
-            pLine2: "directamente del telescopio o cópiala al PC",
-            pLine3: "Descarta referencias saturadas + objetivo ≤ 30″",
-            pLine4: "Elimina sesgo ~0.4m y Mag(err) inflado",
-            fTitle: "Alternativo: CSV resumen",
-            fLine1: "1 archivo Magnitude_*.csv",
-            fLine2: "Sin recalibración",
-            fLine3: "Solo control Mag(err)/SNR",
-            outTitle: "3. Archivo AAVSO Extended limpio + Laboratorio",
-            outSub1: "Magnitudes calibradas SIMBAD/VSX • MERR realista (~0.02–0.03m)",
-            outSub2: "Listo para AAVSO AID y envío a WebObs"
+          svgHtml: buildUiMockupSvg({
+            p1Title: "Conecta Seestar por USB-C (o copia al PC)",
+            p1Badge: "Carpeta *_sub",
+            p1Hint: "Contiene CSV por fotograma con todas las estrellas de referencia",
+            p2Title: "Paso 2 en AstroLab — dónde pulsar:",
+            btnPrimary: "📁 Carpeta CSV por cuadro ★",
+            btnFallback: "📂 CSV resumen (alternativo)",
+            clickHere: "▲ PULSA AQUÍ (método principal)",
+            fallbackNote: "Solo si no tienes la carpeta _sub",
+            p3Banner: "✨ 112 cuadros recalibrados • ~7 refs saturadas fuera • sesgo -0.39m",
+            p3Why: "Por qué: elimina el sesgo de saturación en R y el error Mag(err) inflado",
+            p4Result: "Paso 3 → Convertir: archivo limpio (MERR ~0.025m) listo para AAVSO WebObs"
           }),
-          caption: "Flujo v1.5.0: conecta Seestar por USB-C y carga la carpeta MyWorks/<Estrella>_sub directamente o desde tu PC"
+          caption: "Guía paso a paso: 1) MyWorks/<Estrella>_sub por USB-C → 2) botón azul → 3) recalibración automática → 4) AAVSO"
         }
       },
       de: {
         tab: "13. Aufnahme & CSV",
         slide: {
           kicker: "SEESTAR-AUFNAHME & CSV-UPLOAD",
-          headline: "Aufnahmeempfehlungen & CSV-Upload im Konverter",
-          callout: "Ziel-Workflow in AstroLab: «Einzelbild-CSV-Ordner ★» nutzen — Seestar per USB-C anschließen und MyWorks/<Stern>_sub direkt vom Teleskop oder nach dem Kopieren auf den PC laden.",
+          headline: "Richtig aufnehmen & CSV hochladen (und warum)",
+          callout: "Warum wichtig: Bei hellen Feldern (< 8.5m) enthält die Sammel-CSV gesättigte R-Referenzsterne (~0.4m Shift). Nutze daher immer «Einzelbild-CSV-Ordner ★».",
           steps: [
-            "<strong>Aufnahme am Seestar:</strong> für Sterne < <code>8.5m</code> <strong>5–10 s</strong>, Filter <code>IRCUT</code> (<code>TG</code>) und <strong>EQ-Modus</strong> nutzen.",
-            "<strong>Wo liegt der Ordner:</strong> Seestar per <strong>USB-C</strong> verbinden und <code>MyWorks/&lt;Stern&gt;_sub</code> direkt vom Teleskop wählen oder vorher auf den PC kopieren.",
-            "<strong>Upload im Konverter:</strong> Hauptbutton <strong>«Einzelbild-CSV-Ordner ★»</strong> klicken (verwirft gesättigte Referenzsterne, korrigiert <code>~0.4m</code>). Sammel-CSV dient als Fallback."
+            "<strong>1. Aufnahme:</strong> beachte den <strong>«⏱ Belichtung»</strong>-Badge (<strong>5–10 s</strong> für &lt; <code>8.5m</code>, <code>IRCUT/TG</code>, <code>EQ</code>).",
+            "<strong>2. Wo liegt der Ordner:</strong> Seestar per <strong>USB-C</strong> verbinden und <code>MyWorks/&lt;Stern&gt;_sub</code> direkt vom Teleskop oder nach Kopie auf den PC wählen.",
+            "<strong>3. Wo klicken:</strong> Schritt 2 → blauer Button <strong>«📁 Einzelbild-CSV-Ordner ★»</strong> → Ordner <code>_sub</code> wählen → grünen Bericht prüfen → <strong>Konvertieren</strong>."
           ],
-          svgHtml: buildWorkflowSvg({
-            s1Title: "1. Aufnahme mit Seestar (S30 / S30 Pro / S50 / S50 Pro)",
-            s1Sub: "IRCUT (TG) • EQ-Modus • 5–10 s für Sterne < 8.5m",
-            s1Path: "Ordner auf Seestar (USB-C): MyWorks/<Stern>_sub",
-            pTitle: "★ HAUPTWEG: Einzelbild-CSV-Ordner",
-            pLine1: "Seestar per USB-C verbinden → Ordner direkt",
-            pLine2: "vom Teleskop laden oder vorher auf PC kopieren",
-            pLine3: "Verwirft gesättigte Refs + Ziel-Lock ≤ 30″",
-            pLine4: "Korrigiert ~0.4m Shift & Mag(err)",
-            fTitle: "Fallback: Sammel-CSV",
-            fLine1: "1 Datei Magnitude_*.csv",
-            fLine2: "Ohne Ref-Rekalibrierung",
-            fLine3: "Nur Mag(err)/SNR-Check",
-            outTitle: "3. Saubere AAVSO-Extended-Datei + Lichtkurven-Labor",
-            outSub1: "Kalibrierte Helligkeiten (SIMBAD/VSX) • Reale MERR (~0.02–0.03m)",
-            outSub2: "Bereit für AAVSO AID und WebObs-Upload"
+          svgHtml: buildUiMockupSvg({
+            p1Title: "Seestar per USB-C verbinden (oder auf PC kopieren)",
+            p1Badge: "Ordner *_sub",
+            p1Hint: "Enthält Einzelbild-CSV mit allen Vergleichssternen",
+            p2Title: "Schritt 2 in AstroLab — hier klicken:",
+            btnPrimary: "📁 Einzelbild-CSV-Ordner ★",
+            btnFallback: "📂 Sammel-CSV (Fallback)",
+            clickHere: "▲ HIER KLICKEN (Hauptweg)",
+            fallbackNote: "Nur wenn kein _sub-Ordner vorliegt",
+            p3Banner: "✨ 112 Frames rekalibriert • ~7 gesättigte Refs entfernt • Shift -0.39m",
+            p3Why: "Warum: entfernt R-Sättigungsfehler und überhöhtes Mag(err) automatisch",
+            p4Result: "Schritt 3 → Konvertieren: saubere Werte (MERR ~0.025m) für AAVSO WebObs"
           }),
-          caption: "v1.5.0-Workflow: Seestar per USB-C verbinden und MyWorks/<Stern>_sub direkt oder vom PC laden"
+          caption: "UI-Anleitung: 1) MyWorks/<Stern>_sub per USB-C → 2) blauer Button → 3) Rekalibrierung → 4) AAVSO-Export"
         }
       },
       fr: {
         tab: "13. Capture & CSV",
         slide: {
           kicker: "CAPTURE SEESTAR & IMPORT CSV",
-          headline: "Recommandations de capture et import dans le convertisseur",
-          callout: "Méthode principale dans AstroLab : « Dossier CSV par image ★ » — branchez le Seestar en USB-C et ouvrez MyWorks/<Étoile>_sub directement depuis le télescope ou après copie sur PC.",
+          headline: "Comment capturer et importer vos données (et pourquoi)",
+          callout: "Pourquoi : sur champs brillants (< 8.5m), le CSV résumé garde des références saturées en R (~0.4m de biais). Utilisez toujours « Dossier CSV par image ★ ».",
           steps: [
-            "<strong>Réglages Seestar :</strong> <strong>5–10 s</strong> pour cibles < <code>8.5m</code>, filtre <code>IRCUT</code> (<code>TG</code>), <strong>mode EQ</strong>.",
-            "<strong>Où trouver le dossier :</strong> connectez le Seestar en <strong>USB-C</strong> et ouvrez <code>MyWorks/&lt;Étoile&gt;_sub</code> directement ou après l'avoir copié sur votre ordinateur.",
-            "<strong>Import :</strong> cliquez sur le bouton principal <strong>« Dossier CSV par image ★ »</strong> (rejette les références saturées, corrige <code>~0.4m</code>). Le CSV résumé reste en secours."
+            "<strong>1. Capture :</strong> suivez le badge <strong>« ⏱ Pose »</strong> de la carte (<strong>5–10 s</strong> pour &lt; <code>8.5m</code>, <code>IRCUT/TG</code>, <code>EQ</code>).",
+            "<strong>2. Où trouver le dossier :</strong> branchez le Seestar en <strong>USB-C</strong> et ouvrez <code>MyWorks/&lt;Étoile&gt;_sub</code> directement ou après copie sur PC.",
+            "<strong>3. Où cliquer :</strong> Étape 2 → bouton bleu <strong>« 📁 Dossier CSV par image ★ »</strong> → sélectionnez <code>_sub</code> → vérifiez le bandeau vert → <strong>Convertir</strong>."
           ],
-          svgHtml: buildWorkflowSvg({
-            s1Title: "1. Capture Seestar (S30 / S30 Pro / S50 / S50 Pro)",
-            s1Sub: "IRCUT (TG) • Mode EQ • 5–10 s pour étoiles < 8.5m",
-            s1Path: "Dossier Seestar (USB-C) : MyWorks/<Étoile>_sub",
-            pTitle: "★ VOIE PRINCIPALE : Dossier CSV par image",
-            pLine1: "Branchez le Seestar en USB-C → ouvrez le dossier",
-            pLine2: "directement du télescope ou copiez-le sur PC",
-            pLine3: "Rejette les refs saturées + cible ≤ 30″",
-            pLine4: "Supprime le biais ~0.4m et Mag(err) gonflé",
-            fTitle: "Secours : CSV résumé",
-            fLine1: "1 fichier Magnitude_*.csv",
-            fLine2: "Sans recalibration",
-            fLine3: "Contrôle Mag(err)/SNR seul",
-            outTitle: "3. Fichier AAVSO Extended propre + Laboratoire",
-            outSub1: "Magnitudes calibrées SIMBAD/VSX • MERR réaliste (~0.02–0.03m)",
-            outSub2: "Prêt pour AAVSO AID et envoi WebObs"
+          svgHtml: buildUiMockupSvg({
+            p1Title: "Branchez le Seestar en USB-C (ou copiez sur PC)",
+            p1Badge: "Dossier *_sub",
+            p1Hint: "Contient un CSV par image avec toutes les étoiles de référence",
+            p2Title: "Étape 2 dans AstroLab — où cliquer :",
+            btnPrimary: "📁 Dossier CSV par image ★",
+            btnFallback: "📂 CSV résumé (secours)",
+            clickHere: "▲ CLIQUEZ ICI (voie principale)",
+            fallbackNote: "Seulement sans dossier _sub",
+            p3Banner: "✨ 112 images recalibrées • ~7 refs saturées exclues • biais -0.39m",
+            p3Why: "Pourquoi : supprime la saturation R et le Mag(err) gonflé",
+            p4Result: "Étape 3 → Convertir : données propres (MERR ~0.025m) pour AAVSO WebObs"
           }),
-          caption: "Flux v1.5.0 : connectez le Seestar en USB-C et chargez MyWorks/<Étoile>_sub directement ou depuis le PC"
+          caption: "Guide visuel : 1) MyWorks/<Étoile>_sub en USB-C → 2) bouton bleu → 3) recalibration auto → 4) AAVSO"
         }
       },
       zh: {
         tab: "13. 拍摄与上传",
         slide: {
           kicker: "SEESTAR 拍摄与 CSV 上传",
-          headline: "Seestar 拍摄建议与转换器上传流程",
-          callout: "AstroLab 推荐主流程：点击「逐帧 CSV 文件夹 ★」— 用 USB-C 连接 Seestar，直接从望远镜打开 MyWorks/<目标星>_sub，或先复制到电脑再加载。",
+          headline: "如何正确拍摄与上传数据（原因与点击步骤）",
+          callout: "为什么重要：亮星视场（< 8.5m）下 Seestar 汇总 CSV 含红通道过曝参考星，星等偏移 ~0.4m。请务必使用「逐帧 CSV 文件夹 ★」。",
           steps: [
-            "<strong>Seestar 拍摄设置：</strong>亮于 <code>8.5m</code> 目标用 <strong>5–10 秒</strong>、<code>IRCUT</code>（<code>TG</code>）与 <strong>EQ 模式</strong>。",
-            "<strong>文件夹位置：</strong>用 <strong>USB-C</strong> 连接 Seestar 到电脑，找到 <code>MyWorks/&lt;星名&gt;_sub</code>，可直接从望远镜加载或先复制到电脑。",
-            "<strong>上传方式：</strong>点击主按钮<strong>「逐帧 CSV 文件夹 ★」</strong>（自动剔除过曝参考星，消除 <code>~0.4m</code> 偏移）；单文件汇总 CSV 作为备用。"
+            "<strong>1. 拍摄设置：</strong>按星卡上的<strong>「⏱ 曝光」</strong>标签设置（<code>&lt; 8.5m</code> 用 <strong>5–10 秒</strong>，<code>IRCUT/TG</code>，<code>EQ</code>）。",
+            "<strong>2. 文件夹位置：</strong>用 <strong>USB-C</strong> 连接 Seestar 到电脑，打开 <code>MyWorks/&lt;星名&gt;_sub</code>（可直接从望远镜选或先复制到电脑）。",
+            "<strong>3. 点击步骤：</strong>第 2 步点击蓝色主按钮<strong>「📁 逐帧 CSV 文件夹 ★」</strong>→ 选中 <code>_sub</code> → 查看绿色重校准提示 → 点击<strong>转换</strong>。"
           ],
-          svgHtml: buildWorkflowSvg({
-            s1Title: "1. Seestar 拍摄 (S30 / S30 Pro / S50 / S50 Pro)",
-            s1Sub: "IRCUT (TG) • EQ 模式 • 亮于 8.5m 用 5–10 秒",
-            s1Path: "望远镜目录 (USB-C): MyWorks/<目标星>_sub",
-            pTitle: "★ 推荐主方式：逐帧 CSV 文件夹",
-            pLine1: "USB-C 连接 Seestar → 直接选择望远镜文件夹",
-            pLine2: "或先将 MyWorks/<星名>_sub 复制到电脑",
-            pLine3: "自动剔除过曝参考星 + ≤ 30″ 锁定目标",
-            pLine4: "消除 ~0.4m 零点偏移与虚高 Mag(err)",
-            fTitle: "备用：汇总 CSV",
-            fLine1: "单个 Magnitude_*.csv",
-            fLine2: "不重算参考星",
-            fLine3: "仅检测 Mag(err)/SNR",
-            outTitle: "3. 干净的 AAVSO Extended 文件 + 光变实验室",
-            outSub1: "符合 SIMBAD/VSX 校准星等 • 真实误差 MERR (~0.02–0.03m)",
-            outSub2: "可直接对比 AAVSO AID 并提交 WebObs"
+          svgHtml: buildUiMockupSvg({
+            p1Title: "USB-C 连接 Seestar（或先复制到电脑）",
+            p1Badge: "选择 *_sub 文件夹",
+            p1Hint: "包含每帧 Light_*.csv 及完整参考星表",
+            p2Title: "AstroLab 第 2 步 — 点击这里：",
+            btnPrimary: "📁 逐帧 CSV 文件夹 ★",
+            btnFallback: "📂 汇总 CSV（备用）",
+            clickHere: "▲ 点击此按钮（推荐主方式）",
+            fallbackNote: "仅在没有 _sub 文件夹时使用",
+            p3Banner: "✨ 已重算 112 帧 • 剔除约 7 颗过曝参考星 • 消除 -0.39m 偏移",
+            p3Why: "原因：自动剔除 R 通道饱和误差与虚高 Mag(err)",
+            p4Result: "第 3 步 → 转换：干净星等 (MERR ~0.025m) 可直接提交 AAVSO WebObs"
           }),
-          caption: "v1.5.0 推荐流程：USB-C 连接 Seestar，直接加载或复制 MyWorks/<星名>_sub 逐帧文件夹"
+          caption: "步骤示意图：1) USB-C 打开 MyWorks/<星名>_sub → 2) 点击蓝色主按钮 → 3) 自动重校准 → 4) 导出 AAVSO"
         }
       },
       cs: {
         tab: "13. Snímání a CSV",
         slide: {
           kicker: "SNÍMÁNÍ SEESTAR A NAHRÁNÍ CSV",
-          headline: "Doporučení pro snímání a nahrání do konvertoru",
-          callout: "Hlavní doporučený postup: «Složka snímkových CSV ★» — připojte Seestar přes USB-C a otevřete MyWorks/<Hvězda>_sub přímo z dalekohledu nebo po zkopírování do PC.",
+          headline: "Jak správně snímat a nahrávat data (co, kam a proč)",
+          callout: "Proč na tom záleží: v jasných polích (< 8.5m) souhrnné CSV ze Seestaru obsahuje přesycené reference v R (posun ~0.4m). Proto používejte «Složka snímkových CSV ★».",
           steps: [
-            "<strong>Nastavení Seestar:</strong> pro hvězdy < <code>8.5m</code> zvolte <strong>5–10 s</strong>, filtr <code>IRCUT</code> (<code>TG</code>) a <strong>EQ režim</strong>.",
-            "<strong>Kde složku najít:</strong> připojte Seestar kabelem <strong>USB-C</strong> a otevřete <code>MyWorks/&lt;Hvězda&gt;_sub</code> přímo z dalekohledu nebo ji nejprve zkopírujte do počítače.",
-            "<strong>Nahrání:</strong> použijte hlavní tlačítko <strong>«Složka snímkových CSV ★»</strong> (vyřadí přesycené reference, odstraní posun <code>~0.4m</code>). Souhrnné CSV je záložní."
+            "<strong>1. Snímání:</strong> řiďte se štítkem <strong>«⏱ Expozice»</strong> na kartě hvězdy (<strong>5–10 s</strong> pro &lt; <code>8.5m</code>, <code>IRCUT/TG</code>, <code>EQ</code>).",
+            "<strong>2. Kde najít složku:</strong> připojte Seestar přes <strong>USB-C</strong> a otevřete <code>MyWorks/&lt;Hvězda&gt;_sub</code> přímo z dalekohledu nebo po zkopírování do PC.",
+            "<strong>3. Kam kliknout:</strong> Krok 2 → modré tlačítko <strong>«📁 Složka snímkových CSV ★»</strong> → vyberte <code>_sub</code> → zkontrolujte zelený pruh → <strong>Převést</strong>."
           ],
-          svgHtml: buildWorkflowSvg({
-            s1Title: "1. Snímání na Seestar (S30 / S30 Pro / S50 / S50 Pro)",
-            s1Sub: "IRCUT (TG) • EQ režim • 5–10 s pro hvězdy < 8.5m",
-            s1Path: "Složka v Seestar (USB-C): MyWorks/<Hvězda>_sub",
-            pTitle: "★ HLAVNÍ POSTUP: Složka snímkových CSV",
-            pLine1: "Připojte Seestar přes USB-C → vyberte složku",
-            pLine2: "přímo z dalekohledu nebo po zkopírování do PC",
-            pLine3: "Vyřadí přesycené reference + cíl ≤ 30″",
-            pLine4: "Odstraní posun ~0.4m a chybu Mag(err)",
-            fTitle: "Záložní: Souhrnné CSV",
-            fLine1: "1 soubor Magnitude_*.csv",
-            fLine2: "Bez rekalibrace referencí",
-            fLine3: "Jen kontrola Mag(err)/SNR",
-            outTitle: "3. Čistý soubor AAVSO Extended + Laboratoř",
-            outSub1: "Kalibrované magnitudy SIMBAD/VSX • Reálná chyba MERR (~0.02–0.03m)",
-            outSub2: "Připraveno pro AAVSO AID a odeslání do WebObs"
+          svgHtml: buildUiMockupSvg({
+            p1Title: "Připojte Seestar přes USB-C (nebo zkopírujte do PC)",
+            p1Badge: "Složka *_sub",
+            p1Hint: "Obsahuje jednotlivé Light_*.csv s tabulkou referenčních hvězd",
+            p2Title: "Krok 2 v AstroLab — kam kliknout:",
+            btnPrimary: "📁 Složka snímkových CSV ★",
+            btnFallback: "📂 Souhrnné CSV (záložní)",
+            clickHere: "▲ KLIKNĚTE SEM (hlavní postup)",
+            fallbackNote: "Jen pokud složka _sub chybí",
+            p3Banner: "✨ Přepočteno 112 snímků • vyřazeno ~7 přesycených ref • posun -0.39m",
+            p3Why: "Proč: automaticky odstraní saturaci v R a zkreslené Mag(err)",
+            p4Result: "Krok 3 → Převést: čistá data (MERR ~0.025m) pro AAVSO WebObs"
           }),
-          caption: "Doporučený postup v1.5.0: připojte Seestar přes USB-C a načtěte MyWorks/<Hvězda>_sub přímo nebo z PC"
+          caption: "Vizuální návod: 1) MyWorks/<Hvězda>_sub přes USB-C → 2) modré tlačítko → 3) automatický přepočet → 4) AAVSO"
         }
       },
       ber: {
         tab: "13. Tuṭṭfa & CSV",
         slide: {
           kicker: "SEESTAR TUṬṬFA & CSV",
-          headline: "Seestar Exposure & Per-Frame CSV Folder Upload",
-          callout: "Target upload workflow: click «Per-Frame CSV Folder ★» — connect Seestar via USB-C and open MyWorks/<Star>_sub directly from the telescope or after copying it to your PC.",
+          headline: "How to Shoot & Upload Data Properly (and Why)",
+          callout: "Why: on bright fields (< 8.5m) Seestar summary CSV keeps saturated R refs (~0.4m shift). Always use «Per-Frame CSV Folder ★».",
           steps: [
-            "<strong>Seestar settings:</strong> <strong>5–10s</strong> for targets &lt; <code>8.5m</code>, <code>IRCUT</code> (<code>TG</code>), <strong>EQ mode</strong>.",
-            "<strong>Where to find CSVs:</strong> connect Seestar via <strong>USB-C</strong> and open <code>MyWorks/&lt;Star&gt;_sub</code> directly from the telescope or copy it to your PC first.",
-            "<strong>Upload:</strong> use primary button <strong>«Per-Frame CSV Folder ★»</strong> (rejects saturated refs, <code>≤ 30″</code> lock, removes <code>~0.4m</code>). Summary CSV is fallback."
+            "<strong>1. Shooting:</strong> follow the <strong>«⏱ Exposure»</strong> badge on the star card (<strong>5–10s</strong> for &lt; <code>8.5m</code>, <code>IRCUT/TG</code>, <code>EQ</code>).",
+            "<strong>2. Folder location:</strong> connect Seestar via <strong>USB-C</strong> and open <code>MyWorks/&lt;Star&gt;_sub</code> directly from Seestar or copy it to your PC.",
+            "<strong>3. Where to click:</strong> Step 2 → blue <strong>«📁 Per-Frame CSV Folder ★»</strong> → pick <code>_sub</code> → verify green recalibration banner → <strong>Convert</strong>."
           ],
-          svgHtml: buildWorkflowSvg({
-            s1Title: "1. Capture on Seestar (S30 / S30 Pro / S50 / S50 Pro)",
-            s1Sub: "IRCUT (TG) • EQ Mode • 5–10s for stars < 8.5m",
-            s1Path: "Seestar folder (USB-C): MyWorks/<Target>_sub",
-            pTitle: "★ PRIMARY: Per-Frame CSV Folder",
-            pLine1: "Connect Seestar via USB-C → open folder directly",
-            pLine2: "from telescope or copy to your PC first",
-            pLine3: "Auto-rejects saturated refs + ≤ 30″ lock",
-            pLine4: "Removes ~0.4m ZP bias & inflated Mag(err)",
-            fTitle: "Fallback: Summary CSV",
-            fLine1: "1 file Magnitude_*.csv",
-            fLine2: "No ref recalibration",
-            fLine3: "Mag(err)/SNR check only",
-            outTitle: "3. Clean AAVSO Extended + Light Curve Lab",
-            outSub1: "Calibrated SIMBAD/VSX magnitudes • Realistic MERR",
-            outSub2: "Ready for AAVSO AID & WebObs"
+          svgHtml: buildUiMockupSvg({
+            p1Title: "Connect Seestar via USB-C (or copy to PC)",
+            p1Badge: "Select *_sub folder",
+            p1Hint: "Contains per-frame Light_*.csv files with reference stars",
+            p2Title: "Step 2 in AstroLab — where to click:",
+            btnPrimary: "📁 Per-Frame CSV Folder ★",
+            btnFallback: "📂 Summary CSV (Fallback)",
+            clickHere: "▲ CLICK HERE (primary)",
+            fallbackNote: "Only without _sub folder",
+            p3Banner: "✨ Recalibrated 112 frames • dropped ~7 saturated refs • -0.39m",
+            p3Why: "Why: removes R-channel clipping & inflated Mag(err)",
+            p4Result: "Step 3 → Convert: clean magnitudes (MERR ~0.025m) for AAVSO WebObs"
           }),
-          caption: "v1.5.0 workflow: connect Seestar via USB-C and load MyWorks/<Target>_sub directly or from PC"
+          caption: "Step-by-step UI guide: 1) MyWorks/<Star>_sub via USB-C → 2) blue button → 3) auto-recalibration → 4) AAVSO"
         }
       }
     };
