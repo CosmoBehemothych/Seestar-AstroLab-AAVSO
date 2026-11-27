@@ -22,6 +22,7 @@ def main():
     assert ".replace(\"{exp}\", prof.maxExpSec)" not in bridge_txt, "Found legacy prof.maxExpSec in badgeText!"
     assert ".replace(\"{exp}\", prof.minExpSec)" not in bridge_txt, "Found legacy prof.minExpSec in badgeText!"
     assert "const expHint =" not in bridge_txt, "Found legacy hardcoded expHint in SIMBAD catalog generator!"
+    assert "if (window._astroLabSummaryCsvLoaded)" in bridge_txt, "Summary CSV must be blocked in processFile() for AAVSO!"
     assert "max-width: 100%;" in css_txt and "box-sizing: border-box;" in css_txt and ".exp-highlight-pill" in css_txt, \
         "Missing overflow-safe rules on .exp-highlight-pill!"
 
@@ -127,7 +128,26 @@ if (!oj287.badgeText.includes(ojNum + ' s')) {
   throw new Error(`OJ 287 on S30PRO mismatch: expRec=${oj287.expRec}, badge=${oj287.badgeText}`);
 }
 
+
+// 3. Real CCD SNR Physics verification (Bortle, Airmass, Aperture, Saturation)
+const faintStar = { star: 'OJ 287', magRange: '12.0m → 15.1m', kmag: '13.4', type: 'BLLAC' };
+const snrB2 = CoreRu.computeCcdSnrExposure(faintStar, 'S30PRO', { bortle: 2, fwhm: 3.5, altDeg: 60, moonFrac: 0.0 });
+const snrB8 = CoreRu.computeCcdSnrExposure(faintStar, 'S30PRO', { bortle: 8, fwhm: 3.5, altDeg: 60, moonFrac: 0.0 });
+if (!(snrB2.snr > snrB8.snr)) throw new Error(`Physics fail: Bortle 2 SNR (${snrB2.snr}) must exceed Bortle 8 (${snrB8.snr})`);
+
+const snrHigh = CoreRu.computeCcdSnrExposure(faintStar, 'S30PRO', { bortle: 5, fwhm: 3.5, altDeg: 75, moonFrac: 0.0 });
+const snrLow  = CoreRu.computeCcdSnrExposure(faintStar, 'S30PRO', { bortle: 5, fwhm: 3.5, altDeg: 20, moonFrac: 0.0 });
+if (!(snrHigh.snr > snrLow.snr && snrLow.airmass > snrHigh.airmass)) {
+  throw new Error(`Physics fail: high alt SNR (${snrHigh.snr}, X=${snrHigh.airmass}) must exceed low alt (${snrLow.snr}, X=${snrLow.airmass})`);
+}
+
+const snrS50 = CoreRu.computeCcdSnrExposure(faintStar, 'S50', { bortle: 5, fwhm: 3.5, altDeg: 60, moonFrac: 0.0 });
+const snrS30 = CoreRu.computeCcdSnrExposure(faintStar, 'S30', { bortle: 5, fwhm: 3.5, altDeg: 60, moonFrac: 0.0 });
+if (!(snrS50.snr > snrS30.snr)) throw new Error(`Physics fail: S50 SNR (${snrS50.snr}) must exceed S30 (${snrS30.snr})`);
+
+console.log(`CCD SNR PHYSICS OK: B2=${snrB2.snr} > B8=${snrB8.snr} | alt75=${snrHigh.snr}(X=${snrHigh.airmass}) > alt20=${snrLow.snr}(X=${snrLow.airmass}) | S50=${snrS50.snr} > S30=${snrS30.snr}`);
 console.log(`PASS: Verified ${checked} (star x model x lang) exposure consistency checks with 0 discrepancies!`);
+
 """
     res = subprocess.run(["node", "-e", node_script, str(BRIDGE)], capture_output=True, text=True)
     if res.returncode != 0:

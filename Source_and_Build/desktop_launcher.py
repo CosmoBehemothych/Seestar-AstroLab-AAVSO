@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""
 ==============================================================================
-Seestar AstroLab by CosmoBehemothych – Native Desktop Runner (v1.5.0-alpha)
+Seestar AstroLab by CosmoBehemothych – Native Desktop Runner (v1.5.0)
 ==============================================================================
 """
 
@@ -40,8 +40,8 @@ except ImportError:
         AstroLabDiagnosticLogger = None
 
 
-APP_VERSION = "1.5.0-alpha"
-APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych – Фотометрия и Радар целей (v1.5.0-alpha)"
+APP_VERSION = "1.5.0"
+APP_TITLE = "Seestar AstroLab AAVSO by CosmoBehemothych – Фотометрия и Радар целей (v1.5.0)"
 APP_USER_MODEL_ID = "CosmoBehemothych.SeestarAstroLab.Desktop.1.0"
 
 

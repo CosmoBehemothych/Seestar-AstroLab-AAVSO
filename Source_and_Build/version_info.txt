@@ -22,7 +22,7 @@ VSVersionInfo(
         StringStruct(u'LegalCopyright', u'Copyright (C) 2026 CosmoBehemothych. Fingerprint: CBH-ASTROLAB-AAVSO-2026-9F8E4A21-7C3D-B601'),
         StringStruct(u'OriginalFilename', u'Seestar AstroLab.exe'),
         StringStruct(u'ProductName', u'Seestar AstroLab AAVSO'),
-        StringStruct(u'ProductVersion', u'1.5.0-alpha')])
+        StringStruct(u'ProductVersion', u'1.5.0')])
       ]),
     VarFileInfo([VarStruct(u'Translation', [1049, 1200])])
   ]

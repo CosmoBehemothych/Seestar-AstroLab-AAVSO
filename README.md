@@ -1,7 +1,7 @@
-# 🔭 Seestar AstroLab AAVSO (`v1.5.0-alpha`)
+# 🔭 Seestar AstroLab AAVSO (`v1.5.0`)
 
 [![Build Status](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/actions/workflows/build.yml)
-[![GitHub release](https://img.shields.io/github/v/release/CosmoBehemothych/Seestar-AstroLab-AAVSO?include_prereleases&color=38bdf8&style=flat-square)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases)
+[![GitHub release](https://img.shields.io/github/v/release/CosmoBehemothych/Seestar-AstroLab-AAVSO?color=38bdf8&style=flat-square)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24402803-007ec6?style=flat-square)](https://doi.org/10.5281/zenodo.24402803)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11%20Installer-0078D6?style=flat-square)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest)
@@ -10,7 +10,7 @@
 > **Turn your ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`) into a full-featured stellar photometry laboratory: analyze variable stars with built-in mathematical tools, filter out corrupted or saturated frames, and export verified [AAVSO WebObs](https://www.aavso.org/webobs) reports in 15 seconds.**  
 > **Important:** We **do NOT send photos or telescope images** — only brightness measurements (small CSV numbers) are submitted to the [AAVSO International Database (AID)](https://www.aavso.org/aavso-international-database-aid).
 
-**[⬇️ Download Latest Release (`v1.5.0-alpha` — Windows Installer)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0-alpha)** • **[🛡️ Verify SHA-256 (`VERIFY.txt`)](VERIFY.txt)** • **[🇷🇺 Русская версия ниже](#-русская-версия-russian)**
+**[⬇️ Download Latest Release (`v1.5.0` — Windows Installer)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0)** • **[🛡️ Verify SHA-256 (`VERIFY.txt`)](VERIFY.txt)** • **[🇷🇺 Русская версия ниже](#-русская-версия-russian)**
 
 ---
 
@@ -20,9 +20,9 @@
 
 ---
 
-## 🔬 Built-In Stellar Photometry Laboratory (`v1.5.0-alpha`)
+## 🔬 Built-In Stellar Photometry Laboratory (`v1.5.0`)
 
-In **`v1.5.0-alpha`**, Seestar AstroLab works both as a **standalone scientific photometry lab (`📤 Export to AAVSO` ↔ `🔬 Lab Only`, 1,000-star offline radar)** and as a **verified AAVSO converter** where you can inspect, clean, and mathematically analyze light curves before submitting data:
+In **`v1.5.0`**, Seestar AstroLab works both as a **standalone scientific photometry lab (`📤 Export to AAVSO` ↔ `🔬 Lab Only`, 1,000-star offline radar)** and as a **verified AAVSO converter** where you can inspect, clean, and mathematically analyze light curves before submitting data:
 
 * **Lomb–Scargle Periodogram & Phase Folding (`φ ∈ [0, 2]`):** Automatically detects pulsation and orbital periods, displays periodogram confidence, and folds your observations together with up to **3,000** recent [AAVSO AID](https://www.aavso.org/aavso-international-database-aid) points into a clean phase curve.
 * **Box Least Squares (BLS) Transit & Eclipse Search:** Scans light curves for periodic dips caused by exoplanet transits or eclipsing binaries and computes `T_min`, duration, and depth.
@@ -63,7 +63,7 @@ Uploading raw `Magnitude_*.csv` files directly to AAVSO WebObs risks submitting 
 
 ## 🚀 Getting Started in 3 Simple Steps
 
-1. **⬇️ Download** **`Seestar_AstroLab_Setup_v1.5.0-alpha.exe`** (Windows Installer) and **`SHA256SUMS.txt`** from [GitHub Releases (`v1.5.0-alpha`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0-alpha) *(or the latest stable [`v1.4.0`](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.4.0))*. *(Standalone Windows Installer only — no Python required.)*
+1. **⬇️ Download** **`Seestar_AstroLab_Setup_v1.5.0.exe`** (Windows Installer) and **`SHA256SUMS.txt`** from [GitHub Releases (`v1.5.0`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0). *(Standalone Windows Installer only — no Python required.)*
 2. **▶️ Install & Launch** the app.
 3. **🟢 Click `🚀 Getting Started`** in the top bar for a built-in **13-slide visual guide** (plus an **8-slide guide on How to Read Light Curves**) in all **8 languages**.
 
@@ -73,8 +73,8 @@ Uploading raw `Magnitude_*.csv` files directly to AAVSO WebObs risks submitting 
 
 | Version | Status | Download Link | Highlights |
 | :--- | :--- | :--- | :--- |
-| **`v1.5.0-alpha`** | 🧪 **Pre-release (Alpha)** | [GitHub Releases (`v1.5.0-alpha`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0-alpha) | **Export ↔ Lab Only mode switch** with Quality Gate, **1,000-star offline radar** (246 core + 754 SIMBAD TAP), weighted Lomb–Scargle (`1/MERR²`, **Baluev FAP**, `×2 P`), **`JD → HJD` heliocentric `O − C`**, **`SNR`**, **Bouguer** airmass check, offline toast alerts, `refData:` CSV guard, and token-authenticated localhost RPC |
-| **`v1.4.0`** | ✨ **Latest Stable** | [GitHub Releases (`v1.4.0`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.4.0) | **Built-in Photometry Lab** (Lomb–Scargle, BLS, Phase Folding, Mathematical Audit Protocol), **`>3σ MAD` outlier filtering** (before export & on AAVSO AID charts), **🛡️ Calibration Guard** (zero-point, saturation & `RefStars < 3`), live AAVSO Alert Notices + Target Tool API Radar, and **2-tab My Observations** (`Sessions` + `By Star`) |
+| **`v1.5.0`** | ✨ **Latest Stable** | [GitHub Releases (`v1.5.0`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0) | **Export ↔ Lab Only mode switch** with Quality Gate, **1,000-star offline radar** (246 core + 754 SIMBAD TAP), weighted Lomb–Scargle (`1/MERR²`, **Baluev FAP**, `×2 P`), **`JD → HJD` heliocentric `O − C`**, **`SNR`**, **Bouguer** airmass check, offline toast alerts, `refData:` CSV guard, and token-authenticated localhost RPC |
+| **`v1.4.0`** | 📦 **Previous Stable** | [GitHub Releases (`v1.4.0`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.4.0) | **Built-in Photometry Lab** (Lomb–Scargle, BLS, Phase Folding, Mathematical Audit Protocol), **`>3σ MAD` outlier filtering** (before export & on AAVSO AID charts), **🛡️ Calibration Guard** (zero-point, saturation & `RefStars < 3`), live AAVSO Alert Notices + Target Tool API Radar, and **2-tab My Observations** (`Sessions` + `By Star`) |
 | **`v1.3.5`** | 📦 **Previous Release** | [GitHub Releases (`v1.3.5`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.3.5) | Live AAVSO Target Tool API v1.0.0 integration, extended target dossier, and performance improvements |
 | **`v1.3.1`** | 📦 **Previous Release** | [GitHub Releases (`v1.3.1`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.3.1) | Standalone Windows Installer + `SHA256SUMS.txt` & `VERIFY.txt`, per-row `MERR` control, horizon altitude check (`Alt < 20°`), symmetric Northern & Southern Hemisphere filtering |
 
@@ -117,7 +117,7 @@ Available in **8 languages**: English, Russian, Spanish, German, French, Chinese
 > **Превратите ваш ZWO Seestar (`S30`, `S30PRO`, `S50`, `S50PRO`) в полноценную фотометрическую лабораторию: анализируйте переменные звёзды с помощью встроенных математических расчётов, отсеивайте бракованные и пересвеченные кадры и выгружайте проверенные отчёты в [AAVSO WebObs](https://www.aavso.org/webobs) за 15 секунд.**  
 > **Важно:** программа **НЕ отправляет фотографии** — в международную базу [AAVSO](https://www.aavso.org) передаются только числовые измерения яркости (CSV).
 
-### 🔬 Что нового в `v1.5.0-alpha` (поверх `v1.4.0`): автономная лаборатория и 1 000 целей офлайн
+### 🔬 Что нового в `v1.5.0` (поверх `v1.4.0`): автономная лаборатория и 1 000 целей офлайн
 * **Периодограмма Ломба–Скаргла и фазовая кривая (`φ ∈ [0, 2]`):** программа сама рассчитывает возможный период пульсаций или затмений, показывает его статистическую значимость и сворачивает ваши замеры вместе с данными из базы AAVSO AID (до **3 000** последних точек) на единую фазовую кривую.
 * **Поиск транзитов и затмений (BLS) и математический аудит:** встроенные алгоритмы вычисляют амплитуду `Δm`, разброс `RMS`, робастное отклонение `σ MAD`, время минимума `T_min JD` и асимметрию кривой, а весь расчёт можно открыть в окне **«📐 Расчёт»** и скопировать как готовый протокол.
 * **Очистка данных на `>3σ MAD` — и для ваших файлов, и для чужих графиков:**
@@ -129,7 +129,7 @@ Available in **8 languages**: English, Russian, Spanish, German, French, Chinese
 * **📓 Мои наблюдения в двух разрезах:** список всех сессий и отдельная вкладка **«⭐ По звёздам»** (число ночей, суммарное время, кадры, фильтры) с быстрым переходом к графику любой звезды в Лаборатории.
 
 ### 🚀 Быстрый старт за 3 шага
-1. **⬇️ Скачайте** **`Seestar_AstroLab_Setup_v1.5.0-alpha.exe`** и **`SHA256SUMS.txt`** со страницы [GitHub Releases (`v1.5.0-alpha`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0-alpha) *(или стабильную [`v1.4.0`](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.4.0); Python не требуется)*.
+1. **⬇️ Скачайте** **`Seestar_AstroLab_Setup_v1.5.0.exe`** и **`SHA256SUMS.txt`** со страницы [GitHub Releases (`v1.5.0`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0) *(Python не требуется)*.
 2. **▶️ Установите и запустите** программу.
 3. **🟢 Нажмите `🚀 С чего начать`** (12-слайдовая инструкция) или **«📖 Как читать графики»** (8-слайдовый гид по кривым блеска) на русском языке.
 
@@ -140,7 +140,7 @@ Available in **8 languages**: English, Russian, Spanish, German, French, Chinese
 4. **Честные поля `KNAME=na`, `KMAG=na`:** не подменяет реальные измерения каталожными значениями.
 
 ### 🔐 Безопасность, доверие и цитирование
-- Установщик `Seestar_AstroLab_Setup_v1.5.0-alpha.exe` не имеет коммерческой цифровой подписи, но собирается открыто в GitHub Actions из исходного кода под лицензией MIT и публикуется с хэшем `SHA-256` ([`VERIFY.txt`](VERIFY.txt)).
+- Установщик `Seestar_AstroLab_Setup_v1.5.0.exe` не имеет коммерческой цифровой подписи, но собирается открыто в GitHub Actions из исходного кода под лицензией MIT и публикуется с хэшем `SHA-256` ([`VERIFY.txt`](VERIFY.txt)).
 - Инструкция по самостоятельной сборке — [`BUILD.md`](BUILD.md), политика безопасности — [`SECURITY.md`](SECURITY.md).
 - Для научных ссылок (CERN Zenodo DOI): **[`10.5281/zenodo.24402803`](https://doi.org/10.5281/zenodo.24402803)**.
 

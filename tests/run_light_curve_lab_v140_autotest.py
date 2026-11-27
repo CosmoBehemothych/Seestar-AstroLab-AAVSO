@@ -460,7 +460,7 @@ def test_v140_stable_regressions():
 def test_v150_alpha_features():
     from pathlib import Path
     ROOT = Path(__file__).resolve().parent.parent
-    print("[5/5] Running v1.5.0-alpha math, exposure grid, mode switch, x2 P & Quality Gate checks...")
+    print("[5/5] Running v1.5.0 math, exposure grid, mode switch, x2 P & Quality Gate checks...")
     bridge = (ROOT / "Source_and_Build/pwa_mobile_and_electron/astrolab_engine_bridge.js").read_text(encoding="utf-8")
     tpl = (ROOT / "Source_and_Build/pwa_mobile_and_electron/astrolab_view_template.js").read_text(encoding="utf-8")
     assert "modeExportAavso" in bridge and "modeLabOnly" in bridge
@@ -487,7 +487,7 @@ def test_v150_alpha_features():
       JSON.stringify({ v1, v2, s50BrightExp: s50Bright.expRec, s50FaintExp: s50Faint.expRec, s30FaintFastExp: s30FaintFast.expRec, qgBadElig: qgBad.eligible, qgGoodElig: qgGood.eligible, labModeOn, labModeOff });
     '''
     # Quick Node/JSDOM-free or CDP check using existing chrome helper if available; otherwise verify via node vm
-    print("  PASS: v1.5.0-alpha symbols, templates, and i18n keys verified")
+    print("  PASS: v1.5.0 symbols, templates, and i18n keys verified")
 
 if __name__ == "__main__":
     test_backend_aavso_aid_api_v2_and_delim_tail()
