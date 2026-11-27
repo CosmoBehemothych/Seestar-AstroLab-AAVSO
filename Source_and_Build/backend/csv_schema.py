@@ -429,6 +429,8 @@ def recalibrate_per_frame_seestar_csvs(
     sat_counts: List[int] = []
     tot_refs: List[int] = []
     skipped_other_star = 0
+    seen_jd_keys: set = set()
+    skipped_duplicates = 0
 
     for norm_fields, rows in parsed_frames:
         def _gf(row: Dict[str, str], *cands: str) -> str:
@@ -487,6 +489,12 @@ def recalibrate_per_frame_seestar_csvs(
             t_jd_s = float(_gf(target_row, "exp start(jd)", "jd start", "jd_start", "jd").replace(",", "."))
         except ValueError:
             continue
+
+        jd_key = round(t_jd_s * 100000)
+        if jd_key in seen_jd_keys:
+            skipped_duplicates += 1
+            continue
+        seen_jd_keys.add(jd_key)
 
         t_snr_s = _gf(target_row, "snr", "s/n", "signal_to_noise").replace(",", ".")
         t_snr = float(t_snr_s) if t_snr_s else 0.0
@@ -548,6 +556,7 @@ def recalibrate_per_frame_seestar_csvs(
         "framesProcessed": len(clean_rows),
         "skippedNonPerFrame": skipped_non_per_frame,
         "skippedOtherStar": skipped_other_star,
+        "skippedDuplicates": skipped_duplicates,
         "targetName": detected_target,
         "medianZpShiftMag": round(med_shift, 4),
         "avgSaturatedRefs": round(avg_sat, 1),

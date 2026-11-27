@@ -264,48 +264,156 @@
       return base;
     },
 
-    evaluateScopeSuitability(targetItem, scopeId) {
+    // Full CCD Photometry SNR & Exposure Equation (GAISH / Howell / AAVSO CCD Guide):
+    // SNR(t) = (S * t) / sqrt(S * t + n_pix * (B_sky * t + D_dark * t + R_N^2))
+    // Accounts for aperture D^2, sensor QE, airmass X = sec(z) extinction k_V=0.20,
+    // Bortle 1-9 sky background + Moon brightening, seeing FWHM aperture n_pix,
+    // and strict full-well / empirical brightLimit saturation protection.
+    computeCcdSnrExposure(targetItem, scopeId, envOpts = {}) {
       const prof = AstroLabCore.getScopeProfile(scopeId);
       const kmag = parseFloat(targetItem && targetItem.kmag);
       const magStr = String((targetItem && targetItem.magRange) || "");
       const nums = Array.from(magStr.matchAll(/(\d+(?:\.\d+)?)\s*(?:m|mag)\b/gi), m => parseFloat(m[1])).filter(n => !isNaN(n));
       const minMag = nums.length ? Math.min(...nums) : (isNaN(kmag) ? 10.0 : kmag);
       const maxMag = nums.length ? Math.max(...nums) : (isNaN(kmag) ? 11.5 : kmag);
-      // Use the target star's own brightness (never let a fainter VSP check star kmag inflate exposure and saturate the target!)
       const refMag = nums.length ? ((minMag + maxMag) / 2) : (isNaN(kmag) ? 10.0 : kmag);
 
-      const tr = (typeof t === "function") ? t : (k => k);
-      // v1.5.0: Per-telescope D^2 + sensor discrete Seestar exposure (10s / 20s / 30s / 60s EQ)
-      // with strict saturation guard (based on target minMag at maximum light) and Moon-phase / fast-period awareness
-      const moonFrac = (typeof AstroLabCore.getMoonIlluminationApprox === "function")
-        ? AstroLabCore.getMoonIlluminationApprox(new Date())
-        : 0.0;
+      // Environment parameters: Bortle class (2..9), seeing FWHM (arcsec), altitude (deg), Moon fraction (0..1)
+      let bortle = Number(envOpts.bortle);
+      if (!Number.isFinite(bortle)) {
+        bortle = (typeof window !== "undefined" && Number.isFinite(Number(window._userBortleClass)))
+          ? Number(window._userBortleClass) : 5;
+      }
+      bortle = Math.max(1, Math.min(9, Math.round(bortle)));
+
+      let fwhm = Number(envOpts.fwhm);
+      if (!Number.isFinite(fwhm)) {
+        fwhm = (typeof window !== "undefined" && Number.isFinite(Number(window._userSeeingFwhm)))
+          ? Number(window._userSeeingFwhm) : 3.5;
+      }
+      fwhm = Math.max(1.5, Math.min(8.0, fwhm));
+
+      const moonFrac = Number.isFinite(Number(envOpts.moonFrac))
+        ? Math.max(0, Math.min(1, Number(envOpts.moonFrac)))
+        : ((typeof AstroLabCore.getMoonIlluminationApprox === "function")
+            ? AstroLabCore.getMoonIlluminationApprox(new Date()) : 0.0);
+
+      // Compute star altitude & airmass X (Young 1994 / sec(z) clamped to [1.0, 3.8])
+      let altDeg = Number(envOpts.altDeg);
+      if (!Number.isFinite(altDeg)) {
+        if (typeof window !== "undefined" && typeof window.computeStarAltitudeForCity === "function" &&
+            targetItem && Number.isFinite(Number(targetItem.ra)) && Number.isFinite(Number(targetItem.dec))) {
+          try {
+            const aObj = window.computeStarAltitudeForCity(Number(targetItem.ra), Number(targetItem.dec));
+            // Use current altitude if above 20 deg, else culmination altitude (planning mode)
+            altDeg = (aObj.currentAltDeg >= 20) ? aObj.currentAltDeg : Math.max(20, aObj.maxCulmAltDeg || 45);
+          } catch (_) { altDeg = 45; }
+        } else {
+          altDeg = 45;
+        }
+      }
+      altDeg = Math.max(15, Math.min(90, altDeg));
+      const sinAlt = Math.sin(altDeg * Math.PI / 180);
+      const airmass = Math.min(3.8, 1.0 / Math.max(0.26, sinAlt));
+      const kV = 0.20; // typical V/TG atmospheric extinction (mag/airmass)
+      const extMag = kV * (airmass - 1.0);
+
+      // Bortle -> zenith sky surface brightness (mag/arcsec^2) + Moon sky brightening
+      const BORTLE_MAG = { 1: 21.95, 2: 21.7, 3: 21.3, 4: 20.8, 5: 20.1, 6: 19.3, 7: 18.6, 8: 18.0, 9: 17.5 };
+      let skyMagArcsec2 = BORTLE_MAG[bortle] || 20.1;
+      if (moonFrac > 0.25) {
+        // Bright Moon adds background sky flux (up to ~18.6 mag/arcsec^2 at full Moon)
+        const moonSkyMag = 21.5 - 2.9 * Math.pow(moonFrac, 1.6);
+        const fSky = Math.pow(10, -0.4 * skyMagArcsec2) + Math.pow(10, -0.4 * moonSkyMag);
+        skyMagArcsec2 = -2.5 * Math.log10(fSky);
+      }
+
+      // Per-model sensor/optical parameters
+      const dMeters = (prof.apertureMm || 30) / 1000.0;
+      const areaM2 = Math.PI * Math.pow(dMeters / 2, 2);
+      const isImx585 = String(prof.sensor || "").includes("IMX585");
+      const effQe = isImx585 ? 0.42 : 0.35; // optics * IRCUT * Bayer-G * sensor QE
+      const readNoise = isImx585 ? 1.2 : 1.5; // e- RMS
+      const darkCurrent = 0.05; // e-/px/s
+      const F0_V = 1.0e10; // photons / s / m^2 for m=0 in V/TG bandpass (~100nm)
+      const S0 = F0_V * areaM2 * effQe;
+
+      // Star signal rate S (e-/s) at refMag & sky rate B_sky (e-/px/s)
+      const starRate = S0 * Math.pow(10, -0.4 * (refMag + extMag));
+      const pxScale = Number(prof.pixelScale) || 2.0;
+      const pxAreaArcsec2 = pxScale * pxScale;
+      const skyRatePerPx = S0 * Math.pow(10, -0.4 * skyMagArcsec2) * pxAreaArcsec2;
+
+      // Aperture radius r = 1.5 * FWHM (in px) -> n_pix
+      const rPx = Math.max(2.0, (1.5 * fwhm) / pxScale);
+      const nPix = Math.PI * rPx * rPx;
+
+      function calcStep(tSec) {
+        const sig = starRate * tSec;
+        const skyNoiseTerm = nPix * (skyRatePerPx * tSec + darkCurrent * tSec + readNoise * readNoise);
+        const snr = sig / Math.sqrt(Math.max(1e-6, sig + skyNoiseTerm));
+        const sigmaMag = snr > 0 ? (1.0857 / snr) : 9.99;
+        // Saturation limit scales with exposure time: m_sat(t) = brightLimit_10s + 2.5*log10(t/10)
+        const satMagAtT = prof.brightLimit + 2.5 * Math.log10(tSec / 10.0);
+        const isSaturated = minMag < satMagAtT;
+        return { tSec, snr, sigmaMag, satMagAtT, isSaturated };
+      }
+
       const periodDays = parseFloat((targetItem && (targetItem.periodDays || targetItem.period)) || "");
       const varTypeStr = String((targetItem && (targetItem.varType || targetItem.type || "")) || "").toUpperCase();
       const isFastVar = (Number.isFinite(periodDays) && periodDays > 0 && periodDays < 0.22) ||
         /\b(HADS|DSCT|EW|EP|TRANSIT|SX PHE)\b/.test(varTypeStr);
 
-      let expSecNum = 20;
-      let eqSuffix = "";
-      if (minMag < prof.brightLimit || minMag <= prof.t10Max || refMag <= prof.t10Max) {
-        expSecNum = 10;
-      } else if (minMag <= prof.t20Max && refMag <= prof.t20Max) {
-        expSecNum = 20;
-      } else if (refMag <= prof.t30Max) {
-        expSecNum = 30;
+      const candidateSteps = isFastVar ? [10, 20, 30] : [10, 20, 30, 60];
+      const stepResults = candidateSteps.map(calcStep);
+
+      // Select optimal discrete Seestar exposure:
+      // 1) Never saturate minMag (if even 10s risks saturation or minMag <= t10Max & SNR>=60, pick 10s)
+      // 2) Otherwise choose shortest safe step reaching SNR >= 100 (sigma_m <= 0.011m)
+      // 3) If faint (SNR < 100 on all safe steps), choose longest safe step (30s for fast vars, 60s EQ otherwise)
+      let chosen = stepResults[0];
+      if (minMag < prof.brightLimit || (minMag <= prof.t10Max && stepResults[0].snr >= 60)) {
+        chosen = stepResults[0];
       } else {
-        expSecNum = isFastVar ? 30 : 60;
-        if (expSecNum === 60) eqSuffix = " (EQ)";
+        const safeSteps = stepResults.filter(s => !s.isSaturated);
+        if (safeSteps.length === 0) {
+          chosen = stepResults[0];
+        } else {
+          const hitTarget = safeSteps.find(s => s.snr >= 100);
+          chosen = hitTarget || safeSteps[safeSteps.length - 1];
+        }
       }
 
-      // Moon bump ONLY for faint sky-limited stars (never if near brightLimit!)
-      let moonTag = "";
-      if (moonFrac >= 0.70 && minMag >= (prof.brightLimit + 2.0) && refMag > prof.t20Max) {
-        if (expSecNum === 20) { expSecNum = 30; moonTag = " 🌙"; }
-        else if (expSecNum === 30 && !isFastVar) { expSecNum = 60; eqSuffix = " (EQ)"; moonTag = " 🌙"; }
-      }
+      const eqSuffix = (chosen.tSec >= 60) ? " (EQ)" : "";
+      const moonTag = (moonFrac >= 0.70 && chosen.tSec >= 30 && minMag >= (prof.brightLimit + 2.0)) ? " 🌙" : "";
+      const expRec = `${chosen.tSec} s${eqSuffix}${moonTag}`;
 
-      let expRec = `${expSecNum} s${eqSuffix}${moonTag}`;
+      return {
+        expSec: chosen.tSec,
+        expRec,
+        snr: Math.round(chosen.snr),
+        sigmaMag: Number(chosen.sigmaMag.toFixed(4)),
+        airmass: Number(airmass.toFixed(2)),
+        altDeg: Math.round(altDeg),
+        bortle,
+        fwhm,
+        skyMagArcsec2: Number(skyMagArcsec2.toFixed(1)),
+        moonFrac: Number(moonFrac.toFixed(2)),
+        minMag,
+        maxMag,
+        refMag,
+        steps: stepResults
+      };
+    },
+
+    evaluateScopeSuitability(targetItem, scopeId, envOpts = {}) {
+      const prof = AstroLabCore.getScopeProfile(scopeId);
+      const kmag = parseFloat(targetItem && targetItem.kmag);
+      const ccd = AstroLabCore.computeCcdSnrExposure(targetItem, scopeId, envOpts);
+      const minMag = ccd.minMag;
+      const maxMag = ccd.maxMag;
+      const tr = (typeof t === "function") ? t : (k => k);
+      let expRec = ccd.expRec;
 
       const withinFaintLimit = minMag <= prof.magLimit && (!isNaN(kmag) ? kmag <= prof.magLimit : true);
       const faintDipWarning = maxMag > prof.magLimit;
@@ -336,7 +444,15 @@
         status,
         expRec,
         badgeText,
-        prof
+        prof,
+        snr: ccd.snr,
+        sigmaMag: ccd.sigmaMag,
+        airmass: ccd.airmass,
+        altDeg: ccd.altDeg,
+        bortle: ccd.bortle,
+        fwhm: ccd.fwhm,
+        skyMagArcsec2: ccd.skyMagArcsec2,
+        ccd
       };
     },
 
@@ -717,6 +833,7 @@
       themeDarkBtn: "Стандартная тёмная",
       themeLightBtn: "Светлая",
       lblScopeModel: "Телескоп:",
+      lblSkyBortle: "Небо:",
       radarTitle: "Радар целей AAVSO",
       btnRefreshShort: "Обновить",
       phRadarSearch: "🔍 Поиск звезды, типа (DSCT, UGSS, EP) или созвездия...",
@@ -798,7 +915,7 @@
       tipKmagText: "По умолчанию «na»: каталожный блеск не подставляется вместо реального замера по кадрам.",
       tipRaText: "Прямое восхождение цели (J2000) в десятичных градусах.",
       tipDecText: "Склонение цели (J2000) в десятичных градусах.",
-      tipCsvText: "Рекомендуется: подключите Seestar по USB-C (или скопируйте папку на ПК) и выберите «Папка покадровых CSV» (MyWorks/<Звезда>_sub). Одиночный итоговый CSV — запасной вариант.",
+      tipCsvText: "Для экспорта в AAVSO используется только «Папка покадровых CSV ★» (MyWorks/<Звезда>_sub по USB-C или с ПК). Итоговый CSV доступен только в режиме «Только лаборатория» без отправки в AAVSO.",
       notifGuideTitle: "🔔 Справка по всем уведомлениям и цветовым подсказкам",
       notifGuideHtml: "<div>🟢 <strong>Зеленое поле (Совпадает):</strong> Разница координат файла и каталога менее 0.00001°.</div><div>🟡 <strong>Желтое поле (Отличие в пределах нормы):</strong> Смещение центра кадра до 0.05° или уточнение имени звезды по каталогу.</div><div>🔴 <strong>Красное поле (Сильное расхождение):</strong> Отличие координат более 0.05° — проверьте, ту ли звезду вы указали.</div><div>📦 <strong>Уведомление кэша:</strong> Данные взяты из локального кэша (хранится 1 час) для мгновенного отклика.</div>",
       btnFetchAll: "🔭 Загрузить SIMBAD + VSP",
@@ -892,7 +1009,7 @@
       btnDownloadDesktopShortcut: "💻 Скачать ярлык запуска для ПК со значком",
       submitModalTitle: "🚀 Отправка файла в AAVSO WebObs (?preview=true)",
       secFileStart: "Выбор и проверка файла фотометрии",
-      btnSelectCsvFile: "📂 Итоговый CSV (запасной)",
+      btnSelectCsvFile: "📂 Итоговый CSV (только лаборатория)",
     btnSelectPerFrameFolder: "📁 Папка покадровых CSV ★",
       noFileSelected: "Файл еще не выбран (нажмите кнопку выше или «Демо CSV»)",
       lblVerifyDisk: "Проверка готового файла AAVSO:",
@@ -1243,8 +1360,9 @@
       btnDownloadDesktopShortcut: "💻 Download PC Desktop Shortcut with Icon",
       submitModalTitle: "🚀 Submit File to AAVSO WebObs (?preview=true)",
       secFileStart: "Select & Verify Photometry File",
-      btnSelectCsvFile: "📂 Summary CSV (Fallback)",
+      btnSelectCsvFile: "📂 Summary CSV (Lab Only)",
     btnSelectPerFrameFolder: "📁 Per-Frame CSV Folder ★",
+      lblSkyBortle: "Sky:",
       noFileSelected: "No file selected yet (click the button above or 'Demo CSV')",
       lblVerifyDisk: "Verify Converted AAVSO File:",
       btnVerifyDisk: "🔍 Verify Converted File from Disk",
@@ -1420,6 +1538,7 @@
       themeDarkBtn: "Oscuro estándar",
       themeLightBtn: "Claro",
       lblScopeModel: "Telescopio:",
+      lblSkyBortle: "Cielo:",
       radarTitle: "Radar de Objetivos AAVSO",
       btnRefreshShort: "Actualizar",
       phRadarSearch: "🔍 Buscar estrella, tipo (DSCT, UGSS, EP) o constelación...",
@@ -1443,7 +1562,7 @@
       secUrgentStars: "🔥 Estrellas Prioritarias (AAVSO Alert Notices)",
       btnCloseModal: "Cerrar",
       secFileStart: "1. Selección y verificación de archivo",
-      btnSelectCsvFile: "📂 CSV resumen (alternativo)",
+      btnSelectCsvFile: "📂 CSV resumen (solo laboratorio)",
     btnSelectPerFrameFolder: "📁 Carpeta CSV por cuadro ★",
       noFileSelected: "Ningún archivo seleccionado (pulse arriba o 'CSV Demo')",
       lblVerifyDisk: "Verificar archivo AAVSO:",
@@ -1745,6 +1864,7 @@
       themeDarkBtn: "Standard Dunkel",
       themeLightBtn: "Hell",
       lblScopeModel: "Teleskop:",
+      lblSkyBortle: "Himmel:",
       radarTitle: "AAVSO-Zielradar",
       btnRefreshShort: "Aktualisieren",
       phRadarSearch: "🔍 Stern, Typ (DSCT, UGSS, EP) oder Sternbild suchen...",
@@ -1768,7 +1888,7 @@
       secUrgentStars: "🔥 Dringende Zielsterne (AAVSO Alert Notices)",
       btnCloseModal: "Schließen",
       secFileStart: "Photometriedatei wählen & prüfen",
-      btnSelectCsvFile: "📂 Sammel-CSV (Fallback)",
+      btnSelectCsvFile: "📂 Sammel-CSV (nur Labor)",
     btnSelectPerFrameFolder: "📁 Einzelbild-CSV-Ordner ★",
       noFileSelected: "Noch keine Datei gewählt (oben klicken oder 'Demo-CSV')",
       lblVerifyDisk: "Konvertierte AAVSO-Datei prüfen:",
@@ -2059,6 +2179,7 @@
       themeDarkBtn: "Sombre standard",
       themeLightBtn: "Clair",
       lblScopeModel: "Télescope :",
+      lblSkyBortle: "Ciel :",
       radarTitle: "Radar de Cibles AAVSO",
       btnRefreshShort: "Actualiser",
       phRadarSearch: "🔍 Rechercher étoile, type (DSCT, UGSS, EP) ou constellation...",
@@ -2082,7 +2203,7 @@
       secUrgentStars: "🔥 Étoiles Prioritaires (AAVSO Alert Notices)",
       btnCloseModal: "Fermer",
       secFileStart: "Sélection et vérification du fichier",
-      btnSelectCsvFile: "📂 CSV résumé (secours)",
+      btnSelectCsvFile: "📂 CSV résumé (Labo uniquement)",
     btnSelectPerFrameFolder: "📁 Dossier CSV par image ★",
       noFileSelected: "Aucun fichier choisi (cliquez ci-dessus ou sur 'CSV Démo')",
       lblVerifyDisk: "Vérifier un fichier AAVSO :",
@@ -2395,8 +2516,9 @@
       secUrgentStars: "🔥 紧急优先观测恒星 (AAVSO Alert Notices)",
       btnCloseModal: "关闭",
       secFileStart: "1. 选择并校验测光文件",
-      btnSelectCsvFile: "📂 汇总 CSV（备用）",
+      btnSelectCsvFile: "📂 汇总 CSV（仅限实验室）",
     btnSelectPerFrameFolder: "📁 逐帧 CSV 文件夹 ★",
+      lblSkyBortle: "夜空：",
       noFileSelected: "尚未选择文件（请点击上方按钮或“演示数据”）",
       lblVerifyDisk: "校验已转换的 AAVSO 文件：",
       btnVerifyDisk: "🔍 校验磁盘上的已转换文件",
@@ -5558,6 +5680,14 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   }
 
   async function processFile() {
+    if (window._astroLabSummaryCsvLoaded) {
+      const ru = typeof currentLang === "string" && currentLang.startsWith("ru");
+      if (typeof showIosNotification === "function") {
+        showIosNotification("⛔", ru ? "Отправка итогового CSV в AAVSO запрещена" : "Summary CSV export to AAVSO is blocked",
+          ru ? "Этот метод допускает критические ошибки нуль-пункта. Используйте «📁 Папка покадровых CSV ★»." : "This method allows critical zero-point errors. Use Per-Frame CSV Folder instead.", "error");
+      }
+      return;
+    }
     // ПУНКТ 9 (Блок 4, п. 1): Жёсткая блокировка конвертации при критическом расхождении данных Seestar и SIMBAD
     if (STATE.isConversionBlockedByMismatch) {
       applyCriticalMismatchState(true, STATE.lastMismatchReasons || [], true);
@@ -6129,6 +6259,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     const cleanRows = [];
     const zpShifts = [];
     const satCounts = [];
+    const seenJdKeys = new Set();
+    let skippedDuplicates = 0;
 
     for (const { map, rowsCols } of parsedFrames) {
       const refPairs = [];
@@ -6170,6 +6302,10 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       const tJdS = parseFloat(String(targetCols[map.iJdS] || "").replace(",", "."));
       const tSnr = map.iSnr >= 0 ? parseFloat(String(targetCols[map.iSnr] || "").replace(",", ".")) : 0;
       if (!Number.isFinite(tMag) || !Number.isFinite(tJdS)) continue;
+      // In-folder JD deduplication (~0.86s tolerance) prevents duplicate frame copies in the same sub folder
+      const jdKey = Math.round(tJdS * 100000);
+      if (seenJdKeys.has(jdKey)) { skippedDuplicates++; continue; }
+      seenJdKeys.add(jdKey);
 
       const byFaint = [...refPairs].sort((a, b) => b[0] - a[0]);
       const tail = byFaint.slice(0, Math.max(3, Math.min(6, Math.floor(byFaint.length / 2) + 1)));
@@ -6208,18 +6344,33 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       framesProcessed: cleanRows.length,
       skippedNonPerFrame,
       skippedOtherStar,
+      skippedDuplicates,
       targetName: detectedTarget,
       medianZpShiftMag: Number(medShift.toFixed(4)),
       avgSaturatedRefs: Number(avgSat.toFixed(1)),
     };
   };
 
-  async function _handleSeestarCsvFileList(fileList) {
-    const arr = Array.from(fileList || []).filter(f => /\.(csv|txt)$/i.test(f.name || ""));
-    if (!arr.length) return;
+  async function _handleSeestarCsvFileList(fileList, isFolderSelection = false) {
+    const rawAll = Array.from(fileList || []);
+    // Strictly filter folder selections to .csv only so .fit/.fits/.jpg/.txt/etc. are NEVER counted or read
+    const arr = rawAll.filter(f => isFolderSelection ? /\.csv$/i.test(f.name || "") : /\.(csv|txt)$/i.test(f.name || ""));
+    const ignoredNonCsvCount = rawAll.length - arr.length;
     const badgeEl = document.getElementById("csvModePipelineBadge");
     const nameEl = document.getElementById("selectedFileNameText");
     const ru = typeof currentLang === "string" && currentLang.startsWith("ru");
+    if (!arr.length) {
+      if (rawAll.length > 0 && badgeEl) {
+        badgeEl.style.display = "block";
+        badgeEl.style.background = "rgba(245,158,11,0.16)";
+        badgeEl.style.border = "1px solid rgba(245,158,11,0.55)";
+        badgeEl.style.color = "#fef3c7";
+        badgeEl.textContent = ru
+          ? `⚠️ В выбранной папке не найдено CSV-файлов (игнорировано не-CSV: ${ignoredNonCsvCount}). Выберите папку с файлами Magnitude_..._HHMMSS.csv.`
+          : `⚠️ No .csv files found in this folder (ignored ${ignoredNonCsvCount} non-CSV files). Choose a folder containing Magnitude_..._HHMMSS.csv files.`;
+      }
+      return;
+    }
     const hint = document.getElementById("starNameInput")?.value || STATE.catalogStarName || "";
     const raHint = parseFloat(document.getElementById("raInput")?.value || STATE.catalogRaDeg || "");
     const decHint = parseFloat(document.getElementById("decInput")?.value || STATE.catalogDecDeg || "");
@@ -6231,6 +6382,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         const rec = window.recalibrateSeestarPerFrameCsvFiles([{ name: arr[0].name, text: txt }], hint, raHint, decHint);
         if (rec.framesProcessed > 0) {
           window._astroLabRecalibratedPerFrame = rec;
+      window._astroLabSummaryCsvLoaded = false;
           currentCsvText = rec.csvText;
           if (nameEl) nameEl.textContent = `📄 ${arr[0].name} (1 покадровый CSV • авто-пересчёт)`;
           if (badgeEl) {
@@ -6248,28 +6400,68 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         }
       }
       window._astroLabRecalibratedPerFrame = null;
+      const isAlreadyConvertedAavso = /#TYPE=Extended/i.test(txt);
+      window._astroLabSummaryCsvLoaded = !isAlreadyConvertedAavso;
+      const isLabModeNow = document.body.classList.contains("astrolab-lab-only");
+      if (!isLabModeNow && !isAlreadyConvertedAavso) {
+        if (typeof STATE !== "undefined") STATE.isConversionBlockedByMismatch = true;
+        currentCsvText = "";
+        const btnConv = document.getElementById("btnConvert");
+        if (btnConv) btnConv.disabled = true;
+        if (nameEl) nameEl.textContent = ru
+          ? `⛔ ${arr[0].name} — итоговый CSV запрещён для AAVSO`
+          : `⛔ ${arr[0].name} — Summary CSV blocked for AAVSO`;
+        if (badgeEl) {
+          badgeEl.style.display = "block";
+          badgeEl.style.background = "rgba(239,68,68,0.16)";
+          badgeEl.style.border = "1px solid rgba(239,68,68,0.55)";
+          badgeEl.style.color = "#fecaca";
+          badgeEl.textContent = ru
+            ? "⛔ Итоговый CSV Seestar не допускается для отправки в AAVSO из-за критических ошибок нуль-пункта (~0.4m от пересвета опорных). Выберите «📁 Папка покадровых CSV ★» (или перейдите в режим «Только лаборатория»)."
+            : "⛔ Seestar Summary CSV is blocked for AAVSO export due to critical zero-point errors (~0.4m bias from saturated refs). Use «📁 Per-Frame CSV Folder ★» (or switch to Lab-Only mode).";
+        }
+        return;
+      }
       if (badgeEl) {
         badgeEl.style.display = "block";
-        badgeEl.style.background = "rgba(59,130,246,0.12)";
-        badgeEl.style.border = "1px solid rgba(59,130,246,0.35)";
-        badgeEl.style.color = "#dbeafe";
-        badgeEl.textContent = ru ? `📊 Итоговый CSV (${arr[0].name})` : `📊 Summary CSV (${arr[0].name})`;
+        badgeEl.style.background = "rgba(245,158,11,0.18)";
+        badgeEl.style.border = "1px solid rgba(245,158,11,0.62)";
+        badgeEl.style.color = "#fef3c7";
+        badgeEl.textContent = ru
+          ? `⚠️ Итоговый CSV (${arr[0].name}) — ТОЛЬКО для Лаборатории: дальнейшая отправка в AAVSO невозможна, поскольку этот метод допускает критические ошибки нуль-пункта.`
+          : `⚠️ Summary CSV (${arr[0].name}) — Lab-Only: submission to AAVSO is disabled because this method allows critical zero-point errors.`;
       }
       previewFile(arr[0]);
       return;
     }
 
-    // Multiple files / folder: keep ONLY real per-frame CSVs matching the active target star
-    const loaded = await Promise.all(arr.slice(0, 1200).map(async f => ({ name: f.name, text: await f.text() })));
+    // Multiple files / folder: chunked reading up to 10,000 .csv files (never blocks memory or hits FD limits)
+    const MAX_CSV_FILES = 10000;
+    const CHUNK_SIZE = 200;
+    const toRead = arr.slice(0, MAX_CSV_FILES);
+    const loaded = [];
+    for (let ci = 0; ci < toRead.length; ci += CHUNK_SIZE) {
+      const slice = toRead.slice(ci, ci + CHUNK_SIZE);
+      if (toRead.length > 400 && nameEl) {
+        nameEl.textContent = ru
+          ? `⏳ Чтение CSV: ${Math.min(ci + slice.length, toRead.length)} / ${toRead.length}...`
+          : `⏳ Reading CSVs: ${Math.min(ci + slice.length, toRead.length)} / ${toRead.length}...`;
+      }
+      const chunkTexts = await Promise.all(slice.map(async f => ({ name: f.name, text: await f.text() })));
+      for (let cj = 0; cj < chunkTexts.length; cj++) loaded.push(chunkTexts[cj]);
+    }
     const rec = window.recalibrateSeestarPerFrameCsvFiles(loaded, hint, raHint, decHint);
+    rec.ignoredNonCsvCount = ignoredNonCsvCount;
     if (rec.framesProcessed > 0) {
       window._astroLabRecalibratedPerFrame = rec;
+      window._astroLabSummaryCsvLoaded = false;
       currentCsvText = rec.csvText;
-      const skipInfo = (rec.skippedNonPerFrame + rec.skippedOtherStar) > 0
-        ? (ru
-            ? ` • пропущено ${rec.skippedOtherStar} др. звёзд / ${rec.skippedNonPerFrame} итоговых`
-            : ` • skipped ${rec.skippedOtherStar} other-star / ${rec.skippedNonPerFrame} summary`)
-        : "";
+      const skipParts = [];
+      if (rec.skippedDuplicates > 0) skipParts.push(ru ? `дублей JD: ${rec.skippedDuplicates}` : `dup JD: ${rec.skippedDuplicates}`);
+      if (rec.skippedOtherStar > 0) skipParts.push(ru ? `др. звёзд: ${rec.skippedOtherStar}` : `other-star: ${rec.skippedOtherStar}`);
+      if (rec.skippedNonPerFrame > 0) skipParts.push(ru ? `итоговых: ${rec.skippedNonPerFrame}` : `summary: ${rec.skippedNonPerFrame}`);
+      if (ignoredNonCsvCount > 0) skipParts.push(ru ? `игнор. не-CSV: ${ignoredNonCsvCount}` : `ignored non-CSV: ${ignoredNonCsvCount}`);
+      const skipInfo = skipParts.length ? ` • ${skipParts.join(", ")}` : "";
       if (nameEl) nameEl.textContent = ru
         ? `📁 ${rec.framesProcessed} покадровых CSV (${rec.targetName || "Seestar"})`
         : `📁 ${rec.framesProcessed} per-frame CSVs (${rec.targetName || "Seestar"})`;
@@ -6299,13 +6491,14 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   }
 
   document.getElementById("csvFile").addEventListener("change", e => {
-    if (e.target.files && e.target.files.length) _handleSeestarCsvFileList(e.target.files);
+    if (e.target.files && e.target.files.length) _handleSeestarCsvFileList(e.target.files, false);
   });
   document.getElementById("btnSelectPerFrameFolder")?.addEventListener("click", () => {
-    document.getElementById("csvFolderInput")?.click();
+    const inp = document.getElementById("csvFolderInput");
+    if (inp) { inp.value = ""; inp.click(); }
   });
   document.getElementById("csvFolderInput")?.addEventListener("change", e => {
-    if (e.target.files && e.target.files.length) _handleSeestarCsvFileList(e.target.files);
+    if (e.target.files && e.target.files.length) _handleSeestarCsvFileList(e.target.files, true);
   });
   document.getElementById("btnConvert").addEventListener("click", processFile);
 
@@ -6320,7 +6513,40 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
     if (typeof window.__populateCountryAndCitySelectors === "function") window.__populateCountryAndCitySelectors(false);
     if (typeof window.renderSkyClarityAndMoonHeader === "function") window.renderSkyClarityAndMoonHeader();
-    if (typeof renderV6RadarDock === "function") renderV6RadarDock();
+    // v1.5.0: Bind Bortle & FWHM selectors for real-time CCD SNR exposure calculation
+  (function initCcdSnrEnvSelectors() {
+    try {
+      const savedB = Number(localStorage.getItem("seestar_user_bortle"));
+      const savedF = Number(localStorage.getItem("seestar_user_fwhm"));
+      window._userBortleClass = (Number.isFinite(savedB) && savedB >= 1 && savedB <= 9) ? savedB : 5;
+      window._userSeeingFwhm = (Number.isFinite(savedF) && savedF >= 1.5 && savedF <= 8.0) ? savedF : 3.5;
+    } catch (_) {
+      window._userBortleClass = 5;
+      window._userSeeingFwhm = 3.5;
+    }
+    const bSel = document.getElementById("v6BortleSelect");
+    const fSel = document.getElementById("v6FwhmSelect");
+    if (bSel) {
+      bSel.value = String(window._userBortleClass);
+      bSel.addEventListener("change", () => {
+        window._userBortleClass = Number(bSel.value) || 5;
+        try { localStorage.setItem("seestar_user_bortle", String(window._userBortleClass)); } catch (_) {}
+        if (typeof renderV6RadarDock === "function") renderV6RadarDock();
+        if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
+      });
+    }
+    if (fSel) {
+      fSel.value = String(window._userSeeingFwhm);
+      fSel.addEventListener("change", () => {
+        window._userSeeingFwhm = Number(fSel.value) || 3.5;
+        try { localStorage.setItem("seestar_user_fwhm", String(window._userSeeingFwhm)); } catch (_) {}
+        if (typeof renderV6RadarDock === "function") renderV6RadarDock();
+        if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
+      });
+    }
+  })();
+
+  if (typeof renderV6RadarDock === "function") renderV6RadarDock();
     if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
     if (typeof window.renderObsTrackerModal === "function") window.renderObsTrackerModal();
     if (typeof window.renderBeginnerGuideSlide === "function") window.renderBeginnerGuideSlide(window._currentBeginnerSlideIdx || 0);
@@ -7410,7 +7636,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
             </div>
             <span data-live-status="${escapeHtml(rawItem.star)}" style="color:${vspColor}; font-weight:700;">✓ VSP ${escapeHtml(item.chart)}</span> • AUID: ${escapeHtml(rawItem.auid)} <span class="sky-alt-pill">${window.computeStarAltitudeForCity ? ((() => { const _l = (typeof currentLang!=="undefined"?currentLang:(document.getElementById("langSelect")?.value||"ru")); const _mx = {ru:"макс.",en:"max.",es:"máx.",de:"max.",fr:"max.",zh:"最高",cs:"max."}[_l]||"max."; const _nw = {ru:"сейчас",en:"now",es:"ahora",de:"jetzt",fr:"maint.",zh:"当前",cs:"nyní"}[_l]||"now"; const _a = window.computeStarAltitudeForCity(rawItem.ra, rawItem.dec); return `📐 ${_mx} ${Math.round(_a.maxCulmAltDeg)}° • ${_nw} ${Math.round(_a.currentAltDeg)>=0?"+":""}${Math.round(_a.currentAltDeg)}° (${_a.compassLabel || ""})`; })()) : ""}</span>
             <div style="margin:6px 0 4px 0; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-              <span class="exp-highlight-pill ${scopeEval.status === 'warn' ? 'warn' : ''}">⏱ ${escapeHtml(({ru:"Выдержка",en:"Exposure",es:"Exposición",de:"Belichtung",fr:"Pose",zh:"曝光",cs:"Expozice",ber:"Exposure"}[(typeof currentLang!=="undefined"?currentLang:"ru")]||"Exposure"))}: <strong>${escapeHtml(scopeEval.expRec || "10 s")}</strong></span>
+              <span class="exp-highlight-pill ${scopeEval.status === 'warn' ? 'warn' : ''}">⏱ ${escapeHtml(({ru:"Выдержка",en:"Exposure",es:"Exposición",de:"Belichtung",fr:"Pose",zh:"曝光",cs:"Expozice",ber:"Exposure"}[(typeof currentLang!=="undefined"?currentLang:"ru")]||"Exposure"))}: <strong>${escapeHtml(scopeEval.expRec || "10 s")}</strong><small style="font-size:10px; font-weight:700; color:#d1fae5; opacity:0.95; margin-left:4px;">SNR ~${scopeEval.snr || 0} • ±${(scopeEval.sigmaMag || 0).toFixed(3)}m</small></span>
               <span style="font-size:11px; color:#cbd5e1;">🔭 ${escapeHtml(scopeEval.prof ? scopeEval.prof.id : scopeId)} • FOV ${escapeHtml(scopeEval.prof ? scopeEval.prof.fovStr : "")}</span>
             </div>
             <div class="urgent-customer-rec-box">
@@ -8176,7 +8402,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
             
           </div>
           <div class="v6-target-scope-fit ${scopeEval.status === 'warn' ? 'scope-warn' : ''}" style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; padding:7px 9px;">
-            <span class="exp-highlight-pill ${scopeEval.status === 'warn' ? 'warn' : ''}">⏱ ${escapeHtml(({ru:"Выдержка",en:"Exposure",es:"Exposición",de:"Belichtung",fr:"Pose",zh:"曝光",cs:"Expozice",ber:"Exposure"}[(typeof currentLang!=="undefined"?currentLang:"ru")]||"Exposure"))}: <strong>${escapeHtml(scopeEval.expRec || "10 s")}</strong></span>
+            <span class="exp-highlight-pill ${scopeEval.status === 'warn' ? 'warn' : ''}">⏱ ${escapeHtml(({ru:"Выдержка",en:"Exposure",es:"Exposición",de:"Belichtung",fr:"Pose",zh:"曝光",cs:"Expozice",ber:"Exposure"}[(typeof currentLang!=="undefined"?currentLang:"ru")]||"Exposure"))}: <strong>${escapeHtml(scopeEval.expRec || "10 s")}</strong><small style="font-size:10px; font-weight:700; color:#d1fae5; opacity:0.95; margin-left:4px;">SNR ~${scopeEval.snr || 0} • ±${(scopeEval.sigmaMag || 0).toFixed(3)}m</small></span>
             <span style="font-size:11px; opacity:0.9;">🔭 ${escapeHtml(scopeEval.badgeText)}</span>
           </div>
           <div class="v6-customer-mini">🏛 ${escapeHtml(((typeof window.buildScientificStarDossier === "function") ? window.buildScientificStarDossier(rawItem).requester : "Кампания AAVSO"))}</div>
@@ -16930,7 +17156,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
       <div class="star-dossier-section-card" style="border-left:3px solid #38bdf8;">
         <div class="star-dossier-sec-title"><span>${escapeHtml(mPack.secRecommendations)}</span></div>
-        <div style="margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><strong>${escapeHtml(mPack.lblScopeFit.replace("{scope}", scopeProf.name))}</strong> <span class="exp-highlight-pill ${scopeEval.status === 'warn' ? 'warn' : ''}">⏱ <strong>${escapeHtml(scopeEval.expRec || "10 s")}</strong></span> <span style="color:#34d399; font-weight:700;">🔭 ${escapeHtml(scopeEval.badgeText)}</span> (${escapeHtml(scopeProf.fovStr)} • Лимит ≤${escapeHtml(scopeProf.magLimit)}m)</div>
+        <div style="margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;"><strong>${escapeHtml(mPack.lblScopeFit.replace("{scope}", scopeProf.name))}</strong> <span class="exp-highlight-pill ${scopeEval.status === 'warn' ? 'warn' : ''}">⏱ <strong>${escapeHtml(scopeEval.expRec || "10 s")}</strong> <small style="font-size:10.5px; color:#d1fae5; margin-left:4px;">SNR ~${scopeEval.snr || 0} • ±${(scopeEval.sigmaMag || 0).toFixed(3)}m • X=${scopeEval.airmass || 1.0} • B${scopeEval.bortle || 5}</small></span> <span style="color:#34d399; font-weight:700;">🔭 ${escapeHtml(scopeEval.badgeText)}</span> (${escapeHtml(scopeProf.fovStr)} • Лимит ≤${escapeHtml(scopeProf.magLimit)}m)</div>
         <div><strong>${escapeHtml(mPack.lblObservingGuide)}</strong> ${escapeHtml(dossier.seek)}</div>
       </div>
     `;
@@ -19477,301 +19703,304 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   BEGINNER_PRESENTATION_7LANG.be = BEGINNER_PRESENTATION_7LANG.ber;
 
   // Guarantee Slide 13 (Shooting Recommendations & Per-Frame CSV Pipeline) across all 8 languages
-  (function ensureSlide13AllLangs() {
-    function buildUiMockupSvg(L) {
-      return (
-        "<svg viewBox='0 0 480 350' width='100%' style='display:block; background:#09101d; border-radius:10px; border:1px solid rgba(56,189,248,0.35); font-family:system-ui,-apple-system,sans-serif;'>" +
-        "<defs>" +
-        "<marker id='arrCyan13' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0 1 L10 5 L0 9 z' fill='#38bdf8'/></marker>" +
-        "<marker id='arrEm13' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0 1 L10 5 L0 9 z' fill='#10b981'/></marker>" +
-        "<marker id='arrAmb13' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='6' markerHeight='6' orient='auto-start-reverse'><path d='M0 1 L10 5 L0 9 z' fill='#fbbf24'/></marker>" +
-        "</defs>" +
+  // v1.5.0-alpha: Embed ALL 9 step-by-step PDF guide slides (Slides 13..21, total 21 slides) with real UI screenshots, Lab buttons & plain-language formulas
+  (function ensureV150PdfSlidesAllLangs() {
+    const ruTabs = [
+      "13. До съёмки: SNR",
+      "14. Настройки Seestar",
+      "15. Папка _sub (USB-C)",
+      "16. Зачем папка _sub",
+      "17. Сторож и WebObs",
+      "18. Лаборатория: вид",
+      "19. Кнопки: фильтры",
+      "20. Кнопки: анализ",
+      "21. Формулы просто"
+    ];
+    const enTabs = [
+      "13. Before: SNR",
+      "14. Seestar Setup",
+      "15. _sub Folder",
+      "16. Why _sub Works",
+      "17. Guard & WebObs",
+      "18. Lab Overview",
+      "19. Lab: Filters",
+      "20. Lab: Analysis",
+      "21. Plain Formulas"
+    ];
 
-        // PANEL 1: USB-C Explorer Mockup (Where to find the folder)
-        "<rect x='12' y='10' width='456' height='74' rx='9' fill='#0f1a2e' stroke='#334155' stroke-width='1.3'/>" +
-        "<circle cx='28' cy='27' r='10' fill='#f59e0b'/><text x='28' y='31' text-anchor='middle' fill='#09101d' font-size='11' font-weight='900'>1</text>" +
-        "<text x='46' y='31' fill='#fde68a' font-size='11.2' font-weight='800'>" + L.p1Title + "</text>" +
-        // Explorer address bar
-        "<rect x='22' y='40' width='290' height='22' rx='5' fill='#1e293b' stroke='#475569' stroke-width='1'/>" +
-        "<text x='30' y='55' fill='#93c5fd' font-size='10' font-family='monospace' font-weight='700'>📁 Seestar (USB-C) › MyWorks › W UMa_sub</text>" +
-        // Folder badge on right
-        "<rect x='320' y='40' width='138' height='22' rx='5' fill='rgba(245,158,11,0.16)' stroke='#f59e0b' stroke-width='1'/>" +
-        "<text x='389' y='54' text-anchor='middle' fill='#fde68a' font-size='9.5' font-weight='700'>" + L.p1Badge + "</text>" +
-        "<text x='22' y='76' fill='#94a3b8' font-size='9.3'>" + L.p1Hint + "</text>" +
-
-        // Arrow 1 -> 2
-        "<path d='M135 84 L135 102' stroke='#38bdf8' stroke-width='2' marker-end='url(#arrCyan13)'/>" +
-
-        // PANEL 2: Step 2 UI Screenshot Mockup (Exact buttons + CLICK HERE arrow)
-        "<rect x='12' y='106' width='456' height='104' rx='9' fill='#0f1b2d' stroke='#38bdf8' stroke-width='1.5'/>" +
-        "<circle cx='28' cy='123' r='10' fill='#38bdf8'/><text x='28' y='127' text-anchor='middle' fill='#09101d' font-size='11' font-weight='900'>2</text>" +
-        "<text x='46' y='127' fill='#e0f2fe' font-size='11.2' font-weight='800'>" + L.p2Title + "</text>" +
-        // Primary blue button mockup
-        "<rect x='22' y='137' width='232' height='36' rx='8' fill='#0284c7' stroke='#38bdf8' stroke-width='2'/>" +
-        "<text x='138' y='159' text-anchor='middle' fill='#ffffff' font-size='11.5' font-weight='800'>" + L.btnPrimary + "</text>" +
-        // Secondary muted button mockup
-        "<rect x='264' y='137' width='194' height='36' rx='8' fill='#1e293b' stroke='#475569' stroke-width='1.2' stroke-dasharray='3,2'/>" +
-        "<text x='361' y='159' text-anchor='middle' fill='#94a3b8' font-size='10.2' font-weight='700'>" + L.btnFallback + "</text>" +
-        // Callout arrow pointing UP to primary button
-        "<path d='M138 194 L138 176' stroke='#fbbf24' stroke-width='2.2' marker-end='url(#arrAmb13)'/>" +
-        "<text x='138' y='203' text-anchor='middle' fill='#fde047' font-size='9.8' font-weight='800'>" + L.clickHere + "</text>" +
-        "<text x='361' y='194' text-anchor='middle' fill='#64748b' font-size='9.1'>" + L.fallbackNote + "</text>" +
-
-        // Arrow 2 -> 3
-        "<path d='M240 210 L240 227' stroke='#10b981' stroke-width='2.2' marker-end='url(#arrEm13)'/>" +
-
-        // PANEL 3: Automatic Recalibration Green Banner Mockup (What happens & Why)
-        "<rect x='12' y='231' width='456' height='54' rx='9' fill='rgba(16,185,129,0.16)' stroke='#10b981' stroke-width='1.6'/>" +
-        "<circle cx='28' cy='248' r='10' fill='#10b981'/><text x='28' y='252' text-anchor='middle' fill='#09101d' font-size='11' font-weight='900'>3</text>" +
-        "<text x='46' y='252' fill='#6ee7b7' font-size='10.6' font-weight='800'>" + L.p3Banner + "</text>" +
-        "<text x='22' y='272' fill='#d1fae5' font-size='9.5'>" + L.p3Why + "</text>" +
-
-        // Arrow 3 -> 4
-        "<path d='M240 285 L240 299' stroke='#10b981' stroke-width='2' marker-end='url(#arrEm13)'/>" +
-
-        // PANEL 4: Step 3 Result (Ready for AAVSO WebObs)
-        "<rect x='12' y='303' width='456' height='37' rx='8' fill='rgba(16,185,129,0.24)' stroke='#34d399' stroke-width='1.5'/>" +
-        "<circle cx='28' cy='321' r='9' fill='#34d399'/><text x='28' y='325' text-anchor='middle' fill='#09101d' font-size='10.5' font-weight='900'>4</text>" +
-        "<text x='46' y='325' fill='#ffffff' font-size='10.8' font-weight='800'>" + L.p4Result + "</text>" +
-        "</svg>"
-      );
-    }
-
-    const slidesByLang = {
-      ru: {
-        tab: "13. Съёмка и CSV",
-        slide: {
-          kicker: "СЪЁМКА НА SEESTAR И ЗАГРУЗКА CSV",
-          headline: "Как снимать и загружать данные правильно (и почему)",
-          callout: "Почему это важно: в итоговом CSV прошивка Seestar на ярких звёздах (< 8.5m) не выбрасывает пересвеченные опорные звёзды — блеск уплывает на ~0.4m, а ошибка раздувается до ±0.18m. Поэтому основной режим в AstroLab — «Папка покадровых CSV ★».",
-          steps: [
-            "<strong>1. Как снимать на Seestar (зачем 5–10 с):</strong> смотрите на бейдж <strong>«⏱ Выдержка»</strong> в плитке звезды (для звёзд ярче <code>8.5m</code> ставьте <strong>5–10 с</strong>, фильтр <code>IRCUT / TG</code>, <code>EQ-режим</code>). Короткая выдержка не даёт опорным звёздам уйти в пересвет канала R (<code>65535 ADU</code>).",
-            "<strong>2. Где взять покадровые CSV (зачем папка <code>_sub</code>):</strong> подключите Seestar к ПК кабелем <strong>USB-C</strong> (режим накопителя) и найдите <code>MyWorks/&lt;Звезда&gt;_sub</code>. В этой папке лежат отдельные CSV на каждый кадр со всеми опорными звёздами — её можно выбрать <strong>напрямую с телескопа</strong> или <strong>скопировать на ПК</strong>.",
-            "<strong>3. Куда нажимать в AstroLab:</strong> в Шаге 1 выберите звезду → в Шаге 2 нажмите синюю кнопку <strong>«📁 Папка покадровых CSV ★»</strong> и укажите папку <code>_sub</code>. Конвертер сам выбросит пересвеченные опорные, найдёт цель в радиусе <code>≤ 30″</code>, снимет сдвиг <code>~0.4m</code> и покажет зелёную плашку отчёта — после этого жмите <strong>«Конвертировать»</strong>."
-          ],
-          svgHtml: buildUiMockupSvg({
-            p1Title: "Подключите Seestar по USB-C (или скопируйте на ПК)",
-            p1Badge: "Нужна папка *_sub",
-            p1Hint: "Внутри лежат покадровые Light_*.csv с таблицей опорных звёзд",
-            p2Title: "Шаг 2 в AstroLab — куда нажимать:",
-            btnPrimary: "📁 Папка покадровых CSV ★",
-            btnFallback: "📂 Итоговый CSV (запасной)",
-            clickHere: "▲ НАЖМИТЕ СЮДА (основной способ)",
-            fallbackNote: "Только если нет папки _sub",
-            p3Banner: "✨ Пересчитано 112 кадров • убрано ~7 пересвеч. опорных • сдвиг -0.39m",
-            p3Why: "Зачем: AstroLab сам отсекает клиппинг в R и убирает ложную ошибку Mag(err)",
-            p4Result: "Шаг 3 → «Конвертировать»: чистый блеск (MERR ~0.025m) готов для AAVSO WebObs"
-          }),
-          caption: "Пошаговая схема: 1) папка MyWorks/<Звезда>_sub по USB-C → 2) синяя кнопка «Папка покадровых CSV ★» → 3) автопересчёт → 4) экспорт в AAVSO"
+    const ruSlides = [
+      {
+        kicker: "ОБЯЗАТЕЛЬНЫЙ ШАГ 1 • ДО ВЫХОДА НА СЪЁМКУ",
+        headline: "Сначала открой AstroLab, выбери звезду и узнай выдержку!",
+        callout: "Нельзя ставить выдержку «на глаз»: на ярких звёздах (< 8.5m) 20–30 с пересвечивают опорные звёзды и портят всю ночь. Выдержка считается прямо сейчас по уравнению ПЗС-SNR с учётом высоты звезды и Луны!",
+        steps: [
+          "<strong>1. Выбери свой телескоп</strong> слева сверху (<code>S30</code>, <code>S30+</code>, <code>S30PRO</code>, <code>S50</code> или <code>S50PRO</code>).",
+          "<strong>2. Укажи засветку неба (B2–B9):</strong> <code>B2</code> — глухая деревня, <code>B5</code> — пригород, <code>B8</code> — центр города. <code>FWHM</code> оставь <code>3.5″</code>.",
+          "<strong>3. Найди звезду в Радаре</strong> и посмотри зелёный бейдж <strong>«⏱ Выдержка: 10 s • SNR»</strong> — это точная выдержка именно на этот момент! Нажми <strong>«Выбрать»</strong>."
+        ],
+        img: "assets/guide_v150_radar.jpg",
+        caption: "Реальный экран AstroLab v1.5.0: телескоп + небо Bortle + готовый бейдж выдержки и SNR на карточке звезды"
+      },
+      {
+        kicker: "ШАГ 2 • НАСТРОЙКИ НА ТЕЛЕСКОПЕ SEESTAR",
+        headline: "Четыре простых правила съёмки на Seestar",
+        callout: "Seestar сохраняет покадровые CSV со списком всех опорных звёзд в папку MyWorks/<Имя_звезды>_sub (например, MyWorks/W UMa_sub). Именно папка с окончанием _sub нужна для AAVSO!",
+        steps: [
+          "<strong>1. Ставь выдержку с бейджа AstroLab:</strong> если программа показала <strong>10 s</strong> — ставь в Seestar именно <strong>10 секунд</strong> (не 20–30 с на ярких звёздах).",
+          "<strong>2. Только фильтр IRCUT и EQ-режим:</strong> <code>IRCUT</code> — это полоса <code>TG</code> для AAVSO. Узкополосный фильтр <code>LP</code> для фотометрии запрещён.",
+          "<strong>3. Выбери цель с 1-го кадра:</strong> наведись на звезду и отметь её сразу при старте фотометрии."
+        ],
+        cards: [
+          { num: "⏱", title: "Выдержка с бейджа", desc: "Обычно 10 с для ярких (< 8.5m), 20–60 с для слабых" },
+          { num: "🎯", title: "Фильтр IRCUT (TG)", desc: "Только IRCUT + EQ-режим (LP не подходит)" },
+          { num: "📁", title: "Папка MyWorks/<Звезда>_sub", desc: "Содержит покадровые CSV с опорными звёздами" }
+        ]
+      },
+      {
+        kicker: "ШАГ 3 • ЗАГРУЗКА ПАПКИ _sub В КОНВЕРТЕР",
+        headline: "Подключи Seestar по USB-C и нажми «Папка покадровых CSV ★»",
+        callout: "Одиночный итоговый CSV больше НЕ допускается для отправки в AAVSO — он скрыт в режиме «Экспорт в AAVSO» и доступен только в «Только лаборатория» для просмотра (с предупреждением о критических ошибках).",
+        steps: [
+          "<strong>1. Подключи Seestar по USB-C</strong> к компьютеру (появится как флешка) или скопируй папку <code>MyWorks/&lt;Звезда&gt;_sub</code> на диск ПК.",
+          "<strong>2. Проверь режим «Экспорт в AAVSO»</strong> вверху и убедись, что в Шаге 1 выбрана нужная звезда и указан твой <code>OBSCODE</code>.",
+          "<strong>3. В Шаге 2 нажми синюю кнопку «📁 Папка покадровых CSV ★»</strong> и укажи папку <code>_sub</code> целиком (можно прямо с телескопа)."
+        ],
+        cards: [
+          { num: "🔌", title: "USB-C → Seestar", desc: "Открой MyWorks/<Звезда>_sub напрямую или с ПК" },
+          { num: "📁", title: "Папка покадровых CSV ★", desc: "Единственный разрешённый способ для AAVSO WebObs" },
+          { num: "⛔", title: "Итоговый CSV заблокирован", desc: "Доступен только в «Только лаборатория» без отправки в AAVSO" }
+        ]
+      },
+      {
+        kicker: "ШАГ 4 • ЧТО ПРОГРАММА ДЕЛАЕТ САМА ЗА 1 СЕКУНДУ",
+        headline: "Зачем нужна папка _sub: наглядная разница «До и После»",
+        callout: "Прошивка Seestar не выбрасывает пересвеченные опорные звёзды — наш покадровый режим делает это автоматически и возвращает звезду в её реальный физический блеск!",
+        steps: [
+          "<strong>Красные точки (старый итоговый CSV):</strong> врут на <code>~0.4m</code> (показали W UMa ярче её реального максимума <code>7.75m</code>), а ошибка раздулась до <code>±0.183m</code>.",
+          "<strong>Зелёные точки (новая папка _sub):</strong> AstroLab сам выбросил пересвеченные опорные (<code>7.3/15</code> на кадр) и пересчитал блеск точно в полосу линейных FITS (<code>7.96–8.02m</code>).",
+          "<strong>Ошибка упала в 7.4 раза:</strong> с <code>±0.183m</code> до <code>±0.025m</code>; чужие звёзды в папке отсеиваются автоматически (радиус привязки <code>≤ 30″</code>)."
+        ],
+        img: "assets/guide_v150_wuma_chart.png",
+        caption: "Реальные данные W UMa (16.11.2026, S30 Pro): снят сдвиг +0.389 mag, ошибка MERR снижена в 7.4 раза"
+      },
+      {
+        kicker: "ШАГ 5 • ПРОВЕРКА КАЧЕСТВА И ОТПРАВКА В AAVSO",
+        headline: "Калибровочный сторож, сверка и кнопка «Конвертировать»",
+        callout: "Все проверки безопасности (SIMBAD/VSX, RA/Dec, MAG, MERR, JD Mid, OBSCODE, Calibration Guard) работают для покадрового режима в полном объёме!",
+        steps: [
+          "<strong>1. Если вылез «Калибровочный сторож»</strong> (как справа) — не пугайся! Он предупреждает о риске пересвета. Нажми <strong>«Проверить на графике в Лаборатории»</strong>.",
+          "<strong>2. Проверь таблицу сверки SIMBAD:</strong> имя звезды, координаты <code>RA/Dec</code> и блеск <code>MAG</code> должны быть без красных блокировок.",
+          "<strong>3. Нажми «Конвертировать CSV»</strong> в Шаге 3 — сохранится готовый файл <code>*_Seestar.csv</code> для загрузки на сайт <strong>AAVSO WebObs</strong>."
+        ],
+        img: "assets/guide_v150_cal_guard.jpg",
+        caption: "Реальное окно Калибровочного сторожа: защищает базу AAVSO от пересвеченных и смещённых данных"
+      },
+      {
+        kicker: "ЛАБОРАТОРИЯ КРИВЫХ БЛЕСКА • ЗНАКОМСТВО С ЭКРАНОМ",
+        headline: "Как выглядит Лаборатория и как читать график",
+        callout: "Нажми кнопку «Открыть лабораторию (Фаза · 3σ) →» под графиком справа — откроется полноэкранный научный анализ твоей звезды.",
+        steps: [
+          "<strong>Вертикальная ось (слева):</strong> блеск в звёздных величинах (<code>m</code>). Главное правило: <strong>чем число МЕНЬШЕ — тем звезда ЯРЧЕ</strong> (сверху ярче, снизу тусклее).",
+          "<strong>Горизонтальная ось (внизу):</strong> время съёмки (или фаза <code>0 → 1</code>). Оранжевые точки с палочками ошибок — твои текущие кадры.",
+          "<strong>Панель «Автоанализ» сверху:</strong> сама считает число точек <code>N</code>, размах <code>Δm</code>, разброс <code>RMS</code>, момент минимума <code>T_min</code> и тип звезды!"
+        ],
+        img: "assets/guide_v150_lab.jpg",
+        caption: "Реальный экран Лаборатории на живых кадрах W UMa: кривая блеска + автоматическая математическая диагностика"
+      },
+      {
+        kicker: "ЛАБОРАТОРИЯ • ИНСТРУКЦИЯ ПО КАЖДОЙ КНОПКЕ (1 ИЗ 2)",
+        headline: "Кнопки масштаба, фильтров и очистки графика — простыми словами",
+        callout: "Не бойся нажимать любые кнопки в Лаборатории: они ничего не ломают и не удаляют твои исходные файлы!",
+        table: {
+          headers: ["Кнопка / список", "Что делает простыми словами", "Когда тебе это нужно"],
+          rows: [
+            ["Масштаб X / Высота Y", "Растягивает график вширь (100–800%) или выше по экрану.", "Когда точек много и они слились — растяни до 200–400%."],
+            ["Период AAVSO (30 d..3 yr)", "За какой срок подгрузить точки других астрономов с AAVSO.", "Чтобы сравнить свою кривую с мировыми наблюдениями."],
+            ["Ось X (Авто / Часы / JD)", "Меняет подписи времени: понятные часы/дни или даты JD.", "Оставь «Авто» для просмотра или «JD» для отчётов."],
+            ["Полоса (All / TG / V / B)", "Показывает точки только в одном светофильтре (родная — TG).", "Выбирай TG (или V), чтобы не смешивать разные цвета."],
+            ["Усреднение (Off / 2m..30d)", "Объединяет соседние точки в одну среднюю (биннинг).", "Если график «шумит» — включи 2 min или 5 min."],
+            ["Убрать выбросы (3σ)", "Прячет случайные «кривые» кадры (облако, спутник).", "Если 1–2 точки резко улетели вверх или вниз."],
+            ["Оптимальный фильтр (TG+3σ)", "Кнопка «сделай хорошо в 1 клик»: включает TG и 3σ.", "Нажимай сразу, если не хочешь настраивать вручную."]
+          ]
         }
       },
-      en: {
-        tab: "13. Shooting & CSV",
-        slide: {
-          kicker: "SEESTAR SHOOTING & CSV UPLOAD",
-          headline: "How to Shoot & Upload Data Properly (and Why)",
-          callout: "Why this matters: on bright fields (< 8.5m), Seestar firmware does not reject Red-saturated reference stars in the summary CSV — shifting magnitude by ~0.4m and inflating Mag(err) to ±0.18m. Always use «Per-Frame CSV Folder ★».",
-          steps: [
-            "<strong>1. How to shoot (why 5–10s):</strong> follow the <strong>«⏱ Exposure»</strong> badge on the star card (use <strong>5–10s</strong> for targets &lt; <code>8.5m</code>, <code>IRCUT / TG</code>, <code>EQ mode</code>) so comparison stars stay below Red clipping (<code>65535 ADU</code>).",
-            "<strong>2. Where to find per-frame CSVs:</strong> connect Seestar via <strong>USB-C</strong> (storage mode) and open <code>MyWorks/&lt;Star&gt;_sub</code>. Each frame CSV stores all reference stars — select the folder <strong>directly from Seestar</strong> or <strong>copy it to your PC first</strong>.",
-            "<strong>3. Where to click in AstroLab:</strong> Step 1 pick star → Step 2 click the blue <strong>«📁 Per-Frame CSV Folder ★»</strong> button and select <code>_sub</code>. AstroLab auto-rejects saturated refs, locks the target within <code>≤ 30″</code>, removes <code>~0.4m</code> bias, and shows the green report banner → click <strong>Convert</strong>."
-          ],
-          svgHtml: buildUiMockupSvg({
-            p1Title: "Connect Seestar via USB-C (or copy folder to PC)",
-            p1Badge: "Select *_sub folder",
-            p1Hint: "Contains per-frame Light_*.csv files with full reference star tables",
-            p2Title: "Step 2 in AstroLab — where to click:",
-            btnPrimary: "📁 Per-Frame CSV Folder ★",
-            btnFallback: "📂 Summary CSV (Fallback)",
-            clickHere: "▲ CLICK HERE (primary workflow)",
-            fallbackNote: "Only if _sub folder is unavailable",
-            p3Banner: "✨ Recalibrated 112 frames • dropped ~7 saturated refs • shift -0.39m",
-            p3Why: "Why: removes R-channel clipping bias & inflated Mag(err) automatically",
-            p4Result: "Step 3 → Convert: clean SIMBAD/VSX magnitudes (MERR ~0.025m) for AAVSO WebObs"
-          }),
-          caption: "Step-by-step UI guide: 1) MyWorks/<Star>_sub via USB-C → 2) blue Per-Frame CSV Folder button → 3) auto-recalibration → 4) AAVSO export"
+      {
+        kicker: "ЛАБОРАТОРИЯ • ИНСТРУКЦИЯ ПО КАЖДОЙ КНОПКЕ (2 ИЗ 2)",
+        headline: "Кнопки анализа, фазы и периода — как найти ритм звезды",
+        callout: "Эти кнопки помогают увидеть повторяющееся затмение или пульсацию и получить готовые научные числа.",
+        table: {
+          headers: ["Кнопка в Лаборатории", "Что делает простыми словами", "Когда и зачем нажимать"],
+          rows: [
+            ["Автоанализ звезды", "Считает амплитуду Δm, RMS, ищет период (Lomb–Scargle) и момент минимума T_min.", "Нажимай после загрузки серии — получишь резюме по звезде."],
+            ["Свернуть по периоду (Фаза)", "Накладывает все циклы звезды друг на друга на отрезок от 0 до 1.", "Когда есть несколько ночей: сразу видна полная «волна»!"],
+            ["×2 P (Удвоить период)", "Умножает период на 2 (у двойных вроде W UMa два провала за оборот).", "Если на фазовом графике виден 1 провал вместо 2 — жми ×2 P!"],
+            ["Расчёт (Аудит формул)", "Показывает подробный отчёт: формулы, число точек, T_min и ошибки.", "Чтобы проверить цифры или скопировать их в пост / отчёт."],
+            ["Справка (?)", "Открывает визуальную шпаргалку из 8 слайдов по типам кривых.", "Если не понимаешь, что именно изображено на графике."],
+            ["← К моим наблюдениям", "Возвращает в твой личный архив всех прошлых конвертаций.", "Чтобы посмотреть историю всех снятых тобой звёзд."]
+          ]
         }
       },
-      es: {
-        tab: "13. Captura y CSV",
-        slide: {
-          kicker: "CAPTURA SEESTAR Y CARGA CSV",
-          headline: "Cómo capturar y cargar datos correctamente (y por qué)",
-          callout: "Por qué importa: en campos brillantes (< 8.5m) el CSV resumen de Seestar incluye referencias saturadas en R (~0.4m de sesgo). Usa siempre «Carpeta CSV por cuadro ★».",
-          steps: [
-            "<strong>1. Captura:</strong> sigue la etiqueta <strong>«⏱ Exposición»</strong> de la tarjeta (<strong>5–10 s</strong> para &lt; <code>8.5m</code>, <code>IRCUT/TG</code>, <code>EQ</code>).",
-            "<strong>2. Dónde está la carpeta:</strong> conecta Seestar por <strong>USB-C</strong> y abre <code>MyWorks/&lt;Estrella&gt;_sub</code> directamente desde el telescopio o copiándola al PC.",
-            "<strong>3. Dónde pulsar:</strong> Paso 2 → botón azul <strong>«📁 Carpeta CSV por cuadro ★»</strong> → selecciona <code>_sub</code> → comprueba el aviso verde de recalibración → <strong>Convertir</strong>."
-          ],
-          svgHtml: buildUiMockupSvg({
-            p1Title: "Conecta Seestar por USB-C (o copia al PC)",
-            p1Badge: "Carpeta *_sub",
-            p1Hint: "Contiene CSV por fotograma con todas las estrellas de referencia",
-            p2Title: "Paso 2 en AstroLab — dónde pulsar:",
-            btnPrimary: "📁 Carpeta CSV por cuadro ★",
-            btnFallback: "📂 CSV resumen (alternativo)",
-            clickHere: "▲ PULSA AQUÍ (método principal)",
-            fallbackNote: "Solo si no tienes la carpeta _sub",
-            p3Banner: "✨ 112 cuadros recalibrados • ~7 refs saturadas fuera • sesgo -0.39m",
-            p3Why: "Por qué: elimina el sesgo de saturación en R y el error Mag(err) inflado",
-            p4Result: "Paso 3 → Convertir: archivo limpio (MERR ~0.025m) listo para AAVSO WebObs"
-          }),
-          caption: "Guía paso a paso: 1) MyWorks/<Estrella>_sub por USB-C → 2) botón azul → 3) recalibración automática → 4) AAVSO"
-        }
-      },
-      de: {
-        tab: "13. Aufnahme & CSV",
-        slide: {
-          kicker: "SEESTAR-AUFNAHME & CSV-UPLOAD",
-          headline: "Richtig aufnehmen & CSV hochladen (und warum)",
-          callout: "Warum wichtig: Bei hellen Feldern (< 8.5m) enthält die Sammel-CSV gesättigte R-Referenzsterne (~0.4m Shift). Nutze daher immer «Einzelbild-CSV-Ordner ★».",
-          steps: [
-            "<strong>1. Aufnahme:</strong> beachte den <strong>«⏱ Belichtung»</strong>-Badge (<strong>5–10 s</strong> für &lt; <code>8.5m</code>, <code>IRCUT/TG</code>, <code>EQ</code>).",
-            "<strong>2. Wo liegt der Ordner:</strong> Seestar per <strong>USB-C</strong> verbinden und <code>MyWorks/&lt;Stern&gt;_sub</code> direkt vom Teleskop oder nach Kopie auf den PC wählen.",
-            "<strong>3. Wo klicken:</strong> Schritt 2 → blauer Button <strong>«📁 Einzelbild-CSV-Ordner ★»</strong> → Ordner <code>_sub</code> wählen → grünen Bericht prüfen → <strong>Konvertieren</strong>."
-          ],
-          svgHtml: buildUiMockupSvg({
-            p1Title: "Seestar per USB-C verbinden (oder auf PC kopieren)",
-            p1Badge: "Ordner *_sub",
-            p1Hint: "Enthält Einzelbild-CSV mit allen Vergleichssternen",
-            p2Title: "Schritt 2 in AstroLab — hier klicken:",
-            btnPrimary: "📁 Einzelbild-CSV-Ordner ★",
-            btnFallback: "📂 Sammel-CSV (Fallback)",
-            clickHere: "▲ HIER KLICKEN (Hauptweg)",
-            fallbackNote: "Nur wenn kein _sub-Ordner vorliegt",
-            p3Banner: "✨ 112 Frames rekalibriert • ~7 gesättigte Refs entfernt • Shift -0.39m",
-            p3Why: "Warum: entfernt R-Sättigungsfehler und überhöhtes Mag(err) automatisch",
-            p4Result: "Schritt 3 → Konvertieren: saubere Werte (MERR ~0.025m) für AAVSO WebObs"
-          }),
-          caption: "UI-Anleitung: 1) MyWorks/<Stern>_sub per USB-C → 2) blauer Button → 3) Rekalibrierung → 4) AAVSO-Export"
-        }
-      },
-      fr: {
-        tab: "13. Capture & CSV",
-        slide: {
-          kicker: "CAPTURE SEESTAR & IMPORT CSV",
-          headline: "Comment capturer et importer vos données (et pourquoi)",
-          callout: "Pourquoi : sur champs brillants (< 8.5m), le CSV résumé garde des références saturées en R (~0.4m de biais). Utilisez toujours « Dossier CSV par image ★ ».",
-          steps: [
-            "<strong>1. Capture :</strong> suivez le badge <strong>« ⏱ Pose »</strong> de la carte (<strong>5–10 s</strong> pour &lt; <code>8.5m</code>, <code>IRCUT/TG</code>, <code>EQ</code>).",
-            "<strong>2. Où trouver le dossier :</strong> branchez le Seestar en <strong>USB-C</strong> et ouvrez <code>MyWorks/&lt;Étoile&gt;_sub</code> directement ou après copie sur PC.",
-            "<strong>3. Où cliquer :</strong> Étape 2 → bouton bleu <strong>« 📁 Dossier CSV par image ★ »</strong> → sélectionnez <code>_sub</code> → vérifiez le bandeau vert → <strong>Convertir</strong>."
-          ],
-          svgHtml: buildUiMockupSvg({
-            p1Title: "Branchez le Seestar en USB-C (ou copiez sur PC)",
-            p1Badge: "Dossier *_sub",
-            p1Hint: "Contient un CSV par image avec toutes les étoiles de référence",
-            p2Title: "Étape 2 dans AstroLab — où cliquer :",
-            btnPrimary: "📁 Dossier CSV par image ★",
-            btnFallback: "📂 CSV résumé (secours)",
-            clickHere: "▲ CLIQUEZ ICI (voie principale)",
-            fallbackNote: "Seulement sans dossier _sub",
-            p3Banner: "✨ 112 images recalibrées • ~7 refs saturées exclues • biais -0.39m",
-            p3Why: "Pourquoi : supprime la saturation R et le Mag(err) gonflé",
-            p4Result: "Étape 3 → Convertir : données propres (MERR ~0.025m) pour AAVSO WebObs"
-          }),
-          caption: "Guide visuel : 1) MyWorks/<Étoile>_sub en USB-C → 2) bouton bleu → 3) recalibration auto → 4) AAVSO"
-        }
-      },
-      zh: {
-        tab: "13. 拍摄与上传",
-        slide: {
-          kicker: "SEESTAR 拍摄与 CSV 上传",
-          headline: "如何正确拍摄与上传数据（原因与点击步骤）",
-          callout: "为什么重要：亮星视场（< 8.5m）下 Seestar 汇总 CSV 含红通道过曝参考星，星等偏移 ~0.4m。请务必使用「逐帧 CSV 文件夹 ★」。",
-          steps: [
-            "<strong>1. 拍摄设置：</strong>按星卡上的<strong>「⏱ 曝光」</strong>标签设置（<code>&lt; 8.5m</code> 用 <strong>5–10 秒</strong>，<code>IRCUT/TG</code>，<code>EQ</code>）。",
-            "<strong>2. 文件夹位置：</strong>用 <strong>USB-C</strong> 连接 Seestar 到电脑，打开 <code>MyWorks/&lt;星名&gt;_sub</code>（可直接从望远镜选或先复制到电脑）。",
-            "<strong>3. 点击步骤：</strong>第 2 步点击蓝色主按钮<strong>「📁 逐帧 CSV 文件夹 ★」</strong>→ 选中 <code>_sub</code> → 查看绿色重校准提示 → 点击<strong>转换</strong>。"
-          ],
-          svgHtml: buildUiMockupSvg({
-            p1Title: "USB-C 连接 Seestar（或先复制到电脑）",
-            p1Badge: "选择 *_sub 文件夹",
-            p1Hint: "包含每帧 Light_*.csv 及完整参考星表",
-            p2Title: "AstroLab 第 2 步 — 点击这里：",
-            btnPrimary: "📁 逐帧 CSV 文件夹 ★",
-            btnFallback: "📂 汇总 CSV（备用）",
-            clickHere: "▲ 点击此按钮（推荐主方式）",
-            fallbackNote: "仅在没有 _sub 文件夹时使用",
-            p3Banner: "✨ 已重算 112 帧 • 剔除约 7 颗过曝参考星 • 消除 -0.39m 偏移",
-            p3Why: "原因：自动剔除 R 通道饱和误差与虚高 Mag(err)",
-            p4Result: "第 3 步 → 转换：干净星等 (MERR ~0.025m) 可直接提交 AAVSO WebObs"
-          }),
-          caption: "步骤示意图：1) USB-C 打开 MyWorks/<星名>_sub → 2) 点击蓝色主按钮 → 3) 自动重校准 → 4) 导出 AAVSO"
-        }
-      },
-      cs: {
-        tab: "13. Snímání a CSV",
-        slide: {
-          kicker: "SNÍMÁNÍ SEESTAR A NAHRÁNÍ CSV",
-          headline: "Jak správně snímat a nahrávat data (co, kam a proč)",
-          callout: "Proč na tom záleží: v jasných polích (< 8.5m) souhrnné CSV ze Seestaru obsahuje přesycené reference v R (posun ~0.4m). Proto používejte «Složka snímkových CSV ★».",
-          steps: [
-            "<strong>1. Snímání:</strong> řiďte se štítkem <strong>«⏱ Expozice»</strong> na kartě hvězdy (<strong>5–10 s</strong> pro &lt; <code>8.5m</code>, <code>IRCUT/TG</code>, <code>EQ</code>).",
-            "<strong>2. Kde najít složku:</strong> připojte Seestar přes <strong>USB-C</strong> a otevřete <code>MyWorks/&lt;Hvězda&gt;_sub</code> přímo z dalekohledu nebo po zkopírování do PC.",
-            "<strong>3. Kam kliknout:</strong> Krok 2 → modré tlačítko <strong>«📁 Složka snímkových CSV ★»</strong> → vyberte <code>_sub</code> → zkontrolujte zelený pruh → <strong>Převést</strong>."
-          ],
-          svgHtml: buildUiMockupSvg({
-            p1Title: "Připojte Seestar přes USB-C (nebo zkopírujte do PC)",
-            p1Badge: "Složka *_sub",
-            p1Hint: "Obsahuje jednotlivé Light_*.csv s tabulkou referenčních hvězd",
-            p2Title: "Krok 2 v AstroLab — kam kliknout:",
-            btnPrimary: "📁 Složka snímkových CSV ★",
-            btnFallback: "📂 Souhrnné CSV (záložní)",
-            clickHere: "▲ KLIKNĚTE SEM (hlavní postup)",
-            fallbackNote: "Jen pokud složka _sub chybí",
-            p3Banner: "✨ Přepočteno 112 snímků • vyřazeno ~7 přesycených ref • posun -0.39m",
-            p3Why: "Proč: automaticky odstraní saturaci v R a zkreslené Mag(err)",
-            p4Result: "Krok 3 → Převést: čistá data (MERR ~0.025m) pro AAVSO WebObs"
-          }),
-          caption: "Vizuální návod: 1) MyWorks/<Hvězda>_sub přes USB-C → 2) modré tlačítko → 3) automatický přepočet → 4) AAVSO"
-        }
-      },
-      ber: {
-        tab: "13. Tuṭṭfa & CSV",
-        slide: {
-          kicker: "SEESTAR TUṬṬFA & CSV",
-          headline: "How to Shoot & Upload Data Properly (and Why)",
-          callout: "Why: on bright fields (< 8.5m) Seestar summary CSV keeps saturated R refs (~0.4m shift). Always use «Per-Frame CSV Folder ★».",
-          steps: [
-            "<strong>1. Shooting:</strong> follow the <strong>«⏱ Exposure»</strong> badge on the star card (<strong>5–10s</strong> for &lt; <code>8.5m</code>, <code>IRCUT/TG</code>, <code>EQ</code>).",
-            "<strong>2. Folder location:</strong> connect Seestar via <strong>USB-C</strong> and open <code>MyWorks/&lt;Star&gt;_sub</code> directly from Seestar or copy it to your PC.",
-            "<strong>3. Where to click:</strong> Step 2 → blue <strong>«📁 Per-Frame CSV Folder ★»</strong> → pick <code>_sub</code> → verify green recalibration banner → <strong>Convert</strong>."
-          ],
-          svgHtml: buildUiMockupSvg({
-            p1Title: "Connect Seestar via USB-C (or copy to PC)",
-            p1Badge: "Select *_sub folder",
-            p1Hint: "Contains per-frame Light_*.csv files with reference stars",
-            p2Title: "Step 2 in AstroLab — where to click:",
-            btnPrimary: "📁 Per-Frame CSV Folder ★",
-            btnFallback: "📂 Summary CSV (Fallback)",
-            clickHere: "▲ CLICK HERE (primary)",
-            fallbackNote: "Only without _sub folder",
-            p3Banner: "✨ Recalibrated 112 frames • dropped ~7 saturated refs • -0.39m",
-            p3Why: "Why: removes R-channel clipping & inflated Mag(err)",
-            p4Result: "Step 3 → Convert: clean magnitudes (MERR ~0.025m) for AAVSO WebObs"
-          }),
-          caption: "Step-by-step UI guide: 1) MyWorks/<Star>_sub via USB-C → 2) blue button → 3) auto-recalibration → 4) AAVSO"
-        }
+      {
+        kicker: "ФОРМУЛЫ ПРОСТЫМ ЯЗЫКОМ • КАК СЧИТАЕТ ASTROLAB",
+        headline: "Четыре главные формулы — и что они значат по-человечески",
+        callout: "Главный алгоритм на 5 секунд: 1) Зайди в AstroLab ДО съёмки и узнай выдержку → 2) Сними на Seestar (IRCUT + EQ) → 3) Подключи по USB-C и выбери «Папка покадровых CSV ★» → 4) Проверь в Лаборатории → 5) Нажми «Конвертировать» и отправь на WebObs!",
+        steps: [
+          "<strong>1. ПЗС-SNR и точность:</strong> <code>SNR(t) = S·t / √(S·t + n·(B·t + R²))</code> и <code>σ = 1.0857 / SNR</code> — делим свет звезды на шум неба и матрицы. При <code>SNR = 100</code> ошибка всего <code>±0.01m</code>.",
+          "<strong>2. Шкала Погсона:</strong> <code>Δm = −2.5 · log₁₀(F₁ / F₂)</code> — разница на 1 величину = изменение яркости в 2.512 раза, на 5 величин = в 100 раз. Чем меньше число, тем ярче звезда.",
+          "<strong>3. Фазовая свёртка и фильтр 3σ:</strong> <code>φ = ((JD − T₀) / P) mod 1</code> складывает все ночи в один цикл 0..1; <code>|m − M_loc| &gt; 3 · 1.4826 · MAD</code> убирает спутники, сохраняя затмения."
+        ],
+        cards: [
+          { num: "1", title: "Уравнение ПЗС-SNR", desc: "Выбирает выдержку ДО съёмки (Bortle + высота + Луна)" },
+          { num: "2", title: "Шкала Погсона", desc: "Переводит поток света в звёздные величины (m)" },
+          { num: "3", title: "Фаза φ (0 → 1)", desc: "Сворачивает несколько ночей в один оборот звезды" },
+          { num: "4", title: "Rolling MAD (3σ)", desc: "Удаляет случайные выбросы, не трогая затмение" }
+        ]
       }
-    };
-    slidesByLang.be = slidesByLang.ber;
+    ];
+
+    const enSlides = [
+      {
+        kicker: "MANDATORY STEP 1 • BEFORE YOU OBSERVE",
+        headline: "Open AstroLab First, Pick Your Star & Get Exact Exposure!",
+        callout: "Never guess exposures: on bright stars (< 8.5m), 20–30s saturates reference stars and ruins the night. AstroLab computes real-time CCD SNR exposure for your sky and altitude!",
+        steps: [
+          "<strong>1. Pick your Seestar model</strong> at top left (<code>S30</code>, <code>S30+</code>, <code>S30PRO</code>, <code>S50</code>, or <code>S50PRO</code>).",
+          "<strong>2. Set your sky brightness (B2–B9):</strong> <code>B2</code> dark rural, <code>B5</code> suburban, <code>B8</code> city center; keep <code>FWHM 3.5″</code>.",
+          "<strong>3. Find your star in Target Radar</strong> and read the green badge <strong>«⏱ Exposure: 10 s • SNR»</strong> — click <strong>Select</strong> to auto-fill SIMBAD & VSP."
+        ],
+        img: "assets/guide_v150_radar.jpg",
+        caption: "Real AstroLab v1.5.0 workspace: telescope + Bortle sky + real-time Exposure & SNR badge on star cards"
+      },
+      {
+        kicker: "STEP 2 • SEESTAR CAPTURE SETTINGS",
+        headline: "Four Simple Rules for Shooting on Seestar",
+        callout: "Seestar saves per-frame CSVs (with full reference star tables) in MyWorks/<StarName>_sub (e.g., MyWorks/W UMa_sub). Always use the _sub folder for AAVSO!",
+        steps: [
+          "<strong>1. Use the exact exposure from the badge:</strong> if AstroLab says <strong>10 s</strong>, set <strong>10 s</strong> on Seestar.",
+          "<strong>2. IRCUT filter & EQ mode only:</strong> <code>IRCUT</code> maps to <code>TG</code>; never use dual-band <code>LP</code> for photometry.",
+          "<strong>3. Select the target on frame 1:</strong> lock onto the variable star as soon as photometry starts."
+        ],
+        cards: [
+          { num: "⏱", title: "Badge Exposure", desc: "Usually 10s for bright (< 8.5m), 20–60s for faint" },
+          { num: "🎯", title: "IRCUT (TG) + EQ", desc: "Never submit LP filter frames to AAVSO" },
+          { num: "📁", title: "MyWorks/<Star>_sub", desc: "Per-frame CSV folder with all reference stars" }
+        ]
+      },
+      {
+        kicker: "STEP 3 • LOADING THE _sub FOLDER",
+        headline: "Connect Seestar via USB-C & Click «Per-Frame CSV Folder ★»",
+        callout: "Single summary CSV is disabled for AAVSO export because it allows critical ~0.4m zero-point errors — it is available ONLY in Lab-Only mode for inspection.",
+        steps: [
+          "<strong>1. Connect Seestar via USB-C</strong> (storage mode) or copy <code>MyWorks/&lt;Star&gt;_sub</code> to your PC.",
+          "<strong>2. Keep «Export to AAVSO» mode active</strong> and verify Step 1 star & <code>OBSCODE</code>.",
+          "<strong>3. In Step 2 click «📁 Per-Frame CSV Folder ★»</strong> and select the <code>_sub</code> folder directly."
+        ],
+        cards: [
+          { num: "🔌", title: "USB-C → Seestar", desc: "Load MyWorks/<Star>_sub directly or from PC" },
+          { num: "📁", title: "Per-Frame CSV Folder ★", desc: "Only permitted workflow for AAVSO WebObs" },
+          { num: "⛔", title: "Summary CSV Blocked", desc: "Lab-Only mode only — cannot be sent to AAVSO" }
+        ]
+      },
+      {
+        kicker: "STEP 4 • WHAT ASTROLAB DOES AUTOMATICALLY",
+        headline: "Why the _sub Folder Matters: Real Before vs. After Proof",
+        callout: "Seestar firmware retains saturated Red-channel refs — per-frame recalibration drops them automatically and restores true physical magnitudes!",
+        steps: [
+          "<strong>Red points (old summary CSV):</strong> biased by <code>~0.4m</code> (brighter than W UMa's <code>7.75m</code> max) with inflated <code>±0.183m</code> MERR.",
+          "<strong>Green points (new _sub folder):</strong> drops ~<code>7.3/15</code> clipped refs per frame, matching linear FITS (<code>7.96–8.02m</code>).",
+          "<strong>7.4× cleaner errors:</strong> MERR drops to <code>±0.025m</code>; unrelated stars in the folder are filtered out (<code>≤ 30″</code> lock)."
+        ],
+        img: "assets/guide_v150_wuma_chart.png",
+        caption: "Real W UMa data (2026-11-16, S30 Pro): +0.389 mag bias removed, MERR reduced 7.4×"
+      },
+      {
+        kicker: "STEP 5 • QUALITY GUARD & AAVSO EXPORT",
+        headline: "Calibration Guard, SIMBAD Verification & Convert",
+        callout: "Every safety check (SIMBAD/VSX, RA/Dec, MAG, MERR, JD Mid, OBSCODE, Calibration Guard) runs in full for per-frame data!",
+        steps: [
+          "<strong>1. If Calibration Guard pops up:</strong> click <strong>Check on Lab Chart</strong> to inspect your points visually.",
+          "<strong>2. Verify the SIMBAD comparison table:</strong> ensure STARID, RA/Dec, and MAG have no red locks.",
+          "<strong>3. Click «Convert CSV»</strong> in Step 3 to save <code>*_Seestar.csv</code> and upload it to <strong>AAVSO WebObs</strong>."
+        ],
+        img: "assets/guide_v150_cal_guard.jpg",
+        caption: "Real Calibration Guard modal protecting AAVSO from saturated or biased series"
+      },
+      {
+        kicker: "LIGHT CURVE LAB • SCREEN OVERVIEW",
+        headline: "How the Light Curve Lab Works & How to Read the Plot",
+        callout: "Click «Open Lab (Phase · 3σ) →» beneath the right-hand chart to launch full-screen scientific analysis.",
+        steps: [
+          "<strong>Vertical axis (left):</strong> brightness in magnitudes — <strong>smaller number = brighter star</strong> (brighter at top).",
+          "<strong>Horizontal axis (bottom):</strong> time or phase (<code>0 → 1</code>). Orange dots with error bars are your current session.",
+          "<strong>Auto-Analysis bar (top):</strong> computes point count <code>N</code>, amplitude <code>Δm</code>, <code>RMS</code>, <code>T_min</code>, and variable type!"
+        ],
+        img: "assets/guide_v150_lab.jpg",
+        caption: "Real Light Curve Lab screen on live W UMa frames with automatic diagnostics"
+      },
+      {
+        kicker: "LIGHT CURVE LAB • BUTTON GUIDE (1 OF 2)",
+        headline: "Zoom, Filters & Cleanup Controls Explained Simply",
+        callout: "Every Lab button is completely safe — nothing modifies or deletes your original files!",
+        table: {
+          headers: ["Control / Button", "What it does in plain words", "When to use it"],
+          rows: [
+            ["Zoom X / Height Y", "Stretches the plot horizontally (100–800%) or vertically.", "When dense points overlap — zoom to 200–400%."],
+            ["AAVSO Window (30d..3yr)", "How far back to fetch other observers' AAVSO AID data.", "To compare your curve with worldwide observations."],
+            ["X-Axis (Auto / Hrs / JD)", "Switches bottom labels between clock time and Julian Date.", "Keep Auto for viewing or JD for scientific reports."],
+            ["Band (All / TG / V / B)", "Filters points by photometric band (Seestar native = TG).", "Select TG or V to avoid mixing color bands."],
+            ["Binning (Off / 2m..30d)", "Averages nearby points to smooth out frame-to-frame noise.", "Turn on 2 min or 5 min if the curve looks noisy."],
+            ["Clip Outliers (3σ)", "Hides stray bad frames (clouds, satellites, airplanes).", "Use when 1–2 wild points distort the plot scale."],
+            ["Smart Filter (TG + 3σ)", "One-click preset enabling TG band and 3σ cleanup.", "Click immediately for a clean scientific view."]
+          ]
+        }
+      },
+      {
+        kicker: "LIGHT CURVE LAB • BUTTON GUIDE (2 OF 2)",
+        headline: "Analysis, Phase Folding & Period Controls Explained Simply",
+        callout: "Use these tools to reveal repeating eclipses or pulsations and inspect exact numbers.",
+        table: {
+          headers: ["Lab Button", "What it does in plain words", "When & why to click"],
+          rows: [
+            ["Auto-Analyze Star", "Computes Δm, RMS, Lomb–Scargle period, and T_min eclipse time.", "Click after loading any run for an instant summary."],
+            ["Fold by Period (Phase)", "Overlays all star cycles onto one repeating 0 → 1 phase curve.", "Great for multi-night runs — reveals the full wave!"],
+            ["×2 P (Double Period)", "Doubles the detected period (eclipsing binaries have 2 dips).", "If a phase plot shows 1 dip instead of 2, click ×2 P!"],
+            ["Math Audit (Calc)", "Shows exact formulas, point counts, T_min, and error estimates.", "To verify numbers or copy them into an AAVSO report."],
+            ["Help (?)", "Opens the 8-slide visual guide to variable star curve shapes.", "Whenever you want help identifying a light curve."],
+            ["← My Observations", "Returns to your personal archive of past conversions.", "To browse all stars you have observed."]
+          ]
+        }
+      },
+      {
+        kicker: "PLAIN-LANGUAGE FORMULAS • HOW ASTROLAB CALCULATES",
+        headline: "Four Core Formulas — Explained Without Jargon",
+        callout: "5-second checklist: 1) Check exposure in AstroLab BEFORE shooting → 2) Shoot IRCUT + EQ on Seestar → 3) Load MyWorks/<Star>_sub via USB-C → 4) Inspect in Lab → 5) Convert & upload to WebObs!",
+        steps: [
+          "<strong>1. CCD SNR & precision:</strong> <code>SNR(t) = S·t / √(S·t + n·(B·t + R²))</code> and <code>σ = 1.0857 / SNR</code> — star signal vs sky + sensor noise; <code>SNR = 100</code> gives <code>±0.01m</code>.",
+          "<strong>2. Pogson scale:</strong> <code>Δm = −2.5 · log₁₀(F₁ / F₂)</code> — 1 mag = 2.512× brightness change; 5 mag = 100×. Smaller number = brighter star.",
+          "<strong>3. Phase fold & Rolling MAD (3σ):</strong> <code>φ = ((JD − T₀) / P) mod 1</code> folds nights into 0..1; <code>|m − M_loc| &gt; 3 · 1.4826 · MAD</code> removes satellites while keeping real eclipses."
+        ],
+        cards: [
+          { num: "1", title: "CCD SNR Equation", desc: "Picks safe exposure BEFORE shooting (Bortle + alt + Moon)" },
+          { num: "2", title: "Pogson Magnitude", desc: "Converts measured light flux into magnitudes (m)" },
+          { num: "3", title: "Phase Fold (0 → 1)", desc: "Stacks multiple nights into one clean orbital cycle" },
+          { num: "4", title: "Rolling MAD (3σ)", desc: "Drops single-frame glitches without clipping eclipses" }
+        ]
+      }
+    ];
 
     Object.keys(BEGINNER_PRESENTATION_7LANG).forEach(lg => {
       const p = BEGINNER_PRESENTATION_7LANG[lg];
       if (!p || !Array.isArray(p.slides) || !Array.isArray(p.tabs)) return;
-      const spec = slidesByLang[lg] || slidesByLang.en;
-      p.tabs = p.tabs.slice(0, 12);
-      p.tabs.push(spec.tab);
-      p.slides = p.slides.slice(0, 12);
-      p.slides.push(spec.slide);
+      const isRu = (lg === "ru");
+      p.tabs = p.tabs.slice(0, 12).concat(isRu ? ruTabs : enTabs);
+      p.slides = p.slides.slice(0, 12).concat(isRu ? ruSlides : enSlides);
     });
   })();
 
   let _activeBeginnerSlideIdx = 0;
 
   window.renderBeginnerGuideSlide = function(slideIdx = _activeBeginnerSlideIdx) {
-    _activeBeginnerSlideIdx = Math.max(0, Math.min(12, Number(slideIdx) || 0));
+    _activeBeginnerSlideIdx = Math.max(0, Math.min(20, Number(slideIdx) || 0));
     const lg = getActive7Lang();
     const pack = BEGINNER_PRESENTATION_7LANG[lg] || BEGINNER_PRESENTATION_7LANG.en;
     const slide = pack.slides[_activeBeginnerSlideIdx] || pack.slides[0];
@@ -19780,7 +20009,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     if (titleEl) titleEl.textContent = pack.modalTitle;
 
     const counterEl = document.getElementById("beginnerSlideCounterBadge");
-    if (counterEl) counterEl.textContent = `${_activeBeginnerSlideIdx + 1} / 13`;
+    if (counterEl) counterEl.textContent = `${_activeBeginnerSlideIdx + 1} / 21`;
 
     const prevLbl = document.getElementById("lblBeginnerPrev");
     if (prevLbl) prevLbl.textContent = pack.btnPrev;
@@ -19915,11 +20144,11 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
   window.stepBeginnerGuideSlide = function(delta) {
     const nextIdx = _activeBeginnerSlideIdx + Number(delta || 1);
-    if (nextIdx >= 13) {
+    if (nextIdx >= 21) {
       window.closeBeginnerGuideModal();
       return;
     }
-    window.renderBeginnerGuideSlide(Math.max(0, Math.min(12, nextIdx)));
+    window.renderBeginnerGuideSlide(Math.max(0, Math.min(20, nextIdx)));
   };
 
   // Закрытие по клику на фон и навигация стрелками клавиатуры
@@ -20003,8 +20232,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     acc2Title: "Výběr a kontrola souboru fotometrie",
     acc3Title: "Převod Seestar CSV na AAVSO Extended",
     secFileStart: "Výběr a kontrola souboru fotometrie",
-    btnSelectCsvFile: "📂 Souhrnné CSV (záložní)",
+    btnSelectCsvFile: "📂 Souhrnné CSV (jen laboratoř)",
     btnSelectPerFrameFolder: "📁 Složka snímkových CSV ★",
+    lblSkyBortle: "Obloha:",
     btnLoadDemo: "✨ Demo CSV (SZ Lyn)",
     noFileSelected: "Soubor zatím nevybrán (klikněte výše nebo na «Demo CSV»)",
     btnConvert: "⚡ Převést a uložit AAVSO Extended (.csv)",
@@ -20361,8 +20591,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         secFileStart: "Výběr a kontrola fotometrického souboru",
         lblFile: "CSV soubor ze Seestar:",
         btnLoadDemo: "✨ Demo CSV (SZ Lyn)",
-        btnSelectCsvFile: "📂 Souhrnné CSV (záložní)",
+        btnSelectCsvFile: "📂 Souhrnné CSV (jen laboratoř)",
     btnSelectPerFrameFolder: "📁 Složka snímkových CSV ★",
+    lblSkyBortle: "Obloha:",
         noFileSelected: "Soubor zatím nevybrán (klikněte výše nebo «Demo CSV»)",
         tipCsvText: "Vyberte zdrojový fotometrický CSV soubor Seestar (zpracují se řádky «Non-reference star»).",
         lblVerifyDisk: "Kontrola hotového souboru AAVSO:",
@@ -25934,6 +26165,23 @@ T₀ (${ru ? "середина транзита" : "mid-transit"}) = JD ${(bls.m
     }
     const labRunBtn = document.getElementById("btnAnalyzeInLabOnly");
     if (labRunBtn) labRunBtn.style.display = isLab ? "block" : "none";
+    const summaryCsvBtn = document.getElementById("btnSelectCsvFile");
+    if (summaryCsvBtn) summaryCsvBtn.style.display = isLab ? "" : "none";
+    if (!isLab && window._astroLabSummaryCsvLoaded) {
+      currentCsvText = "";
+      const btnConv = document.getElementById("btnConvert");
+      if (btnConv) btnConv.disabled = true;
+      const badgeEl = document.getElementById("csvModePipelineBadge");
+      if (badgeEl) {
+        badgeEl.style.display = "block";
+        badgeEl.style.background = "rgba(239,68,68,0.16)";
+        badgeEl.style.border = "1px solid rgba(239,68,68,0.55)";
+        badgeEl.style.color = "#fecaca";
+        badgeEl.textContent = (typeof currentLang === "string" && currentLang.startsWith("ru"))
+          ? "⛔ Итоговый CSV запрещён для отправки в AAVSO. Загрузите «📁 Папка покадровых CSV ★»."
+          : "⛔ Summary CSV is blocked for AAVSO export. Please load «📁 Per-Frame CSV Folder ★».";
+      }
+    }
     if (isLab) {
       document.getElementById("accFileSelect")?.setAttribute("open", "");
       document.getElementById("accConvertSection")?.setAttribute("open", "");

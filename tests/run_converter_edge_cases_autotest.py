@@ -633,8 +633,18 @@ def test_14_csv_verification_aavso_guard_badges_and_3sigma_default():
       }}
 
       out.c_aavso = await loadCsv('W_UMa_2026-11-16_02-56-21_105pts_Seestar.csv', aavsoTxt);
+      // In AAVSO Export mode, summary CSV (without reference stars) MUST be blocked
+      out.c_summary_aavso_blocked = await loadCsv('Magnitude_08h 09m 36s +44° 28′ 23″.csv', rawSzlyn);
+      // In Lab-Only mode, summary CSV is allowed for inspection and still runs full mismatch verification
+      if (window.setAstrolabWorkflowMode) window.setAstrolabWorkflowMode('lab');
       out.c_mismatch = await loadCsv('Magnitude_09h 43m 46s +55° 57′ 14″.csv', rawWuma);
-      out.c_match = await loadCsv('Magnitude_08h 09m 36s +44° 28′ 23″.csv', rawSzlyn);
+      // Back to AAVSO Export mode: per-frame CSV (with reference stars) passes full verification & unlocks conversion
+      if (window.setAstrolabWorkflowMode) window.setAstrolabWorkflowMode('aavso');
+      const perFrameSzlyn = rawSzlyn.trim() + String.fromCharCode(10) +
+        ',reference star,122.50,44.50,15,9.500,9.500,0.015,100,100,10.0s,2026.11.16 01:00:00,2461360.5000,61360.0000,2026.11.16 01:00:10,2461360.5001,61360.0001,false,150.0' + String.fromCharCode(10) +
+        ',reference star,122.60,44.55,15,9.800,9.800,0.015,200,200,10.0s,2026.11.16 01:00:00,2461360.5000,61360.0000,2026.11.16 01:00:10,2461360.5001,61360.0001,false,140.0' + String.fromCharCode(10) +
+        ',reference star,122.30,44.40,15,10.100,10.100,0.015,300,300,10.0s,2026.11.16 01:00:00,2461360.5000,61360.0000,2026.11.16 01:00:10,2461360.5001,61360.0001,false,130.0';
+      out.c_match = await loadCsv('Magnitude_08h 09m 36s +44° 28′ 23″_010000.csv', perFrameSzlyn);
       return JSON.stringify(out);
     }})()
     """
@@ -648,6 +658,9 @@ def test_14_csv_verification_aavso_guard_badges_and_3sigma_default():
     assert c1["modalDisplay"] == "flex", f"Already-converted AAVSO CSV must show alert modal: {c1}"
     assert any("AAVSO Extended" in r for r in c1["reasons"]), f"Reason must identify AAVSO Extended file: {c1}"
     assert c1["filePillReady"] is False and c1["convPillReady"] is False, f"Step 2 & 3 badges must NOT be green on invalid CSV: {c1}"
+
+    csum = res["c_summary_aavso_blocked"]
+    assert csum["blocked"] is True and csum["btnConvertDisabled"] is True, f"Summary CSV MUST be blocked in AAVSO Export mode: {csum}"
 
     c2 = res["c_mismatch"]
     assert c2["tableDisplay"] == "table" and c2["rowsCount"] >= 6, f"Raw mismatched CSV must render comparison table: {c2}"
