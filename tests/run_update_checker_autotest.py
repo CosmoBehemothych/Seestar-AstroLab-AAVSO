@@ -30,6 +30,12 @@ class _FakeResp:
 
 
 def test_backend():
+    eng_txt = (ROOT / "Source_and_Build/pwa_mobile_and_electron/astrolab_engine_bridge.js").read_text(encoding="utf-8")
+    m_ver = re.search(r'const\s+LOCAL_VER\s*=\s*"([^"]+)"', eng_txt)
+    assert m_ver, "LOCAL_VER not found in astrolab_engine_bridge.js"
+    assert m_ver.group(1) == core.APP_VERSION, (
+        f"Version drift! JS LOCAL_VER={m_ver.group(1)!r} != Backend APP_VERSION={core.APP_VERSION!r}"
+    )
     with patch("urllib.request.urlopen", return_value=_FakeResp(
         url="https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0"
     )):
@@ -102,6 +108,25 @@ def test_frontend():
         return { ok: false };
       };
 
+      // First verify same version (1.5.0) does NOT show update banner
+      let sameVerFetch = window.fetch;
+      window.fetch = async (url) => {
+        if (String(url).includes("api.github.com")) {
+          return {
+            ok: true,
+            json: async () => ({
+              tag_name: "v1.5.0",
+              html_url: "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0"
+            })
+          };
+        }
+        return { ok: false };
+      };
+      window._githubUpdateCheckedThisSession = false;
+      await window.checkGithubReleaseOnceOnStartup(false);
+      const noFalseBannerOnSameVer = !document.getElementById("githubUpdateBanner");
+      window.fetch = sameVerFetch;
+
       window._githubUpdateCheckedThisSession = false;
       await window.checkGithubReleaseOnceOnStartup(false);
 
@@ -120,6 +145,7 @@ def test_frontend():
 
       return JSON.stringify({
         semverOk,
+        noFalseBannerOnSameVer,
         bannerVisible: Boolean(banner && rect.height >= 30),
         hasVer: bannerText.includes("9.9.9"),
         hasHref: bannerHref.includes("releases/tag/v9.9.9"),

@@ -834,6 +834,8 @@
       themeLightBtn: "Светлая",
       lblScopeModel: "Телескоп:",
       lblSkyBortle: "Небо:",
+      btnAutoDetectBortle: "🎯 Авто",
+      tipAutoDetectBortle: "Определить класс засветки Бортля автоматически по населённому пункту",
       radarTitle: "Радар целей AAVSO",
       btnRefreshShort: "Обновить",
       phRadarSearch: "🔍 Поиск звезды, типа (DSCT, UGSS, EP) или созвездия...",
@@ -1363,6 +1365,8 @@
       btnSelectCsvFile: "📂 Summary CSV (Lab Only)",
     btnSelectPerFrameFolder: "📁 Per-Frame CSV Folder ★",
       lblSkyBortle: "Sky:",
+      btnAutoDetectBortle: "🎯 Auto",
+      tipAutoDetectBortle: "Auto-detect Bortle light pollution class from selected city",
       noFileSelected: "No file selected yet (click the button above or 'Demo CSV')",
       lblVerifyDisk: "Verify Converted AAVSO File:",
       btnVerifyDisk: "🔍 Verify Converted File from Disk",
@@ -1539,6 +1543,8 @@
       themeLightBtn: "Claro",
       lblScopeModel: "Telescopio:",
       lblSkyBortle: "Cielo:",
+      btnAutoDetectBortle: "🎯 Auto",
+      tipAutoDetectBortle: "Detectar automáticamente la clase Bortle según la ciudad seleccionada",
       radarTitle: "Radar de Objetivos AAVSO",
       btnRefreshShort: "Actualizar",
       phRadarSearch: "🔍 Buscar estrella, tipo (DSCT, UGSS, EP) o constelación...",
@@ -1865,6 +1871,8 @@
       themeLightBtn: "Hell",
       lblScopeModel: "Teleskop:",
       lblSkyBortle: "Himmel:",
+      btnAutoDetectBortle: "🎯 Auto",
+      tipAutoDetectBortle: "Bortle-Lichtverschmutzung automatisch nach ausgewählter Stadt erkennen",
       radarTitle: "AAVSO-Zielradar",
       btnRefreshShort: "Aktualisieren",
       phRadarSearch: "🔍 Stern, Typ (DSCT, UGSS, EP) oder Sternbild suchen...",
@@ -2180,6 +2188,8 @@
       themeLightBtn: "Clair",
       lblScopeModel: "Télescope :",
       lblSkyBortle: "Ciel :",
+      btnAutoDetectBortle: "🎯 Auto",
+      tipAutoDetectBortle: "Détecter automatiquement la classe Bortle selon la ville sélectionnée",
       radarTitle: "Radar de Cibles AAVSO",
       btnRefreshShort: "Actualiser",
       phRadarSearch: "🔍 Rechercher étoile, type (DSCT, UGSS, EP) ou constellation...",
@@ -2519,6 +2529,8 @@
       btnSelectCsvFile: "📂 汇总 CSV（仅限实验室）",
     btnSelectPerFrameFolder: "📁 逐帧 CSV 文件夹 ★",
       lblSkyBortle: "夜空：",
+      btnAutoDetectBortle: "🎯 自动",
+      tipAutoDetectBortle: "根据所选城市自动估算波特尔光污染等级",
       noFileSelected: "尚未选择文件（请点击上方按钮或“演示数据”）",
       lblVerifyDisk: "校验已转换的 AAVSO 文件：",
       btnVerifyDisk: "🔍 校验磁盘上的已转换文件",
@@ -6513,38 +6525,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     if (typeof window.syncAllModule14Translations === "function") window.syncAllModule14Translations();
     if (typeof window.__populateCountryAndCitySelectors === "function") window.__populateCountryAndCitySelectors(false);
     if (typeof window.renderSkyClarityAndMoonHeader === "function") window.renderSkyClarityAndMoonHeader();
-    // v1.5.0: Bind Bortle & FWHM selectors for real-time CCD SNR exposure calculation
-  (function initCcdSnrEnvSelectors() {
-    try {
-      const savedB = Number(localStorage.getItem("seestar_user_bortle"));
-      const savedF = Number(localStorage.getItem("seestar_user_fwhm"));
-      window._userBortleClass = (Number.isFinite(savedB) && savedB >= 1 && savedB <= 9) ? savedB : 5;
-      window._userSeeingFwhm = (Number.isFinite(savedF) && savedF >= 1.5 && savedF <= 8.0) ? savedF : 3.5;
-    } catch (_) {
-      window._userBortleClass = 5;
-      window._userSeeingFwhm = 3.5;
-    }
-    const bSel = document.getElementById("v6BortleSelect");
-    const fSel = document.getElementById("v6FwhmSelect");
-    if (bSel) {
-      bSel.value = String(window._userBortleClass);
-      bSel.addEventListener("change", () => {
-        window._userBortleClass = Number(bSel.value) || 5;
-        try { localStorage.setItem("seestar_user_bortle", String(window._userBortleClass)); } catch (_) {}
-        if (typeof renderV6RadarDock === "function") renderV6RadarDock();
-        if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
-      });
-    }
-    if (fSel) {
-      fSel.value = String(window._userSeeingFwhm);
-      fSel.addEventListener("change", () => {
-        window._userSeeingFwhm = Number(fSel.value) || 3.5;
-        try { localStorage.setItem("seestar_user_fwhm", String(window._userSeeingFwhm)); } catch (_) {}
-        if (typeof renderV6RadarDock === "function") renderV6RadarDock();
-        if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
-      });
-    }
-  })();
+
 
   if (typeof renderV6RadarDock === "function") renderV6RadarDock();
     if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
@@ -6563,6 +6544,194 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     const stExp = document.getElementById("statusExplainText");
     if (stExp && STATE.lastConvertedContent) stExp.textContent = `ℹ️ ${t("msgConvertedExplain")}`;
   });
+
+  // ============================================================================
+  // v1.5.0: Bortle Sky-Class Auto-Detection by Observatory City + Manual Override
+  // ============================================================================
+  window._bortleCityCache = window._bortleCityCache || {};
+
+  window.estimateBortleFromPopulation = function(population, cityName = "") {
+    const pop = Number(population);
+    if (Number.isFinite(pop) && pop > 0) {
+      if (pop >= 3000000) return 9;
+      if (pop >= 1000000) return 8;
+      if (pop >= 350000) return 7;
+      if (pop >= 100000) return 6;
+      if (pop >= 20000) return 5;
+      if (pop >= 3000) return 4;
+      return 3;
+    }
+    const raw = String(cityName || "").toLowerCase();
+    const cityPart = raw.includes("—") ? raw.split("—").pop().trim() : (raw.includes("-") ? raw.split("-").pop().trim() : raw.trim());
+    const offlineTiers = [
+      { b: 9, keys: ["london", "лондон", "moscow", "москва", "saint petersburg", "санкт-петербург", "st. petersburg", "paris", "париж", "beijing", "пекин", "shanghai", "шанхай", "tokyo", "токио", "new york", "нью-йорк", "los angeles", "mexico city", "мехико", "sao paulo", "сан-паулу", "istanbul", "стамбул", "cairo", "каир", "seoul", "сеул", "delhi", "mumbai", "guangzhou", "shenzhen"] },
+      { b: 8, keys: ["madrid", "мадрид", "barcelona", "барселона", "berlin", "берлин", "rome", "рим", "milan", "милан", "vienna", "вена", "prague", "прага", "warsaw", "варшава", "sydney", "сидней", "melbourne", "toronto", "chicago", "washington", "вашингтон", "kazan", "казань", "novosibirsk", "новосибирск", "yekaterinburg", "екатеринбург", "nizhny novgorod", "нижний новгород", "samara", "самара", "omsk", "омск", "chelyabinsk", "челябинск", "rostov", "ростов", "ufa", "уфа", "krasnoyarsk", "красноярск", "voronezh", "воронеж", "perm", "пермь", "volgograd", "волгоград", "krasnodar", "краснодар", "minsk", "минск", "almaty", "алматы", "astana", "астана", "tashkent", "ташкент", "casablanca", "algiers", "santiago", "buenos aires"] },
+      { b: 7, keys: ["cheboksary", "чебоксары", "cambridge", "кембридж", "amsterdam", "zurich", "цюрих", "geneva", "женева", "munich", "мюнхен", "hamburg", "гамбург", "lyon", "лион", "marseille", "valencia", "seville", "sochi", "сочи", "kaliningrad", "калининград", "tula", "тула", "yaroslavl", "ярославль", "ryazan", "рязань", "vladivostok", "владивосток", "irkutsk", "иркутск", "tomsk", "томск", "tyumen", "тюмень", "saratov", "саратов", "izhevsk", "ижевск", "ulyanovsk", "ульяновск", "barnaul", "барнаул", "kirov", "киров", "penza", "пенза", "lipetsk", "липецк", "tver", "тверь", "stavropol", "ставрополь", "sevastopol", "севастополь", "simferopol", "симферополь", "cape town", "johannesburg"] },
+      { b: 6, keys: ["novocheboksarsk", "новочебоксарск", "yoshkar-ola", "йошкар-ола", "saransk", "саранск", "vladimir", "владимир", "kostroma", "кострома", "vologda", "вологда", "pskov", "псков", "veliky novgorod", "новгород", "petrozavodsk", "петрозаводск", "murmansk", "мурманск", "arkhangelsk", "архангельск", "smolensk", "смоленск", "kaluga", "калуга", "tambov", "тамбов", "orel", "орёл", "kursk", "курск", "belgorod", "белгород", "bryansk", "брянск", "ivanovo", "иваново", "nalchik", "нальчик", "abakan", "абакан"] },
+      { b: 4, keys: ["observatory", "обсерватория", "arkhyz", "архыз", "nauchny", "научный", "atacama", "атакама", "la palma", "tenerife", "тенерифе", "kislovodsk", "кисловодск"] }
+    ];
+    for (const tier of offlineTiers) {
+      if (tier.keys.some(k => cityPart.includes(k))) return tier.b;
+    }
+    return 5;
+  };
+
+  window.applyBortleClassToUi = function(bortleVal, isManual = false) {
+    const clamped = Math.max(2, Math.min(9, Math.round(Number(bortleVal) || 5)));
+    window._userBortleClass = clamped;
+    const bSel = document.getElementById("v6BortleSelect");
+    if (bSel) bSel.value = String(clamped);
+    try {
+      localStorage.setItem("seestar_user_bortle", String(clamped));
+      if (isManual) localStorage.setItem("seestar_user_bortle_manual", "1");
+      else localStorage.removeItem("seestar_user_bortle_manual");
+    } catch (_) {}
+    if (typeof renderV6RadarDock === "function") renderV6RadarDock();
+    if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
+    return clamped;
+  };
+
+  window.autoDetectBortleForActiveCity = async function(userClicked = false) {
+    const st = window._OBSERVER_GEO_STATE || {};
+    const rawCity = String(st.city || "").trim();
+    const cleanCity = rawCity.includes("—")
+      ? rawCity.split("—").pop().replace(/\([^)]*\)/g, "").trim()
+      : rawCity.replace(/\([^)]*\)/g, "").trim();
+    const lat = Number(st.lat);
+    const lon = Number(st.lon);
+    const cacheKey = `${cleanCity.toLowerCase()}|${Number.isFinite(lat) ? lat.toFixed(1) : ""}|${Number.isFinite(lon) ? lon.toFixed(1) : ""}`;
+
+    const btn = document.getElementById("btnAutoDetectBortle");
+    const prevLabel = btn ? btn.textContent : "";
+    if (btn && userClicked) {
+      btn.disabled = true;
+      btn.textContent = "⏳";
+    }
+
+    let detectedBortle = null;
+    let detectedPop = null;
+    let sourceTag = "offline";
+
+    try {
+      if (window._bortleCityCache[cacheKey]) {
+        const cached = window._bortleCityCache[cacheKey];
+        detectedBortle = cached.bortle;
+        detectedPop = cached.pop;
+        sourceTag = cached.source;
+      } else if (cleanCity) {
+        try {
+          const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cleanCity)}&count=5&language=en&format=json`;
+          const resp = await fetch(url, {
+            method: "GET",
+            signal: AbortSignal.timeout ? AbortSignal.timeout(4500) : undefined
+          });
+          if (resp && resp.ok) {
+            const data = await resp.json();
+            const list = Array.isArray(data && data.results) ? data.results : [];
+            if (list.length > 0) {
+              let best = list[0];
+              if (Number.isFinite(lat) && Number.isFinite(lon)) {
+                let bestDist = Infinity;
+                for (const item of list) {
+                  const d = Math.hypot((Number(item.latitude) || 0) - lat, (Number(item.longitude) || 0) - lon);
+                  if (d < bestDist) { bestDist = d; best = item; }
+                }
+              }
+              const pop = Number(best && best.population);
+              if (Number.isFinite(pop) && pop > 0) {
+                detectedPop = pop;
+                detectedBortle = window.estimateBortleFromPopulation(pop, cleanCity);
+                sourceTag = "open-meteo";
+              }
+            }
+          }
+        } catch (_) {}
+
+        if (detectedBortle === null) {
+          detectedBortle = window.estimateBortleFromPopulation(null, rawCity || cleanCity);
+          sourceTag = "offline";
+        }
+        window._bortleCityCache[cacheKey] = { bortle: detectedBortle, pop: detectedPop, source: sourceTag };
+      } else {
+        detectedBortle = 5;
+      }
+
+      const applied = window.applyBortleClassToUi(detectedBortle, false);
+
+      if (userClicked && typeof showToast === "function") {
+        const ru = (typeof currentLang !== "undefined" && currentLang === "ru");
+        const popStr = detectedPop
+          ? (detectedPop >= 1000000 ? `${(detectedPop / 1000000).toFixed(1)}M` : `${Math.round(detectedPop / 1000)}k`)
+          : "";
+        const cityDisplay = cleanCity || rawCity || "Observatory";
+        const msg = ru
+          ? `🌃 Засветка определена: B${applied} (${cityDisplay}${popStr ? `, нас. ~${popStr}` : ""}) — можно скорректировать вручную`
+          : `🌃 Bortle auto-detected: B${applied} (${cityDisplay}${popStr ? `, pop. ~${popStr}` : ""}) — editable manually`;
+        showToast(msg, "info");
+      }
+      return { bortle: applied, population: detectedPop, source: sourceTag, city: cleanCity };
+    } finally {
+      if (btn && userClicked) {
+        btn.disabled = false;
+        btn.textContent = prevLabel || (typeof t === "function" ? t("btnAutoDetectBortle") : "🎯 Auto");
+      }
+    }
+  };
+
+  (function initCcdSnrEnvSelectors() {
+    let hasSavedBortle = false;
+    try {
+      const rawB = localStorage.getItem("seestar_user_bortle");
+      const savedB = Number(rawB);
+      const savedF = Number(localStorage.getItem("seestar_user_fwhm"));
+      if (rawB !== null && rawB !== "" && Number.isFinite(savedB) && savedB >= 1 && savedB <= 9) {
+        window._userBortleClass = savedB;
+        hasSavedBortle = true;
+      } else {
+        window._userBortleClass = 5;
+      }
+      window._userSeeingFwhm = (Number.isFinite(savedF) && savedF >= 1.5 && savedF <= 8.0) ? savedF : 3.5;
+    } catch (_) {
+      window._userBortleClass = 5;
+      window._userSeeingFwhm = 3.5;
+    }
+    const bSel = document.getElementById("v6BortleSelect");
+    const fSel = document.getElementById("v6FwhmSelect");
+    const bAutoBtn = document.getElementById("btnAutoDetectBortle");
+    if (bSel) {
+      bSel.value = String(window._userBortleClass);
+      bSel.addEventListener("change", () => {
+        window.applyBortleClassToUi(Number(bSel.value) || 5, true);
+      });
+    }
+    if (bAutoBtn) {
+      bAutoBtn.addEventListener("click", () => {
+        window.autoDetectBortleForActiveCity(true);
+      });
+    }
+    if (fSel) {
+      fSel.value = String(window._userSeeingFwhm);
+      fSel.addEventListener("change", () => {
+        window._userSeeingFwhm = Number(fSel.value) || 3.5;
+        try { localStorage.setItem("seestar_user_fwhm", String(window._userSeeingFwhm)); } catch (_) {}
+        if (typeof renderV6RadarDock === "function") renderV6RadarDock();
+        if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
+      });
+    }
+    if (!hasSavedBortle) {
+      setTimeout(() => {
+        if (typeof window.autoDetectBortleForActiveCity === "function") {
+          try {
+            if (localStorage.getItem("seestar_user_bortle_manual") !== "1") {
+              window.autoDetectBortleForActiveCity(false);
+            }
+          } catch (_) {
+            window.autoDetectBortleForActiveCity(false);
+          }
+        }
+      }, 1600);
+    }
+  })();
 
   // --- Обработчики памятки «Как читать графики» (Пункт 5) ---
   const graphGuideModal = document.getElementById("graphGuideModal");
@@ -18234,6 +18403,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblCitySelect: "2. Country — City:",
       btnAutoDetectCity: "🎯 Auto",
       tipAutoDetectCity: "Auto-detect observatory city by IP / Timezone",
+      btnAutoDetectBortle: "🎯 Auto",
+      tipAutoDetectBortle: "Auto-detect Bortle light pollution class from selected city",
       optCustomCity: "🔍 Other City / Search below...",
       phCustomCity: "Country-City or City (e.g. USA-Washington, España-Madrid)...",
       optAllCountries: "🌍 All Countries (World)",
@@ -18254,6 +18425,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblCitySelect: "2. Страна — Город:",
       btnAutoDetectCity: "🎯 Авто",
       tipAutoDetectCity: "Определить город автоматически по IP / часовому поясу",
+      btnAutoDetectBortle: "🎯 Авто",
+      tipAutoDetectBortle: "Определить класс засветки Бортля автоматически по населённому пункту",
       optCustomCity: "🔍 Другой город (поиск ниже)...",
       phCustomCity: "Страна-Город или город (напр. Россия-Москва, USA-Washington)...",
       optAllCountries: "🌍 Все страны мира",
@@ -18274,6 +18447,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblCitySelect: "2. País — Ciudad:",
       btnAutoDetectCity: "🎯 Auto",
       tipAutoDetectCity: "Detectar ciudad automáticamente por IP / zona horaria",
+      btnAutoDetectBortle: "🎯 Auto",
+      tipAutoDetectBortle: "Detectar automáticamente la clase Bortle según la ciudad seleccionada",
       optCustomCity: "🔍 Otra ciudad (buscar abajo)...",
       phCustomCity: "País-Ciudad o ciudad (ej. España-Madrid, USA-Washington)...",
       optAllCountries: "🌍 Todos los países",
@@ -18294,6 +18469,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblCitySelect: "2. Land — Stadt:",
       btnAutoDetectCity: "🎯 Auto",
       tipAutoDetectCity: "Stadt automatisch per IP / Zeitzone erkennen",
+      btnAutoDetectBortle: "🎯 Auto",
+      tipAutoDetectBortle: "Bortle-Lichtverschmutzung automatisch nach ausgewählter Stadt erkennen",
       optCustomCity: "🔍 Andere Stadt (unten suchen)...",
       phCustomCity: "Land-Stadt oder Stadt (z.B. Deutschland-Berlin, USA-Washington)...",
       optAllCountries: "🌍 Alle Länder",
@@ -18314,6 +18491,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblCitySelect: "2. Pays — Ville :",
       btnAutoDetectCity: "🎯 Auto",
       tipAutoDetectCity: "Détecter la ville automatiquement par IP / fuseau horaire",
+      btnAutoDetectBortle: "🎯 Auto",
+      tipAutoDetectBortle: "Détecter automatiquement la classe Bortle selon la ville sélectionnée",
       optCustomCity: "🔍 Autre ville (rechercher ci-dessous)...",
       phCustomCity: "Pays-Ville ou ville (ex. France-Paris, España-Madrid)...",
       optAllCountries: "🌍 Tous les pays",
@@ -18334,6 +18513,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblCitySelect: "2. 国家 — 城市：",
       btnAutoDetectCity: "🎯 自动定位",
       tipAutoDetectCity: "通过 IP / 时区自动识别所在城市",
+      btnAutoDetectBortle: "🎯 自动",
+      tipAutoDetectBortle: "根据所选城市自动估算波特尔光污染等级",
       optCustomCity: "🔍 其他城市（在下方搜索）...",
       phCustomCity: "输入 国家-城市 或城市名 (如 China-Beijing, USA-Washington)...",
       optAllCountries: "🌍 全部国家 / 地区",
@@ -18354,6 +18535,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblCitySelect: "2. Země — Město:",
       btnAutoDetectCity: "🎯 Auto",
       tipAutoDetectCity: "Automaticky rozpoznat město podle IP / časového pásma",
+      btnAutoDetectBortle: "🎯 Auto",
+      tipAutoDetectBortle: "Automaticky určit třídu světelného znečištění Bortle podle zvoleného města",
       optCustomCity: "🔍 Jiné město (hledat níže)...",
       phCustomCity: "Země-Město nebo město (např. Česko-Praha, USA-Washington)...",
       optAllCountries: "🌍 Všechny země světa",
@@ -18374,6 +18557,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblCitySelect: "2. Tamurt — Tamdint (País — Ciudad):",
       btnAutoDetectCity: "🎯 Awurman",
       tipAutoDetectCity: "Af-d tamdint s wudem awurman (IP / Аkud)",
+      lblSkyBortle: "Igenni:",
+      btnAutoDetectBortle: "🎯 Awurman",
+      tipAutoDetectBortle: "Af-d aswir n Bortle s wudem awurman seg temdint",
       optCustomCity: "🔍 Tamdint nniḍen (Nadi داو)...",
       phCustomCity: "Tamurt-Tamdint (am. España-Madrid, Tamazgha-Rabat)...",
       optAllCountries: "🌍 Timura merra (Amaḍal)",
@@ -18771,6 +18957,10 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
     if (typeof window.fetchCitySkyClarityAndMoonNow === "function") {
       window.fetchCitySkyClarityAndMoonNow(false);
+    }
+    if (persist && typeof window.autoDetectBortleForActiveCity === "function") {
+      try { localStorage.removeItem("seestar_user_bortle_manual"); } catch (_) {}
+      window.autoDetectBortleForActiveCity(false);
     }
     if (typeof window.renderV6RadarDock === "function") window.renderV6RadarDock();
     if (typeof window.renderUrgentStarsCards === "function") window.renderUrgentStarsCards();
@@ -20235,6 +20425,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     btnSelectCsvFile: "📂 Souhrnné CSV (jen laboratoř)",
     btnSelectPerFrameFolder: "📁 Složka snímkových CSV ★",
     lblSkyBortle: "Obloha:",
+      btnAutoDetectBortle: "🎯 Auto",
+      tipAutoDetectBortle: "Automaticky určit třídu světelného znečištění Bortle podle zvoleného města",
     btnLoadDemo: "✨ Demo CSV (SZ Lyn)",
     noFileSelected: "Soubor zatím nevybrán (klikněte výše nebo na «Demo CSV»)",
     btnConvert: "⚡ Převést a uložit AAVSO Extended (.csv)",
@@ -20252,6 +20444,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     lblCitySelect: "2. Země — Město:",
     btnAutoDetectCity: "🎯 Auto",
     tipAutoDetectCity: "Automaticky rozpoznat město podle IP / časového pásma",
+      btnAutoDetectBortle: "🎯 Auto",
+      tipAutoDetectBortle: "Automaticky určit třídu světelného znečištění Bortle podle zvoleného města",
     optCustomCity: "🔍 Jiné město (hledat níže)...",
     phCustomCity: "Země-Město nebo město (např. Česko-Praha, USA-Washington)...",
     optAllCountries: "🌍 Všechny země světa",
@@ -20594,6 +20788,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         btnSelectCsvFile: "📂 Souhrnné CSV (jen laboratoř)",
     btnSelectPerFrameFolder: "📁 Složka snímkových CSV ★",
     lblSkyBortle: "Obloha:",
+      btnAutoDetectBortle: "🎯 Auto",
+      tipAutoDetectBortle: "Automaticky určit třídu světelného znečištění Bortle podle zvoleného města",
         noFileSelected: "Soubor zatím nevybrán (klikněte výše nebo «Demo CSV»)",
         tipCsvText: "Vyberte zdrojový fotometrický CSV soubor Seestar (zpracují se řádky «Non-reference star»).",
         lblVerifyDisk: "Kontrola hotového souboru AAVSO:",
@@ -20713,7 +20909,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     window.checkGithubReleaseOnceOnStartup = async function(forceCheck = false) {
       if (window._githubUpdateCheckedThisSession && !forceCheck) return;
       window._githubUpdateCheckedThisSession = true;
-      const LOCAL_VER = "1.4.0";
+      const LOCAL_VER = "1.5.0";
       const REPO_API = "https://api.github.com/repos/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
       const REPO_RELEASES = "https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/latest";
 
