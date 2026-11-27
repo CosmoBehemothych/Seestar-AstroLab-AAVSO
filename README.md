@@ -65,7 +65,7 @@ Uploading raw `Magnitude_*.csv` files directly to AAVSO WebObs risks submitting 
 
 1. **⬇️ Download** **`Seestar_AstroLab_Setup_v1.5.0.exe`** (Windows Installer) and **`SHA256SUMS.txt`** from [GitHub Releases (`v1.5.0`)](https://github.com/CosmoBehemothych/Seestar-AstroLab-AAVSO/releases/tag/v1.5.0). *(Standalone Windows Installer only — no Python required.)*
 2. **▶️ Install & Launch** the app.
-3. **🟢 Click `🚀 Getting Started`** in the top bar for a built-in **13-slide visual guide** (plus an **8-slide guide on How to Read Light Curves**) in all **8 languages**.
+3. **🟢 Click `🚀 Getting Started`** in the top bar for a built-in **21-slide visual guide** (plus an **8-slide guide on How to Read Light Curves**) in all **8 languages**.
 
 ---
 
@@ -107,7 +107,7 @@ Available in **8 languages**: English, Russian, Spanish, German, French, Chinese
 ### 3. My Observations (By Star & Session Analytics)
 ![My Observations Analytics](screenshots/03_my_observations_analytics.png)
 
-### 4. Getting Started (13-Slide Visual Guide — incl. Seestar Exposure & Per-Frame CSV)
+### 4. Getting Started (21-Slide Visual Guide — incl. Seestar Exposure, Per-Frame CSV & Lab)
 ![Getting Started Guide](screenshots/04_getting_started_guide.png)
 
 ---

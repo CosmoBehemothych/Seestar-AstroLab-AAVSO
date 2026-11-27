@@ -8457,3 +8457,38 @@ body[data-theme="light"] .obs-qg-badge.converted { color: #15803d; }
   border-color: #fbbf24;
   box-shadow: 0 0 12px rgba(245,158,11,0.24);
 }
+
+
+/* v1.5.0 Global Anti-Overflow Containment Guard (Guides, Formulas, Cards & SVGs) */
+.beginner-slide-grid,
+.beginner-slide-left,
+.beginner-slide-mockup-box,
+.beginner-slide-BannerCallout,
+.beginner-step-card,
+.beginner-step-text,
+.beginner-slide-stage,
+.beginner-slide-headline,
+.star-dossier-modal-body,
+.lc-analysis-panel {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.beginner-step-text code,
+.beginner-slide-BannerCallout code,
+.beginner-slide-stage code,
+.lc-analysis-panel code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 100%;
+  display: inline;
+}
+.beginner-slide-mockup-box svg,
+.guide-svg-box svg {
+  max-width: 100%;
+  height: auto;
+  overflow: hidden;
+}
