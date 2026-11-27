@@ -836,6 +836,9 @@
       lblSkyBortle: "Небо:",
       btnAutoDetectBortle: "🎯 Авто",
       tipAutoDetectBortle: "Определить класс засветки Бортля автоматически по населённому пункту",
+      btnAutoDetectFwhm: "🎯 Авто",
+      tipAutoDetectFwhm: "Оценить FWHM автоматически по погоде (ветер, дымка, влажность) и модели Seestar",
+      tipFwhmHelp: "FWHM — видимый диаметр звезды на полувысоте яркости (″). Определяется автоматически по текущей погоде (ветер, дымка, влажность) и модели Seestar, при желании можно изменить вручную: 2.5″ — штиль и стабильная атмосфера; 3.5″ — обычная ночь; 5.0″ — сильный ветер, турбулентность или низко над горизонтом.",
       radarTitle: "Радар целей AAVSO",
       btnRefreshShort: "Обновить",
       phRadarSearch: "🔍 Поиск звезды, типа (DSCT, UGSS, EP) или созвездия...",
@@ -1367,6 +1370,9 @@
       lblSkyBortle: "Sky:",
       btnAutoDetectBortle: "🎯 Auto",
       tipAutoDetectBortle: "Auto-detect Bortle light pollution class from selected city",
+      btnAutoDetectFwhm: "🎯 Auto",
+      tipAutoDetectFwhm: "Auto-estimate FWHM from live weather (wind, haze, humidity) and Seestar model",
+      tipFwhmHelp: "FWHM (Full Width at Half Maximum, arcsec) is the apparent star diameter at 50% peak brightness. Auto-estimated from live weather (wind, haze, humidity) and your Seestar model, and editable manually: 2.5″ = calm steady sky; 3.5″ = typical night; 5.0″ = windy, turbulent, or low altitude.",
       noFileSelected: "No file selected yet (click the button above or 'Demo CSV')",
       lblVerifyDisk: "Verify Converted AAVSO File:",
       btnVerifyDisk: "🔍 Verify Converted File from Disk",
@@ -1545,6 +1551,9 @@
       lblSkyBortle: "Cielo:",
       btnAutoDetectBortle: "🎯 Auto",
       tipAutoDetectBortle: "Detectar automáticamente la clase Bortle según la ciudad seleccionada",
+      btnAutoDetectFwhm: "🎯 Auto",
+      tipAutoDetectFwhm: "Estimar FWHM automáticamente según el clima (viento, humedad) y el modelo Seestar",
+      tipFwhmHelp: "FWHM es el diámetro aparente de la estrella al 50% de su brillo (″). Se estima automáticamente según el clima actual y el modelo Seestar, y puede ajustarse manualmente: 2.5″ = cielo muy estable; 3.5″ = noche típica; 5.0″ = viento fuerte o turbulencia.",
       radarTitle: "Radar de Objetivos AAVSO",
       btnRefreshShort: "Actualizar",
       phRadarSearch: "🔍 Buscar estrella, tipo (DSCT, UGSS, EP) o constelación...",
@@ -1873,6 +1882,9 @@
       lblSkyBortle: "Himmel:",
       btnAutoDetectBortle: "🎯 Auto",
       tipAutoDetectBortle: "Bortle-Lichtverschmutzung automatisch nach ausgewählter Stadt erkennen",
+      btnAutoDetectFwhm: "🎯 Auto",
+      tipAutoDetectFwhm: "FWHM automatisch aus Wetter (Wind, Dunst, Feuchte) und Seestar-Modell schätzen",
+      tipFwhmHelp: "FWHM ist der Sterndurchmesser bei halber Maximalhelligkeit (″). Wird automatisch aus aktuellem Wetter und Seestar-Modell geschätzt und ist manuell anpassbar: 2.5″ = ruhiges Seeing; 3.5″ = typische Nacht; 5.0″ = starker Wind oder Turbulenz.",
       radarTitle: "AAVSO-Zielradar",
       btnRefreshShort: "Aktualisieren",
       phRadarSearch: "🔍 Stern, Typ (DSCT, UGSS, EP) oder Sternbild suchen...",
@@ -2190,6 +2202,9 @@
       lblSkyBortle: "Ciel :",
       btnAutoDetectBortle: "🎯 Auto",
       tipAutoDetectBortle: "Détecter automatiquement la classe Bortle selon la ville sélectionnée",
+      btnAutoDetectFwhm: "🎯 Auto",
+      tipAutoDetectFwhm: "Estimer le FWHM automatiquement selon la météo (vent, humidité) et le modèle Seestar",
+      tipFwhmHelp: "Le FWHM est la largeur à mi-hauteur de l’étoile (″). Estimé automatiquement selon la météo actuelle et le modèle Seestar, modifiable manuellement : 2.5″ = ciel très stable ; 3.5″ = nuit typique ; 5.0″ = vent fort ou turbulence.",
       radarTitle: "Radar de Cibles AAVSO",
       btnRefreshShort: "Actualiser",
       phRadarSearch: "🔍 Rechercher étoile, type (DSCT, UGSS, EP) ou constellation...",
@@ -2531,6 +2546,9 @@
       lblSkyBortle: "夜空：",
       btnAutoDetectBortle: "🎯 自动",
       tipAutoDetectBortle: "根据所选城市自动估算波特尔光污染等级",
+      btnAutoDetectFwhm: "🎯 自动",
+      tipAutoDetectFwhm: "根据实时天气（风速、湿度、薄云）与 Seestar 型号自动估算 FWHM",
+      tipFwhmHelp: "FWHM（半高全宽，角秒″）表示星点在半峰值亮度处的宽度。系统根据实时天气与 Seestar 型号自动估算，也可手动调整：2.5″ = 极佳宁静度；3.5″ = 常规夜晚；5.0″ = 大风、湍流或低仰角。",
       noFileSelected: "尚未选择文件（请点击上方按钮或“演示数据”）",
       lblVerifyDisk: "校验已转换的 AAVSO 文件：",
       btnVerifyDisk: "🔍 校验磁盘上的已转换文件",
@@ -4876,6 +4894,279 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
   // [EN] Parses raw Seestar CSV content, reconciles parameters against SIMBAD/VSP catalog data, and renders the comparison table & light curve.
   // [RU] Парсит CSV-файл Seestar, сверяет параметры с каталогом SIMBAD/VSP и отрисовывает таблицу сравнения и кривую блеска.
+  // ============================================================================
+  // v1.5.0: Historical Session Context & Transparency Check (Variants 2, 3, 4)
+  // Evaluates uploaded CSV strictly at its actual observation date/time (JD):
+  // - Historical Moon phase & altitude (local Jean Meeus ephemeris, 100% offline)
+  // - Historical weather & FWHM estimate (Open-Meteo past_days / ERA5 archive)
+  // - Offline CSV transparency & seeing check (per-frame ZP shift range + MERR)
+  // - Shooting site verification (Site Profile / city coordinates)
+  // ============================================================================
+  window.AstroLabSessionContext = (function() {
+    const _weatherCache = {};
+    let _lastCsvText = "";
+
+    function _jdToDate(jd) {
+      return new Date((jd - 2440587.5) * 86400000);
+    }
+
+    function _fmtUtcDate(d) {
+      const dd = String(d.getUTCDate()).padStart(2, "0");
+      const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+      const yyyy = d.getUTCFullYear();
+      return `${dd}.${mm}.${yyyy}`;
+    }
+
+    function _fmtUtcHm(d) {
+      return `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
+    }
+
+    function _isoDate(d) {
+      return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
+    }
+
+    function _median(arr) {
+      if (!arr.length) return null;
+      const s = [...arr].sort((a, b) => a - b);
+      const m = Math.floor(s.length / 2);
+      return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+    }
+
+    function extractMeta(csvText) {
+      const lines = String(csvText || "").split(/\r?\n/).filter(l => l.trim() && !l.trim().startsWith("#"));
+      if (lines.length < 2) return null;
+      const hdr = lines[0].split(",").map(s => s.trim().toLowerCase());
+      const iJd = hdr.findIndex(h => h === "jd" || h === "jd_mid" || h.includes("julian") || h === "date");
+      const iUtc = hdr.findIndex(h => h.includes("utc") || h.includes("time") || h.includes("date-obs"));
+      const iMerr = hdr.findIndex(h => h === "merr" || h.includes("mag(err)") || h.includes("err"));
+      const iType = hdr.findIndex(h => h.includes("type") || h.includes("star_type"));
+
+      const jds = [];
+      const merrs = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(",").map(s => s.trim());
+        if (iType >= 0 && cols[iType] && /reference/i.test(cols[iType]) && !/non-reference/i.test(cols[iType])) continue;
+        let jdVal = NaN;
+        if (iJd >= 0 && cols[iJd]) {
+          const v = Number(cols[iJd]);
+          if (Number.isFinite(v) && v > 2400000 && v < 2600000) jdVal = v;
+        }
+        if (!Number.isFinite(jdVal) && iUtc >= 0 && cols[iUtc]) {
+          const tMs = Date.parse(cols[iUtc].replace(" ", "T") + (cols[iUtc].endsWith("Z") ? "" : "Z"));
+          if (Number.isFinite(tMs)) jdVal = tMs / 86400000 + 2440587.5;
+        }
+        if (Number.isFinite(jdVal)) jds.push(jdVal);
+        if (iMerr >= 0 && cols[iMerr]) {
+          const mv = Number(cols[iMerr]);
+          if (Number.isFinite(mv) && mv > 0 && mv < 5) merrs.push(mv);
+        }
+      }
+      if (!jds.length) return null;
+      const minJd = Math.min(...jds);
+      const maxJd = Math.max(...jds);
+      const midJd = (minJd + maxJd) / 2;
+      const startDate = _jdToDate(minJd);
+      const endDate = _jdToDate(maxJd);
+      const midDate = _jdToDate(midJd);
+      const ageHours = Math.max(0, (Date.now() - endDate.getTime()) / 3600000);
+      const medMerr = _median(merrs);
+      const noisyCount = merrs.filter(v => v > 0.10).length;
+      return {
+        frameCount: jds.length,
+        minJd, maxJd, midJd,
+        startDate, endDate, midDate,
+        ageHours,
+        isHistorical: ageHours >= 12,
+        medMerr,
+        noisyPct: merrs.length ? Math.round((noisyCount / merrs.length) * 100) : 0
+      };
+    }
+
+    function getActiveSite() {
+      try {
+        if (window.AstroLabSiteProfiles && typeof window.AstroLabSiteProfiles.getActiveSite === "function") {
+          const s = window.AstroLabSiteProfiles.getActiveSite();
+          if (s && Number.isFinite(Number(s.lat)) && Number.isFinite(Number(s.lon))) {
+            return { name: s.name || s.label || "Site Profile", lat: Number(s.lat), lon: Number(s.lon), custom: true };
+          }
+        }
+      } catch (_) {}
+      const g = window._OBSERVER_GEO_STATE || { lat: 51.5074, lon: -0.1278, city: "UK — London" };
+      return { name: g.city || "Observatory", lat: Number(g.lat), lon: Number(g.lon), custom: false };
+    }
+
+    async function fetchHistoricalWeatherForSession(site, meta) {
+      const startIso = _isoDate(meta.startDate);
+      const endIso = _isoDate(meta.endDate);
+      const cacheKey = `${site.lat.toFixed(2)},${site.lon.toFixed(2)}|${startIso}|${endIso}|${meta.startDate.getUTCHours()}-${meta.endDate.getUTCHours()}`;
+      if (_weatherCache[cacheKey]) return _weatherCache[cacheKey];
+
+      const ageDays = meta.ageHours / 24;
+      const vars = "cloud_cover,cloud_cover_high,relative_humidity_2m,wind_speed_10m,wind_gusts_10m";
+      let url = "";
+      let source = "";
+      if (ageDays <= 5) {
+        const pd = Math.min(7, Math.max(1, Math.ceil(ageDays) + 1));
+        url = `https://api.open-meteo.com/v1/forecast?latitude=${site.lat.toFixed(4)}&longitude=${site.lon.toFixed(4)}&past_days=${pd}&forecast_days=1&hourly=${vars}&timezone=UTC`;
+        source = "Open-Meteo Forecast (past_days)";
+      } else {
+        url = `https://archive-api.open-meteo.com/v1/archive?latitude=${site.lat.toFixed(4)}&longitude=${site.lon.toFixed(4)}&start_date=${startIso}&end_date=${endIso}&hourly=${vars}&timezone=UTC`;
+        source = "Open-Meteo Archive (ERA5)";
+      }
+
+      try {
+        const resp = await fetch(url, {
+          method: "GET",
+          signal: AbortSignal.timeout ? AbortSignal.timeout(5000) : undefined
+        });
+        if (!resp || !resp.ok) return null;
+        const data = await resp.json();
+        const h = data && data.hourly;
+        if (!h || !Array.isArray(h.time) || !h.time.length) return null;
+
+        const startMs = meta.startDate.getTime() - 3600000;
+        const endMs = meta.endDate.getTime() + 3600000;
+        const idxs = [];
+        for (let i = 0; i < h.time.length; i++) {
+          const tMs = Date.parse(h.time[i].endsWith("Z") ? h.time[i] : h.time[i] + "Z");
+          if (Number.isFinite(tMs) && tMs >= startMs && tMs <= endMs) idxs.push(i);
+        }
+        if (!idxs.length) return null;
+
+        const avg = (arr) => {
+          const vals = idxs.map(i => Number(arr && arr[i])).filter(Number.isFinite);
+          return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+        };
+        const res = {
+          cloudCover: avg(h.cloud_cover),
+          cloudHigh: avg(h.cloud_cover_high),
+          humidity: avg(h.relative_humidity_2m),
+          windKmh: avg(h.wind_speed_10m),
+          windGustsKmh: avg(h.wind_gusts_10m),
+          source
+        };
+        _weatherCache[cacheKey] = res;
+        return res;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function hide() {
+      _lastCsvText = "";
+      const b = document.getElementById("sessionConditionsBanner");
+      if (b) b.style.display = "none";
+    }
+
+    async function evaluateFromCsvText(csvText) {
+      _lastCsvText = csvText || "";
+      const banner = document.getElementById("sessionConditionsBanner");
+      const titleEl = document.getElementById("sessionConditionsTitle");
+      const detailsEl = document.getElementById("sessionConditionsDetails");
+      if (!banner || !titleEl || !detailsEl) return null;
+
+      const meta = extractMeta(csvText);
+      if (!meta) {
+        banner.style.display = "none";
+        return null;
+      }
+
+      const ru = (typeof currentLang === "string" && currentLang.startsWith("ru"));
+      const site = getActiveSite();
+      const dateSpan = (_fmtUtcDate(meta.startDate) === _fmtUtcDate(meta.endDate))
+        ? `${_fmtUtcDate(meta.startDate)} • ${_fmtUtcHm(meta.startDate)}–${_fmtUtcHm(meta.endDate)} UTC`
+        : `${_fmtUtcDate(meta.startDate)} ${_fmtUtcHm(meta.startDate)} – ${_fmtUtcDate(meta.endDate)} ${_fmtUtcHm(meta.endDate)} UTC`;
+
+      const ageDays = Math.floor(meta.ageHours / 24);
+      const ageTag = meta.isHistorical
+        ? (ru ? ` (${ageDays >= 1 ? `${ageDays} дн. назад` : `${Math.round(meta.ageHours)} ч назад`})` : ` (${ageDays >= 1 ? `${ageDays}d ago` : `${Math.round(meta.ageHours)}h ago`})`)
+        : "";
+
+      titleEl.textContent = ru
+        ? `📅 Условия на дату съёмки: ${dateSpan}${ageTag}`
+        : `📅 Session conditions at observation time: ${dateSpan}${ageTag}`;
+
+      const siteLine = ru
+        ? `📍 Площадка: <strong>${site.name}</strong> (${site.lat.toFixed(2)}°, ${site.lon.toFixed(2)}°) — если снимали на выезде, переключите площадку справа.`
+        : `📍 Site: <strong>${site.name}</strong> (${site.lat.toFixed(2)}°, ${site.lon.toFixed(2)}°) — if imaged away from home, switch site on the right.`;
+
+      let moonLine = "";
+      if (typeof window.computeRegionalLunarEphemeris === "function") {
+        const m = window.computeRegionalLunarEphemeris(site.lat, site.lon, meta.midDate);
+        const moonWarn = (m.topoAltDeg > 5 && m.illumPct >= 50);
+        moonLine = ru
+          ? `${m.icon} Луна в момент съёмки: фаза <strong>${m.illumPct}%</strong>, высота <strong>${m.topoAltDeg}°</strong>${moonWarn ? " (яркая Луна над горизонтом — повышен фон неба)" : " (не мешает фотометрии)"}`
+          : `${m.icon} Moon during session: <strong>${m.illumPct}%</strong> illum., alt <strong>${m.topoAltDeg}°</strong>${moonWarn ? " (bright Moon up — elevated sky background)" : " (minimal sky impact)"}`;
+      }
+
+      const rec = window._astroLabRecalibratedPerFrame;
+      const zpRange = (rec && Number.isFinite(rec.zpShiftRangeMag) && rec.zpShiftCount >= 2) ? rec.zpShiftRangeMag : null;
+      let csvQualityLine = "";
+      if (zpRange !== null) {
+        if (zpRange > 0.30) {
+          csvQualityLine = ru
+            ? `☁️ Прозрачность по опорным звёздам: <strong>переменная / возможна дымка</strong> (размах ΔZP ${zpRange.toFixed(2)}m${meta.medMerr != null ? `, медиана MERR ${meta.medMerr.toFixed(3)}m` : ""})`
+            : `☁️ Reference-star transparency: <strong>variable / possible clouds</strong> (ΔZP range ${zpRange.toFixed(2)}m${meta.medMerr != null ? `, median MERR ${meta.medMerr.toFixed(3)}m` : ""})`;
+        } else if (zpRange > 0.15) {
+          csvQualityLine = ru
+            ? `⛅ Прозрачность по опорным звёздам: умеренные колебания (ΔZP ${zpRange.toFixed(2)}m${meta.medMerr != null ? `, медиана MERR ${meta.medMerr.toFixed(3)}m` : ""})`
+            : `⛅ Reference-star transparency: mild variation (ΔZP ${zpRange.toFixed(2)}m${meta.medMerr != null ? `, median MERR ${meta.medMerr.toFixed(3)}m` : ""})`;
+        } else {
+          csvQualityLine = ru
+            ? `✓ Прозрачность по опорным звёздам: стабильная (ΔZP ${zpRange.toFixed(2)}m${meta.medMerr != null ? `, медиана MERR ${meta.medMerr.toFixed(3)}m` : ""})`
+            : `✓ Reference-star transparency: stable (ΔZP ${zpRange.toFixed(2)}m${meta.medMerr != null ? `, median MERR ${meta.medMerr.toFixed(3)}m` : ""})`;
+        }
+      } else if (meta.medMerr != null) {
+        const highMerr = meta.medMerr > 0.08;
+        csvQualityLine = ru
+          ? `${highMerr ? "🌬️" : "✓"} Качество кадров CSV: медиана MERR <strong>${meta.medMerr.toFixed(3)}m</strong>${highMerr ? " (повышенный разброс — ветер/турбулентность или слабая цель)" : " (стабильный сигнал)"}`
+          : `${highMerr ? "🌬️" : "✓"} CSV frame quality: median MERR <strong>${meta.medMerr.toFixed(3)}m</strong>${highMerr ? " (elevated scatter — wind/seeing or faint target)" : " (stable signal)"}`;
+      }
+
+      const weatherPending = ru
+        ? `⏳ Загрузка архива погоды на часы съёмки...`
+        : `⏳ Loading historical weather for session hours...`;
+
+      const renderLines = (weatherHtml) => {
+        detailsEl.innerHTML = [siteLine, moonLine, csvQualityLine, weatherHtml]
+          .filter(Boolean)
+          .map(s => `<div>${s}</div>`)
+          .join("");
+      };
+
+      banner.style.display = "block";
+      renderLines(weatherPending);
+
+      const hw = await fetchHistoricalWeatherForSession(site, meta);
+      if (hw) {
+        const est = (typeof window.estimateFwhmFromWeatherAndScope === "function")
+          ? window.estimateFwhmFromWeatherAndScope(hw)
+          : null;
+        const cStr = hw.cloudCover != null ? `${Math.round(hw.cloudCover)}%` : "—";
+        const wStr = hw.windKmh != null ? `${Math.round(hw.windKmh)} ${ru ? "км/ч" : "km/h"}` : "—";
+        const hStr = hw.humidity != null ? `${Math.round(hw.humidity)}%` : "—";
+        const fStr = est ? ` • ${ru ? "оц. FWHM" : "est. FWHM"} <strong>${est.bucket.toFixed(1)}″</strong>` : "";
+        const wHtml = ru
+          ? `🌦️ Архив погоды на ту ночь: облачность <strong>${cStr}</strong>, ветер <strong>${wStr}</strong>, влажн. <strong>${hStr}</strong>${fStr}`
+          : `🌦️ Historical weather for that night: clouds <strong>${cStr}</strong>, wind <strong>${wStr}</strong>, hum. <strong>${hStr}</strong>${fStr}`;
+        renderLines(wHtml);
+      } else {
+        const offlineHtml = ru
+          ? `📡 Архив погоды недоступен офлайн — использованы локальные эфемериды Луны и контроль CSV.`
+          : `📡 Historical weather unavailable offline — using local Moon ephemeris & CSV quality checks.`;
+        renderLines(offlineHtml);
+      }
+
+      return { meta, site, zpRange, historicalWeather: hw };
+    }
+
+    function refreshIfLoaded() {
+      if (_lastCsvText) evaluateFromCsvText(_lastCsvText);
+    }
+
+    return { extractMeta, evaluateFromCsvText, refreshIfLoaded, hide };
+  })();
+
   function previewCsvText(text, options = {}) {
     const triggerModalOnMismatch = options.triggerModal !== false;
     const previewCard = document.getElementById("previewCard");
@@ -4892,6 +5183,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     // ПУНКТ 5 (Empty State): Пока CSV-файл Seestar не выбран — таблица скрыта
     if (!text || !String(text).trim()) {
       STATE.csvHasValidData = false;
+      if (window.AstroLabSessionContext) window.AstroLabSessionContext.hide();
       if (previewCard) previewCard.style.display = "block";
       if (emptyStateEl) emptyStateEl.style.display = "block";
       if (previewTableEl) previewTableEl.style.display = "none";
@@ -4932,6 +5224,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       }
       return;
     }
+    if (window.AstroLabSessionContext) { window.AstroLabSessionContext.evaluateFromCsvText(text); }
 
     // [RU] Кэшируем разбиение CSV на строки и первую строку данных (extractFirstDataRow),
     // чтобы при вводе символов в поле #starid не выполнять split(/\r?\n/) по всему файлу на каждое нажатие клавиши.
@@ -5584,6 +5877,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
   document.getElementById("btnStop").addEventListener("click", stopAllRequests);
 
   document.getElementById("btnClearAll").addEventListener("click", () => {
+    if (window.AstroLabSessionContext) window.AstroLabSessionContext.hide();
     ["starid", "chart", "kname", "kmag", "ra", "dec"].forEach(id => {
       document.getElementById(id).value = "";
       document.getElementById(id).classList.remove("field-match", "field-warn", "field-mismatch");
@@ -6359,6 +6653,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       skippedDuplicates,
       targetName: detectedTarget,
       medianZpShiftMag: Number(medShift.toFixed(4)),
+      zpShiftRangeMag: zpShifts.length >= 2 ? Number((Math.max(...zpShifts) - Math.min(...zpShifts)).toFixed(4)) : 0,
+      zpShiftCount: zpShifts.length,
       avgSaturatedRefs: Number(avgSat.toFixed(1)),
     };
   };
@@ -6709,13 +7005,87 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
         window.autoDetectBortleForActiveCity(true);
       });
     }
+  window.estimateFwhmFromWeatherAndScope = function(geoState, scopeModel) {
+    const st = geoState || window._OBSERVER_GEO_STATE || {};
+    const model = String(scopeModel || (typeof getActiveScopeModel === "function" ? getActiveScopeModel() : (STATE && STATE.scopeModel) || "S50")).toUpperCase();
+    // Optical + pixel-scale baseline floor per Seestar model (arcsec)
+    const optFloors = { S50PRO: 1.8, S30PRO: 2.0, S50: 2.1, S30: 2.3, S30PLUS: 2.7 };
+    const optFloor = optFloors[model] || 2.1;
+
+    // Atmospheric seeing + wind jitter estimate from Open-Meteo current weather
+    const wind = Number(st.windKmh);
+    const gusts = Number(st.windGustsKmh);
+    const cloudHigh = Number(st.cloudHigh);
+    const humidity = Number(st.humidity);
+
+    let atm = 1.65; // typical mid-latitude baseline seeing
+    if (Number.isFinite(wind)) {
+      if (wind >= 28) atm += 2.0;
+      else if (wind >= 18) atm += 1.25;
+      else if (wind >= 10) atm += 0.65;
+      else if (wind <= 5) atm -= 0.25;
+    }
+    if (Number.isFinite(gusts)) {
+      if (gusts >= 42) atm += 1.1;
+      else if (gusts >= 28) atm += 0.55;
+    }
+    if (Number.isFinite(cloudHigh) && cloudHigh >= 40) atm += 0.45;
+    if (Number.isFinite(humidity) && humidity >= 85) atm += 0.35;
+
+    const rawFwhm = Math.hypot(optFloor, Math.max(0.9, atm));
+    let bucket = 3.5;
+    if (rawFwhm <= 2.95) bucket = 2.5;
+    else if (rawFwhm >= 4.25) bucket = 5.0;
+    return { bucket, rawFwhm: Number(rawFwhm.toFixed(1)), model, wind: Number.isFinite(wind) ? Math.round(wind) : null, gusts: Number.isFinite(gusts) ? Math.round(gusts) : null, humidity: Number.isFinite(humidity) ? Math.round(humidity) : null };
+  };
+
+  window.applyFwhmToUi = function(fwhmVal, isManual = false) {
+    const val = (Number(fwhmVal) === 2.5 || Number(fwhmVal) === 5.0) ? Number(fwhmVal) : 3.5;
+    window._userSeeingFwhm = val;
+    const fSel = document.getElementById("v6FwhmSelect");
+    if (fSel) fSel.value = val.toFixed(1);
+    try {
+      localStorage.setItem("seestar_user_fwhm", val.toFixed(1));
+      if (isManual) localStorage.setItem("seestar_user_fwhm_manual", "1");
+      else localStorage.removeItem("seestar_user_fwhm_manual");
+    } catch (_) {}
+    if (typeof renderV6RadarDock === "function") renderV6RadarDock();
+    if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
+    return val;
+  };
+
+  window.autoDetectFwhmForActiveConditions = function(userClicked = false) {
+    const est = window.estimateFwhmFromWeatherAndScope(window._OBSERVER_GEO_STATE, (typeof getActiveScopeModel === "function" ? getActiveScopeModel() : (STATE && STATE.scopeModel) || "S50"));
+    const applied = window.applyFwhmToUi(est.bucket, false);
+    if (userClicked && typeof showToast === "function") {
+      const ru = (typeof currentLang !== "undefined" && currentLang === "ru");
+      const wPart = est.wind !== null ? (ru ? `, ветер ${est.wind} км/ч` : `, wind ${est.wind} km/h`) : "";
+      const hPart = est.humidity !== null ? (ru ? `, влажн. ${est.humidity}%` : `, hum. ${est.humidity}%`) : "";
+      const msg = ru
+        ? `🔭 FWHM оценён: ${applied.toFixed(1)}″ (расч. ~${est.rawFwhm}″ • ${est.model}${wPart}${hPart}) — можно скорректировать вручную`
+        : `🔭 FWHM estimated: ${applied.toFixed(1)}″ (est. ~${est.rawFwhm}″ • ${est.model}${wPart}${hPart}) — editable manually`;
+      showToast(msg, "info");
+    }
+    return est;
+  };
+
+    const fAutoBtn = document.getElementById("btnAutoDetectFwhm");
+    const fHelpBtn = document.getElementById("btnFwhmHelpTip");
     if (fSel) {
-      fSel.value = String(window._userSeeingFwhm);
+      fSel.value = Number(window._userSeeingFwhm).toFixed(1);
       fSel.addEventListener("change", () => {
-        window._userSeeingFwhm = Number(fSel.value) || 3.5;
-        try { localStorage.setItem("seestar_user_fwhm", String(window._userSeeingFwhm)); } catch (_) {}
-        if (typeof renderV6RadarDock === "function") renderV6RadarDock();
-        if (typeof renderUrgentStarsCards === "function") renderUrgentStarsCards();
+        window.applyFwhmToUi(Number(fSel.value) || 3.5, true);
+      });
+    }
+    if (fAutoBtn) {
+      fAutoBtn.addEventListener("click", () => {
+        window.autoDetectFwhmForActiveConditions(true);
+      });
+    }
+    if (fHelpBtn) {
+      fHelpBtn.addEventListener("click", () => {
+        const msg = (typeof t === "function" && t("tipFwhmHelp")) || fHelpBtn.title || "";
+        if (msg && typeof showToast === "function") showToast(`ℹ️ ${msg}`, "info");
       });
     }
     if (!hasSavedBortle) {
@@ -16656,7 +17026,7 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
 
     // 1. Опрос Open-Meteo Forecast API (https://api.open-meteo.com/v1/forecast) — без ключей, CORS-enabled, разрешение 9 км ECMWF IFS
     try {
-      const omUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,relative_humidity_2m,temperature_2m&timezone=auto`;
+      const omUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,relative_humidity_2m,temperature_2m,wind_speed_10m,wind_gusts_10m&timezone=auto`;
       const ctrl = new AbortController();
       const tid = setTimeout(() => ctrl.abort(), 4500);
       const resp = await fetch(omUrl, { signal: ctrl.signal });
@@ -16672,6 +17042,8 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
           OBSERVER_GEO_STATE.cloudHigh = Math.round(data.current.cloud_cover_high || 0);
           OBSERVER_GEO_STATE.humidity = Math.round(data.current.relative_humidity_2m || 0);
           OBSERVER_GEO_STATE.tempC = data.current.temperature_2m != null ? Number(data.current.temperature_2m).toFixed(1) : "—";
+          OBSERVER_GEO_STATE.windKmh = data.current.wind_speed_10m != null ? Number(data.current.wind_speed_10m) : null;
+          OBSERVER_GEO_STATE.windGustsKmh = data.current.wind_gusts_10m != null ? Number(data.current.wind_gusts_10m) : null;
         }
       }
     } catch (_) {
@@ -16712,8 +17084,18 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       minute: "2-digit"
     });
     renderSkyAndMoonHeaderWidgets();
+    if (typeof window.autoDetectFwhmForActiveConditions === "function") {
+      try {
+        if (localStorage.getItem("seestar_user_fwhm_manual") !== "1") {
+          window.autoDetectFwhmForActiveConditions(false);
+        }
+      } catch (_) {
+        window.autoDetectFwhmForActiveConditions(false);
+      }
+    }
   }
   window.fetchCitySkyClarityAndMoonNow = fetchCitySkyClarityAndMoonNow;
+  window.computeRegionalLunarEphemeris = computeRegionalLunarEphemeris;
 
   // Геокодинг произвольного города через Open-Meteo Geocoding API (https://geocoding-api.open-meteo.com/v1/search)
   async function searchAndSelectCustomCity(queryStr) {
@@ -18405,6 +18787,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       tipAutoDetectCity: "Auto-detect observatory city by IP / Timezone",
       btnAutoDetectBortle: "🎯 Auto",
       tipAutoDetectBortle: "Auto-detect Bortle light pollution class from selected city",
+      btnAutoDetectFwhm: "🎯 Auto",
+      tipAutoDetectFwhm: "Auto-estimate FWHM from live weather (wind, haze, humidity) and Seestar model",
+      tipFwhmHelp: "FWHM (Full Width at Half Maximum, arcsec) is the apparent star diameter at 50% peak brightness. Auto-estimated from live weather (wind, haze, humidity) and your Seestar model, and editable manually: 2.5″ = calm steady sky; 3.5″ = typical night; 5.0″ = windy, turbulent, or low altitude.",
       optCustomCity: "🔍 Other City / Search below...",
       phCustomCity: "Country-City or City (e.g. USA-Washington, España-Madrid)...",
       optAllCountries: "🌍 All Countries (World)",
@@ -18427,6 +18812,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       tipAutoDetectCity: "Определить город автоматически по IP / часовому поясу",
       btnAutoDetectBortle: "🎯 Авто",
       tipAutoDetectBortle: "Определить класс засветки Бортля автоматически по населённому пункту",
+      btnAutoDetectFwhm: "🎯 Авто",
+      tipAutoDetectFwhm: "Оценить FWHM автоматически по погоде (ветер, дымка, влажность) и модели Seestar",
+      tipFwhmHelp: "FWHM — видимый диаметр звезды на полувысоте яркости (″). Определяется автоматически по текущей погоде (ветер, дымка, влажность) и модели Seestar, при желании можно изменить вручную: 2.5″ — штиль и стабильная атмосфера; 3.5″ — обычная ночь; 5.0″ — сильный ветер, турбулентность или низко над горизонтом.",
       optCustomCity: "🔍 Другой город (поиск ниже)...",
       phCustomCity: "Страна-Город или город (напр. Россия-Москва, USA-Washington)...",
       optAllCountries: "🌍 Все страны мира",
@@ -18449,6 +18837,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       tipAutoDetectCity: "Detectar ciudad automáticamente por IP / zona horaria",
       btnAutoDetectBortle: "🎯 Auto",
       tipAutoDetectBortle: "Detectar automáticamente la clase Bortle según la ciudad seleccionada",
+      btnAutoDetectFwhm: "🎯 Auto",
+      tipAutoDetectFwhm: "Estimar FWHM automáticamente según el clima (viento, humedad) y el modelo Seestar",
+      tipFwhmHelp: "FWHM es el diámetro aparente de la estrella al 50% de su brillo (″). Se estima automáticamente según el clima actual y el modelo Seestar, y puede ajustarse manualmente: 2.5″ = cielo muy estable; 3.5″ = noche típica; 5.0″ = viento fuerte o turbulencia.",
       optCustomCity: "🔍 Otra ciudad (buscar abajo)...",
       phCustomCity: "País-Ciudad o ciudad (ej. España-Madrid, USA-Washington)...",
       optAllCountries: "🌍 Todos los países",
@@ -18471,6 +18862,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       tipAutoDetectCity: "Stadt automatisch per IP / Zeitzone erkennen",
       btnAutoDetectBortle: "🎯 Auto",
       tipAutoDetectBortle: "Bortle-Lichtverschmutzung automatisch nach ausgewählter Stadt erkennen",
+      btnAutoDetectFwhm: "🎯 Auto",
+      tipAutoDetectFwhm: "FWHM automatisch aus Wetter (Wind, Dunst, Feuchte) und Seestar-Modell schätzen",
+      tipFwhmHelp: "FWHM ist der Sterndurchmesser bei halber Maximalhelligkeit (″). Wird automatisch aus aktuellem Wetter und Seestar-Modell geschätzt und ist manuell anpassbar: 2.5″ = ruhiges Seeing; 3.5″ = typische Nacht; 5.0″ = starker Wind oder Turbulenz.",
       optCustomCity: "🔍 Andere Stadt (unten suchen)...",
       phCustomCity: "Land-Stadt oder Stadt (z.B. Deutschland-Berlin, USA-Washington)...",
       optAllCountries: "🌍 Alle Länder",
@@ -18493,6 +18887,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       tipAutoDetectCity: "Détecter la ville automatiquement par IP / fuseau horaire",
       btnAutoDetectBortle: "🎯 Auto",
       tipAutoDetectBortle: "Détecter automatiquement la classe Bortle selon la ville sélectionnée",
+      btnAutoDetectFwhm: "🎯 Auto",
+      tipAutoDetectFwhm: "Estimer le FWHM automatiquement selon la météo (vent, humidité) et le modèle Seestar",
+      tipFwhmHelp: "Le FWHM est la largeur à mi-hauteur de l’étoile (″). Estimé automatiquement selon la météo actuelle et le modèle Seestar, modifiable manuellement : 2.5″ = ciel très stable ; 3.5″ = nuit typique ; 5.0″ = vent fort ou turbulence.",
       optCustomCity: "🔍 Autre ville (rechercher ci-dessous)...",
       phCustomCity: "Pays-Ville ou ville (ex. France-Paris, España-Madrid)...",
       optAllCountries: "🌍 Tous les pays",
@@ -18515,6 +18912,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       tipAutoDetectCity: "通过 IP / 时区自动识别所在城市",
       btnAutoDetectBortle: "🎯 自动",
       tipAutoDetectBortle: "根据所选城市自动估算波特尔光污染等级",
+      btnAutoDetectFwhm: "🎯 自动",
+      tipAutoDetectFwhm: "根据实时天气（风速、湿度、薄云）与 Seestar 型号自动估算 FWHM",
+      tipFwhmHelp: "FWHM（半高全宽，角秒″）表示星点在半峰值亮度处的宽度。系统根据实时天气与 Seestar 型号自动估算，也可手动调整：2.5″ = 极佳宁静度；3.5″ = 常规夜晚；5.0″ = 大风、湍流或低仰角。",
       optCustomCity: "🔍 其他城市（在下方搜索）...",
       phCustomCity: "输入 国家-城市 或城市名 (如 China-Beijing, USA-Washington)...",
       optAllCountries: "🌍 全部国家 / 地区",
@@ -18537,6 +18937,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       tipAutoDetectCity: "Automaticky rozpoznat město podle IP / časového pásma",
       btnAutoDetectBortle: "🎯 Auto",
       tipAutoDetectBortle: "Automaticky určit třídu světelného znečištění Bortle podle zvoleného města",
+      btnAutoDetectFwhm: "🎯 Auto",
+      tipAutoDetectFwhm: "Automaticky odhadnout FWHM z počasí (vítr, vlhkost) a modelu Seestar",
+      tipFwhmHelp: "FWHM je zdánlivý průměr hvězdy v polovině maximálního jasu (″). Odhaduje se automaticky z aktuálního počasí a modelu Seestar a lze jej upravit ručně: 2.5″ = klidná obloha; 3.5″ = běžná noc; 5.0″ = silný vítr nebo turbulence.",
       optCustomCity: "🔍 Jiné město (hledat níže)...",
       phCustomCity: "Země-Město nebo město (např. Česko-Praha, USA-Washington)...",
       optAllCountries: "🌍 Všechny země světa",
@@ -18560,6 +18963,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
       lblSkyBortle: "Igenni:",
       btnAutoDetectBortle: "🎯 Awurman",
       tipAutoDetectBortle: "Af-d aswir n Bortle s wudem awurman seg temdint",
+      btnAutoDetectFwhm: "🎯 Awurman",
+      tipAutoDetectFwhm: "Ssiḍen FWHM s wudem awurman seg unezwi d uɣawas n Seestar",
+      tipFwhmHelp: "FWHM d tehri n yitri deg uzgen n tafat (″). Yettwassiḍen s wudem awurman seg unezwi d uɣawas n Seestar, tzemreḍ ad t-tbeddleḍ s ufus: 2.5″ = igenni yersen; 3.5″ = iḍ amagnut; 5.0″ = aḍu iǧehden.",
       optCustomCity: "🔍 Tamdint nniḍen (Nadi داو)...",
       phCustomCity: "Tamurt-Tamdint (am. España-Madrid, Tamazgha-Rabat)...",
       optAllCountries: "🌍 Timura merra (Amaḍal)",
@@ -20427,6 +20833,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     lblSkyBortle: "Obloha:",
       btnAutoDetectBortle: "🎯 Auto",
       tipAutoDetectBortle: "Automaticky určit třídu světelného znečištění Bortle podle zvoleného města",
+      btnAutoDetectFwhm: "🎯 Auto",
+      tipAutoDetectFwhm: "Automaticky odhadnout FWHM z počasí (vítr, vlhkost) a modelu Seestar",
+      tipFwhmHelp: "FWHM je zdánlivý průměr hvězdy v polovině maximálního jasu (″). Odhaduje se automaticky z aktuálního počasí a modelu Seestar a lze jej upravit ručně: 2.5″ = klidná obloha; 3.5″ = běžná noc; 5.0″ = silný vítr nebo turbulence.",
     btnLoadDemo: "✨ Demo CSV (SZ Lyn)",
     noFileSelected: "Soubor zatím nevybrán (klikněte výše nebo na «Demo CSV»)",
     btnConvert: "⚡ Převést a uložit AAVSO Extended (.csv)",
@@ -20446,6 +20855,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     tipAutoDetectCity: "Automaticky rozpoznat město podle IP / časového pásma",
       btnAutoDetectBortle: "🎯 Auto",
       tipAutoDetectBortle: "Automaticky určit třídu světelného znečištění Bortle podle zvoleného města",
+      btnAutoDetectFwhm: "🎯 Auto",
+      tipAutoDetectFwhm: "Automaticky odhadnout FWHM z počasí (vítr, vlhkost) a modelu Seestar",
+      tipFwhmHelp: "FWHM je zdánlivý průměr hvězdy v polovině maximálního jasu (″). Odhaduje se automaticky z aktuálního počasí a modelu Seestar a lze jej upravit ručně: 2.5″ = klidná obloha; 3.5″ = běžná noc; 5.0″ = silný vítr nebo turbulence.",
     optCustomCity: "🔍 Jiné město (hledat níže)...",
     phCustomCity: "Země-Město nebo město (např. Česko-Praha, USA-Washington)...",
     optAllCountries: "🌍 Všechny země světa",
@@ -20790,6 +21202,9 @@ function applyCriticalMismatchState(isCritical, reasons, showModalNow = false) {
     lblSkyBortle: "Obloha:",
       btnAutoDetectBortle: "🎯 Auto",
       tipAutoDetectBortle: "Automaticky určit třídu světelného znečištění Bortle podle zvoleného města",
+      btnAutoDetectFwhm: "🎯 Auto",
+      tipAutoDetectFwhm: "Automaticky odhadnout FWHM z počasí (vítr, vlhkost) a modelu Seestar",
+      tipFwhmHelp: "FWHM je zdánlivý průměr hvězdy v polovině maximálního jasu (″). Odhaduje se automaticky z aktuálního počasí a modelu Seestar a lze jej upravit ručně: 2.5″ = klidná obloha; 3.5″ = běžná noc; 5.0″ = silný vítr nebo turbulence.",
         noFileSelected: "Soubor zatím nevybrán (klikněte výše nebo «Demo CSV»)",
         tipCsvText: "Vyberte zdrojový fotometrický CSV soubor Seestar (zpracují se řádky «Non-reference star»).",
         lblVerifyDisk: "Kontrola hotového souboru AAVSO:",
